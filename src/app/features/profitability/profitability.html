@@ -1,0 +1,66 @@
+<div class="container mx-auto px-6 py-8 space-y-8">
+  <!-- Header -->
+  <div>
+    <h1 class="text-3xl font-bold text-primary">Analyse de Rentabilité</h1>
+    <p class="text-muted-foreground mt-2">
+      Suivi des performances et optimisation des investissements
+    </p>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="kpi-card p-4">
+      <h3 class="text-sm text-success font-medium">Revenus Totaux</h3>
+      <p class="text-2xl font-bold">{{ totalRevenue | number }} €</p>
+    </div>
+    <div class="kpi-card p-4">
+      <h3 class="text-sm text-destructive font-medium">Charges Totales</h3>
+      <p class="text-2xl font-bold">{{ totalExpenses | number }} €</p>
+    </div>
+    <div class="kpi-card p-4">
+      <h3 class="text-sm text-primary font-medium">Bénéfice Net</h3>
+      <p class="text-2xl font-bold">{{ totalProfit | number }} €</p>
+    </div>
+    <div class="kpi-card p-4">
+      <h3 class="text-sm text-warning font-medium">Rendement Moyen</h3>
+      <p class="text-2xl font-bold">{{ averageYield | number:'1.1-1' }} %</p>
+    </div>
+  </div>
+
+  <!-- Performance par investissement -->
+  <div class="kpi-card p-6">
+    <h3 class="font-semibold mb-4">Performance par Investissement</h3>
+    <div class="space-y-3">
+      @for (property of investmentData(); track property) {
+        <div class="flex justify-between border-b pb-2">
+          <div>
+            <p class="font-medium">{{ property.name }}</p>
+            <p class="text-sm text-muted-foreground">
+              Valeur: {{ property.valeur | number }} €
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-success font-semibold">{{ property.benefice }} €/mois</p>
+            <p class="text-sm">{{ property.rendement }} % rendement</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Optimisation recommandée -->
+  <div class="kpi-card p-6">
+    <h3 class="font-semibold mb-2">Optimisation Recommandée</h3>
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="p-4 border rounded bg-muted">
+        ⚠️ Attention : Charges élevées ce mois-ci
+      </div>
+      <div class="p-4 border rounded bg-muted">
+        ✅ Opportunité : Augmenter le loyer de l’Appartement Centre
+      </div>
+      <div class="p-4 border rounded bg-muted">
+        💡 Conseil : Optimiser les charges de copropriété
+      </div>
+    </div>
+  </div>
+</div>

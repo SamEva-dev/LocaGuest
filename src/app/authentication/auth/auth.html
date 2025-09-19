@@ -1,0 +1,72 @@
+<div class="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
+  <div class="w-full max-w-md space-y-8">
+
+    <!-- Logo -->
+    <div class="text-center">
+      <div class="flex items-center justify-center gap-2 mb-4">
+        <div class="p-2 bg-gradient-to-br from-primary to-primary/80 rounded-xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building h-8 w-8 text-white" data-lov-id="src\components\AuthPage.tsx:43:14" data-lov-name="Building" data-component-path="src\components\AuthPage.tsx" data-component-line="43" data-component-file="AuthPage.tsx" data-component-name="Building" data-component-content="%7B%22className%22%3A%22h-8%20w-8%20text-white%22%7D"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>
+        </div>
+      </div>
+      <h1 class="text-2xl font-bold gradient-text">LocaGuest</h1>
+      <p class="text-muted-foreground mt-2">Connectez-vous à votre plateforme de gestion immobilière</p>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="bg-card/50 backdrop-blur-sm shadow-xl rounded-xl p-6">
+      <!-- Tabs -->
+      <div class="flex border-b mb-4">
+        <button (click)="tab.set('login')" [class.border-primary]="tab() === 'login'" class="flex-1 py-2 border-b-2">Connexion</button>
+        <button (click)="tab.set('register')" [class.border-primary]="tab() === 'register'" class="flex-1 py-2 border-b-2">Inscription</button>
+      </div>
+
+      <!-- Login Form -->
+      @if(tab() === 'login') {
+        <form (ngSubmit)="login(email.value, password.value)" class="space-y-4">
+          <div>
+            <label class="block mb-1">Email</label>
+            <input #email type="email" required class="w-full p-2 border rounded pl-10" placeholder="demo@locaguest.com" value="demo@locaguest.com">
+          </div>
+          <div>
+            <label class="block mb-1">Mot de passe</label>
+            <div class="relative">
+              <input #password [type]="showPassword() ? 'text' : 'password'" required class="w-full p-2 border rounded pl-10 pr-10" value="demo123">
+              <button type="button" (click)="showPassword.set(!showPassword())" class="absolute right-3 top-1/2 -translate-y-1/2">
+                <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+              </button>
+            </div>
+            <p class="text-xs text-muted-foreground">Utilisez: demo@locaguest.com / demo123</p>
+          </div>
+          <button type="submit" class="w-full py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-white" [disabled]="isLoading()">
+            {{ isLoading() ? 'Connexion...' : 'Se connecter' }}
+          </button>
+        </form>
+      }
+      <!-- Register Form -->
+      @if(tab() === 'register') {
+        <form (ngSubmit)="register(name.value, emailRegister.value, passwordRegister.value)" class="space-y-4">
+          <div>
+            <label class="block mb-1">Nom complet</label>
+            <input #name type="text" required class="w-full p-2 border rounded pl-10" placeholder="John Doe">
+          </div>
+          <div>
+            <label class="block mb-1">Email</label>
+            <input #emailRegister type="email" required class="w-full p-2 border rounded pl-10" placeholder="votre@email.com">
+          </div>
+          <div>
+            <label class="block mb-1">Mot de passe</label>
+            <div class="relative">
+              <input #passwordRegister [type]="showPassword() ? 'text' : 'password'" required class="w-full p-2 border rounded pl-10 pr-10">
+              <button type="button" (click)="showPassword.set(!showPassword())" class="absolute right-3 top-1/2 -translate-y-1/2">
+                <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="w-full py-2 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-white" [disabled]="isLoading()">
+            {{ isLoading() ? 'Création...' : 'Créer un compte' }}
+          </button>
+        </form>
+      }
+
+    <!-- Demo Info -->
+    <div class="text-center text-sm text-muted-foreground">Mode démonstration - Aucune données réelles</div>

@@ -1,0 +1,168 @@
+<div class="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+
+  <!-- Header -->
+  <header class="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-6">
+        <div class="flex items-center space-x-2">
+          <i class="pi pi-building text-primary text-2xl"></i>
+          <h1 class="text-2xl font-bold gradient-text">LocaGuest</h1>
+        </div>
+        <nav class="hidden md:flex items-center space-x-6">
+          <a class="font-medium text-primary">Dashboard</a>
+          <a (click)="goTo('/contrats')" class="text-muted-foreground hover:text-primary">Contrats</a>
+          <a (click)="goTo('/documents')" class="text-muted-foreground hover:text-primary">Documents</a>
+          <a (click)="goTo('/financial')" class="text-muted-foreground hover:text-primary">Comptabilité</a>
+          <a (click)="goTo('/profitability')" class="text-muted-foreground hover:text-primary">Rentabilité</a>
+          <a (click)="goTo('/settings')" class="text-muted-foreground hover:text-primary">Paramètres</a>
+        </nav>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button class="p-2 rounded-full hover:bg-muted"><i class="pi pi-bell"></i></button>
+        <button (click)="goTo('/properties/add')" class="px-4 py-2 rounded bg-primary text-white">Ajouter un bien</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container mx-auto px-6 py-8">
+    <!-- Welcome -->
+    <h2 class="text-3xl font-bold mb-2">Bienvenue sur votre tableau de bord</h2>
+    <p class="text-muted-foreground text-lg mb-8">Voici un aperçu de votre activité locative</p>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      @for (stat of stats(); track stat) {
+        <div class="bg-gradient-card rounded-xl p-4 border border-border/50 shadow card-hover">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-muted-foreground">{{ stat.title }}</span>
+            <i [class]="stat.icon + ' ' + stat.color"></i>
+          </div>
+          <div class="text-2xl font-bold">{{ stat.value }}</div>
+          <p class="text-xs text-muted-foreground">{{ stat.change }}</p>
+        </div>
+      }
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+      <!-- Properties -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-gradient-card rounded-xl border border-border/50 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-semibold">Mes Biens</h3>
+              <p class="text-sm text-muted-foreground">Gérez tous vos biens immobiliers</p>
+            </div>
+            <button class="px-3 py-1 border rounded flex items-center gap-1 text-sm"><i class="pi pi-plus"></i> Ajouter</button>
+          </div>
+          <div class="flex items-center gap-4 mb-4">
+            <div class="relative flex-1">
+              <i class="pi pi-search absolute left-3 top-2.5 text-muted-foreground"></i>
+              <input type="text" [(ngModel)]="searchQuery" class="w-full pl-9 border rounded p-2" placeholder="Rechercher un bien...">
+            </div>
+            <button class="p-2 border rounded"><i class="pi pi-filter"></i></button>
+          </div>
+          <div class="space-y-4">
+            @for (property of properties(); track property) {
+              <div class="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition">
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
+                    <div class="text-primary text-3xl mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building2 h-6 w-6 text-primary-foreground" data-lov-id="src\components\Dashboard.tsx:250:24" data-lov-name="Building2" data-component-path="src\components\Dashboard.tsx" data-component-line="250" data-component-file="Dashboard.tsx" data-component-name="Building2" data-component-content="%7B%22className%22%3A%22h-6%20w-6%20text-primary-foreground%22%7D"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold">{{ property.address }}</h4>
+                    <p class="text-sm text-muted-foreground">{{ property.type }}</p>
+                    @if (property.tenant) {
+                      <p class="text-sm text-muted-foreground">Locataire: {{ property.tenant }}</p>
+                    }
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <div class="text-right">
+                    <p class="font-semibold">{{ property.rent }}</p>
+                    @if (property.nextDue) {
+                      <p class="text-xs text-muted-foreground">Échéance: {{ property.nextDue }}</p>
+                    }
+                  </div>
+                  <span [ngClass]="getStatusBadge(property.status).classes">{{ getStatusBadge(property.status).label }}</span>
+                  <button (click)="goTo('/property/'+property.id)" class="px-3 py-1 border rounded text-sm">Voir détails</button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <div class="bg-gradient-card rounded-xl border border-border/50 p-6">
+          <h3 class="font-semibold mb-4 flex items-center gap-2"><i class="pi pi-calendar"></i> Échéances</h3>
+          <div class="p-3 bg-warning/10 border border-warning/20 rounded mb-2">
+            <p class="text-sm font-medium">Loyer en retard</p>
+            <p class="text-xs text-muted-foreground">Boulevard Voltaire - 3 jours</p>
+          </div>
+          <div class="p-3 bg-muted rounded mb-2">
+            <p class="text-sm font-medium">Prochaine échéance</p>
+            <p class="text-xs text-muted-foreground">15 Rue de la Paix - Dans 2 jours</p>
+          </div>
+          <div class="p-3 bg-muted rounded">
+            <p class="text-sm font-medium">Renouvellement contrat</p>
+            <p class="text-xs text-muted-foreground">Studio Lyon - Dans 15 jours</p>
+          </div>
+        </div>
+
+        <div class="bg-gradient-card rounded-xl border border-border/50 p-6">
+          <h3 class="font-semibold mb-4">Activité récente</h3>
+          <div *ngFor="let activity of recentActivities()" class="flex items-start gap-3 mb-3">
+            <i [class]="getActivityIcon(activity.type)"></i>
+            <div>
+              <p class="text-sm font-medium">{{ activity.message }}</p>
+              <p *ngIf="activity.amount" class="text-sm text-success font-semibold">{{ activity.amount }}</p>
+              <p class="text-xs text-muted-foreground">{{ activity.time }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Access -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="cursor-pointer border rounded-xl p-6 text-center hover:shadow-lg" (click)="goTo('/contracts')">
+        <div class="text-primary text-3xl mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text h-12 w-12 text-primary mx-auto mb-4" data-lov-id="src\components\ContractsManagement.tsx:224:14" data-lov-name="FileText" data-component-path="src\components\ContractsManagement.tsx" data-component-line="224" data-component-file="ContractsManagement.tsx" data-component-name="FileText" data-component-content="%7B%22className%22%3A%22h-12%20w-12%20text-primary%20mx-auto%20mb-4%22%7D"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+        </div>
+        <h4 class="font-semibold">Gestion des contrats</h4>
+        <p class="text-sm text-muted-foreground">Créez et gérez vos baux de location</p>
+      </div>
+      <div class="cursor-pointer border rounded-xl p-6 text-center hover:shadow-lg" (click)="goTo('/financial')">
+        <div class="text-warning text-3xl mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator h-12 w-12 text-warning mx-auto mb-4" data-lov-id="src\components\Dashboard.tsx:344:14" data-lov-name="Calculator" data-component-path="src\components\Dashboard.tsx" data-component-line="344" data-component-file="Dashboard.tsx" data-component-name="Calculator" data-component-content="%7B%22className%22%3A%22h-12%20w-12%20text-warning%20mx-auto%20mb-4%22%7D"><rect width="16" height="20" x="4" y="2" rx="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
+        </div>
+        <h4 class="font-semibold">Comptabilité</h4>
+        <p class="text-sm text-muted-foreground">Suivez vos revenus et dépenses</p>
+      </div>
+      <div class="cursor-pointer border rounded-xl p-6 text-center hover:shadow-lg" (click)="goTo('/documents')">
+        <div class="text-success text-3xl mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text h-12 w-12 text-success mx-auto mb-4" data-lov-id="src\components\Dashboard.tsx:352:14" data-lov-name="FileText" data-component-path="src\components\Dashboard.tsx" data-component-line="352" data-component-file="Dashboard.tsx" data-component-name="FileText" data-component-content="%7B%22className%22%3A%22h-12%20w-12%20text-success%20mx-auto%20mb-4%22%7D"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+        </div>
+        <h4 class="font-semibold">Documents</h4>
+        <p class="text-sm text-muted-foreground">Générez vos documents automatiquement</p>
+      </div>
+      <div class="cursor-pointer border rounded-xl p-6 text-center hover:shadow-lg" (click)="goTo('/profitability')">
+        <div class="text-green-500 text-3xl mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up h-12 w-12 text-green-500 mx-auto mb-4" data-lov-id="src\components\Dashboard.tsx:360:14" data-lov-name="TrendingUp" data-component-path="src\components\Dashboard.tsx" data-component-line="360" data-component-file="Dashboard.tsx" data-component-name="TrendingUp" data-component-content="%7B%22className%22%3A%22h-12%20w-12%20text-green-500%20mx-auto%20mb-4%22%7D"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+        </div>
+        <h4 class="font-semibold">Rentabilité</h4>
+        <p class="text-sm text-muted-foreground">Analysez vos performances financières</p>
+      </div>
+      <div class="cursor-pointer border rounded-xl p-6 text-center hover:shadow-lg" (click)="goTo('/settings')">
+        <div class="pi pi-cog text-gray-500 text-3xl mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings h-12 w-12 text-gray-500 mx-auto mb-4" data-lov-id="src\components\Dashboard.tsx:368:14" data-lov-name="Settings" data-component-path="src\components\Dashboard.tsx" data-component-line="368" data-component-file="Dashboard.tsx" data-component-name="Settings" data-component-content="%7B%22className%22%3A%22h-12%20w-12%20text-gray-500%20mx-auto%20mb-4%22%7D"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </div>
+        <h4 class="font-semibold">Paramètres</h4>
+        <p class="text-sm text-muted-foreground">Configurez votre compte et préférences</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,140 @@
+<div class="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
+
+  <!-- Navigation -->
+  <nav class="border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i class="pi pi-building text-primary text-2xl"></i>
+        <h1 class="text-2xl font-bold gradient-text">LocaGuest</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a routerLink="/auth" class="text-foreground hover:text-primary transition-colors">Connexion</a>
+        <a routerLink="/auth" class="px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-md hover:btn-glow transition">
+          Commencer
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="py-20 px-4">
+    <div class="container mx-auto grid lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-8">
+        <h2 class="text-5xl lg:text-6xl font-bold leading-tight">
+          Gérez vos <span class="gradient-text">locations</span> comme un pro
+        </h2>
+        <p class="text-xl text-muted-foreground leading-relaxed">
+          LocaGuest simplifie la gestion de vos biens immobiliers : locataires, colocations, saisonnières...
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a routerLink="/auth" class="px-6 py-3 rounded-lg bg-primary text-white text-lg font-semibold btn-glow">Démarrer gratuitement</a>
+          <a routerLink="/auth" class="px-6 py-3 rounded-lg border border-primary text-primary text-lg font-semibold bg-white/40 backdrop-blur-md">Voir la démo</a>
+        </div>
+
+        <div class="flex items-center space-x-8 text-sm text-muted-foreground">
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-success rounded-full"></div>
+            <span>Essai gratuit 30 jours</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-success rounded-full"></div>
+            <span>Aucune carte requise</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative">
+        <div class="absolute inset-0 bg-gradient-hero opacity-20 blur-3xl rounded-full"></div>
+        <img src="assets/images/hero-building.jpg" alt="Immeuble moderne"
+             class="relative z-10 rounded-2xl shadow-elevation w-full">
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-20 px-4 bg-muted/30">
+    <div class="container mx-auto text-center">
+      <h3 class="text-3xl lg:text-4xl font-bold mb-4">Tout ce dont vous avez besoin</h3>
+      <p class="text-xl text-muted-foreground max-w-2xl mx-auto mb-12">
+        Une solution complète pour gérer efficacement votre patrimoine immobilier
+      </p>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        @for (feature of features; track feature) {
+          <div class="card-hover bg-gradient-card border border-border/50 rounded-xl p-6 shadow">
+            <div class="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4">
+              <i [class]="feature.icon" class="text-white text-xl"></i>
+            </div>
+            <h4 class="text-xl font-semibold">{{ feature.title }}</h4>
+            <p class="text-base text-muted-foreground leading-relaxed mt-2">{{ feature.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard preview -->
+  <section class="py-20 px-4">
+    <div class="container mx-auto text-center">
+      <h3 class="text-3xl lg:text-4xl font-bold mb-4">Interface moderne et intuitive</h3>
+      <p class="text-xl text-muted-foreground max-w-2xl mx-auto mb-12">Découvrez votre futur tableau de bord LocaGuest</p>
+
+      <div class="relative max-w-5xl mx-auto">
+        <div class="absolute inset-0 bg-gradient-secondary opacity-20 blur-3xl rounded-3xl"></div>
+        <img src="assets/images/dashboard-preview.jpg" alt="Dashboard LocaGuest"
+             class="relative z-10 rounded-2xl shadow-elevation w-full border border-border/50">
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 px-4 bg-gradient-hero text-center">
+    <h3 class="text-3xl lg:text-4xl font-bold text-white mb-4">Prêt à transformer votre gestion locative ?</h3>
+    <p class="text-xl text-white/90 mb-8">Rejoignez les centaines de propriétaires qui nous font confiance</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a routerLink="/auth" class="px-6 py-3 rounded-lg bg-white text-primary text-lg font-semibold">Commencer maintenant</a>
+      <a routerLink="/auth" class="px-6 py-3 rounded-lg border border-white text-white text-lg font-semibold hover:bg-white hover:text-primary">Planifier une démo</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-border bg-muted/30 py-12 px-4">
+    <div class="container mx-auto grid md:grid-cols-4 gap-8">
+      <div class="space-y-4">
+        <div class="flex items-center space-x-2">
+          <i class="pi pi-building text-primary"></i>
+          <span class="font-bold text-lg gradient-text">LocaGuest</span>
+        </div>
+        <p class="text-muted-foreground">La solution moderne pour gérer vos biens immobiliers en toute simplicité.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold">Produit</h4>
+        <ul class="space-y-2 text-muted-foreground">
+          <li><a href="#">Fonctionnalités</a></li>
+          <li><a href="#">Tarifs</a></li>
+          <li><a href="#">Documentation</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold">Support</h4>
+        <ul class="space-y-2 text-muted-foreground">
+          <li><a href="#">Centre d'aide</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Formation</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold">Légal</h4>
+        <ul class="space-y-2 text-muted-foreground">
+          <li><a href="#">Confidentialité</a></li>
+          <li><a href="#">CGU</a></li>
+          <li><a href="#">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
+      <p>&copy; 2025 LocaGuest. Tous droits réservés.</p>
+    </div>
+  </footer>
+</div>

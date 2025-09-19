@@ -1,0 +1,147 @@
+@import "tailwindcss";
+// @import "tailwindcss/base";
+// @import "tailwindcss/components";
+// @import "tailwindcss/utilities";
+
+/* LocaGuest Design System - Professional Real Estate Management */
+
+@layer base {
+  :root {
+    /* Core Brand Colors */
+    --background: 0 0% 98%;
+    --foreground: 215 25% 15%;
+    
+    /* Palette */
+    --primary: 210 60% 45%;
+    --primary-light: 210 60% 55%;
+    --primary-dark: 210 60% 35%;
+    --primary-glow: 210 60% 70%;
+    --secondary: 158 45% 45%;
+    --secondary-light: 158 45% 55%;
+    --secondary-dark: 158 45% 35%;
+    --accent: 35 75% 55%;
+    --accent-light: 35 75% 65%;
+
+    /* Status Colors */
+    --success: 142 76% 36%;
+    --warning: 43 96% 56%;
+    --error: 0 84% 60%;
+
+    /* Neutral Palette */
+    --muted: 210 15% 96%;
+    --muted-dark: 210 15% 92%;
+    --border: 210 15% 88%;
+    --input: 210 15% 95%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
+
+    /* Shadows */
+    --shadow-card: 0 4px 6px -1px hsl(var(--primary) / 0.1), 0 2px 4px -1px hsl(var(--primary) / 0.06);
+    --shadow-elevation: 0 10px 25px -5px hsl(var(--primary) / 0.15), 0 4px 6px -2px hsl(var(--primary) / 0.05);
+    --shadow-glow: 0 0 20px hsl(var(--primary-glow) / 0.3);
+
+    --radius: 0.5rem;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans, system-ui, sans-serif);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .card-hover {
+    transition: var(--transition-smooth);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevation);
+  }
+
+  .btn-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+
+    .text-primary {
+        color: #4a90e2;
+    }
+
+    .bg-primary {
+        background-color: #4a90e2;
+    }
+
+    .hover\:text-primary:hover {
+        color: #4a90e2;
+    }
+
+    .bg-card {
+  background-color: var(--card);
+}
+.text-muted-foreground {
+  color: var(--muted-foreground);
+}
+.text-success {
+  color: var(--success);
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+}
+
+}
+

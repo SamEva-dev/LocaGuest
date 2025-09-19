@@ -1,0 +1,106 @@
+@use '../../../styles/feature-theme' as ft;
+
+/* Injecte le thème local (bg-card, text-muted-foreground, badges, etc.) */
+@include ft.featureTheme();
+
+/* =============== Layout / helpers =============== */
+.page-title { letter-spacing: -0.01em; }
+.section    { background: var(--card); border: 1px solid var(--border); border-radius: .75rem; }
+.section__hd{ padding: 1.25rem 1.5rem 0; }
+.section__bd{ padding: 1rem 1.5rem 1.5rem; }
+
+/* placeholders de graphiques (si pas encore branchés) */
+.chart-placeholder {
+  height: 18rem; border-radius: .75rem; background: var(--muted);
+  display: flex; align-items: center; justify-content: center; color: #94a3b8;
+}
+
+/* barre de filtres (période / bien) */
+.filters {
+  display: flex; gap: .5rem; justify-content: flex-end; align-items: center;
+  select {
+    appearance: none; background: #fff; border: 1px solid var(--border); border-radius: .5rem;
+    padding: .5rem .75rem; font-weight: 500; color: var(--fg);
+  }
+}
+
+/* =============== KPI Cards =============== */
+.kpi-card {
+  background: #fff; border: 1px solid var(--border); border-radius: .75rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+  padding: 1rem;
+}
+.kpi { position: relative; overflow: hidden; }
+.kpi-icon { font-size: 1.25rem; line-height: 1; }
+
+.kpi--revenus {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--success) 7%, transparent) 0%, #fff 55%);
+  .kpi-icon { color: var(--success); }
+}
+.kpi--charges {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--danger) 8%, transparent) 0%, #fff 55%);
+  .kpi-icon { color: var(--danger); }
+}
+.kpi--benefice {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--primary) 7%, transparent) 0%, #fff 55%);
+  .kpi-icon { color: var(--primary); }
+}
+.kpi--rendement {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--warning) 12%, transparent) 0%, #fff 55%);
+  .kpi-icon { color: var(--warning); }
+}
+.kpi-trend {
+  font-size: .75rem; display: inline-flex; align-items: center; gap: .25rem;
+}
+
+/* =============== Répartition des charges (pie + légende) =============== */
+.pie {
+  display: grid; grid-template-columns: 1fr; gap: 1rem;
+}
+.legend {
+  display: flex; flex-wrap: wrap; gap: .75rem 1.25rem;
+  &__item { display: inline-flex; align-items: center; gap: .5rem; font-size: .875rem; }
+  &__dot { width: .6rem; height: .6rem; border-radius: 999px; }
+}
+
+/* =============== Performance par investissement =============== */
+.investment-row {
+  background: #fff; border: 1px solid var(--border); border-radius: .75rem;
+  padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  transition: background-color .2s ease;
+  &:hover { background: color-mix(in srgb, var(--primary) 4%, #fff); }
+}
+.yield-badge {
+  display: inline-block; padding: .125rem .5rem; border-radius: .375rem;
+  font-size: .75rem; line-height: 1rem; font-weight: 600;
+  background: color-mix(in srgb, var(--secondary) 12%, transparent);
+  color: var(--secondary); border: 1px solid color-mix(in srgb, var(--secondary) 28%, var(--border));
+}
+
+/* =============== Optimisations recommandées =============== */
+.optim {
+  display: grid; gap: 1rem;
+  &-card {
+    display: flex; align-items: flex-start; gap: .75rem;
+    padding: 1rem; border: 1px solid var(--border); border-radius: .75rem;
+    background: linear-gradient(180deg, #f9fafb, #fff);
+  }
+  &-warn { background: color-mix(in srgb, var(--warning) 8%, #fff); border-color: color-mix(in srgb, var(--warning) 30%, var(--border)); }
+  &-ok   { background: color-mix(in srgb, var(--success) 8%, #fff); border-color: color-mix(in srgb, var(--success) 28%, var(--border)); }
+  &-info { background: color-mix(in srgb, var(--secondary) 8%, #fff); border-color: color-mix(in srgb, var(--secondary) 28%, var(--border)); }
+}
+
+/* =============== Responsive =============== */
+@media (max-width: 1024px) {
+  .investment-row { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 640px) {
+  .filters { justify-content: stretch; flex-wrap: wrap;
+    select { flex: 1 1 auto; }
+  }
+  .chart-placeholder { height: 14rem; }
+}

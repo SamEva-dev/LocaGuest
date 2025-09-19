@@ -1,0 +1,7 @@
+@use '../../../styles/feature-theme' as ft;
+@include ft.featureTheme();
+
+.photo {
+  background: var(--muted);
+  border: 1px dashed var(--border);
+}

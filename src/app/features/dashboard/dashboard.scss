@@ -1,0 +1,5 @@
+@use '../../../styles/feature-theme' as ft;
+@include ft.featureTheme();
+
+/* exemples ciblés */
+.property-item:hover { background: color-mix(in srgb, var(--primary) 3%, #fff); }

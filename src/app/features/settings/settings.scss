@@ -1,0 +1,49 @@
+@use '../../../styles/feature-theme' as ft;
+@include ft.featureTheme();
+
+.settings-container { padding: 2rem; }
+
+.settings-header {
+  display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border); padding-bottom: 1rem;
+}
+
+.tabs {
+  display: flex; gap: .5rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;
+  button {
+    padding: .5rem 1rem; border-radius: .5rem .5rem 0 0; background: var(--muted);
+    &.active { background: #fff; color: var(--primary); border: 1px solid var(--border); border-bottom: 0; }
+  }
+}
+
+.card {
+  background: #fff; border: 1px solid var(--border); border-radius: .75rem; padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  h3 { font-weight: 600; margin-bottom: .5rem; }
+  .subtitle { color: var(--muted-foreground); margin-bottom: 1rem; }
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+.sessions .session {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .5rem .75rem; border: 1px solid var(--border); border-radius: .5rem; margin-bottom: .5rem;
+}
+
+.badge-ok {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--success); border: 1px solid color-mix(in srgb, var(--success) 30%, var(--border));
+  padding: 0 .5rem; border-radius: .25rem; font-size: .75rem;
+}
+
+.plan { padding: 1rem; border: 1px solid var(--border); border-radius: .5rem; margin-bottom: 1rem; }
+
+.invoice { display: flex; justify-content: space-between; padding: .5rem .75rem; border: 1px solid var(--border); border-radius: .5rem; margin-bottom: .5rem; }
+
+.danger-zone { border-top: 1px solid var(--border); margin-top: 1.5rem; padding-top: 1rem; }
+.btn-danger { background: var(--danger); color: #fff; padding: .5rem 1rem; border-radius: .5rem; }
+
+.actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
+.btn-outline { border: 1px solid var(--border); padding: .5rem 1rem; border-radius: .5rem; }
+.btn-primary { background: var(--primary); color: #fff; padding: .5rem 1rem; border-radius: .5rem; }
+.btn-secondary { background: var(--secondary); color: #fff; padding: .5rem 1rem; border-radius: .5rem; }

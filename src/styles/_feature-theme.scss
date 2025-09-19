@@ -1,0 +1,88 @@
+/* Utilitaires SCSS à inclure dans CHAQUE feature (composant) */
+
+$color-bg: #ffffff;
+$color-fg: #0f172a;
+$color-card: #f8fafc;
+$color-muted: #f1f5f9;
+$color-border: #e2e8f0;
+
+$color-primary: #2563eb;   // bleu LocaGuest
+$color-secondary: #0ea5e9; // turquoise (ou #9333ea si tu préfères violet)
+$color-accent: #3b82f6;
+
+$color-success: #16a34a;
+$color-warning: #f59e0b;   // ou #facc15 si tu veux plus clair
+$color-danger:  #dc2626;
+
+@mixin featureTheme() {
+  /* variables locales au composant (scopées grâce à l'encapsulation) */
+  :host {
+    --bg: #{$color-bg};
+    --fg: #{$color-fg};
+    --card: #{$color-card};
+    --muted: #{$color-muted};
+    --border: #{$color-border};
+
+    --primary: #{$color-primary};
+    --secondary: #{$color-secondary};
+    --accent: #{$color-accent};
+
+    --success: #{$color-success};
+    --warning: #{$color-warning};
+    --danger:  #{$color-danger};
+  }
+
+  /* Helpers “shadcn-like” portés localement */
+  .bg-card            { background-color: var(--card); }
+  .bg-muted           { background-color: var(--muted); }
+  .text-muted-foreground { color: #64748b; }
+
+  .text-primary   { color: var(--primary); }
+  .text-secondary { color: var(--secondary); }
+  .text-accent    { color: var(--accent); }
+  .text-success   { color: var(--success); }
+  .text-warning   { color: var(--warning); }
+  .text-destructive { color: var(--danger); }
+
+  .border { border: 1px solid var(--border); }
+
+  /* Cartes “kpi-card” si tu veux un rendu homogène */
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem; /* ~ rounded-xl */
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: .125rem .5rem;
+    border-radius: .375rem;
+    font-size: .75rem;
+    line-height: 1rem;
+    border: 1px solid var(--border);
+  }
+  .badge--ok       { background: color-mix(in srgb, var(--success) 10%, transparent); color: var(--success); border-color: color-mix(in srgb, var(--success) 25%, var(--border)); }
+  .badge--warn     { background: color-mix(in srgb, var(--warning) 10%, transparent); color: var(--warning); border-color: color-mix(in srgb, var(--warning) 25%, var(--border)); }
+  .badge--neutral  { background: color-mix(in srgb, var(--secondary) 10%, transparent); color: var(--secondary); border-color: color-mix(in srgb, var(--secondary) 25%, var(--border)); }
+
+  /* Tabs (style léger, l’état actif ajoute fond blanc et bord) */
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+  }
+  .tab {
+    padding: .5rem 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--muted);
+    font-weight: 500;
+  }
+  .tab--active {
+    background: #fff;
+    color: var(--primary);
+  }
+
+  
+}

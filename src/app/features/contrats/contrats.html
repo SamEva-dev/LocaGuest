@@ -1,0 +1,132 @@
+<div class="min-h-screen bg-background">
+  <!-- Header -->
+  <header class="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button (click)="goToDashboard()" class="text-muted-foreground hover:text-foreground">
+          ← Retour au dashboard
+        </button>
+        <h1 class="text-2xl font-bold text-foreground">Gestion des Contrats</h1>
+      </div>
+      <button class="px-4 py-2 bg-primary text-white rounded flex items-center gap-2">
+        <i class="pi pi-plus"></i> Nouveau contrat
+      </button>
+    </div>
+  </header>
+
+  <div class="container mx-auto px-4 py-8">
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-card rounded-xl border p-6 flex justify-between">
+        <div>
+          <p class="text-sm text-muted-foreground">Contrats actifs</p>
+          <p class="text-2xl font-bold">12</p>
+        </div>
+        <i class="pi pi-file text-primary text-2xl"></i>
+      </div>
+      <div class="bg-card rounded-xl border p-6 flex justify-between">
+        <div>
+          <p class="text-sm text-muted-foreground">Expirent dans 3 mois</p>
+          <p class="text-2xl font-bold text-warning">3</p>
+        </div>
+        <i class="pi pi-exclamation-triangle text-warning text-2xl"></i>
+      </div>
+      <div class="bg-card rounded-xl border p-6 flex justify-between">
+        <div>
+          <p class="text-sm text-muted-foreground">Revenus mensuels</p>
+          <p class="text-2xl font-bold text-success">18,450€</p>
+        </div>
+        <i class="pi pi-euro text-success text-2xl"></i>
+      </div>
+      <div class="bg-card rounded-xl border p-6 flex justify-between">
+        <div>
+          <p class="text-sm text-muted-foreground">Locataires</p>
+          <p class="text-2xl font-bold">18</p>
+        </div>
+        <i class="pi pi-users text-primary text-2xl"></i>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-card rounded-xl border p-6 mb-6 flex flex-col md:flex-row gap-4">
+      <div class="relative flex-1">
+        <i class="pi pi-search absolute left-3 top-3 text-muted-foreground"></i>
+        <input type="text" placeholder="Rechercher par bien, locataire..." class="w-full pl-9 border rounded p-2" />
+      </div>
+      <select class="border rounded p-2 w-full md:w-48">
+        <option>Tous les statuts</option>
+        <option>Actifs</option>
+        <option>Expire bientôt</option>
+        <option>Expirés</option>
+      </select>
+      <select class="border rounded p-2 w-full md:w-48">
+        <option>Tous les types</option>
+        <option>Meublé</option>
+        <option>Non meublé</option>
+      </select>
+      <button class="border rounded px-4 py-2 flex items-center gap-2">
+        <i class="pi pi-filter"></i> Plus de filtres
+      </button>
+    </div>
+
+    <!-- Contracts List -->
+    <div class="bg-card rounded-xl border p-6">
+      <h2 class="text-lg font-semibold mb-4">Liste des contrats</h2>
+      <div class="space-y-4">
+        @for (c of contracts(); track c) {
+        <div class="border rounded-lg p-6 hover:bg-muted/50 transition">
+          <div class="flex flex-col lg:flex-row justify-between gap-4">
+            <div class="flex-1 space-y-2">
+              <div class="flex items-center gap-2">
+                <h3 class="font-semibold">{{ c.property }}</h3>
+                @if (c.status==='Actif') {
+                  <span class="bg-secondary/10 text-secondary border px-2 py-1 rounded text-xs">Actif</span>
+                }
+                @if (c.status==='Expire bientôt') {
+                  <span class="bg-warning/10 text-warning border px-2 py-1 rounded text-xs">Expire bientôt</span>
+                }
+              </div>
+              <p class="text-sm text-muted-foreground"><i class="pi pi-users mr-1"></i>{{ c.tenant }}</p>
+              <div class="flex items-center gap-4 text-sm text-muted-foreground">
+                <span><i class="pi pi-calendar mr-1"></i>{{ c.startDate }} - {{ c.endDate }}</span>
+                <span class="border px-2 py-1 rounded text-xs">{{ c.type }}</span>
+                <span class="border px-2 py-1 rounded text-xs">{{ c.duration }}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="text-right">
+                <p class="font-bold text-primary text-lg">{{ c.rent }}€</p>
+                <p class="text-xs text-muted-foreground">par mois</p>
+              </div>
+              <div class="flex gap-2">
+                <button class="border px-3 py-1 rounded text-sm">Voir</button>
+                <button class="border px-3 py-1 rounded text-sm">Modifier</button>
+                <button class="border px-3 py-1 rounded text-sm">Documents</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="cursor-pointer border rounded-xl p-6 text-center hover:shadow-lg">
+        <i class="pi pi-file text-primary text-3xl mb-2"></i>
+        <h4 class="font-semibold">Générer un nouveau bail</h4>
+        <p class="text-sm text-muted-foreground">Créez rapidement un contrat de location</p>
+      </div>
+      <div class="cursor-pointer border rounded-xl p-6 text-center hover:shadow-lg">
+        <i class="pi pi-calendar text-warning text-3xl mb-2"></i>
+        <h4 class="font-semibold">Renouvellements à venir</h4>
+        <p class="text-sm text-muted-foreground">Gérez les contrats qui arrivent à échéance</p>
+      </div>
+      <div class="cursor-pointer border rounded-xl p-6 text-center hover:shadow-lg">
+        <i class="pi pi-users text-success text-3xl mb-2"></i>
+        <h4 class="font-semibold">Ajouter un colocataire</h4>
+        <p class="text-sm text-muted-foreground">Modifiez les contrats existants</p>
+      </div>
+    </div>
+  </div>
+</div>
