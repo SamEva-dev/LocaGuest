@@ -10,6 +10,7 @@ $color-primary: #2563eb;   // bleu LocaGuest
 $color-secondary: #0ea5e9; // turquoise (ou #9333ea si tu préfères violet)
 $color-accent: #3b82f6;
 
+
 $color-success: #16a34a;
 $color-warning: #f59e0b;   // ou #facc15 si tu veux plus clair
 $color-danger:  #dc2626;
@@ -30,6 +31,12 @@ $color-danger:  #dc2626;
     --success: #{$color-success};
     --warning: #{$color-warning};
     --danger:  #{$color-danger};
+
+    /* Ombres */
+    --shadow-elevation: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    /* Nouveau dégradé réutilisable */
+    --gradient-cta: linear-gradient(to bottom right, #2563eb, #22c55e);
   }
 
   /* Helpers “shadcn-like” portés localement */
@@ -43,6 +50,15 @@ $color-danger:  #dc2626;
   .text-success   { color: var(--success); }
   .text-warning   { color: var(--warning); }
   .text-destructive { color: var(--danger); }
+  .btn-bck-primary { 
+    background-color: var(--primary); 
+   
+    transition: background-color 0.2s ease; /* effet fluide */
+
+    &:hover {
+      background-color: var(--success);
+    }
+  }
 
   .border { border: 1px solid var(--border); }
 
@@ -83,6 +99,13 @@ $color-danger:  #dc2626;
     background: #fff;
     color: var(--primary);
   }
+  .bg-gradient-primary{
+  background: var(--primary);
+  }
+
+  .bck-degrade {
+  background: var(--gradient-cta);
+}
 
   
 }

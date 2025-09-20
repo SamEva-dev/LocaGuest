@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-background">
   <!-- Header -->
-  <header class="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+  <header class="border-b bg-white backdrop-blur-sm sticky top-0 z-50">
     <div class="container mx-auto px-4 py-4 flex items-center justify-between">
       <div class="flex items-center gap-4">
         <button (click)="goToDashboard()" class="text-muted-foreground hover:text-foreground">
@@ -17,28 +17,28 @@
   <div class="container mx-auto px-4 py-8">
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-      <div class="bg-card rounded-xl border p-6 flex justify-between">
+      <div class="bg-white rounded-xl border p-6 flex justify-between">
         <div>
           <p class="text-sm text-muted-foreground">Documents générés</p>
           <p class="text-2xl font-bold">2,847</p>
         </div>
         <i class="pi pi-file text-primary text-2xl"></i>
       </div>
-      <div class="bg-card rounded-xl border p-6 flex justify-between">
+      <div class="bg-white rounded-xl border p-6 flex justify-between">
         <div>
           <p class="text-sm text-muted-foreground">Ce mois</p>
           <p class="text-2xl font-bold text-success">156</p>
         </div>
         <i class="pi pi-download text-success text-2xl"></i>
       </div>
-      <div class="bg-card rounded-xl border p-6 flex justify-between">
+      <div class="bg-white rounded-xl border p-6 flex justify-between">
         <div>
           <p class="text-sm text-muted-foreground">Modèles actifs</p>
           <p class="text-2xl font-bold">8</p>
         </div>
         <i class="pi pi-eye text-primary text-2xl"></i>
       </div>
-      <div class="bg-card rounded-xl border p-6 flex justify-between">
+      <div class="bg-white rounded-xl border p-6 flex justify-between">
         <div>
           <p class="text-sm text-muted-foreground">Temps économisé</p>
           <p class="text-2xl font-bold text-warning">127h</p>
@@ -50,7 +50,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Templates -->
       <div class="lg:col-span-2 space-y-6">
-        <div class="bg-card rounded-xl border p-6">
+        <div class="bg-white rounded-xl border p-6">
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold">Modèles de documents</h2>
             <div class="flex gap-4">
@@ -93,7 +93,7 @@
       <!-- Quick generation + Recent -->
       <div class="space-y-6">
         <!-- Quick Gen -->
-        <div class="bg-card rounded-xl border p-6">
+        <div class="bg-white rounded-xl border p-6">
           <h2 class="text-lg font-semibold mb-4">Génération rapide</h2>
           <div class="space-y-4">
             <div>
@@ -135,7 +135,7 @@
         </div>
 
         <!-- Recent docs -->
-        <div class="bg-card rounded-xl border p-6">
+        <div class="bg-white rounded-xl border p-6">
           <h2 class="text-lg font-semibold mb-4">Documents récents</h2>
           <div class="space-y-3">
             @for (d of recentDocuments(); track d) {

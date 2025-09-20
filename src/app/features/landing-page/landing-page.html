@@ -8,8 +8,12 @@
         <h1 class="text-2xl font-bold gradient-text">LocaGuest</h1>
       </div>
       <div class="flex items-center space-x-4">
-        <a routerLink="/auth" class="text-foreground hover:text-primary transition-colors">Connexion</a>
-        <a routerLink="/auth" class="px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-md hover:btn-glow transition">
+        <a routerLink="/auth" class="px-4 py-2 rounded-lg text-black 
+               bg-transparent transition-colors duration-200
+               hover:bg-yellow-500 hover:text-white
+               font-semibold"
+               >Connexion</a>
+        <a routerLink="/auth" class="btn-bck-primary px-4 py-2 rounded-lg text-white font-semibold shadow-md hover:btn-glow transition">
           Commencer
         </a>
       </div>
@@ -28,17 +32,19 @@
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4">
-          <a routerLink="/auth" class="px-6 py-3 rounded-lg bg-primary text-white text-lg font-semibold btn-glow">Démarrer gratuitement</a>
+          <a routerLink="/auth" class="px-6 py-3 rounded bck-degrade text-white font-semibold 
+         transition-transform duration-200 ease-in-out
+         hover:scale-105">Démarrer gratuitement</a>
           <a routerLink="/auth" class="px-6 py-3 rounded-lg border border-primary text-primary text-lg font-semibold bg-white/40 backdrop-blur-md">Voir la démo</a>
         </div>
 
         <div class="flex items-center space-x-8 text-sm text-muted-foreground">
           <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-success rounded-full"></div>
+            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
             <span>Essai gratuit 30 jours</span>
           </div>
           <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-success rounded-full"></div>
+            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
             <span>Aucune carte requise</span>
           </div>
         </div>
@@ -64,7 +70,7 @@
         @for (feature of features; track feature) {
           <div class="card-hover bg-gradient-card border border-border/50 rounded-xl p-6 shadow">
             <div class="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4">
-              <i [class]="feature.icon" class="text-white text-xl"></i>
+               <i [class]="feature.icon" class="text-white text-xl"></i>
             </div>
             <h4 class="text-xl font-semibold">{{ feature.title }}</h4>
             <p class="text-base text-muted-foreground leading-relaxed mt-2">{{ feature.description }}</p>
@@ -89,7 +95,7 @@
   </section>
 
   <!-- CTA -->
-  <section class="py-20 px-4 bg-gradient-hero text-center">
+  <section class="py-20 px-4 bg-gradient-hero text-center bck-degrade">
     <h3 class="text-3xl lg:text-4xl font-bold text-white mb-4">Prêt à transformer votre gestion locative ?</h3>
     <p class="text-xl text-white/90 mb-8">Rejoignez les centaines de propriétaires qui nous font confiance</p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">

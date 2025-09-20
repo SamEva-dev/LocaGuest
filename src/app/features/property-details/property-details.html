@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-background">
   <!-- Header -->
-  <header class="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+  <header class="border-b bg-white backdrop-blur-sm sticky top-0 z-50">
     <div class="container mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
@@ -72,7 +72,7 @@
       @if (activeTab() === 'overview') {
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Détails du bien -->
-          <div class="bg-card border rounded-xl lg:col-span-2">
+          <div class="bg-white border rounded-xl lg:col-span-2">
             <div class="px-6 pt-6"><h3 class="font-semibold">Détails du bien</h3></div>
             <div class="p-6 grid grid-cols-2 gap-4">
               @for (d of details(); track d) {
@@ -85,7 +85,7 @@
           </div>
 
           <!-- Résumé financier -->
-          <div class="bg-card border rounded-xl">
+          <div class="bg-white border rounded-xl">
             <div class="px-6 pt-6"><h3 class="font-semibold">Résumé financier</h3></div>
             <div class="p-6 space-y-4">
               @for (f of finance(); track f) {
@@ -103,7 +103,7 @@
         </div>
 
         <!-- Graphique performance -->
-        <div class="bg-card border rounded-xl">
+        <div class="bg-white border rounded-xl">
           <div class="px-6 pt-6"><h3 class="font-semibold">Performance du bien</h3></div>
           <div class="p-6">
             <div class="h-64 bg-muted rounded-lg flex items-center justify-center">
@@ -115,7 +115,7 @@
 
       <!-- ===== Tenants ===== -->
       @if (activeTab() === 'tenants') {
-        <div class="bg-card border rounded-xl">
+        <div class="bg-white border rounded-xl">
           <div class="px-6 pt-6">
             <h3 class="font-semibold flex items-center gap-2">
               <i class="pi pi-users"></i> Locataires actuels
@@ -146,7 +146,7 @@
 
       <!-- ===== Contracts ===== -->
       @if (activeTab() === 'contracts') {
-        <div class="bg-card border rounded-xl">
+        <div class="bg-white border rounded-xl">
           <div class="px-6 pt-6">
             <h3 class="font-semibold flex items-center gap-2">
               <i class="pi pi-file"></i> Contrats de location
@@ -182,7 +182,7 @@
 
       <!-- ===== Documents ===== -->
       @if (activeTab() === 'documents') {
-        <div class="bg-card border rounded-xl">
+        <div class="bg-white border rounded-xl">
           <div class="px-6 pt-6"><h3 class="font-semibold">Documents associés</h3></div>
           <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -200,7 +200,7 @@
 
       <!-- ===== Maintenance ===== -->
       @if (activeTab() === 'maintenance') {
-        <div class="bg-card border rounded-xl">
+        <div class="bg-white border rounded-xl">
           <div class="px-6 pt-6"><h3 class="font-semibold">Historique de maintenance</h3></div>
           <div class="p-6 space-y-4">
             @for (m of maintenance(); track m) {
@@ -222,7 +222,7 @@
   </div>
 </div>
     <!-- Footer -->
-    <footer class="border-t bg-card/50 backdrop-blur-sm mt-12">
+    <footer class="border-t bg-white/50 backdrop-blur-sm mt-12">
         <div class="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
         &copy; 2024 LocaGuest. Tous droits réservés.
         </div>

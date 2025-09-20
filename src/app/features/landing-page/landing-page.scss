@@ -1,0 +1,5 @@
+@use '../../../styles/feature-theme' as ft;
+
+/* Injecte le thème global (définit les variables CSS : --background, --primary, etc.) */
+@include ft.featureTheme();
+
