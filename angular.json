@@ -27,6 +27,7 @@
               }
             ],
             "styles": [
+              "node_modules/phosphor-icons/src/css/icons.css",
               "src/styles.scss"
             ]
           },
