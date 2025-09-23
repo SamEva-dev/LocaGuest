@@ -1,6 +1,0 @@
-@use '../../../styles/feature-theme' as ft;
-
-@include ft.featureTheme();
-
-/* spécifiques à la page si besoin */
-.kpi-icon { font-size: 1.375rem; }
