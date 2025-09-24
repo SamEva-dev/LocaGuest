@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitch } from '../../shared/components/language-switch/language-switch';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'landing-page',
-  imports: [TranslatePipe, LanguageSwitch],
+  imports: [RouterLink,TranslatePipe, LanguageSwitch],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -2,6 +2,32 @@
   "APP": {
     "TITLE": "LocaGuest"
   },
+  "AUTH": {
+    "SUBTITLE": "Connectez-vous à votre plateforme de gestion immobilière",
+    "WELCOME": "Bienvenue",
+    "DEMO_HINT": "Utilisez les identifiants de démonstration",
+    "EMAIL": "Email",
+    "PASSWORD": "Mot de passe",
+    "FULLNAME": "Nom complet",
+    "DEMO_CREDS": "Utilisez: demo@locaguest.com / demo123",
+    "LOGIN": "Se connecter",
+    "LOGGING": "Connexion...",
+    "REGISTER": "Créer un compte",
+    "REGISTERING": "Création...",
+    "DEMO_MODE": "Mode démonstration - Aucune données réelles",
+    "HAVE_ACCOUNT": "Déjà un compte ?",
+     "OR": "ou",
+    "LOGIN_GOOGLE": "Se connecter avec Google",
+    "LOGIN_FACEBOOK": "Se connecter avec Facebook",
+    "REMEMBER_ME": "Se souvenir de moi",
+    "FORGOT_PASSWORD": "Mot de passe oublié ?",
+    "RESET_PASSWORD": "Réinitialiser le mot de passe",
+    "RESET_INSTRUCTIONS": "Entrez votre email pour recevoir un lien de réinitialisation",
+    "SEND_LINK": "Envoyer le lien",
+    "BACK_TO_LOGIN": "Retour à la connexion",
+    "NO_ACCOUNT": "Pas encore de compte ?"
+  },
+
   "NAV": {
     "LOGIN": "Connexion",
     "START": "Commencer"

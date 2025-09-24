@@ -2,6 +2,31 @@
   "APP": {
     "TITLE": "LocaGuest"
   },
+  "AUTH": {
+    "SUBTITLE": "Log in to your property management platform",
+    "WELCOME": "Welcome",
+    "DEMO_HINT": "Use the demo credentials",
+    "EMAIL": "Email",
+    "PASSWORD": "Password",
+    "FULLNAME": "Full name",
+    "DEMO_CREDS": "Use: demo@locaguest.com / demo123",
+    "LOGIN": "Log in",
+    "LOGGING": "Logging in...",
+    "REGISTER": "Create account",
+    "REGISTERING": "Creating...",
+    "NO_ACCOUNT": "Don't have an account yet?",
+    "HAVE_ACCOUNT": "Already have an account?",
+    "OR": "or",
+    "LOGIN_GOOGLE": "Sign in with Google",
+    "LOGIN_FACEBOOK": "Sign in with Facebook",
+  "REMEMBER_ME": "Remember me",
+    "FORGOT_PASSWORD": "Forgot password?",
+    "RESET_PASSWORD": "Reset password",
+    "RESET_INSTRUCTIONS": "Enter your email to receive a reset link",
+    "SEND_LINK": "Send link",
+    "BACK_TO_LOGIN": "Back to login",
+    "DEMO_MODE": "Demo mode - No real data"
+  },
   "NAV": {
     "LOGIN": "Login",
     "START": "Get Started"
