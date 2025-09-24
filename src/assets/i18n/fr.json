@@ -1,0 +1,97 @@
+{
+  "APP": {
+    "TITLE": "LocaGuest"
+  },
+  "NAV": {
+    "LOGIN": "Connexion",
+    "START": "Commencer"
+  },
+  "HERO": {
+    "TITLE": "Gérez vos locations comme un pro",
+    "SUBTITLE": "LocaGuest simplifie la gestion de vos biens immobiliers : locataires, colocations, locations saisonnières – tout en un seul endroit.",
+    "CTA": {
+      "START": "Démarrer gratuitement",
+      "DEMO": "Voir la démo"
+    },
+    "BADGE": {
+      "TRIAL": "Essai gratuit 30 jours",
+      "NOCARD": "Aucune carte requise"
+    }
+  },
+  "FEATURES": {
+    "TITLE": "Tout ce dont vous avez besoin pour réussir",
+    "SUBTITLE": "Une solution complète pour gérer efficacement votre patrimoine immobilier",
+    "ITEMS":{
+      "PROPERTIES": {
+        "TITLE": "Gestion des biens",
+        "DESCRIPTION": "Ajoutez, modifiez et organisez facilement vos propriétés, appartements et chambres."
+      },
+      "TENANTS": {
+        "TITLE": "Gestion des locataires",
+        "DESCRIPTION": "Suivez les informations de vos locataires, contrats et paiements en un seul endroit."
+      },
+      "MAINTENANCE": {
+        "TITLE": "Maintenance & Support",
+        "DESCRIPTION": "Gérez les demandes de maintenance et communiquez avec vos locataires rapidement."
+      },
+      "FINANCE": {
+        "TITLE": "Suivi financier",
+        "DESCRIPTION": "Surveillez les loyers, dépenses et rapports financiers pour une gestion transparente."
+      },
+      "DOCUMENTS": {
+        "TITLE": "Stockage de documents",
+        "DESCRIPTION": "Centralisez tous vos documents importants liés à vos propriétés et locataires."
+      },
+      "REMINDERS": {
+        "TITLE": "Rappels automatiques",
+        "DESCRIPTION": "Recevez des notifications pour les paiements, renouvellements de bail et autres tâches importantes."
+      },
+      "ANALYTICS": {
+        "TITLE": "Analyses & Projections",
+        "DESCRIPTION": "Tableaux de bord complets avec analyses financières et projections."
+      },
+      "LEGAL": {
+        "TITLE": "Conformité Légale",
+        "DESCRIPTION": "Restez conforme avec les dernières réglementations locatives."
+      },
+      "ACCOUNTING": {
+        "TITLE": "Comptabilité Simplifiée",
+        "DESCRIPTION": "Export automatique vers votre expert-comptable et suivi fiscal."
+      }
+    }
+  },
+  "DASHBOARD": {
+    "TITLE": "Interface moderne et intuitive",
+    "SUBTITLE": "Découvrez votre futur tableau de bord LocaGuest"
+  },
+  "CTA": {
+    "TITLE": "Prêt à transformer votre gestion locative ?",
+    "SUBTITLE": "Rejoignez les centaines de propriétaires qui nous font confiance",
+    "BUTTONS": {
+      "START": "Commencer maintenant",
+      "DEMO": "Planifier une démo"
+    }
+  },
+  "FOOTER": {
+    "DESCRIPTION": "La solution moderne pour gérer vos biens immobiliers en toute simplicité.",
+    "PRODUCT": {
+      "TITLE": "Produit",
+      "FEATURES": "Fonctionnalités",
+      "PRICING": "Tarifs",
+      "DOCS": "Documentation"
+    },
+    "SUPPORT": {
+      "TITLE": "Support",
+      "HELP": "Centre d'aide",
+      "CONTACT": "Contact",
+      "TRAINING": "Formation"
+    },
+    "LEGAL": {
+      "TITLE": "Légal",
+      "PRIVACY": "Confidentialité",
+      "TERMS": "CGU",
+      "IMPRINT": "Mentions légales"
+    },
+    "COPYRIGHT": "Tous droits réservés."
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "APP": {
+    "TITLE": "LocaGuest"
+  },
+  "NAV": {
+    "LOGIN": "Login",
+    "START": "Get Started"
+  },
+  "HERO": {
+    "TITLE": "Manage your rentals like a pro",
+    "SUBTITLE": "LocaGuest makes it easy to manage your properties: tenants, co-living, short-term rentals – all in one place.",
+    "CTA": {
+      "START": "Start for free",
+      "DEMO": "See the demo"
+    },
+    "BADGE": {
+      "TRIAL": "30-day free trial",
+      "NOCARD": "No credit card required"
+    }
+  },
+  "FEATURES": {
+    "TITLE": "Everything you need to succeed",
+    "SUBTITLE": "A complete solution to efficiently manage your real estate portfolio"
+  },
+  "DASHBOARD": {
+    "TITLE": "Modern and intuitive interface",
+    "SUBTITLE": "Discover your future LocaGuest dashboard"
+  },
+  "CTA": {
+    "TITLE": "Ready to transform your rental management?",
+    "SUBTITLE": "Join the hundreds of landlords who trust us",
+    "BUTTONS": {
+      "START": "Start now",
+      "DEMO": "Schedule a demo"
+    }
+  },
+  "FOOTER": {
+    "DESCRIPTION": "The modern solution to easily manage your real estate properties.",
+    "PRODUCT": {
+      "TITLE": "Product",
+      "FEATURES": "Features",
+      "PRICING": "Pricing",
+      "DOCS": "Documentation"
+    },
+    "SUPPORT": {
+      "TITLE": "Support",
+      "HELP": "Help Center",
+      "CONTACT": "Contact",
+      "TRAINING": "Training"
+    },
+    "LEGAL": {
+      "TITLE": "Legal",
+      "PRIVACY": "Privacy Policy",
+      "TERMS": "Terms of Use",
+      "IMPRINT": "Legal Notice"
+    },
+    "COPYRIGHT": "All rights reserved."
+  }
+}

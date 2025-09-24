@@ -1,0 +1,24 @@
+<div class="flex justify-center">
+  <div class="relative w-full md:w-56">
+    <select
+      id="lang-switch"
+      [(ngModel)]="selectedLang"
+      (ngModelChange)="onLangChange($event)"
+      class="w-full appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="" disabled selected hidden>
+        Select a language
+      </option>
+      <option *ngFor="let lang of languages" [value]="lang.code">
+        {{ lang.label }}
+      </option>
+    </select>
+
+    <!-- Icône flèche (dropdown indicator) -->
+    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+      <svg class="h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 8l4 4 4-4" />
+      </svg>
+    </div>
+  </div>
+</div>
