@@ -1,0 +1,131 @@
+<header
+  class="text-white flex items-center justify-between px-6 py-3 fixed top-0 right-0 z-50 transition-all duration-300"
+  [ngClass]="theme()?.header"
+  [style.left]="isMobile() || menuInHeader() ? '0' : (opened() ? '18rem' : '5rem')"
+>
+  <h1 class="text-xl font-bold">Mon Application</h1>
+  <div class="flex items-center gap-4">
+    <!-- Menu horizontal (desktop) -->
+    @if (menuInHeader() && !isMobile()) {
+      <nav class="hidden md:flex gap-6 items-center">
+        @for (menu of Menus(); track menu.title) {
+          <div class="relative">
+            <div
+              class="flex items-center gap-2 text-gray-200 hover:text-white cursor-pointer"
+              (click)="menu.submenu ? onToggleSubmenu.emit(menu) : null"
+            >
+              <i class="fa-solid {{menu.icon}} text-sm"></i>
+              <span>{{ menu.title }}</span>
+
+              @if (menu.submenu) {
+                <i
+                  class="fa-solid fa-chevron-down text-xs ml-1 transition-transform duration-200"
+                  [class.rotate-180]="menu.open"
+                ></i>
+              }
+            </div>
+
+            <!-- Dropdown -->
+            @if (menu.submenu && menu.open) {
+              <ul
+                class="absolute left-0 mt-2 text-gray-300 shadow-lg rounded-md w-40 py-2 z-[100]"
+                [ngClass]="theme()?.header"
+              >
+                @for (sub of menu.submenuItems; track sub.title) {
+                  <li class="px-4 py-2 hover:bg-gray-700 hover:text-white cursor-pointer">
+                    <i class="fa-solid {{sub.icon}} text-xs mr-2"></i>
+                    {{ sub.title }}
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </nav>
+    }
+
+    <!-- Hamburger si menuInHeader actif en mobile -->
+    @if (menuInHeader() && isMobile()) {
+      <i
+        class="fa-solid fa-bars text-2xl cursor-pointer block md:hidden"
+        (click)="onOpenMobileHeader.emit()"
+      ></i>
+    }
+
+    <!-- Bouton bascule sidebar/header -->
+    <button
+      class="bg-gray-700 px-3 py-1 rounded hover:bg-gray-600 transition"
+      (click)="onToggleMenuInHeader.emit()"
+    >
+      <i
+        class="fa-solid"
+        [ngClass]="{ 'fa-toggle-on': menuInHeader(), 'fa-toggle-off': !menuInHeader() }"
+      ></i>
+    </button>
+
+    <!-- Icône hamburger (sidebar) si sidebar active -->
+    @if (!menuInHeader() && isMobile()) {
+      <i
+        class="fa-solid fa-bars text-2xl cursor-pointer block md:hidden"
+        (click)="onOpenMobileSidebar.emit()"
+      ></i>
+    }
+
+    <!-- Theme picker -->
+    <div class="relative group hidden md:block">
+      <button class="px-3 py-1 rounded bg-white text-black hover:bg-gray-200 transition">
+        🎨 Theme
+      </button>
+      <div
+        class="absolute right-0 mt-2 bg-white shadow rounded p-3 flex gap-3 opacity-0 group-hover:opacity-100 transition"
+      >
+        @for (t of themes(); track t.name) {
+          <div
+            class="w-8 h-8 rounded-full cursor-pointer border-2"
+            [ngClass]="t.body"
+            (click)="themeChange.emit(t)"
+          ></div>
+        }
+      </div>
+    </div>
+
+    <!-- Bouton Connexion -->
+    <div class="hidden md:block  text-gray-900 font-semibold 
+    px-4 py-2 rounded transition cursor-pointer">
+      <language-switch />
+    </div>
+  </div>
+</header>
+
+<!-- Header menu overlay (mobile, si menuInHeader actif) -->
+@if (mobileHeaderMenu()) {
+  <div class="fixed inset-0 z-[998] flex md:hidden" [ngClass]="theme()?.sidebar">
+    <div class="absolute inset-0 bg-black bg-opacity-50" (click)="onCloseMobileHeader.emit()"></div>
+    <div class="relative w-64 p-5 pt-8 z-[999]" [ngClass]="theme()?.sidebar">
+      <i class="fa-solid fa-xmark text-white text-2xl absolute top-5 right-5 cursor-pointer" (click)="onCloseMobileHeader.emit()"></i>
+      <ul class="pt-2">
+        @for (menu of Menus(); track menu.title) {
+          <li class="text-gray-300 text-sm flex flex-col cursor-pointer mt-2" (click)="menu.submenu ? onToggleSubmenu.emit(menu) : null">
+            <div class="flex items-center gap-x-4 p-2 hover:bg-gray-700 rounded-md" [ngClass]="{ 'mt-9': menu.spacing }">
+              <i class="fa-solid {{menu.icon}} text-lg"></i>
+              <span class="font-semibold flex-1">{{ menu.title }}</span>
+              @if (menu.submenu) {
+                <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300" [class.rotate-180]="menu.open"></i>
+              }
+            </div>
+            @if (menu.submenu && menu.open) {
+              <ul class="pl-8 text-gray-400 text-sm transition-all duration-300">
+                @for (sub of menu.submenuItems; track sub.title) {
+                  <li class="flex items-center gap-x-3 py-1 hover:text-white">
+                    <i class="fa-solid {{sub.icon}} text-xs"></i>
+                    <span>{{ sub.title }}</span>
+                  </li>
+                }
+              </ul>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+}

@@ -20,7 +20,7 @@ interface Language {
 
 export class LanguageSwitch {
 
-  private translate = inject(TranslateService)
+  //private translate = inject(TranslateService)
 
   languages: Language[] = [
     { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -29,10 +29,9 @@ export class LanguageSwitch {
 
   selectedLang = this.languages[0].code
 
-  constructor() {
-    const currentLang = this.translate.currentLang || this.translate.defaultLang || 'en'
-    const lang = this.languages.find(l => l.code === currentLang)
-    this.selectedLang = lang ? lang.code : this.languages[0].code
+  constructor(private translate: TranslateService) {
+      translate.setDefaultLang('fr');
+      translate.use('fr'); // 
   }
 
   onLangChange(code: string) {

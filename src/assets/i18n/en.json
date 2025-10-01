@@ -31,6 +31,24 @@
     "LOGIN": "Login",
     "START": "Get Started"
   },
+  "SIDEBAR": {
+    "APP_NAME": "Tailwind",
+    "SEARCH": "Search",
+    "DASHBOARD": "Dashboard",
+    "CONTRACTS": "Contracts",
+    "FINANCIALS": "Financials",
+    "ACCOUNTS": "Accounts",
+    "SCHEDULE": "Schedule",
+    "SEARCH_MENU": "Search",
+    "ANALYTICS": "Analytics",
+    "FILES": "Files",
+    "SETTINGS": "Settings",
+    "LOGOUT": "Logout"
+  },
+  "HEADER": {
+    "APP_NAME": "My Application",
+    "THEME": "Theme"
+  },
   "HERO": {
     "TITLE": "Manage your rentals like a pro",
     "SUBTITLE": "LocaGuest makes it easy to manage your properties: tenants, co-living, short-term rentals – all in one place.",
@@ -47,9 +65,160 @@
     "TITLE": "Everything you need to succeed",
     "SUBTITLE": "A complete solution to efficiently manage your real estate portfolio"
   },
-  "DASHBOARD": {
+  "DASHBOARDxx": {
     "TITLE": "Modern and intuitive interface",
     "SUBTITLE": "Discover your future LocaGuest dashboard"
+  },
+  "DASHBOARD": {
+    "WELCOME_TITLE": "Welcome to your dashboard",
+    "WELCOME_SUBTITLE": "Here is an overview of your rental activity",
+    "ADD_PROPERTY": "+ Add property",
+    "PROPERTIES": {
+      "TITLE": "My Properties",
+      "SUBTITLE": "Manage all your real estate",
+      "ADD": "Add",
+      "SEARCH": "Search a property...",
+      "TENANT": "Tenant",
+      "DUE": "Due",
+      "DETAILS": "View details",
+      "STATUS": {
+        "OCCUPIED": "Occupied",
+        "VACANT": "Vacant",
+        "INCONNU": "Unknown"
+      },
+      "MENU": {
+        "DETAILS": "View details",
+        "EDIT": "Edit",
+        "DELETE": "Delete",
+        "DELETE_CONFIRM": "Confirm property deletion?"
+      }
+    },
+    "ACTIVITIES": {
+      "PAYMENT": "Payment",
+      "DOCUMENT": "Document",
+      "ALERT": "Alert",
+      "NEW": "New",
+      "TIME_AGO": {
+        "HOURS": "{{value}}h ago",
+        "DAYS": "{{value}}d ago"
+      }
+    },
+    "STATS": {
+      "PROPERTIES": "Managed properties",
+      "TENANTS": "Active tenants",
+      "REVENUE": "Monthly revenue",
+      "OCCUPANCY": "Occupancy rate"
+    },
+    "DEADLINES": {
+      "TITLE": "Deadlines",
+      "LATE_RENT": "Late rent",
+      "NEXT": "Next due date",
+      "RENEWAL": "Lease renewal",
+      "DAYS": "days"
+    },
+    "RECENT_ACTIVITY": {
+      "TITLE": "Recent activity"
+    },
+    "SHORTCUTS": {
+      "CONTRACTS": {
+        "TITLE": "Contract management",
+        "DESC": "Create and manage your rental agreements"
+      },
+      "ACCOUNTING": {
+        "TITLE": "Accounting",
+        "DESC": "Track your income and expenses"
+      },
+      "DOCS": {
+        "TITLE": "Documents",
+        "DESC": "Generate your documents automatically"
+      },
+      "PROFIT": {
+        "TITLE": "Profitability",
+        "DESC": "Analyze your financial performance"
+      },
+      "SETTINGS": {
+        "TITLE": "Settings",
+        "DESC": "Configure your account and preferences"
+      }
+    }
+  },
+  "SETTINGS": {
+    "TITLE": "Settings",
+    "SUBTITLE": "Manage your account preferences and settings",
+    "TABS": {
+      "PROFILE": "Profile",
+      "NOTIFICATIONS": "Notifications",
+      "SECURITY": "Security",
+      "BILLING": "Billing",
+      "PREFERENCES": "Preferences",
+      "LAYOUT": "Layout"
+    },
+    "PROFILE": {
+      "TITLE": "Profile Information",
+      "SUBTITLE": "Update your personal information",
+      "FIRST_NAME": "First name",
+      "LAST_NAME": "Last name",
+      "EMAIL": "Email",
+      "PHONE": "Phone",
+      "COMPANY": "Company",
+      "ROLE_OWNER": "Owner",
+      "ROLE_MANAGER": "Manager",
+      "ROLE_ADMIN": "Administrator",
+      "BIO": "Biography",
+      "CHANGE_PHOTO": "Change photo",
+  "PHOTO_HINT": "JPG, GIF or PNG. Max size 2MB",
+  "ROLE": "Role"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notification Preferences",
+      "SUBTITLE": "Choose how you want to be notified",
+      "EMAIL": "Email notifications",
+      "SMS": "SMS notifications",
+      "BOOKINGS": "New bookings",
+      "PAYMENTS": "Payment reminders",
+      "REPORTS": "Monthly reports"
+    },
+    "SECURITY": {
+      "TITLE": "Account Security",
+      "SUBTITLE": "Manage your account security and access",
+      "CURRENT_PASSWORD": "Current password",
+      "NEW_PASSWORD": "New password",
+      "CONFIRM_PASSWORD": "Confirm password",
+      "UPDATE_PASSWORD": "Update password",
+      "SESSIONS": "Active sessions",
+      "CURRENT": "Current",
+      "DISCONNECT": "Disconnect"
+    },
+    "BILLING": {
+      "TITLE": "Billing & Subscription",
+      "PLAN": "Professional plan",
+      "RENEWAL": "Next renewal",
+      "HISTORY": "Billing history"
+    },
+    "PREFERENCES": {
+      "TITLE": "Application Preferences",
+      "DARK_MODE": "Dark mode",
+      "DANGER_ZONE": "Danger zone",
+      "DANGER_DESC": "This action is irreversible and will permanently delete all your data.",
+      "DELETE_ACCOUNT": "Delete account"
+    },
+    "LAYOUT": {
+      "TITLE": "Interface Layout",
+      "SUBTITLE": "Choose where the menu is displayed after login.",
+      "HEADER_MENU": "Header menu",
+      "HEADER_DESC": "The menu will be displayed at the top inside the header.",
+      "SIDEBAR_MENU": "Sidebar menu",
+      "SIDEBAR_DESC": "The menu will be displayed on the left as a sidebar (recommended).",
+      "USE_HEADER": "Use Header",
+      "USE_SIDEBAR": "Use Sidebar",
+      "CURRENT_MODE": "Current mode:",
+      "SIDEBAR": "Sidebar",
+      "HEADER": "Header"
+    },
+    "ACTIONS": {
+      "RESET": "Reset",
+      "SAVE": "Save"
+    }
   },
   "CTA": {
     "TITLE": "Ready to transform your rental management?",
@@ -79,6 +248,7 @@
       "TERMS": "Terms of Use",
       "IMPRINT": "Legal Notice"
     },
-    "COPYRIGHT": "All rights reserved."
+    "COPYRIGHT": "All rights reserved.",
+    "COPYRIGHT2": "© {{year}} {{app}} — All rights reserved"
   }
 }

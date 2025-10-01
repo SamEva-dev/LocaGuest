@@ -1,0 +1,199 @@
+<div class="w-full space-y-6  mt-12">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div class="flex items-center gap-2 text-sm text-gray-600">
+      <i class="ph ph-arrow-left text-lg"></i>
+      <a href="#" class="hover:underline">Retour au dashboard</a>
+    </div>
+
+    <h1 class="text-2xl font-semibold text-gray-800 flex-1">Gestion des Contrats</h1>
+
+    <button
+      class="flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+    >
+      <i class="ph ph-plus"></i> Nouveau contrat
+    </button>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <!-- Contrats actifs -->
+    <div class="bg-white rounded-md shadow p-4 flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500">Contrats actifs</p>
+        <p class="text-2xl font-bold text-gray-800">12</p>
+      </div>
+      <i class="ph ph-file text-blue-600 text-3xl"></i>
+    </div>
+
+    <!-- Expirent dans 3 mois -->
+    <div class="bg-white rounded-md shadow p-4 flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500">Expirent dans 3 mois</p>
+        <p class="text-2xl font-bold text-yellow-600">3</p>
+      </div>
+      <i class="ph ph-warning text-yellow-500 text-3xl"></i>
+    </div>
+
+    <!-- Revenus mensuels -->
+    <div class="bg-white rounded-md shadow p-4 flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500">Revenus mensuels</p>
+        <p class="text-2xl font-bold text-green-600">18,450€</p>
+      </div>
+      <i class="ph ph-currency-eur text-green-600 text-3xl"></i>
+    </div>
+
+    <!-- Locataires -->
+    <div class="bg-white rounded-md shadow p-4 flex items-center justify-between">
+      <div>
+        <p class="text-sm text-gray-500">Locataires</p>
+        <p class="text-2xl font-bold text-gray-800">18</p>
+      </div>
+      <i class="ph ph-users text-blue-600 text-3xl"></i>
+    </div>
+  </div>
+
+  <!-- Barre de recherche et filtres -->
+  <div class="bg-white shadow rounded-md p-4 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+    <input type="text" placeholder="Rechercher par bien, locataire..."
+      class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+
+    <div class="flex flex-wrap gap-2">
+      <select class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <option >Tous les statuts</option>
+        <option>Actif</option>
+        <option>Expire bientôt</option>
+      </select>
+      <select class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <option>Tous les types</option>
+        <option>Meublé</option>
+        <option>Non meublé</option>
+      </select>
+      <button
+        class="flex items-center px-3 py-2 text-sm rounded-md border border-gray-300 bg-gray-50 hover:bg-gray-100 transition">
+        <i class="ph ph-funnel-simple mr-1"></i> Plus de filtres
+      </button>
+    </div>
+  </div>
+
+  <!-- Liste des contrats -->
+  <div class="bg-white shadow rounded-md p-4 space-y-4">
+    <h3 class="text-base font-semibold text-gray-800 mb-2">Liste des contrats</h3>
+
+    <!-- Contrat -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between border border-gray-300 rounded-md p-4">
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <h3 class="font-medium text-gray-800">Appartement 3 pièces - Centre Ville</h3>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">Actif</span>
+        </div>
+        <p class="text-sm text-gray-500 flex items-center gap-1">
+          <i class="ph ph-user"></i> Jean Dupont & Marie Lefebvre
+        </p>
+        <p class="text-sm text-gray-500 flex items-center gap-1">
+          <i class="ph ph-calendar"></i> 15/03/2023 - 14/03/2026
+        </p>
+        <div class="flex gap-2 text-xs mt-1">
+          <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded">Non meublé</span>
+          <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded">3 ans</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 md:ml-auto">
+        <p class="text-lg font-semibold text-gray-800">1850€ <span class="text-sm font-normal text-gray-500">/mois</span></p>
+        <div class="flex gap-2">
+          <button class="px-3 py-1.5 text-sm rounded-md bg-gray-100 hover:bg-amber-500 cursor-pointer text-gray-800">Voir</button>
+          <button class="px-3 py-1.5 text-sm rounded-md bg-blue-100 hover:bg-amber-500 cursor-pointer text-blue-800">Modifier</button>
+          <button class="px-3 py-1.5 text-sm rounded-md bg-green-100 hover:bg-amber-500 cursor-pointer text-green-800">Documents</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contrat -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between border border-gray-300 rounded-md p-4">
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <h3 class="font-medium text-gray-800">Studio - Quartier Latin</h3>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">Actif</span>
+        </div>
+        <p class="text-sm text-gray-500 flex items-center gap-1">
+          <i class="ph ph-user"></i> Paul Martin
+        </p>
+        <p class="text-sm text-gray-500 flex items-center gap-1">
+          <i class="ph ph-calendar"></i> 01/09/2023 - 31/08/2024
+        </p>
+        <div class="flex gap-2 text-xs mt-1">
+          <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded">Non meublé</span>
+          <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded">1 an</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 md:ml-auto">
+        <p class="text-lg font-semibold text-gray-800">950€ <span class="text-sm font-normal text-gray-500">/mois</span></p>
+        <div class="flex gap-2">
+          <button class="px-3 py-1.5 text-sm rounded-md bg-gray-100 hover:bg-amber-500 cursor-pointer text-gray-800">Voir</button>
+          <button class="px-3 py-1.5 text-sm rounded-md bg-blue-100 hover:bg-amber-500 cursor-pointer text-blue-800">Modifier</button>
+          <button class="px-3 py-1.5 text-sm rounded-md bg-green-100 hover:bg-amber-500 cursor-pointer text-green-800">Documents</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contrat -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between border border-gray-300 rounded-md p-4">
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <h3 class="font-medium text-gray-800">Appartement 2 pièces - Montmartre</h3>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">Expire bientôt</span>
+        </div>
+        <p class="text-sm text-gray-500 flex items-center gap-1">
+          <i class="ph ph-user"></i> Sophie Bernard
+        </p>
+        <p class="text-sm text-gray-500 flex items-center gap-1">
+          <i class="ph ph-calendar"></i> 10/01/2023 - 09/01/2024
+        </p>
+        <div class="flex gap-2 text-xs mt-1">
+          <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded">Non meublé</span>
+          <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded">1 an</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 md:ml-auto">
+        <p class="text-lg font-semibold text-gray-800">1200€ <span class="text-sm font-normal text-gray-500">/mois</span></p>
+        <div class="flex gap-2">
+          <button class="px-3 py-1.5 text-sm rounded-md bg-gray-100 hover:bg-amber-500 cursor-pointer text-gray-800">Voir</button>
+          <button class="px-3 py-1.5 text-sm rounded-md bg-blue-100 hover:bg-amber-500 cursor-pointer text-blue-800">Modifier</button>
+          <button class="px-3 py-1.5 text-sm rounded-md bg-green-100 hover:bg-amber-500 cursor-pointer text-green-800">Documents</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions rapides -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white rounded-md shadow p-4 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer transition">
+      <i class="ph ph-file-plus text-blue-600 text-3xl"></i>
+      <div>
+        <p class="text-sm font-semibold text-gray-800">Générer un nouveau bail</p>
+        <p class="text-xs text-gray-500">Créez rapidement un contrat de location</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-md shadow p-4 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer transition">
+      <i class="ph ph-calendar-check text-yellow-500 text-3xl"></i>
+      <div>
+        <p class="text-sm font-semibold text-gray-800">Renouvellements à venir</p>
+        <p class="text-xs text-gray-500">Gérez les contrats qui arrivent à échéance</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-md shadow p-4 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer transition">
+      <i class="ph ph-user-plus text-green-600 text-3xl"></i>
+      <div>
+        <p class="text-sm font-semibold text-gray-800">Ajouter un colocataire</p>
+        <p class="text-xs text-gray-500">Modifiez les contrats existants</p>
+      </div>
+    </div>
+  </div>
+</div>

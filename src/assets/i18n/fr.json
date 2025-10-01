@@ -32,6 +32,24 @@
     "LOGIN": "Connexion",
     "START": "Commencer"
   },
+  "SIDEBAR": {
+    "APP_NAME": "Tailwind",
+    "SEARCH": "Rechercher",
+    "DASHBOARD": "Tableau de bord",
+    "CONTRACTS": "Contrats",
+    "FINANCIALS": "Finances",
+    "ACCOUNTS": "Comptes",
+    "SCHEDULE": "Planning",
+    "SEARCH_MENU": "Recherche",
+    "ANALYTICS": "Analyses",
+    "FILES": "Documents",
+    "SETTINGS": "Paramètres",
+    "LOGOUT": "Se déconnecter"
+  },
+  "HEADER": {
+    "APP_NAME": "Mon Application",
+    "THEME": "Thème"
+  },
   "HERO": {
     "TITLE": "Gérez vos locations comme un pro",
     "SUBTITLE": "LocaGuest simplifie la gestion de vos biens immobiliers : locataires, colocations, locations saisonnières – tout en un seul endroit.",
@@ -86,9 +104,161 @@
       }
     }
   },
-  "DASHBOARD": {
+  "DASHBOARDxx": {
     "TITLE": "Interface moderne et intuitive",
     "SUBTITLE": "Découvrez votre futur tableau de bord LocaGuest"
+  },
+  "DASHBOARD": {
+    "WELCOME_TITLE": "Bienvenue sur votre tableau de bord",
+    "WELCOME_SUBTITLE": "Voici un aperçu de votre activité locative",
+    "ADD_PROPERTY": "+ Ajouter un bien",
+    "PROPERTIES": {
+      "TITLE": "Mes Biens",
+      "SUBTITLE": "Gérez tous vos biens immobiliers",
+      "ADD": "Ajouter",
+      "SEARCH": "Rechercher un bien...",
+      "TENANT": "Locataire",
+      "DUE": "Échéance",
+      "DETAILS": "Voir détails",
+      "STATUS": {
+        "OCCUPIED": "Occupé",
+        "VACANT": "Vacant",
+        "INCONNU": "Inconnu"
+      },
+      "MENU": {
+        "DETAILS": "Voir détails",
+        "EDIT": "Modifier",
+        "DELETE": "Supprimer",
+        "DELETE_CONFIRM": "Confirmer la suppression du bien ?"
+      }
+    },
+    "ACTIVITIES": {
+      "PAYMENT": "Paiement",
+      "DOCUMENT": "Document",
+      "ALERT": "Alerte",
+      "NEW": "Nouveau",
+      "TIME_AGO": {
+        "HOURS": "Il y a {{value}}h",
+        "DAYS": "Il y a {{value}}j"
+      }
+    },
+    
+    "STATS": {
+      "PROPERTIES": "Biens gérés",
+      "TENANTS": "Locataires actifs",
+      "REVENUE": "Revenus mensuels",
+      "OCCUPANCY": "Taux d'occupation"
+    },
+    "DEADLINES": {
+      "TITLE": "Échéances",
+      "LATE_RENT": "Loyer en retard",
+      "NEXT": "Prochaine échéance",
+      "RENEWAL": "Renouvellement contrat",
+      "DAYS": "jours"
+    },
+    "RECENT_ACTIVITY": {
+      "TITLE": "Activité récente"
+    },
+    "SHORTCUTS": {
+      "CONTRACTS": {
+        "TITLE": "Gestion des contrats",
+        "DESC": "Créez et gérez vos baux de location"
+      },
+      "ACCOUNTING": {
+        "TITLE": "Comptabilité",
+        "DESC": "Suivez vos revenus et dépenses"
+      },
+      "DOCS": {
+        "TITLE": "Documents",
+        "DESC": "Générez vos documents automatiquement"
+      },
+      "PROFIT": {
+        "TITLE": "Rentabilité",
+        "DESC": "Analysez vos performances financières"
+      },
+      "SETTINGS": {
+        "TITLE": "Paramètres",
+        "DESC": "Configurez votre compte et préférences"
+      }
+    }
+  },
+  "SETTINGS": {
+    "TITLE": "Paramètres",
+    "SUBTITLE": "Gérez vos préférences et paramètres du compte",
+    "TABS": {
+      "PROFILE": "Profil",
+      "NOTIFICATIONS": "Notifications",
+      "SECURITY": "Sécurité",
+      "BILLING": "Facturation",
+      "PREFERENCES": "Préférences",
+      "LAYOUT": "Disposition"
+    },
+    "PROFILE": {
+      "TITLE": "Informations du Profil",
+      "SUBTITLE": "Mettez à jour vos informations personnelles",
+      "FIRST_NAME": "Prénom",
+      "LAST_NAME": "Nom",
+      "EMAIL": "Email",
+      "PHONE": "Téléphone",
+      "COMPANY": "Société",
+      "ROLE_OWNER": "Propriétaire",
+      "ROLE_MANAGER": "Gestionnaire",
+      "ROLE_ADMIN": "Administrateur",
+      "BIO": "Biographie",
+      "CHANGE_PHOTO": "Changer la photo",
+  "PHOTO_HINT": "JPG, GIF ou PNG. Taille max. 2MB",
+  "ROLE": "Rôle"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Préférences de Notification",
+      "SUBTITLE": "Choisissez comment vous souhaitez être informé",
+      "EMAIL": "Notifications Email",
+      "SMS": "Notifications SMS",
+      "BOOKINGS": "Nouvelles réservations",
+      "PAYMENTS": "Rappels de paiement",
+      "REPORTS": "Rapports mensuels"
+    },
+    "SECURITY": {
+      "TITLE": "Sécurité du Compte",
+      "SUBTITLE": "Gérez la sécurité et les accès à votre compte",
+      "CURRENT_PASSWORD": "Mot de passe actuel",
+      "NEW_PASSWORD": "Nouveau mot de passe",
+      "CONFIRM_PASSWORD": "Confirmer le mot de passe",
+      "UPDATE_PASSWORD": "Mettre à jour le mot de passe",
+      "SESSIONS": "Sessions actives",
+      "CURRENT": "Actuel",
+      "DISCONNECT": "Déconnecter"
+    },
+    "BILLING": {
+      "TITLE": "Facturation et Abonnement",
+      "PLAN": "Plan Professionnel",
+      "RENEWAL": "Renouvellement",
+      "HISTORY": "Historique"
+    },
+    "PREFERENCES": {
+      "TITLE": "Préférences d'Application",
+      "DARK_MODE": "Mode sombre",
+      "DANGER_ZONE": "Zone de danger",
+      "DANGER_DESC": "Cette action est définitive et supprimera toutes vos données.",
+      "DELETE_ACCOUNT": "Supprimer le compte"
+    },
+    "LAYOUT": {
+      "TITLE": "Disposition de l'interface",
+      "SUBTITLE": "Choisissez où afficher le menu après connexion.",
+      "HEADER_MENU": "Menu dans l'en-tête",
+      "HEADER_DESC": "Le menu est affiché en haut, dans le header.",
+      "SIDEBAR_MENU": "Menu en barre latérale",
+      "SIDEBAR_DESC": "Le menu est affiché à gauche, en sidebar (recommandé).",
+      "USE_HEADER": "Utiliser le Header",
+      "USE_SIDEBAR": "Utiliser la Sidebar",
+      "CURRENT_MODE": "Mode actuel :",
+      "SIDEBAR": "Sidebar",
+      "HEADER": "Header"
+    },
+    "ACTIONS": {
+      "RESET": "Réinitialiser",
+      "SAVE": "Sauvegarder"
+    }
   },
   "CTA": {
     "TITLE": "Prêt à transformer votre gestion locative ?",
@@ -118,6 +288,7 @@
       "TERMS": "CGU",
       "IMPRINT": "Mentions légales"
     },
-    "COPYRIGHT": "Tous droits réservés."
+    "COPYRIGHT": "Tous droits réservés.",
+    "COPYRIGHT2": "© {{year}} {{app}} — Tous droits réservés"
   }
 }

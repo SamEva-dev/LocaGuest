@@ -1,0 +1,46 @@
+<div class="flex flex-col h-screen">
+  <!-- Navbar -->
+  <nav-bar
+    [isMobile]="isMobile()"
+    [opened]="opened()"
+    [menuInHeader]="menuInHeader()"
+    [mobileHeaderMenu]="mobileHeaderMenu()"
+    [Menus]="Menus"
+    [theme]="selectedTheme()"
+    [themes]="themes"
+    (onToggleMenuInHeader)="menuInHeader.set(!menuInHeader())"
+    (onOpenMobileSidebar)="mobileSidebar.set(true)"
+    (onOpenMobileHeader)="mobileHeaderMenu.set(true)"
+    (onCloseMobileHeader)="mobileHeaderMenu.set(false)"
+    (onToggleSubmenu)="toggleSubmenu($event)"
+    (themeChange)="changeTheme($event)"
+  ></nav-bar>
+
+  <!-- Contenu principal -->
+  <div class="flex flex-1 min-h-0 overflow-hidden">
+    <!-- Sidebar -->
+    <side-bar
+      [opened]="opened()"
+      [menuInHeader]="menuInHeader()"
+      [mobileSidebar]="mobileSidebar()"
+      [Menus]="Menus"
+      [theme]="selectedTheme()"
+      (onToggleSidebar)="toggleSidebar()"
+      (onToggleSubmenu)="toggleSubmenu($event)"
+      (onCloseMobileSidebar)="mobileSidebar.set(false)"
+    ></side-bar>
+
+    <!-- Zone centrale indépendante -->
+    <main class="flex-1 mt-7 overflow-auto bg-white shadow-md p-4">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer-bar
+    [isMobile]="isMobile()"
+    [menuInHeader]="menuInHeader()"
+    [opened]="opened()"
+    [theme]="selectedTheme()"
+  ></footer-bar>
+</div>
