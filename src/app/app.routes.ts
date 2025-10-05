@@ -9,6 +9,7 @@ import { Dashboard } from './features/dashboard/dashboard';
 import { Settings } from './features/settings/settings';
 import { Contracts } from './features/contracts/contracts';
 import { Documents } from './features/documents/documents';
+import { DashboardTabs } from './features/dashboard/dashboard-tabs/dashboard-tabs';
 
 export const routes: Routes = [
   {
@@ -25,12 +26,14 @@ export const routes: Routes = [
     path: '',
     component: MainLayout,
     children: [
-      { path: 'dashboard', component: Dashboard},
+      { path: 'dashboard', component: DashboardTabs},
      { path: 'settings', component: Settings },
      { path: 'contacts', component: Contracts },
      { path: 'documents', component: Documents },
      {path: 'financial', loadComponent: () => import('./features/financial/financial').then(m => m.Financial)},
-      // ajoute ici toutes tes routes de features
+     {path: 'analytics', loadComponent: () => import('./features/analytics/analytics').then(m => m.Analytics)}, 
+     {path: 'property/:id', loadComponent: () => import('./features/property-details/property-details').then(m => m.PropertyDetails)},
+     // ajoute ici toutes tes routes de features
     ]
   },
   {

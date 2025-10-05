@@ -1,0 +1,337 @@
+<!-- 
+<div class="w-full">
+
+  <div class="flex border-b mb-4 text-sm font-medium text-gray-600">
+    <button
+      *ngFor="let tab of tabs"
+      (click)="activeTab = tab.id"
+      [class.border-b-2]="activeTab === tab.id"
+      [class.border-blue-600]="activeTab === tab.id"
+      [class.text-blue-600]="activeTab === tab.id"
+      class="flex-1 text-center px-5 py-3 hover:text-blue-600 transition-colors cursor-pointer"
+    >
+      {{ tab.label }}
+    </button>
+  </div>
+
+
+  <div *ngIf="activeTab === 'tenants'">
+    <app-tenants [tenants]="tenants" (view)="viewTenant($event)"></app-tenants>
+  </div>
+
+  <div *ngIf="activeTab === 'leases'">
+    <app-leases [leases]="leases" (edit)="editLease($event)"></app-leases>
+  </div>
+
+  <div *ngIf="activeTab === 'documents'">
+    <app-documents [documents]="documents" (view)="viewDocument($event)"></app-documents>
+  </div>
+
+  <div *ngIf="activeTab === 'maintenance'">
+    <app-maintenance [history]="maintenanceHistory"></app-maintenance>
+  </div>
+</div> -->
+
+
+<div class="w-full space-y-6 mt-9">
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
+   
+    <button
+      class="px-4 py-2 bg-blue-600 cursor-pointer text-white rounded-md text-sm font-medium shadow
+       hover:bg-blue-700 transition flex items-center gap-2"
+      (click)="toggleEdit()">
+      <i class="ph" [class.ph-pencil-simple]="!editMode" [class.ph-check]="editMode"></i>
+      {{ editMode ? ('COMMON.SAVE' | translate) : ('COMMON.EDIT' | translate) }}
+    </button>
+  </div>
+
+  <!-- TITRE ET STATUT -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-xl font-semibold text-gray-800">
+        <ng-container *ngIf="!editMode; else nameInput">
+          {{ property.name }}
+        </ng-container>
+        <ng-template #nameInput>
+          <input [(ngModel)]="property.name"
+                 class="border border-gray-300 rounded-md px-3 py-1 text-lg 
+                 font-medium focus:ring-2
+                  focus:ring-blue-500 focus:border-blue-500 w-full" />
+        </ng-template>
+      </h1>
+
+      <div class="flex items-center gap-2 text-sm text-gray-600 mt-1">
+        <i class="ph ph-map-pin"></i>
+        <ng-container *ngIf="!editMode; else addressInput">
+          <span>{{ property.address }}</span>
+        </ng-container>
+        <ng-template #addressInput>
+          <input [(ngModel)]="property.address"
+                 class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-2
+                  focus:ring-blue-500 focus:border-blue-500" />
+        </ng-template>
+
+        <span
+          class="ml-2 px-2 py-0.5 rounded-full text-xs font-medium"
+          [ngClass]="{
+            'bg-green-100 text-green-700': property.status==='occupied',
+            'bg-blue-100 text-blue-700': property.status==='available',
+            'bg-yellow-100 text-yellow-700': property.status==='maintenance'
+          }">
+          {{ property.status | translate }}
+        </span>
+      </div>
+    </div>
+
+    <div class="text-right mt-3 md:mt-0">
+      <ng-container *ngIf="!editMode; else rentInput">
+        <p class="text-2xl font-bold text-blue-600">{{ property.rent | currency:'EUR':'symbol':'1.0-0' }}</p>
+      </ng-container>
+      <ng-template #rentInput>
+        <input type="number" [(ngModel)]="property.rent"
+               class="border border-gray-300 rounded
+                  hover:bg-amber-500 cursor-pointer px-3 py-1 
+               text-lg font-bold focus:ring-2 focus:ring-blue-500 
+               focus:border-blue-500" />
+      </ng-template>
+      <p class="text-sm text-gray-500">{{ 'PROPERTY.PER_MONTH' | translate }}</p>
+    </div>
+  </div>
+
+  
+
+  <!-- TABS -->
+  <div class="bg-gray-50 rounded-md flex overflow-x-auto mt-6">
+    <button
+      *ngFor="let tab of tabs"
+      (click)="activeTab = tab"
+      class="px-6 py-3 text-sm font-medium transition"
+      [ngClass]="activeTab === tab ? 'bg-white text-gray-900 rounded-t-md border-b-2 border-white shadow-sm'
+                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'">
+      {{ tab.label | translate }}
+    </button>
+  </div>
+
+  <!-- CONTENU DES TABS -->
+  @switch (activeTab.id) {
+
+    @case ('overview') {
+      <!-- === VUE D'ENSEMBLE === -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+
+        <!-- Détails du bien -->
+        <div class="bg-white rounded-md shadow p-4 md:col-span-2">
+          <h3 class="text-sm font-semibold text-gray-800 mb-4">{{ 'PROPERTY.DETAILS' | translate }}</h3>
+
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-gray-500">{{ 'PROPERTY.SURFACE' | translate }}</p>
+              <p class="font-semibold">
+                <ng-container *ngIf="!editMode; else surfaceInput">
+                  {{ property.surface }} m²
+                </ng-container>
+                <ng-template #surfaceInput>
+                  <input type="number" [(ngModel)]="property.surface"
+                         class="border border-gray-300 px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </ng-template>
+              </p>
+            </div>
+            <div>
+              <p class="text-gray-500">{{ 'PROPERTY.ROOMS' | translate }}</p>
+              <p class="font-semibold">
+                <ng-container *ngIf="!editMode; else roomsInput">
+                  {{ property.rooms }}
+                </ng-container>
+                <ng-template #roomsInput>
+                  <input [(ngModel)]="property.rooms"
+                         class="border border-gray-300 px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </ng-template>
+              </p>
+            </div>
+            <div>
+              <p class="text-gray-500">{{ 'PROPERTY.FLOOR' | translate }}</p>
+              <p class="font-semibold">
+                <ng-container *ngIf="!editMode; else floorInput">
+                  {{ property.floor }}
+                </ng-container>
+                <ng-template #floorInput>
+                  <input [(ngModel)]="property.floor"
+                         class="border border-gray-300 px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </ng-template>
+              </p>
+            </div>
+            <div>
+              <p class="text-gray-500">{{ 'PROPERTY.ELEVATOR' | translate }}</p>
+              <p class="font-semibold">{{ property.elevator ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
+            </div>
+            <div>
+              <p class="text-gray-500">{{ 'PROPERTY.PARKING' | translate }}</p>
+              <p class="font-semibold">{{ property.parking }}</p>
+            </div>
+            <div>
+              <p class="text-gray-500">{{ 'PROPERTY.FURNISHED' | translate }}</p>
+              <p class="font-semibold">{{ property.furnished ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Résumé financier -->
+        <div class="bg-white rounded-md shadow p-4">
+          <h3 class="text-sm font-semibold text-gray-800 mb-4">{{ 'PROPERTY.FINANCIAL_SUMMARY' | translate }}</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span>{{ 'PROPERTY.RENT' | translate }}</span>
+              <span class="font-semibold">{{ property.rent | currency:'EUR':'symbol' }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>{{ 'PROPERTY.CHARGES' | translate }}</span>
+              <span class="font-semibold">{{ property.charges | currency:'EUR':'symbol' }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>{{ 'PROPERTY.DEPOSIT' | translate }}</span>
+              <span class="font-semibold">{{ property.deposit | currency:'EUR':'symbol' }}</span>
+            </div>
+            <hr>
+            <div class="flex justify-between font-bold">
+              <span>{{ 'PROPERTY.ANNUAL_REVENUE' | translate }}</span>
+              <span class="text-blue-600">{{ property.annualRevenue | currency:'EUR':'symbol' }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Performance -->
+      <div class="bg-white border border-gray-300 shadow p-4 mt-4">
+        <h3 class="text-sm font-semibold text-gray-800 mb-3">{{ 'PROPERTY.PERFORMANCE' | translate }}</h3>
+        <div class="h-48 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+          Graphique des revenus (12 derniers mois)
+        </div>
+      </div>
+    }
+
+    @case ('tenants') {
+      <div class="bg-white p-4 rounded-md shadow text-center">
+            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i class="ph ph-users-three text-xl"></i>
+                Locataires actuels
+            </h2>
+
+            <div *ngFor="let tenant of tenants" class="flex justify-between items-center border border-gray-300 rounded-lg p-3 mb-2">
+                <!-- Avatar -->
+                <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center font-medium text-gray-700">
+                    {{ tenant.initials }}
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-800">{{ tenant.name }}</p>
+                    <p class="text-sm text-gray-500">{{ tenant.role }}</p>
+                    <p class="text-sm text-gray-500">{{ tenant.email }}</p>
+                </div>
+                </div>
+
+                <!-- Status -->
+                <div class="flex flex-col items-end">
+                <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs mb-1">{{ tenant.status }}</span>
+                <span class="text-xs text-gray-500">Depuis le {{ tenant.since | date:'dd/MM/yyyy' }}</span>
+                </div>
+            </div>
+            </div>
+
+    }
+
+    @case ('contracts') {
+      <div class="bg-white p-4 rounded-md shadow text-center">
+            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i class="ph ph-files text-xl"></i>
+                Contrats de location
+            </h2>
+
+            <div *ngFor="let lease of leases" class="border border-gray-300 rounded-lg p-3 mb-2 flex justify-between items-center">
+                <div>
+                <p class="font-semibold text-gray-800">
+                    {{ lease.title }}
+                </p>
+                <p class="text-sm text-gray-500">Du {{ lease.start | date:'dd/MM/yyyy' }} au {{ lease.end | date:'dd/MM/yyyy' }}</p>
+                <div class="flex gap-2 mt-1">
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">{{ lease.duration }}</span>
+                    <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">{{ lease.type }}</span>
+                </div>
+                </div>
+
+                <div class="flex gap-2">
+                <button (click)="view.emit(lease)" class="text-sm px-3 py-1 rounded bg-gray-200 hover:bg-amber-500 cursor-pointer transition">Voir</button>
+                <button (click)="edit.emit(lease)" class="text-sm px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 cursor-pointer transition">Modifier</button>
+                </div>
+            </div>
+            </div>
+
+    }
+
+    @case ('documents') {
+      <div class="bg-white p-4 rounded-md shadow text-center">
+        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-file-text text-xl"></i>
+            Documents associés
+        </h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div *ngFor="let doc of documents" 
+                (click)="view.emit(doc)" 
+                class="border border-gray-300 rounded-lg p-3 hover:shadow cursor-pointer transition">
+            <i class="ph ph-file-pdf text-2xl text-blue-600"></i>
+            <p class="font-medium text-gray-700 mt-2">{{ doc.title }}</p>
+            <p class="text-xs text-gray-500">{{ doc.size }}</p>
+            </div>
+        </div>
+        </div>
+
+    }
+
+    @case ('maintenance') {
+      <div class="bg-white p-4 rounded-md shadow text-center">
+        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-wrench text-xl"></i>
+            Historique de maintenance
+        </h2>
+
+        <div *ngFor="let item of maintenanceHistory " class="border border-gray-300 rounded-lg p-3 mb-2 flex justify-between items-center">
+            <div>
+            <p class="font-medium text-gray-800">{{ item.title }}</p>
+            <p class="text-sm text-gray-500">{{ item.provider }} - {{ item.date | date:'dd/MM/yyyy' }}</p>
+            </div>
+            <div class="flex items-center gap-3">
+            <span class="font-semibold text-gray-800">{{ item.cost }}€</span>
+            <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs">{{ item.status }}</span>
+            </div>
+        </div>
+        </div>
+    }
+  }
+  <!-- SECTION IMAGES -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-gray-50 rounded  flex items-center justify-center h-64 relative">
+      <i class="ph ph-camera text-3xl text-gray-400"></i>
+      <button class="absolute bottom-2 right-2 px-3 py-1.5 text-sm
+       rounded hover:bg-amber-500 cursor-pointer shadow transition">
+        <i class="ph ph-plus mr-1"></i>{{ 'PROPERTY.TYPE_OPTIONS.ADD_IMAGE' | translate }}
+      </button>
+    </div>
+    <div class="bg-gray-50 rounded   flex items-center justify-center h-32 relative">
+      <i class="ph ph-camera text-2xl text-gray-400"></i>
+      <button class="absolute bottom-2 cursor-pointer right-2 px-2 py-1 text-xs 
+       rounded shadow hover:bg-amber-500 transition">
+        <i class="ph ph-plus mr-0.5"></i>{{ 'PROPERTY.TYPE_OPTIONS.ADD_IMAGE' | translate }}
+      </button>
+    </div>
+    <div class="bg-gray-50 rounded   flex items-center justify-center h-32 relative">
+      <i class="ph ph-camera text-2xl text-gray-400"></i>
+      <button class="absolute bottom-2 right-2 px-2 py-1 text-xs
+         rounded shadow cursor-pointer hover:bg-amber-500 transition">
+        <i class="ph ph-plus mr-0.5"></i>{{ 'PROPERTY.TYPE_OPTIONS.ADD_IMAGE' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

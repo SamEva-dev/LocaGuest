@@ -2,6 +2,25 @@
   "APP": {
     "TITLE": "LocaGuest"
   },
+  "COMMON": {
+    "CANCEL": "Annuler",
+    "CONFIRM": "Confirmer",
+    "EDIT": "Modifier",
+    "DELETE": "Supprimer",
+    "SAVE": "Sauvegarder",
+    "SEARCH": "Rechercher...",
+    "YES": "Oui",
+    "NO": "Non",
+    "LOADING": "Chargement...",
+    "SUBMIT": "Soumettre",
+    "ACTIONS": "Actions",
+    "BACK": "Retour",
+    "DESCRIOTION": "Description",
+    "NEXT": "Suivant",
+    "UPLOAD": "Télécharger",
+    "DOWNLOAD": "Télécharger",
+    "BACK_TO_DASHBOARD": "Retour au dashboard"
+  },
   "AUTH": {
     "SUBTITLE": "Connectez-vous à votre plateforme de gestion immobilière",
     "WELCOME": "Bienvenue",
@@ -258,6 +277,64 @@
     "ACTIONS": {
       "RESET": "Réinitialiser",
       "SAVE": "Sauvegarder"
+    }
+  },
+  "PROPERTY": {
+    "NAME":"Nom du bien",
+    "TITLE": "Ajouter un bien",
+    "SUBTITLE": "Saisissez les détails de votre nouveau bien immobilier",
+    "ADDRESS": "Adresse",
+    "CITY": "Ville",
+    "STATE": "État/Province/Région",
+    "ZIP": "Code postal",
+    "COUNTRY": "Pays",
+    "TYPE": "Type de bien",
+    "TYPE_PLACEHOLDER": "Sélectionner un type",
+    "ANNUAL_REVENUE": "Revenus annuels",
+    "PERFORMANCE": "Performance du bien",
+    "TYPE_OPTIONS": {
+      "APARTMENT": "Appartement",
+      "HOUSE": "Maison",
+      "CONDO": "Copropriété",
+      "TOWNHOUSE": "Maison de ville",
+      "DUPLEX": "Duplex",
+      "STUDIO": "Studio",
+      "ADD_IMAGE": "Ajouter une image",
+      "ROOMS": "Pièces",
+      "FLOOR": "Étage",
+      
+      "FURNISHED": "Meublé"
+      
+    },
+    "ELEVATOR": "Ascenseur",
+      "PARKING": "Parking",
+    "CHARGES": "Charges",
+      "DEPOSIT": "Dépôt de garantie",
+    "BEDROOMS": "Chambres",
+    "BATHROOMS": "Salles de bain",
+    "SURFACE": "Surface (m²)",
+    "RENT": "Loyer mensuel (€)",
+    "STATUS": "Statut",
+    "STATUS_OPTIONS": {
+      "OCCUPIED": "Occupé",
+      "VACANT": "Libre"
+    },
+    "TENANT_NAME": "Nom du locataire",
+    "TENANT_EMAIL": "Email du locataire",
+    "TENANT_PHONE": "Téléphone du locataire",
+    "LEASE_START": "Date de début du bail",
+    "LEASE_END": "Date de fin du bail",
+    "NOTES": "Remarques",
+    "ACTIONS": {
+      "CANCEL": "Annuler",
+      "SAVE": "Enregistrer le bien"
+    },
+    "TABS": {
+      "OVERVIEW": "Vue d'ensemble",
+      "TENANTS": "Locataires",
+      "CONTRACTS": "Contrats",
+      "DOCUMENTS": "Documents",
+      "MAINTENANCE": "Maintenance"
     }
   },
   "CTA": {

@@ -1,22 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, Output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Property } from '../components/property/property';
-
+import { Property } from '../../components/property/property';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-dashboard-content',
   imports: [TranslatePipe,CommonModule, FormsModule, Property],
-  templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './dashboard-content.html',
+  styleUrl: './dashboard-content.scss'
 })
-export class Dashboard {
+export class DashboardContent {
+    private translate = inject(TranslateService)
+
+   @Output() openProperty = new EventEmitter<string>();
 
   private router = inject(Router);
-  private translate = inject(TranslateService)
 
   searchQuery = signal('');
   isAddPropertyOpen = false;
@@ -133,7 +133,7 @@ export class Dashboard {
 
   editProperty(id: number) {
     this.closeMenu();
-    this.router.navigate(['/properties', id, 'edit']);
+    //this.router.navigate(['/properties', id, 'edit']);
   }
 
   deleteProperty(id: number) {
@@ -146,14 +146,10 @@ export class Dashboard {
   }
 
   goTo(path: string) {
-    this.router.navigate([path]);
+    //this.router.navigate([path]);
   }
 
-//   addProperty() {
-//   console.log('➡️ Bouton "+ Ajouter un bien" cliqué');
-//   // TODO: Naviguer vers la page de création de bien
-//   this.router.navigate(['/properties/new']);
-// }
-
-
+  onDetailsClick(p: any) {
+    this.openProperty.emit(p.address);
+  }
 }

@@ -18,11 +18,11 @@
       </button>
     </div>
 
-    <property
-      *ngIf="isAddPropertyOpen"
+    @if(isAddPropertyOpen){<property
       (close)="isAddPropertyOpen = false"
       (save)="onPropertySaved($event)">
     </property>
+}
 
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -94,7 +94,8 @@
 
                   <button (click)="goTo('/property/'+property.id)"
                           class="px-3 py-1 border border-gray-100 rounded text-sm
-                           hover:bg-amber-500 cursor-pointer transition">
+                           hover:bg-amber-500 cursor-pointer transition"
+                           (click)="onDetailsClick(property)">
                     {{ 'DASHBOARD.PROPERTIES.DETAILS' | translate }}
                   </button>
 
@@ -112,7 +113,7 @@
                         <ul class="py-2 text-sm">
                           <li>
                             <button class="w-full px-4 py-2 flex items-center gap-2 text-left hover:bg-gray-50"
-                                    (click)="goTo('/property/'+property.id); closeMenu()">
+                                    (click)="onDetailsClick(property); closeMenu()">
                               <i class="ph ph-eye"></i>
                               {{ 'DASHBOARD.PROPERTIES.MENU.DETAILS' | translate }}
                             </button>

@@ -1,0 +1,35 @@
+<!-- Barre d’onglets -->
+
+<div class="bg-gray-50 rounded-md flex overflow-x-auto mt-6">
+  @for (tab of tabs(); track tab.id) {
+    <div
+      id="tab-{{tab.id}}"
+      class="px-6 py-3 text-sm font-medium transition"
+      [ngClass]="activeTab() === tab.id ? 'bg-white text-gray-900 rounded-t-md border-b-2 border-white shadow-sm'
+                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'"
+      (click)="activeTab.set(tab.id)"
+    >
+      {{ tab.title }}
+      @if(tab.type==='property'){<button
+      
+        class="ml-2 text-gray-400 hover:text-red-500"
+        (click)="$event.stopPropagation(); closeTab(tab.id)">
+        <i class="ph ph-x"></i>
+      </button>
+    }
+    </div>
+  }
+</div>
+
+<!-- Contenu -->
+<div class="p-4">
+  @switch (activeTab()) {
+    @case ('dashboard') {
+      <app-dashboard-content (openProperty)="openProperty($event)"></app-dashboard-content>
+    }
+    @default {
+      <property-details [propertyName]="activeTabData?.title || ''">
+      </property-details>
+    }
+  }
+</div>

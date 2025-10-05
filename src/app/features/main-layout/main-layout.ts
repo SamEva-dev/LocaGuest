@@ -1,5 +1,5 @@
-import { Component, HostListener, input, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, HostListener, inject, input, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { NavBar } from '../../shared/components/nav-bar/nav-bar';
 import { SideBar } from '../../shared/components/side-bar/side-bar';
 import { FooterBar } from '../../shared/components/footer-bar/footer-bar';
@@ -8,70 +8,27 @@ import { CommonModule } from '@angular/common';
 import { Theme } from '../../models/theme';
 import { TranslatePipe } from '@ngx-translate/core';
 
+type MainTab = 'dashboard' | 'contacts' | 'parametre';
+
 @Component({
   selector: 'app-main-layout',
-  imports: [CommonModule, RouterOutlet, NavBar, SideBar, FooterBar],
+  imports: [CommonModule, RouterOutlet, NavBar, FooterBar],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
 export class MainLayout {
 
-  constructor() {
-    this.checkScreenSize();
+   private router = inject(Router);
+
+ activeMainTab = signal<MainTab>('dashboard');
+
+  tabs = ['dashboard','contacts','parametre'] as const; 
+
+  navigate(tab: MainTab) {
+    this.activeMainTab.set(tab);
+    console.log(`Navigation vers ${tab}`);
+    this.router.navigate([`/${tab}`]); // 🔥 navigation réelle
   }
-
-   @HostListener('window:resize')
-  onResize() {
-    this.checkScreenSize();
-  }
-  theme = input<Theme>();
-  protected readonly title = signal('tailwind-sidebar');
-
-  opened = signal(false);
-  mobileSidebar = signal(false);
-  isMobile = signal(false); 
-  menuInHeader = signal(false);
-  mobileHeaderMenu = signal(false);
-
-  Menus: MenuItem[] = [
-  {
-    title: 'SIDEBAR.DASHBOARD',
-    icon: 'ph ph-house',
-    route: '/dashboard',
-    submenu: true,
-    submenuItems: [
-      { title: 'Submenu 1', icon: 'ph ph-circle' },
-      { title: 'Submenu 2', icon: 'ph ph-circle' },
-      { title: 'Submenu 3', icon: 'ph ph-circle' },
-    ],
-    open: false,
-  },
-  { 
-    title: 'SIDEBAR.CONTRACTS', 
-    icon: 'ph ph-envelope', 
-    route: '/contacts', 
-   },
-   { title: 'SIDEBAR.FILES',  
-    route: '/documents',
-    icon: 'ph ph-folder' },
-  { 
-    title: 'SIDEBAR.FINANCIALS', 
-    route: '/financial', 
-    icon: 'ph ph-bank' 
-  },
-  { 
-    title: 'SIDEBAR.SETTINGS', 
-    route: '/settings', 
-    spacing: true,
-    icon: 'ph ph-gear' 
-  },
-  { title: 'SIDEBAR.ACCOUNTS', icon: 'ph ph-user', spacing: true },
-  { title: 'SIDEBAR.SCHEDULE', icon: 'ph ph-calendar' },
-  { title: 'SIDEBAR.SEARCH_MENU', icon: 'ph ph-magnifying-glass' },
-  { title: 'SIDEBAR.ANALYTICS', icon: 'ph ph-chart-bar' },
-  
-];
-
 
   themes = [
     // Thème Gris
@@ -169,25 +126,6 @@ export class MainLayout {
 
   changeTheme(theme: any) {
     this.selectedTheme.set(theme);
-  }
-
-
-  toggleSidebar() {
-    this.opened.set(!this.opened());
-  }
-
-  toggleSubmenu(menu: MenuItem) {
-    this.Menus.forEach(m => {
-    if (m !== menu) m.open = false;
-  });
-    menu.open = !menu.open;
-  }
-
-  checkScreenSize() {
-    this.isMobile.set(window.innerWidth < 768); // md = 768px
-    if (this.isMobile()) {
-      this.opened.set(false); // désactive sidebar desktop
-    }
   }
 
 }

@@ -2,6 +2,33 @@
   "APP": {
     "TITLE": "LocaGuest"
   },
+  "COMMON": {
+    "CANCEL": "Cancel",
+    "CONFIRM": "Confirm",
+    "EDIT": "Edit",
+    "DELETE": "Delete",
+    "SAVE": "Save",
+    "SEARCH": "Search",
+    "YES": "Yes",
+    "NO": "No",
+    "LOADING": "Loading...",
+    "BACK": "Back",
+    "NEXT": "Next",
+    "SUBMIT": "Submit",
+    "UPLOAD": "Upload",
+    "DOWNLOAD": "Download",
+    "VIEW": "View",
+    "ACTIONS": "Actions",
+    "DETAILS": "Details",
+    "CREATE": "Create",
+    "UPDATE": "Update",
+    "SELECT": "Select",
+    "OPTIONAL": "(optional)",
+    "REQUIRED": "(required)",
+    "MORE_INFO": "More info",
+    "DESCRIOTION": "Description",
+    "BACK_TO_DASHBOARD": "Back to dashboard"
+  },
   "AUTH": {
     "SUBTITLE": "Log in to your property management platform",
     "WELCOME": "Welcome",
@@ -226,6 +253,58 @@
     "BUTTONS": {
       "START": "Start now",
       "DEMO": "Schedule a demo"
+    }
+  },
+  "PROPERTY": {
+    "NAME": "Property name",
+    "TITLE": "Add Property",
+    "SUBTITLE": "Enter the details of your new property",
+    "ADDRESS": "Address",
+    "CITY": "City",
+    "STATE": "State/Province",
+    "ZIP": "ZIP/Postal Code",
+    "COUNTRY": "Country",
+    "TYPE": "Property Type",
+    "TYPE_PLACEHOLDER": "Select type",
+     "ANNUAL_REVENUE": "Annual revenue",
+    "PERFORMANCE": "Property performance",
+    "TYPE_OPTIONS": {
+      "APARTMENT": "Apartment",
+      "HOUSE": "House",
+      "CONDO": "Condominium",
+      "TOWNHOUSE": "Townhouse",
+      "DUPLEX": "Duplex",
+      "STUDIO": "Studio",
+      "ADD_IMAGE": "Add Image",
+      "SURFACE": "Surface",
+    "ROOMS": "Rooms",
+    "FLOOR": "Floor"
+   
+    },
+    "ELEVATOR": "Elevator"
+,
+     "PARKING": "Parking",
+    "FURNISHED": "Furnished",
+    "CHARGES": "Charges",
+    "DEPOSIT": "Security deposit",
+    "BEDROOMS": "Bedrooms",
+    "BATHROOMS": "Bathrooms",
+    "SURFACE": "Size (sq ft)",
+    "RENT": "Monthly Rent ($)",
+    "STATUS": "Status",
+    "STATUS_OPTIONS": {
+      "OCCUPIED": "Occupied",
+      "VACANT": "Vacant"
+    },
+    "TENANT_NAME": "Tenant Name",
+    "TENANT_EMAIL": "Tenant Email",
+    "TENANT_PHONE": "Tenant Phone",
+    "LEASE_START": "Lease Start Date",
+    "LEASE_END": "Lease End Date",
+    "NOTES": "Notes",
+    "ACTIONS": {
+      "CANCEL": "Cancel",
+      "SAVE": "Save Property"
     }
   },
   "FOOTER": {

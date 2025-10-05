@@ -8,7 +8,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'nav-bar',
-  imports: [CommonModule, RouterModule, LanguageSwitch, TranslatePipe],
+  imports: [CommonModule, RouterModule, LanguageSwitch],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
