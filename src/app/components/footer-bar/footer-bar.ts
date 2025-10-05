@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
-import { Theme } from '../../../models/theme';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Theme } from '../../models/theme';
 
 @Component({
   selector: 'footer-bar',

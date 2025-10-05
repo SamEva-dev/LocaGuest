@@ -1,4 +1,4 @@
- type Tabs = 'profile' | 'notifications' | 'security' | 'billing' | 'preferences' | 'layout';
+ export type Tabs = 'profile' | 'notifications' | 'security' | 'billing' | 'preferences' | 'layout';
 
  export interface DashboardTab {
   id: string;

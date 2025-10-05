@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LayoutService } from '../../services/layout-service';
+import { Tabs } from '../../models/tabs';
 
 
 @Component({
