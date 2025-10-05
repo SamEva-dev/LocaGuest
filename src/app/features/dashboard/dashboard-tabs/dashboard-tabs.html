@@ -4,7 +4,7 @@
   @for (tab of tabs(); track tab.id) {
     <div
       id="tab-{{tab.id}}"
-      class="px-6 py-3 text-sm font-medium transition"
+      class="px-6 py-3 text-sm font-medium transition cursor-pointer"
       [ngClass]="activeTab() === tab.id ? 'bg-white text-gray-900 rounded-t-md border-b-2 border-white shadow-sm'
                                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'"
       (click)="activeTab.set(tab.id)"
@@ -28,7 +28,7 @@
       <app-dashboard-content (openProperty)="openProperty($event)"></app-dashboard-content>
     }
     @default {
-      <property-details [propertyName]="activeTabData?.title || ''">
+      <property-details [propertyName]="activeTabData()?.title  || ''">
       </property-details>
     }
   }
