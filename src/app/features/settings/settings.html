@@ -1,8 +1,8 @@
 <div class="min-h-screen bg-gray-50">
-  <div class=" mx-auto px-6 py-8">
+  <div class=" mx-auto px-6 py-8 ">
 
     <!-- Header -->
-    <div class="flex items-center gap-3 mb-8 border-b">
+    <div class="flex items-center gap-3 mb-8 border-b border-gray-300">
       <i class="ph ph-gear-six text-blue-600 text-3xl"></i>
       <div>
         <h1 class="text-3xl font-bold text-gray-800">{{ 'SETTINGS.TITLE' | translate }}</h1>
@@ -11,7 +11,7 @@
     </div>
 
     <!-- Onglets -->
-    <div class="flex border-b mb-8 text-sm font-medium text-gray-600 bg-gray-100 rounded">
+    <div class="flex border-b border-gray-300 mb-8 text-sm font-medium bg-gray-100 rounded">
         <button
             *ngFor="let tab of tabs"
             (click)="activeTab.set(tab.id)"
@@ -28,8 +28,41 @@
 
 
     <!-- Carte Profil -->
+      <div class="p-4 h-[calc(100vh-33em)] overflow-auto bg-gray-50">
+        <!-- @switch (activeTab()) {
+          @case ('profile') {
+            <div class="max-w-4xl mx-auto">
+              <app-settings-profile></app-settings-profile>
+            </div>
+          }
+          @case ('notifications') {
+            <div class="max-w-4xl mx-auto">
+              <app-settings-notifications></app-settings-notifications>
+            </div>
+          }
+          @case ('security') {
+            <div class="max-w-4xl mx-auto">
+              <app-settings-security></app-settings-security>
+            </div>
+          }
+          @case ('billing') {
+            <div class="max-w-4xl mx-auto">
+              <app-settings-billing></app-settings-billing>
+            </div>
+          }
+          @case ('preferences') {
+            <div class="max-w-4xl mx-auto">
+              <app-settings-preferences></app-settings-preferences>
+            </div>
+          }
+          @case ('layout') {
+            <div class="max-w-4xl mx-auto">
+              <app-settings-layout></app-settings-layout>
+            </div>
+          }
+        } -->
     @if (activeTab() === 'profile') {
-      <div class="bg-white rounded-lg  border-gray-200 shadow-1xl p-6">
+      <div class="bg-white rounded-lg  border-gray-200 shadow-1xl p-6 ">
           <!-- Titre -->
           <div class="flex items-center mb-8">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24"
@@ -606,6 +639,7 @@
       <button class="px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700 transition">
         {{ 'SETTINGS.ACTIONS.SAVE' | translate }}
       </button>
+    </div>
     </div>
   </div>
 </div>

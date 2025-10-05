@@ -3,7 +3,7 @@ import { Component, EventEmitter, HostListener, inject, Output, signal } from '@
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Property } from '../../components/property/property';
+import { Property } from '../../property/property';
 
 @Component({
   selector: 'app-dashboard-content',

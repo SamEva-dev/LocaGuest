@@ -9,35 +9,49 @@
     ></nav-bar>
 
   <!-- Contenu entre header et footer -->
-  <div class="bg-transparent fixed w-full top-16 pb-16 h-[calc(100vh-9rem)] overflow-auto m-2">
+  <div class="bg-transparent fixed w-full top-16 pb-16 h-[calc(100vh-9rem)]  p-6">
 
-<!-- Barre d’onglets principaux -->
-<div class="w-full">
-    <div class="bg-gray-50 rounded-md flex overflow-x-auto mt-6"> 
-      @for (tab of tabs; track tab) {
-        <button
-          class="px-6 py-3 text-sm font-medium transition cursor-pointer"
-      [ngClass]="activeMainTab() === tab ? 'bg-white text-gray-900 rounded-t-md border-b-2 border-white shadow-sm'
-                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'"
-          (click)="navigate(tab)"
-        >
-          @switch (tab) {
-            @case ('dashboard') { <span class="inline-flex items-center gap-2 justify-center">
-              <i class="ph ph-layout"></i> Dashboard
-            </span> }
-            @case ('contacts') { <span class="inline-flex items-center gap-2 justify-center">
-              <i class="ph ph-user"></i> Contact
-            </span> }
-            @case ('parametre') { <span class="inline-flex items-center gap-2 justify-center">
-              <i class="ph ph-gear"></i> Paramètre
-            </span> }
+    <!-- Barre d’onglets principaux -->
+    <div class="w-full">
+        <div class="bg-gray-50 rounded-md h-full flex overflow-x-auto mt-6"> 
+          @for (tab of tabs; track tab) {
+            <button
+              class="px-6 py-3 text-sm font-medium transition cursor-pointer"
+                [ngClass]="activeMainTab() === tab ? 'bg-white text-gray-900 rounded-t-md border-b-2 border-white shadow-sm'
+                                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'"
+              (click)="navigate(tab)"
+            >
+              @switch (tab) {
+                @case ('dashboard') { <span class="inline-flex items-center gap-2 justify-center">
+                  <i class="ph ph-layout"></i> {{'SIDEBAR.DASHBOARD' | translate  }}
+                </span> }
+                @case ('contrats') { <span class="inline-flex items-center gap-2 justify-center">
+                  <i class="ph ph-user"></i> {{'SIDEBAR.CONTRACTS' | translate  }}
+                </span> }
+                @case ('financial') { <span class="inline-flex items-center gap-2 justify-center">
+                  <i class="ph ph-gear"></i> {{'SIDEBAR.FINANCIALS' | translate  }}
+                </span> }
+                @case ('analytics') { <span class="inline-flex items-center gap-2 justify-center">
+                  <i class="ph ph-gear"></i> {{'SIDEBAR.ANALYTICS' | translate  }}
+                </span> }
+                @case ('planning') { <span class="inline-flex items-center gap-2 justify-center">
+                  <i class="ph ph-gear"></i> {{'SIDEBAR.SCHEDULE' | translate  }}
+                </span> }
+                @case ('account') { <span class="inline-flex items-center gap-2 justify-center">
+                  <i class="ph ph-gear"></i> {{'SIDEBAR.ACCOUNTS' | translate  }}
+                </span> }
+                @case ('settings') { <span class="inline-flex items-center gap-2 justify-center">
+                  <i class="ph ph-gear"></i> {{'SIDEBAR.SETTINGS' | translate  }}
+                </span> }
+              }
+            </button>
           }
-        </button>
-      }
 
-  </div>
-</div>
+      </div>
+    </div>
+    <div class="p-4 h-[calc(100vh-20rem)] overflow-auto bg-gray-50">
     <router-outlet></router-outlet>
+    </div>
   </div>
 
   <!-- Footer -->

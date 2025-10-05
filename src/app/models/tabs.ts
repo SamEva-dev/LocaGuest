@@ -5,3 +5,5 @@
   title: string;
   type: 'dashboard' | 'property';
 }
+
+export type MainTab = 'dashboard' | 'contrats' | 'financial' | 'analytics' | 'planning' | 'account' | 'settings';

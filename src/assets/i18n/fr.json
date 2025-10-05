@@ -283,6 +283,8 @@
     "NAME":"Nom du bien",
     "TITLE": "Ajouter un bien",
     "SUBTITLE": "Saisissez les détails de votre nouveau bien immobilier",
+    "FINANCIAL_SUMMARY": "Résumé financier",
+    "FINANCIAL_SUBTITLE": "Aperçu rapide des performances financières",
     "ADDRESS": "Adresse",
     "CITY": "Ville",
     "STATE": "État/Province/Région",
@@ -292,7 +294,9 @@
     "TYPE_PLACEHOLDER": "Sélectionner un type",
     "ANNUAL_REVENUE": "Revenus annuels",
     "PERFORMANCE": "Performance du bien",
+    "PER_MONTH": "par mois",
     "TYPE_OPTIONS": {
+      "DETAILS":"Détails du bien",
       "APARTMENT": "Appartement",
       "HOUSE": "Maison",
       "CONDO": "Copropriété",
@@ -302,14 +306,12 @@
       "ADD_IMAGE": "Ajouter une image",
       "ROOMS": "Pièces",
       "FLOOR": "Étage",
-      
       "FURNISHED": "Meublé"
-      
     },
     "ELEVATOR": "Ascenseur",
-      "PARKING": "Parking",
+    "PARKING": "Parking",
     "CHARGES": "Charges",
-      "DEPOSIT": "Dépôt de garantie",
+    "DEPOSIT": "Dépôt de garantie",
     "BEDROOMS": "Chambres",
     "BATHROOMS": "Salles de bain",
     "SURFACE": "Surface (m²)",

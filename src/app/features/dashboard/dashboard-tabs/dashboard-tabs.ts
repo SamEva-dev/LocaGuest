@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DashboardContent } from '../dashboard-content/dashboard-content';
-import { PropertyDetails } from '../../property-details/property-details';
+import { PropertyDetails } from '../../property/property-details/property-details';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';

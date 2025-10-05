@@ -259,6 +259,8 @@
     "NAME": "Property name",
     "TITLE": "Add Property",
     "SUBTITLE": "Enter the details of your new property",
+    "FINANCIAL_SUMMARY": "Financial Summary",
+    "FINANCIAL_SUBTITLE": "Quick overview of financial performance",
     "ADDRESS": "Address",
     "CITY": "City",
     "STATE": "State/Province",
@@ -268,7 +270,9 @@
     "TYPE_PLACEHOLDER": "Select type",
      "ANNUAL_REVENUE": "Annual revenue",
     "PERFORMANCE": "Property performance",
+    "PER_MONTH": "per month",
     "TYPE_OPTIONS": {
+      "DETAILS":"Property Details",
       "APARTMENT": "Apartment",
       "HOUSE": "House",
       "CONDO": "Condominium",

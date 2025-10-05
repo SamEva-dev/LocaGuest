@@ -1,28 +1,31 @@
 import { Component, HostListener, inject, input, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { NavBar } from '../../shared/components/nav-bar/nav-bar';
-import { SideBar } from '../../shared/components/side-bar/side-bar';
-import { FooterBar } from '../../shared/components/footer-bar/footer-bar';
+import { NavBar } from '../../components/nav-bar/nav-bar';
 import { MenuItem } from '../../models/menu';
 import { CommonModule } from '@angular/common';
 import { Theme } from '../../models/theme';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { MainTab } from '../../models/tabs';
+import { FooterBar } from '../../components/footer-bar/footer-bar';
 
-type MainTab = 'dashboard' | 'contacts' | 'parametre';
+
 
 @Component({
   selector: 'app-main-layout',
-  imports: [CommonModule, RouterOutlet, NavBar, FooterBar],
+  imports: [TranslatePipe,CommonModule, RouterOutlet, NavBar, FooterBar],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
 export class MainLayout {
 
    private router = inject(Router);
+   private translate = inject(TranslateService)
 
  activeMainTab = signal<MainTab>('dashboard');
 
-  tabs = ['dashboard','contacts','parametre'] as const; 
+  tabs : MainTab []= ['dashboard', 'contrats', 'financial', 'analytics', 'planning', 'account', 'settings']; 
+
+
 
   navigate(tab: MainTab) {
     this.activeMainTab.set(tab);

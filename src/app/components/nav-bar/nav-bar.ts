@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { MenuItem } from '../../../models/menu';
-import { Theme } from '../../../models/theme';
+import { MenuItem } from '../../models/menu';
+import { Theme } from '../../models/theme';
 import { LanguageSwitch } from '../language-switch/language-switch';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 

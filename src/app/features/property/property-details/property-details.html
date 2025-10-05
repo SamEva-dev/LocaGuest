@@ -33,19 +33,19 @@
 </div> -->
 
 
-<div class="w-full space-y-6 mt-9">
+<div class="w-full space-y-6 p-3">
 
   <!-- HEADER -->
-  <div class="flex items-center justify-between">
-   
-    <button
-      class="px-4 py-2 bg-blue-600 cursor-pointer text-white rounded-md text-sm font-medium shadow
-       hover:bg-blue-700 transition flex items-center gap-2"
-      (click)="toggleEdit()">
-      <i class="ph" [class.ph-pencil-simple]="!editMode" [class.ph-check]="editMode"></i>
-      {{ editMode ? ('COMMON.SAVE' | translate) : ('COMMON.EDIT' | translate) }}
-    </button>
-  </div>
+  <div class="flex justify-end">
+  <button
+    class="px-4 py-2 bg-blue-600 cursor-pointer text-white rounded-md text-sm font-medium shadow
+           hover:bg-blue-700 transition flex items-center gap-2"
+    (click)="toggleEdit()">
+    <i class="ph" [class.ph-pencil-simple]="!editMode" [class.ph-check]="editMode"></i>
+    {{ editMode ? ('COMMON.SAVE' | translate) : ('COMMON.EDIT' | translate) }}
+  </button>
+</div>
+
 
   <!-- TITRE ET STATUT -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -107,7 +107,7 @@
     <button
       *ngFor="let tab of tabs"
       (click)="activeTab = tab"
-      class="px-6 py-3 text-sm font-medium transition"
+      class="px-6 py-3 text-sm font-medium cursor-pointer transition"
       [ngClass]="activeTab === tab ? 'bg-white text-gray-900 rounded-t-md border-b-2 border-white shadow-sm'
                                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'">
       {{ tab.label | translate }}
@@ -123,7 +123,7 @@
 
         <!-- Détails du bien -->
         <div class="bg-white rounded-md shadow p-4 md:col-span-2">
-          <h3 class="text-sm font-semibold text-gray-800 mb-4">{{ 'PROPERTY.DETAILS' | translate }}</h3>
+          <h1 class="font-bold text-2xl text-gray-800 mb-4">{{ 'PROPERTY.TYPE_OPTIONS.DETAILS' | translate }}</h1>
 
           <div class="grid grid-cols-2 gap-4 text-sm">
             <div>
@@ -139,7 +139,7 @@
               </p>
             </div>
             <div>
-              <p class="text-gray-500">{{ 'PROPERTY.ROOMS' | translate }}</p>
+              <p class="text-gray-500">{{ 'PROPERTY.TYPE_OPTIONS.ROOMS' | translate }}</p>
               <p class="font-semibold">
                 <ng-container *ngIf="!editMode; else roomsInput">
                   {{ property.rooms }}
@@ -151,7 +151,7 @@
               </p>
             </div>
             <div>
-              <p class="text-gray-500">{{ 'PROPERTY.FLOOR' | translate }}</p>
+              <p class="text-gray-500">{{ 'PROPERTY.TYPE_OPTIONS.FLOOR' | translate }}</p>
               <p class="font-semibold">
                 <ng-container *ngIf="!editMode; else floorInput">
                   {{ property.floor }}
@@ -171,7 +171,7 @@
               <p class="font-semibold">{{ property.parking }}</p>
             </div>
             <div>
-              <p class="text-gray-500">{{ 'PROPERTY.FURNISHED' | translate }}</p>
+              <p class="text-gray-500">{{ 'PROPERTY.TYPE_OPTIONS.FURNISHED' | translate }}</p>
               <p class="font-semibold">{{ property.furnished ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
             </div>
           </div>
@@ -179,7 +179,7 @@
 
         <!-- Résumé financier -->
         <div class="bg-white rounded-md shadow p-4">
-          <h3 class="text-sm font-semibold text-gray-800 mb-4">{{ 'PROPERTY.FINANCIAL_SUMMARY' | translate }}</h3>
+          <h1 class="font-bold text-2xl  text-gray-800 mb-4">{{ 'PROPERTY.FINANCIAL_SUMMARY' | translate }}</h1>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
               <span>{{ 'PROPERTY.RENT' | translate }}</span>
@@ -205,7 +205,7 @@
 
       <!-- Performance -->
       <div class="bg-white border border-gray-300 shadow p-4 mt-4">
-        <h3 class="text-sm font-semibold text-gray-800 mb-3">{{ 'PROPERTY.PERFORMANCE' | translate }}</h3>
+        <h1 class="font-bold text-2xl text-gray-800 mb-3">{{ 'PROPERTY.PERFORMANCE' | translate }}</h1>
         <div class="h-48 bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
           Graphique des revenus (12 derniers mois)
         </div>
