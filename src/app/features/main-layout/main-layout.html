@@ -13,12 +13,12 @@
 
     <!-- Barre d’onglets principaux -->
     <div class="w-full">
-        <div class="bg-gray-50 rounded-md h-full flex overflow-x-auto mt-6"> 
+        <div class="rounded-md h-full flex overflow-x-auto mt-6"> 
           @for (tab of tabs; track tab) {
             <button
               class="px-6 py-3 text-sm font-medium transition cursor-pointer"
-                [ngClass]="activeMainTab() === tab ? 'bg-white text-gray-900 rounded-t-md border-b-2 border-white shadow-sm'
-                                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'"
+                [ngClass]="activeMainTab() === tab ? 'bg-amber-600 text-white rounded-t-md border-b-2 border-white shadow-sm'
+                                      : 'text-gray-600  hover:bg-amber-600 hover:text-white hover:rounded-t-md hover:border-b-2 hover:border-white hover:shadow-sm'"
               (click)="navigate(tab)"
             >
               @switch (tab) {
@@ -49,7 +49,7 @@
 
       </div>
     </div>
-    <div class="p-4 h-[calc(100vh-20rem)] overflow-auto bg-gray-50">
+    <div class="p-4 h-[calc(100vh-20rem)] overflow-auto ">
     <router-outlet></router-outlet>
     </div>
   </div>
