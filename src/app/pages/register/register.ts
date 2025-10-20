@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -20,9 +20,12 @@ export class Register {
 
   async register(name: string, email: string, password: string) {
     this.isLoading.set(true);
-    await this.auth.register(name, email, password);
-    this.router.navigate(['/dashboard']);
-    this.isLoading.set(false);
+    try {
+      await this.auth.register(name, email, password);
+      this.router.navigate(['/dashboard']);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   goToLogin() {

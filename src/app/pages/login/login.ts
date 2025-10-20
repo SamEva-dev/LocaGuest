@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../services/auth';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../core/auth/services/auth.service';
+import { ToastService } from '../../core/ui/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -16,18 +17,27 @@ export class Login {
    private translate = inject(TranslateService)
    private auth = inject(AuthService);
   private router = inject(Router);
-
+  private route = inject(ActivatedRoute);
+  private toast = inject(ToastService);
   showPassword = signal(false);
   isLoading = signal(false);
   rememberMe= signal(false);
 
+  ngOnInit() {
+    const expired = this.route.snapshot.queryParamMap.get('expired');
+    if (expired) this.toast.info('AUTH.SESSION_EXPIRED');
+  }
+
 
   async login(email: string, password: string) {
-    console.log(email, password);
     this.isLoading.set(true);
-   // await this.auth.login(email, password);
-    this.router.navigate(['/dashboard']);
-    this.isLoading.set(false);
+    try {
+      this.auth.setRememberMe(this.rememberMe());
+      await this.auth.login(email, password);
+      this.router.navigate(['/dashboard']);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   loginWithGoogle() {

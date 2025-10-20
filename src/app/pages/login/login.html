@@ -43,7 +43,10 @@
         <!-- Remember me & Forgot password -->
         <div class="flex items-center justify-between text-sm">
           <label class="flex items-center gap-2">
-            <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+            <input type="checkbox"
+                  [checked]="rememberMe()"
+                  (change)="rememberMe.set($any($event.target).checked)"
+                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
             <span>{{ 'AUTH.REMEMBER_ME' | translate }}</span>
           </label>
           <a (click)="goToForgotPassword()" class="text-blue-600 hover:underline cursor-pointer">

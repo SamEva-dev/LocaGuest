@@ -1,0 +1,30 @@
+<div class="flex flex-col items-center justify-center h-screen bg-gray-100">
+  <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm text-center">
+    <h2 class="text-2xl font-semibold mb-4">Vérification MFA</h2>
+    <p class="text-gray-600 mb-6">
+      Entrez le code à 6 chiffres généré par votre application d'authentification
+      (Google Authenticator, Authy…)
+    </p>
+
+    <form [formGroup]="codeForm" (ngSubmit)="verify()">
+      <input
+        formControlName="code"
+        type="text"
+        maxlength="6"
+        class="w-full text-center tracking-widest text-2xl border p-3 rounded-md mb-4"
+        placeholder="000000"
+      />
+
+      <button [disabled]="loading()" type="submit"
+        class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition disabled:opacity-60">
+        {{ loading() ? 'Vérification...' : 'Vérifier' }}
+      </button>
+
+      <button type="button" (click)="cancel()" class="mt-3 text-sm text-gray-500 hover:underline">
+        Annuler
+      </button>
+
+      <p *ngIf="error()" class="text-red-600 text-sm mt-3">{{ error() }}</p>
+    </form>
+  </div>
+</div>

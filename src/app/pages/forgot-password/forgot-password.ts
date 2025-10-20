@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -15,11 +15,16 @@ private translate = inject(TranslateService)
    private auth = inject(AuthService);
   private router = inject(Router);
 
-  isLoading = () => false;
+ isLoading = signal(false);
 
-  sendResetLink(email: string) {
-    console.log('Envoi du lien de réinitialisation à:', email);
-    // TODO: Appeler ton backend ou Firebase Auth pour envoyer le mail
+  async sendResetLink(email: string) {
+    this.isLoading.set(true);
+    try {
+      await this.auth.forgotPassword(email);
+      // Option: toast succès
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   backToLogin() {

@@ -22,6 +22,7 @@
     "BACK_TO_DASHBOARD": "Retour au dashboard"
   },
   "AUTH": {
+    "SENDING": "Sending...",
     "SUBTITLE": "Connectez-vous à votre plateforme de gestion immobilière",
     "WELCOME": "Bienvenue",
     "DEMO_HINT": "Utilisez les identifiants de démonstration",
@@ -44,7 +45,17 @@
     "RESET_INSTRUCTIONS": "Entrez votre email pour recevoir un lien de réinitialisation",
     "SEND_LINK": "Envoyer le lien",
     "BACK_TO_LOGIN": "Retour à la connexion",
-    "NO_ACCOUNT": "Pas encore de compte ?"
+    "NO_ACCOUNT": "Pas encore de compte ?",
+    "INVALID_CREDENTIALS": "Email ou mot de passe invalide.",
+  "ACCOUNT_LOCKED": "Votre compte est verrouillé. Réessayez plus tard ou réinitialisez votre mot de passe.",
+  "SESSION_EXPIRED": "Votre session a expiré. Veuillez vous reconnecter.",
+  "SESSION_EXPIRING": "Votre session va expirer, renouvellement en cours...",
+  "MFA_SETUP_FAILED": "Impossible d’activer la double authentification.",
+  "MFA_VERIFIED": "Authentification à deux facteurs vérifiée.",
+  "MFA_INVALID": "Code de vérification invalide.",
+  "MFA_DISABLED": "Authentification à deux facteurs désactivée.",
+  "MFA_DISABLE_FAILED": "Impossible de désactiver la double authentification.",
+  "SESSION_REVOKED": "Votre session a été révoquée depuis un autre appareil."
   },
 
   "NAV": {

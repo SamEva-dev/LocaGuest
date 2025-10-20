@@ -26,10 +26,11 @@
     "OPTIONAL": "(optional)",
     "REQUIRED": "(required)",
     "MORE_INFO": "More info",
-    "DESCRIOTION": "Description",
+    "DESCRIPTION": "Description",
     "BACK_TO_DASHBOARD": "Back to dashboard"
   },
   "AUTH": {
+    "SENDING": "Envoi...",
     "SUBTITLE": "Log in to your property management platform",
     "WELCOME": "Welcome",
     "DEMO_HINT": "Use the demo credentials",
@@ -46,20 +47,32 @@
     "OR": "or",
     "LOGIN_GOOGLE": "Sign in with Google",
     "LOGIN_FACEBOOK": "Sign in with Facebook",
-  "REMEMBER_ME": "Remember me",
+    "REMEMBER_ME": "Remember me",
     "FORGOT_PASSWORD": "Forgot password?",
     "RESET_PASSWORD": "Reset password",
     "RESET_INSTRUCTIONS": "Enter your email to receive a reset link",
     "SEND_LINK": "Send link",
     "BACK_TO_LOGIN": "Back to login",
-    "DEMO_MODE": "Demo mode - No real data"
+    "DEMO_MODE": "Demo mode - No real data",
+    "INVALID_CREDENTIALS": "Invalid email or password.",
+  "ACCOUNT_LOCKED": "Your account has been locked. Please try again later or reset your password.",
+
+  "SESSION_EXPIRING": "Your session is about to expire, refreshing...",
+  "SESSION_EXPIRED": "Your session has expired. Please log in again.",
+  "MFA_SETUP_FAILED": "Unable to enable MFA.",
+  "MFA_VERIFIED": "Two-factor authentication verified.",
+  "MFA_INVALID": "Invalid verification code.",
+  "MFA_DISABLED": "Two-factor authentication disabled.",
+  "MFA_DISABLE_FAILED": "Unable to disable MFA.",
+  "SESSION_REVOKED": "Your session was revoked from another device."
+  
   },
   "NAV": {
     "LOGIN": "Login",
     "START": "Get Started"
   },
   "SIDEBAR": {
-    "APP_NAME": "Tailwind",
+    "APP_NAME": "LocaGuest",
     "SEARCH": "Search",
     "DASHBOARD": "Dashboard",
     "CONTRACTS": "Contracts",
@@ -73,7 +86,7 @@
     "LOGOUT": "Logout"
   },
   "HEADER": {
-    "APP_NAME": "My Application",
+    "APP_NAME": "LocaGuest",
     "THEME": "Theme"
   },
   "HERO": {
@@ -90,11 +103,45 @@
   },
   "FEATURES": {
     "TITLE": "Everything you need to succeed",
-    "SUBTITLE": "A complete solution to efficiently manage your real estate portfolio"
-  },
-  "DASHBOARDxx": {
-    "TITLE": "Modern and intuitive interface",
-    "SUBTITLE": "Discover your future LocaGuest dashboard"
+    "SUBTITLE": "A complete solution to efficiently manage your real estate portfolio",
+    "ITEMS": {
+      "PROPERTIES": {
+        "TITLE": "Property Management",
+        "DESCRIPTION": "Easily add, edit and organize your properties, apartments and rooms."
+      },
+      "TENANTS": {
+        "TITLE": "Tenant Management",
+        "DESCRIPTION": "Track tenant details, contracts, and payments in one place."
+      },
+      "MAINTENANCE": {
+        "TITLE": "Maintenance & Support",
+        "DESCRIPTION": "Handle maintenance requests and communicate quickly with tenants."
+      },
+      "FINANCE": {
+        "TITLE": "Financial Tracking",
+        "DESCRIPTION": "Monitor rents, expenses, and reports for transparent management."
+      },
+      "DOCUMENTS": {
+        "TITLE": "Document Storage",
+        "DESCRIPTION": "Centralize all important files related to properties and tenants."
+      },
+      "REMINDERS": {
+        "TITLE": "Automatic Reminders",
+        "DESCRIPTION": "Get notifications for payments, lease renewals and important tasks."
+      },
+      "ANALYTICS": {
+        "TITLE": "Analytics & Insights",
+        "DESCRIPTION": "Comprehensive dashboards with financial analysis and projections."
+      },
+      "LEGAL": {
+        "TITLE": "Legal Compliance",
+        "DESCRIPTION": "Stay compliant with the latest rental regulations."
+      },
+      "ACCOUNTING": {
+        "TITLE": "Simplified Accounting",
+        "DESCRIPTION": "Automatic export to your accountant and tax tracking."
+      }
+    }
   },
   "DASHBOARD": {
     "WELCOME_TITLE": "Welcome to your dashboard",
@@ -118,16 +165,6 @@
         "EDIT": "Edit",
         "DELETE": "Delete",
         "DELETE_CONFIRM": "Confirm property deletion?"
-      }
-    },
-    "ACTIVITIES": {
-      "PAYMENT": "Payment",
-      "DOCUMENT": "Document",
-      "ALERT": "Alert",
-      "NEW": "New",
-      "TIME_AGO": {
-        "HOURS": "{{value}}h ago",
-        "DAYS": "{{value}}d ago"
       }
     },
     "STATS": {
@@ -193,8 +230,8 @@
       "ROLE_ADMIN": "Administrator",
       "BIO": "Biography",
       "CHANGE_PHOTO": "Change photo",
-  "PHOTO_HINT": "JPG, GIF or PNG. Max size 2MB",
-  "ROLE": "Role"
+      "PHOTO_HINT": "JPG, GIF or PNG. Max size 2MB",
+      "ROLE": "Role"
     },
     "NOTIFICATIONS": {
       "TITLE": "Notification Preferences",
@@ -247,14 +284,6 @@
       "SAVE": "Save"
     }
   },
-  "CTA": {
-    "TITLE": "Ready to transform your rental management?",
-    "SUBTITLE": "Join the hundreds of landlords who trust us",
-    "BUTTONS": {
-      "START": "Start now",
-      "DEMO": "Schedule a demo"
-    }
-  },
   "PROPERTY": {
     "NAME": "Property name",
     "TITLE": "Add Property",
@@ -268,33 +297,30 @@
     "COUNTRY": "Country",
     "TYPE": "Property Type",
     "TYPE_PLACEHOLDER": "Select type",
-     "ANNUAL_REVENUE": "Annual revenue",
+    "ANNUAL_REVENUE": "Annual revenue",
     "PERFORMANCE": "Property performance",
     "PER_MONTH": "per month",
     "TYPE_OPTIONS": {
-      "DETAILS":"Property Details",
+      "DETAILS": "Property Details",
       "APARTMENT": "Apartment",
       "HOUSE": "House",
       "CONDO": "Condominium",
       "TOWNHOUSE": "Townhouse",
       "DUPLEX": "Duplex",
       "STUDIO": "Studio",
-      "ADD_IMAGE": "Add Image",
-      "SURFACE": "Surface",
-    "ROOMS": "Rooms",
-    "FLOOR": "Floor"
-   
+      "ADD_IMAGE": "Add image",
+      "ROOMS": "Rooms",
+      "FLOOR": "Floor",
+      "FURNISHED": "Furnished"
     },
-    "ELEVATOR": "Elevator"
-,
-     "PARKING": "Parking",
-    "FURNISHED": "Furnished",
+    "ELEVATOR": "Elevator",
+    "PARKING": "Parking",
     "CHARGES": "Charges",
     "DEPOSIT": "Security deposit",
     "BEDROOMS": "Bedrooms",
     "BATHROOMS": "Bathrooms",
-    "SURFACE": "Size (sq ft)",
-    "RENT": "Monthly Rent ($)",
+    "SURFACE": "Surface (m²)",
+    "RENT": "Monthly rent (€)",
     "STATUS": "Status",
     "STATUS_OPTIONS": {
       "OCCUPIED": "Occupied",
@@ -309,6 +335,21 @@
     "ACTIONS": {
       "CANCEL": "Cancel",
       "SAVE": "Save Property"
+    },
+    "TABS": {
+      "OVERVIEW": "Overview",
+      "TENANTS": "Tenants",
+      "CONTRACTS": "Contracts",
+      "DOCUMENTS": "Documents",
+      "MAINTENANCE": "Maintenance"
+    }
+  },
+  "CTA": {
+    "TITLE": "Ready to transform your rental management?",
+    "SUBTITLE": "Join the hundreds of landlords who trust us",
+    "BUTTONS": {
+      "START": "Start now",
+      "DEMO": "Schedule a demo"
     }
   },
   "FOOTER": {
