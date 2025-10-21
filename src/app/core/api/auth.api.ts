@@ -1,9 +1,9 @@
 // core/auth/auth.api.ts
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environnements/environment.prod';
-import { LoginRequest, LoginResponse, RegisterRequest } from '../auth.models';
-import { MfaSetupResponse, MfaVerifyRequest } from '../../mfa/mfa.models';
+import { environment } from '../../../environnements/environment.prod';
+import { LoginRequest, LoginResponse, RegisterRequest } from '../auth/auth.models';
+import { MfaSetupResponse, MfaVerifyRequest } from '../mfa/mfa.models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApi {

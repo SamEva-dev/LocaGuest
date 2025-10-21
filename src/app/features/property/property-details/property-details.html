@@ -52,10 +52,11 @@
     <div>
       <h1 class="text-xl font-semibold text-gray-800">
         <ng-container *ngIf="!editMode; else nameInput">
-          {{ property.name }}
+          {{ property()?.name }}
         </ng-container>
         <ng-template #nameInput>
-          <input [(ngModel)]="property.name"
+          <input [value]="property()?.name"
+                (input)="updateField('name', $event.target.value)"
                  class="border border-gray-300 rounded-md px-3 py-1 text-lg 
                  font-medium focus:ring-2
                   focus:ring-blue-500 focus:border-blue-500 w-full" />
@@ -65,10 +66,11 @@
       <div class="flex items-center gap-2 text-sm text-gray-600 mt-1">
         <i class="ph ph-map-pin"></i>
         <ng-container *ngIf="!editMode; else addressInput">
-          <span>{{ property.address }}</span>
+          <span>{{ property()?.address }}</span>
         </ng-container>
         <ng-template #addressInput>
-          <input [(ngModel)]="property.address"
+          <input [value]="property()?.address"
+                 (input)="updateField('address', $event.target.value)"
                  class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-2
                   focus:ring-blue-500 focus:border-blue-500" />
         </ng-template>
@@ -76,21 +78,22 @@
         <span
           class="ml-2 px-2 py-0.5 rounded-full text-xs font-medium"
           [ngClass]="{
-            'bg-green-100 text-green-700': property.status==='occupied',
-            'bg-blue-100 text-blue-700': property.status==='available',
-            'bg-yellow-100 text-yellow-700': property.status==='maintenance'
+            'bg-green-100 text-green-700': property()?.status==='occupied',
+            'bg-blue-100 text-blue-700': property()?.status==='vacant',
+            'bg-yellow-100 text-yellow-700': property()?.status==='maintenance'
           }">
-          {{ property.status | translate }}
+          {{ property()?.status | translate }}
         </span>
       </div>
     </div>
 
     <div class="text-right mt-3 md:mt-0">
       <ng-container *ngIf="!editMode; else rentInput">
-        <p class="text-2xl font-bold text-blue-600">{{ property.rent | currency:'EUR':'symbol':'1.0-0' }}</p>
+        <p class="text-2xl font-bold text-blue-600">{{ property()?.rent | currency:'EUR':'symbol':'1.0-0' }}</p>
       </ng-container>
       <ng-template #rentInput>
-        <input type="number" [(ngModel)]="property.rent"
+        <input type="number" [value]="property()?.rent"
+                (input)="updateField('rent', +$event.target.value)"
                class="border border-gray-300 rounded
                   hover:bg-amber-500 cursor-pointer px-3 py-1 
                text-lg font-bold focus:ring-2 focus:ring-blue-500 
@@ -130,10 +133,11 @@
               <p class="text-gray-500">{{ 'PROPERTY.SURFACE' | translate }}</p>
               <p class="font-semibold">
                 <ng-container *ngIf="!editMode; else surfaceInput">
-                  {{ property.surface }} m²
+                  {{ property()?.surface }} m²
                 </ng-container>
                 <ng-template #surfaceInput>
-                  <input type="number" [(ngModel)]="property.surface"
+                  <input type="number" [value]="property()?.surface"
+                  (input)="updateField('surface', +$event.target.value)"
                          class="border border-gray-300 px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                 </ng-template>
               </p>
@@ -142,10 +146,11 @@
               <p class="text-gray-500">{{ 'PROPERTY.TYPE_OPTIONS.ROOMS' | translate }}</p>
               <p class="font-semibold">
                 <ng-container *ngIf="!editMode; else roomsInput">
-                  {{ property.rooms }}
+                  {{ property()?.rooms }}
                 </ng-container>
                 <ng-template #roomsInput>
-                  <input [(ngModel)]="property.rooms"
+                  <input [value]="property()?.rooms"
+                  (input)="updateField('rooms', $event.target.value)"
                          class="border border-gray-300 px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                 </ng-template>
               </p>
@@ -154,25 +159,26 @@
               <p class="text-gray-500">{{ 'PROPERTY.TYPE_OPTIONS.FLOOR' | translate }}</p>
               <p class="font-semibold">
                 <ng-container *ngIf="!editMode; else floorInput">
-                  {{ property.floor }}
+                  {{ property()?.floor }}
                 </ng-container>
                 <ng-template #floorInput>
-                  <input [(ngModel)]="property.floor"
+                  <input [value]="property()?.floor"
+                  (input)="updateField('floor', $event.target.value)"
                          class="border border-gray-300 px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                 </ng-template>
               </p>
             </div>
             <div>
               <p class="text-gray-500">{{ 'PROPERTY.ELEVATOR' | translate }}</p>
-              <p class="font-semibold">{{ property.elevator ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
+              <p class="font-semibold">{{ property()?.elevator ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
             </div>
             <div>
               <p class="text-gray-500">{{ 'PROPERTY.PARKING' | translate }}</p>
-              <p class="font-semibold">{{ property.parking }}</p>
+              <p class="font-semibold">{{ property()?.parking }}</p>
             </div>
             <div>
               <p class="text-gray-500">{{ 'PROPERTY.TYPE_OPTIONS.FURNISHED' | translate }}</p>
-              <p class="font-semibold">{{ property.furnished ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
+              <p class="font-semibold">{{ property()?.furnished ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}</p>
             </div>
           </div>
         </div>
@@ -183,20 +189,20 @@
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
               <span>{{ 'PROPERTY.RENT' | translate }}</span>
-              <span class="font-semibold">{{ property.rent | currency:'EUR':'symbol' }}</span>
+              <span class="font-semibold">{{ property()?.rent | currency:'EUR':'symbol' }}</span>
             </div>
             <div class="flex justify-between">
               <span>{{ 'PROPERTY.CHARGES' | translate }}</span>
-              <span class="font-semibold">{{ property.charges | currency:'EUR':'symbol' }}</span>
+              <span class="font-semibold">{{ property()?.charges | currency:'EUR':'symbol' }}</span>
             </div>
             <div class="flex justify-between">
               <span>{{ 'PROPERTY.DEPOSIT' | translate }}</span>
-              <span class="font-semibold">{{ property.deposit | currency:'EUR':'symbol' }}</span>
+              <span class="font-semibold">{{ property()?.deposit | currency:'EUR':'symbol' }}</span>
             </div>
             <hr>
             <div class="flex justify-between font-bold">
               <span>{{ 'PROPERTY.ANNUAL_REVENUE' | translate }}</span>
-              <span class="text-blue-600">{{ property.annualRevenue | currency:'EUR':'symbol' }}</span>
+              <span class="text-blue-600">{{ property()?.annualRevenue | currency:'EUR':'symbol' }}</span>
             </div>
           </div>
         </div>

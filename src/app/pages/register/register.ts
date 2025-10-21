@@ -11,7 +11,10 @@ import { AuthService } from '../../core/auth/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Register {
- private translate = inject(TranslateService)
+ constructor(private translate: TranslateService) {
+      translate.setDefaultLang('fr');
+      translate.use('fr'); // 
+  }
  private auth = inject(AuthService);
  private router = inject(Router);
 

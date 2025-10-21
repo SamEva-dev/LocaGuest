@@ -1,168 +1,141 @@
 <div class="p-6 bg-gray-50 w-full min-h-screen">
-
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
     <div>
-      <h1 class="text-2xl font-semibold text-gray-800">Analyse de Rentabilité</h1>
-      <p class="text-sm text-gray-500">Suivi des performances et optimisation des investissements</p>
+      <h1 class="text-2xl font-semibold text-gray-800">
+        {{ 'ANALYTICS.TITLE' | translate }}
+      </h1>
+      <p class="text-sm text-gray-500">
+        {{ 'ANALYTICS.SUBTITLE' | translate }}
+      </p>
     </div>
 
     <div class="flex gap-2">
-      <select class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
-        <option>6 derniers mois</option>
-        <option>12 derniers mois</option>
-        <option>3 derniers mois</option>
+      <select
+        [(ngModel)]="period"
+        (change)="onFilterChange()"
+        class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+        @for (p of periods; track p.id) {
+          <option [value]="p.id">{{ p.label | translate }}</option>
+        }
       </select>
-      <select class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
-        <option>Tous les biens</option>
-        <option>Appartement Centre</option>
-        <option>Studio Étudiant</option>
+
+      <select
+        [(ngModel)]="selectedProperty"
+        (change)="onFilterChange()"
+        class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+        @for (prop of properties; track prop.id) {
+          <option [value]="prop.id">{{ prop.label | translate }}</option>
+        }
       </select>
     </div>
   </div>
 
-  <!-- Statistiques globales -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-    <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-      <p class="text-sm text-gray-500">Revenus Totaux</p>
-      <p class="text-2xl font-semibold text-green-600 mt-1">29,600€</p>
-      <p class="text-xs text-gray-500 mt-1">↗ +12.5% vs période précédente</p>
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="flex justify-center items-center h-32">
+      <i class="ph ph-spinner animate-spin text-2xl text-blue-600"></i>
+      <span class="ml-3 text-gray-500 text-sm">Loading analytics...</span>
     </div>
+  }
 
-    <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-      <p class="text-sm text-gray-500">Charges Totales</p>
-      <p class="text-2xl font-semibold text-red-500 mt-1">13,700€</p>
-      <p class="text-xs text-gray-500 mt-1">↘ -3.2% vs période précédente</p>
-    </div>
-
-    <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-      <p class="text-sm text-gray-500">Bénéfice Net</p>
-      <p class="text-2xl font-semibold text-blue-600 mt-1">15,900€</p>
-      <p class="text-xs text-gray-500 mt-1">↗ +18.7% vs période précédente</p>
-    </div>
-
-    <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-      <p class="text-sm text-gray-500">Rendement Moyen</p>
-      <p class="text-2xl font-semibold text-purple-600 mt-1">53.7%</p>
-      <p class="text-xs text-green-600 mt-1">↗ Objectif 6.5% atteint</p>
-    </div>
-  </div>
-
-  <!-- Graphiques -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-    <!-- Évolution des performances -->
-    <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-      <h2 class="text-lg font-semibold text-gray-800 mb-2">Évolution des Performances</h2>
-      <p class="text-sm text-gray-500 mb-4">Comparaison revenus vs charges par mois</p>
-      <div class="w-full h-56 bg-gray-100 flex items-center justify-center rounded">
-        <span class="text-sm text-gray-500">Graphique Revenus / Charges</span>
-      </div>
-    </div>
-
-    <!-- Répartition des charges -->
-    <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-      <h2 class="text-lg font-semibold text-gray-800 mb-2">Répartition des Charges</h2>
-      <p class="text-sm text-gray-500 mb-4">Analyse détaillée des postes de dépenses</p>
-      <div class="w-full h-56 bg-gray-100 flex items-center justify-center rounded">
-        <span class="text-sm text-gray-500">Graphique en camembert</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Performance par investissement -->
-  <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm mb-6">
-    <h2 class="text-lg font-semibold text-gray-800 mb-2">Performance par Investissement</h2>
-    <p class="text-sm text-gray-500 mb-4">Analyse comparative de la rentabilité de chaque bien</p>
-
-    <div class="space-y-4">
-      <div class="flex justify-between items-center border border-gray-300 rounded-md p-3">
-        <div>
-          <p class="font-medium text-gray-800">Appartement Centre</p>
-          <p class="text-sm text-gray-500">Valeur : 180,000€</p>
-        </div>
-        <div class="text-right">
-          <p class="text-green-600 font-semibold">950€/mois</p>
-          <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded">6.2% rendement</span>
-        </div>
-      </div>
-
-      <div class="flex justify-between items-center border border-gray-300 rounded-md p-3">
-        <div>
-          <p class="font-medium text-gray-800">Studio Quartier Étudiant</p>
-          <p class="text-sm text-gray-500">Valeur : 95,000€</p>
-        </div>
-        <div class="text-right">
-          <p class="text-green-600 font-semibold">620€/mois</p>
-          <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded">7.8% rendement</span>
-        </div>
-      </div>
-
-      <div class="flex justify-between items-center border border-gray-300 rounded-md p-3">
-        <div>
-          <p class="font-medium text-gray-800">Maison Banlieue</p>
-          <p class="text-sm text-gray-500">Valeur : 220,000€</p>
-        </div>
-        <div class="text-right">
-          <p class="text-green-600 font-semibold">990€/mois</p>
-          <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded">5.4% rendement</span>
-        </div>
-      </div>
-
-      <div class="flex justify-between items-center border border-gray-300 rounded-md p-3">
-        <div>
-          <p class="font-medium text-gray-800">T2 Proche Métro</p>
-          <p class="text-sm text-gray-500">Valeur : 145,000€</p>
-        </div>
-        <div class="text-right">
-          <p class="text-green-600 font-semibold">820€/mois</p>
-          <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded">6.8% rendement</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="w-full h-48 bg-gray-100 mt-6 flex items-center justify-center rounded">
-      <span class="text-sm text-gray-500">Graphique en barres comparatif</span>
-    </div>
-  </div>
-
-  <!-- Optimisation recommandée -->
-  <div class="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
-    <h2 class="text-lg font-semibold text-gray-800 mb-2">Optimisation Recommandée</h2>
-    <p class="text-sm text-gray-500 mb-4">Actions suggérées pour améliorer la rentabilité</p>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <!-- Attention -->
-      <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-2 bg-red-50">
-        <div class="flex items-center gap-2 text-red-600 font-medium">
-          <i class="ph ph-warning text-lg"></i> Attention
-        </div>
-        <p class="text-sm text-gray-700 flex-1">
-          Le Studio Quartier Étudiant a des charges élevées ce mois-ci
+  <!-- Overview -->
+  @if (overview()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+        <p class="text-sm text-gray-500">{{ 'ANALYTICS.TOTAL_REVENUE' | translate }}</p>
+        <p class="text-2xl font-semibold text-green-600 mt-1">
+          {{ overview()?.totalRevenue | number:'1.0-0' }} €
         </p>
-        <button class="bg-red-600 cursor-pointer hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-md w-fit">Analyser</button>
+        <p class="text-xs text-gray-500 mt-1">↗ {{ overview()?.revenueChange }}%</p>
       </div>
 
-      <!-- Opportunité -->
-      <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-2 bg-green-50">
-        <div class="flex items-center gap-2 text-green-700 font-medium">
-          <i class="ph ph-lightbulb text-lg"></i> Opportunité
-        </div>
-        <p class="text-sm text-gray-700 flex-1">
-          Possibilité d’augmenter le loyer de l’Appartement Centre
+      <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+        <p class="text-sm text-gray-500">{{ 'ANALYTICS.TOTAL_EXPENSES' | translate }}</p>
+        <p class="text-2xl font-semibold text-red-600 mt-1">
+          {{ overview()?.totalExpenses | number:'1.0-0' }} €
         </p>
-        <button class="bg-green-600 cursor-pointer hover:bg-green-700 text-white text-sm px-3 py-1.5 rounded-md w-fit">Calculer</button>
+        <p class="text-xs text-gray-500 mt-1">↘ {{ overview()?.expensesChange }}%</p>
       </div>
 
-      <!-- Conseil -->
-      <div class="border border-gray-300 rounded-lg p-4 flex flex-col gap-2 bg-blue-50">
-        <div class="flex items-center gap-2 text-blue-700 font-medium">
-          <i class="ph ph-info text-lg"></i> Conseil
-        </div>
-        <p class="text-sm text-gray-700 flex-1">
-          Optimiser les charges de copropriété par négociation
+      <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+        <p class="text-sm text-gray-500">{{ 'ANALYTICS.NET_PROFIT' | translate }}</p>
+        <p class="text-2xl font-semibold text-blue-600 mt-1">
+          {{ overview()?.netProfit | number:'1.0-0' }} €
         </p>
-        <button class="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-md w-fit">Voir détails</button>
+        <p class="text-xs text-gray-500 mt-1">↗ {{ overview()?.profitChange }}%</p>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+        <p class="text-sm text-gray-500">{{ 'ANALYTICS.AVERAGE_YIELD' | translate }}</p>
+        <p class="text-2xl font-semibold text-amber-600 mt-1">
+          {{ overview()?.averageYield | number:'1.1-1' }} %
+        </p>
       </div>
     </div>
-  </div>
+  }
+
+  <!-- Property performances -->
+  @if (performances().length) {
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">
+        {{ 'ANALYTICS.PERFORMANCE.TITLE' | translate }}
+      </h3>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-100 text-gray-600">
+            <tr>
+              <th class="py-2 px-3 text-left">{{ 'ANALYTICS.PERFORMANCE.NAME' | translate }}</th>
+              <th class="py-2 px-3 text-right">{{ 'ANALYTICS.PERFORMANCE.VALUE' | translate }}</th>
+              <th class="py-2 px-3 text-right">Revenus mensuels (€)</th>
+              <th class="py-2 px-3 text-right">{{ 'ANALYTICS.PERFORMANCE.YIELD' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of performances(); track p.name) {
+              <tr class="border-t border-gray-100 hover:bg-gray-50">
+                <td class="py-2 px-3">{{ p.name }}</td>
+                <td class="py-2 px-3 text-right">{{ p.value | number:'1.0-0' }}</td>
+                <td class="py-2 px-3 text-right text-emerald-600">{{ p.monthlyIncome | number:'1.0-0' }}</td>
+                <td class="py-2 px-3 text-right">{{ p.yield }}%</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+  <!-- Charts -->
+  @if (cashflow()?.length || yieldShare()?.length) {
+    <app-analytics-charts
+      [cashflow]="cashflow()"
+      [yieldShare]="yieldShare()"
+    ></app-analytics-charts>
+  }
+
+  <!-- Optimization suggestions -->
+  @if (optimizations().length) {
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">
+        {{ 'ANALYTICS.OPTIMIZATIONS.TITLE' | translate }}
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        @for (opt of optimizations(); track opt.title) {
+          <div
+            class="border-l-4 p-3 rounded bg-gray-50"
+            [ngClass]="{
+              'border-green-500': opt.type === 'opportunity',
+              'border-yellow-500': opt.type === 'warning',
+              'border-blue-500': opt.type === 'advice'
+            }">
+            <h4 class="font-medium text-gray-800">{{ opt.title }}</h4>
+            <p class="text-sm text-gray-500 mt-1">{{ opt.message }}</p>
+            <button class="mt-2 text-blue-600 text-sm underline hover:text-blue-700">
+              {{ opt.action }}
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>

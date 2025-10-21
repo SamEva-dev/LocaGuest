@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { PropertyDto } from '../../../models/models';
+import { PropertyService } from '../../../services/property.service';
 
 @Component({
   selector: 'property-details',
@@ -11,63 +13,74 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   styleUrl: './property-details.scss'
 })
 export class PropertyDetails {
+private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
+  private readonly propertyService = inject(PropertyService);
 
+  /** Nom passé depuis la tab ou le routeur */
+  @Input() propertyName = '';
 
-  private router = inject(Router);
-  private translate = inject(TranslateService)
+  /** État interne */
+  readonly property = signal<PropertyDto | null>(null);
+  editMode = false;
 
-   @Input() propertyName = '';
-
- editMode = false;
-
+  /** Onglets principaux */
   tabs = [
     { id: 'overview', label: 'PROPERTY.TABS.OVERVIEW' },
     { id: 'tenants', label: 'PROPERTY.TABS.TENANTS' },
     { id: 'contracts', label: 'PROPERTY.TABS.CONTRACTS' },
     { id: 'documents', label: 'PROPERTY.TABS.DOCUMENTS' },
-    { id: 'maintenance', label: 'PROPERTY.TABS.MAINTENANCE' }
+    { id: 'maintenance', label: 'PROPERTY.TABS.MAINTENANCE' },
   ];
-
   activeTab = this.tabs[0];
 
-  property = {
-    name: this.propertyName,
-    address: '15 Rue de la République, 75001 Paris',
-    status: 'occupied',
-    rent: 1850,
-    charges: 150,
-    deposit: 1850,
-    annualRevenue: 22200,
-    surface: 68,
-    rooms: '3 pièces',
-    floor: '2ème',
-    elevator: false,
-    parking: '1 place',
-    furnished: false
-  };
-  tenants = [
-    { initials: 'JD', name: 'Jean Dupont', role: 'Locataire principal', email: 'jean.dupont@email.com', status: 'Actif', since: '2023-03-15' },
-    { initials: 'ML', name: 'Marie Lefebvre', role: 'Colocataire', email: 'marie.lefebvre@email.com', status: 'Actif', since: '2023-03-15' }
-  ];
+  /** Données liées au bien */
+  tenants: any[] = [];
+  leases: any[] = [];
+  documents: any[] = [];
+  maintenanceHistory: any[] = [];
 
-  leases = [
-    { title: 'Bail principal - Jean Dupont & Marie Lefebvre', start: '2023-03-15', end: '2026-03-14', duration: '3 ans', type: 'Non meublé' }
-  ];
+  async ngOnInit() {
+    try {
+      // Exemple : dans le futur, ce sera via route param
+      const id = 'prop-001';
+      const data = await this.propertyService.loadById(id);
+      this.property.set(data);
+    } catch (err) {
+      console.error('Erreur chargement propriété :', err);
+      alert(this.translate.instant('COMMON.ERROR'));
+    }
+  }
 
-  documents = [
-    { title: 'Bail de location', size: 'PDF - 2.3 MB' },
-    { title: 'État des lieux d’entrée', size: 'PDF - 2.3 MB' },
-    { title: 'Diagnostics', size: 'PDF - 2.3 MB' },
-    { title: 'Assurance', size: 'PDF - 2.3 MB' },
-    { title: 'Règlement de copropriété', size: 'PDF - 2.3 MB' }
-  ];
+  updateField<K extends keyof PropertyDto>(key: K, value: PropertyDto[K]) {
+    this.property.update(current => {
+      if (!current) return current;
+      return { ...current, [key]: value } as PropertyDto;
+    });
+  }
 
-  maintenanceHistory = [
-    { title: 'Réparation fuite cuisine', provider: 'Plombier Martin', date: '2024-01-15', cost: 180, status: 'Terminé' },
-    { title: 'Révision chaudière', provider: 'Chauffagiste Pro', date: '2023-10-10', cost: 120, status: 'Terminé' }
-  ];
-view: any;
-edit: any;
+  /** Bascule édition / sauvegarde */
+  async toggleEdit() {
+    this.editMode = !this.editMode;
+
+    if (!this.editMode && this.property()?.id) {
+      try {
+        // Exemple de sauvegarde via ETag (à améliorer quand le backend le renverra)
+        await this.propertyService.update(this.property()!, 'W/"etag-simulé"');
+        alert(this.translate.instant('COMMON.SAVE_SUCCESS'));
+      } catch (err) {
+        console.error('Erreur sauvegarde propriété :', err);
+        alert(this.translate.instant('COMMON.ERROR'));
+      }
+    }
+  }
+
+  /** Navigation interne (vers d’autres pages si besoin) */
+  goTo(path: string) {
+    this.router.navigate([path]);
+  }
+  view: any;
+  edit: any;
 
   viewTenant(tenant: any) {
     alert(`Voir détails du locataire : ${tenant.name}`);
@@ -89,16 +102,4 @@ edit: any;
     // 👉 Ici tu peux afficher un modal détaillé avec facture ou photos par ex.
   }
 
-  toggleEdit() {
-    this.editMode = !this.editMode;
-    if (!this.editMode) {
-      console.log('Sauvegarde des changements :', this.property);
-      // appel backend possible ici
-    }
-  }
-
-  addImage(slot: string) {
-    // Ici tu peux ouvrir un file picker ou déclencher une autre modal
-    console.log(`Ajouter une image pour : ${slot}`);
-  }
 }

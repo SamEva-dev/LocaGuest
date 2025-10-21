@@ -27,7 +27,12 @@
     "REQUIRED": "(required)",
     "MORE_INFO": "More info",
     "DESCRIPTION": "Description",
-    "BACK_TO_DASHBOARD": "Back to dashboard"
+    "BACK_TO_DASHBOARD": "Back to dashboard",
+    "ALL": "All",
+    "REFRESH": "Refresh",
+    "RESET": "Reset",
+    "APPLY": "Apply",
+    "CLOSE": "Close"
   },
   "AUTH": {
     "SENDING": "Envoi...",
@@ -171,7 +176,9 @@
       "PROPERTIES": "Managed properties",
       "TENANTS": "Active tenants",
       "REVENUE": "Monthly revenue",
-      "OCCUPANCY": "Occupancy rate"
+      "OCCUPANCY": "Occupancy rate",
+        "FILTERS": "Filters",
+    "NO_RESULT": "No property matches your filters"
     },
     "DEADLINES": {
       "TITLE": "Deadlines",
@@ -204,8 +211,193 @@
         "TITLE": "Settings",
         "DESC": "Configure your account and preferences"
       }
+    },
+  
+  "FILTER": {
+    "STATUS": "Status",
+    "TYPE": "Type",
+    "RENT_MIN": "Min Rent (€)",
+    "RENT_MAX": "Max Rent (€)"
+  }
+  },
+  "CONTRACTS": {
+    "TITLE": "Contract Management",
+    "NEW_CONTRACT": "New Contract",
+    "STATS": {
+      "ACTIVE": "Active contracts",
+      "EXPIRING": "Expiring within 3 months",
+      "REVENUE": "Monthly revenue",
+      "TENANTS": "Tenants"
+    },
+    "SEARCH_PLACEHOLDER": "Search by property, tenant...",
+    "FILTERS": {
+      "ALL_STATUS": "All statuses",
+      "ACTIVE": "Active",
+      "EXPIRING": "Expiring soon",
+      "ALL_TYPES": "All types",
+      "FURNISHED": "Furnished",
+      "UNFURNISHED": "Unfurnished",
+      "MORE": "More filters",
+      "TITLE": "Filters",
+    "STATUS": "Status",
+    "TYPE": "Type",
+    "TENANT": "Tenant name",
+    "PROPERTY": "Property name",
+    "START_AFTER": "Start after",
+    "END_BEFORE": "End before",
+    "MIN_RENT": "Min rent (€)",
+    "MAX_RENT": "Max rent (€)"
+    },
+     "STATUS": {
+    "ACTIVE": "Active",
+    "EXPIRING": "Expiring soon",
+    "TERMINATED": "Terminated"
+  },
+  "TYPE": {
+    "FURNISHED": "Furnished",
+    "UNFURNISHED": "Unfurnished"
+  },
+    "LIST_TITLE": "Contract list",
+    "ACTIONS": {
+      "VIEW": "View",
+      "EDIT": "Edit",
+      "DOCS": "Documents"
+    },
+    "QUICK_ACTIONS": {
+      "GENERATE": {
+        "TITLE": "Generate new lease",
+        "DESC": "Quickly create a rental contract"
+      },
+      "RENEWALS": {
+        "TITLE": "Upcoming renewals",
+        "DESC": "Manage contracts nearing expiration"
+      },
+      "ADD_COTENANT": {
+        "TITLE": "Add co-tenant",
+        "DESC": "Modify existing contracts"
+      }
     }
   },
+  "NEW_CONTRACT": {
+    "TITLE": "Create new contract",
+    "SUBTITLE": "Fill in the details of the new rental contract",
+    "PROPERTY": "Property",
+    "TENANTS": "Tenants",
+    "START_DATE": "Start date",
+    "END_DATE": "End date",
+    "TYPE": "Contract type",
+    "TYPE_OPTIONS": {
+      "FURNISHED": "Furnished",
+      "UNFURNISHED": "Unfurnished"
+    },
+    "DURATION": "Duration",
+    "RENT": "Monthly rent (€)",
+    "STATUS": "Status",
+    "STATUS_OPTIONS": {
+      "ACTIVE": "Active",
+      "EXPIRING": "Expiring soon",
+      "TERMINATED": "Terminated"
+    },
+    "SAVE": "Save contract",
+    "CANCEL": "Cancel"
+  },
+  "FINANCIAL": {
+    "TITLE": "Financial Dashboard",
+    "SUBTITLE": "Track your portfolio's performance and cash flow",
+    "TABS": {
+      "OVERVIEW": "Overview",
+      "CASHFLOW": "Cash Flow",
+      "CHARGES": "Expenses Analysis",
+      "PROJECTIONS": "Projections"
+    },
+    "ACTIONS": {
+      "EXPORT": "Export",
+      "CHANGE_YEAR": "Select Year"
+    },
+    "STATS": {
+      "TOTAL_REVENUE": "Total Revenue",
+      "TOTAL_EXPENSES": "Total Expenses",
+      "NET_RESULT": "Net Result",
+      "OCCUPANCY": "Occupancy Rate"
+    },
+    "UPCOMING": {
+      "TITLE": "Upcoming Payments",
+      "LABEL": "Label",
+      "DUE": "Due date",
+      "AMOUNT": "Amount",
+      "STATUS": "Status"
+    },
+    "PROPERTIES": {
+      "TITLE": "Property Performance",
+      "NAME": "Property",
+      "REVENUE": "Revenue (€)",
+      "CHARGES": "Expenses (€)",
+      "ROI": "ROI (%)"
+    },
+    "CASHFLOW": {
+      "TITLE": "Cash Flow Summary",
+      "INCOME": "Incomes",
+      "EXPENSE": "Expenses",
+      "TOTAL": "Total"
+    },
+    "CHARGES": {
+      "TITLE": "Expense Breakdown",
+      "LABEL": "Category",
+      "AMOUNT": "Amount (€)",
+      "PERCENT": "Percent (%)"
+    },
+    "OPTIMIZATIONS": {
+      "TITLE": "Optimization Suggestions",
+      "DESCRIPTION": "Suggestions to improve profitability"
+    },
+    "PROJECTIONS": {
+      "TITLE": "Financial Projections",
+      "ESTIMATED_REVENUE": "Estimated Revenue",
+      "ESTIMATED_EXPENSES": "Estimated Expenses",
+      "EXPECTED_RESULT": "Expected Result"
+    },
+    "OPPORTUNITIES": {
+      "TITLE": "Investment Opportunities",
+      "DESC": "Potential acquisitions with good ROI",
+      "PRICE": "Price",
+      "RENT": "Rent",
+      "ROI": "ROI"
+    },
+    "COMMON": {
+      "NO_DATA": "No data available",
+      "LOADING": "Loading..."
+    }
+  },
+  "ANALYTICS": {
+  "TITLE": "Profitability Analysis",
+  "SUBTITLE": "Track performance and optimize your investments",
+  "PERIOD": {
+    "3M": "Last 3 months",
+    "6M": "Last 6 months",
+    "12M": "Last 12 months"
+  },
+  "PROPERTIES": {
+    "ALL": "All properties"
+  },
+  "TOTAL_REVENUE": "Total Revenue",
+  "TOTAL_EXPENSES": "Total Expenses",
+  "NET_PROFIT": "Net Profit",
+  "AVERAGE_YIELD": "Average Yield",
+  "OPTIMIZATIONS": {
+    "TITLE": "Optimization Suggestions",
+    "OPPORTUNITY": "Opportunity",
+    "WARNING": "Warning",
+    "ADVICE": "Advice"
+  },
+  "PERFORMANCE": {
+    "TITLE": "Property Performance",
+    "NAME": "Property",
+    "VALUE": "Value",
+    "YIELD": "Yield (%)"
+  }
+},
+
+
   "SETTINGS": {
     "TITLE": "Settings",
     "SUBTITLE": "Manage your account preferences and settings",
@@ -374,5 +566,10 @@
     },
     "COPYRIGHT": "All rights reserved.",
     "COPYRIGHT2": "© {{year}} {{app}} — All rights reserved"
-  }
+  },
+  "CHARTS": {
+  "CASHFLOW": "Cash Flow Overview",
+  "YIELD_SHARE": "Yield Distribution"
+}
+
 }

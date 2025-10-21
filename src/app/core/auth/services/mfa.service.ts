@@ -1,6 +1,6 @@
 // core/auth/mfa.service.ts
 import { inject, Injectable, signal } from '@angular/core';
-import { AuthApi } from './auth.api';
+import { AuthApi } from '../../api/auth.api';
 import { ToastService } from '../../ui/toast.service';
 import { MfaSetupResponse } from '../../mfa/mfa.models';
 

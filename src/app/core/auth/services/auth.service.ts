@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { AuthApi } from './auth.api';
+import { AuthApi } from '../../api/auth.api';
 import { TokenService } from './token/token.service';
 import { AuthState } from '../auth.state';
 import { LoginRequest, LoginResponse, MfaLoginRequest, RegisterRequest, UserDto } from '../auth.models';

@@ -1,0 +1,84 @@
+<div  class="bg-white shadow-xl rounded-xl p-6 w-full max-w-3xl mx-auto transform transition-all duration-300 scale-100 animate-fadeIn">
+  <h2 class="text-xl font-semibold text-gray-800 mb-2">
+    {{ 'NEW_CONTRACT.TITLE' | translate }}
+  </h2>
+  <p class="text-sm text-gray-500 mb-6">{{ 'NEW_CONTRACT.SUBTITLE' | translate }}</p>
+
+  <form class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium mb-1">{{ 'NEW_CONTRACT.PROPERTY' | translate }}</label>
+      <input type="text" [(ngModel)]="contract.propertyName" name="propertyName"
+        class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">{{ 'NEW_CONTRACT.TENANTS' | translate }}</label>
+      <input type="text" [(ngModel)]="contract.tenantNames" name="tenantNames"
+        class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ 'NEW_CONTRACT.START_DATE' | translate }}</label>
+        <input type="date" [(ngModel)]="contract.startDate" name="startDate"
+          class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ 'NEW_CONTRACT.END_DATE' | translate }}</label>
+        <input type="date" [(ngModel)]="contract.endDate" name="endDate"
+          class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ 'NEW_CONTRACT.TYPE' | translate }}</label>
+        <select [(ngModel)]="contract.type" name="type"
+          class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          @for (opt of typeOptions; track opt.id) {
+            <option [value]="opt.id">{{ opt.label | translate }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ 'NEW_CONTRACT.DURATION' | translate }}</label>
+        <input type="text" [(ngModel)]="contract.duration" name="duration"
+          class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="ex: 1 an, 3 ans..." />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ 'NEW_CONTRACT.RENT' | translate }}</label>
+        <input type="number" [(ngModel)]="contract.rent" name="rent"
+          class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ 'NEW_CONTRACT.STATUS' | translate }}</label>
+        <select [(ngModel)]="contract.status" name="status"
+          class="w-full border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          @for (opt of statusOptions; track opt.id) {
+            <option [value]="opt.id">{{ opt.label | translate }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="button"
+        class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium cursor-pointer"
+        (click)="close.emit()">
+        {{ 'NEW_CONTRACT.CANCEL' | translate }}
+      </button>
+
+      <button type="button" (click)="saveContract()"
+        [disabled]="loading()"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium shadow disabled:opacity-50">
+        <i class="ph ph-floppy-disk mr-1"></i> {{ 'NEW_CONTRACT.SAVE' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

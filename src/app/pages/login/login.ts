@@ -14,7 +14,7 @@ import { ToastService } from '../../core/ui/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Login {
-   private translate = inject(TranslateService)
+   
    private auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -22,6 +22,11 @@ export class Login {
   showPassword = signal(false);
   isLoading = signal(false);
   rememberMe= signal(false);
+
+  constructor(private translate: TranslateService) {
+      translate.setDefaultLang('fr');
+      translate.use('fr'); // 
+  }
 
   ngOnInit() {
     const expired = this.route.snapshot.queryParamMap.get('expired');

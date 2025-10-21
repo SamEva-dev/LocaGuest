@@ -19,7 +19,12 @@
     "NEXT": "Suivant",
     "UPLOAD": "Télécharger",
     "DOWNLOAD": "Télécharger",
-    "BACK_TO_DASHBOARD": "Retour au dashboard"
+    "BACK_TO_DASHBOARD": "Retour au dashboard",
+    "ALL": "Tous",
+    "REFRESH": "Rafraîchir",
+    "RESET": "Réinitialiser",
+    "APPLY": "Appliquer",
+    "CLOSE": "Fermer"
   },
   "AUTH": {
     "SENDING": "Sending...",
@@ -160,7 +165,9 @@
         "EDIT": "Modifier",
         "DELETE": "Supprimer",
         "DELETE_CONFIRM": "Confirmer la suppression du bien ?"
-      }
+      },
+       "FILTERS": "Filtres",
+    "NO_RESULT": "Aucun bien ne correspond à vos filtres"
     },
     "ACTIVITIES": {
       "PAYMENT": "Paiement",
@@ -210,6 +217,188 @@
         "TITLE": "Paramètres",
         "DESC": "Configurez votre compte et préférences"
       }
+    },
+    "FILTER": {
+    "STATUS": "Statut",
+    "TYPE": "Type",
+    "RENT_MIN": "Loyer min (€)",
+    "RENT_MAX": "Loyer max (€)"
+  }
+  },
+  "CONTRACTS": {
+    "TITLE": "Gestion des contrats",
+    "NEW_CONTRACT": "Nouveau contrat",
+    "STATS": {
+      "ACTIVE": "Contrats actifs",
+      "EXPIRING": "Expirent dans 3 mois",
+      "REVENUE": "Revenus mensuels",
+      "TENANTS": "Locataires"
+    },
+    "SEARCH_PLACEHOLDER": "Rechercher par bien, locataire...",
+    "FILTERS": {
+      "ALL_STATUS": "Tous les statuts",
+      "ACTIVE": "Actif",
+      "EXPIRING": "Expire bientôt",
+      "ALL_TYPES": "Tous les types",
+      "FURNISHED": "Meublé",
+      "UNFURNISHED": "Non meublé",
+      "MORE": "Plus de filtres",
+      "TITLE": "Filtres",
+      "STATUS": "Statut",
+      "TYPE": "Type",
+      "TENANT": "Nom du locataire",
+      "PROPERTY": "Nom du bien",
+      "START_AFTER": "Début après le",
+      "END_BEFORE": "Fin avant le",
+      "MIN_RENT": "Loyer min (€)",
+      "MAX_RENT": "Loyer max (€)"
+    },
+    "STATUS": {
+    "ACTIVE": "Actif",
+    "EXPIRING": "Expire bientôt",
+    "TERMINATED": "Terminé"
+  },
+  "TYPE": {
+    "FURNISHED": "Meublé",
+    "UNFURNISHED": "Non meublé"
+  },
+    "LIST_TITLE": "Liste des contrats",
+    "ACTIONS": {
+      "VIEW": "Voir",
+      "EDIT": "Modifier",
+      "DOCS": "Documents"
+    },
+    "QUICK_ACTIONS": {
+      "GENERATE": {
+        "TITLE": "Générer un nouveau bail",
+        "DESC": "Créez rapidement un contrat de location"
+      },
+      "RENEWALS": {
+        "TITLE": "Renouvellements à venir",
+        "DESC": "Gérez les contrats qui arrivent à échéance"
+      },
+      "ADD_COTENANT": {
+        "TITLE": "Ajouter un colocataire",
+        "DESC": "Modifiez les contrats existants"
+      }
+    }
+  },
+   "NEW_CONTRACT": {
+    "TITLE": "Créer un nouveau contrat",
+    "SUBTITLE": "Renseignez les informations du nouveau bail",
+    "PROPERTY": "Bien immobilier",
+    "TENANTS": "Locataires",
+    "START_DATE": "Date de début",
+    "END_DATE": "Date de fin",
+    "TYPE": "Type de contrat",
+    "TYPE_OPTIONS": {
+      "FURNISHED": "Meublé",
+      "UNFURNISHED": "Non meublé"
+    },
+    "DURATION": "Durée",
+    "RENT": "Loyer mensuel (€)",
+    "STATUS": "Statut",
+    "STATUS_OPTIONS": {
+      "ACTIVE": "Actif",
+      "EXPIRING": "Expire bientôt",
+      "TERMINATED": "Terminé"
+    },
+    "SAVE": "Enregistrer le contrat",
+    "CANCEL": "Annuler"
+  },
+  "FINANCIAL": {
+    "TITLE": "Tableau financier",
+    "SUBTITLE": "Suivez la performance et la trésorerie de votre portefeuille",
+    "TABS": {
+      "OVERVIEW": "Vue d'ensemble",
+      "CASHFLOW": "Flux de trésorerie",
+      "CHARGES": "Analyse des charges",
+      "PROJECTIONS": "Projections"
+    },
+    "ACTIONS": {
+      "EXPORT": "Exporter",
+      "CHANGE_YEAR": "Changer d'année"
+    },
+    "STATS": {
+      "TOTAL_REVENUE": "Revenus totaux",
+      "TOTAL_EXPENSES": "Dépenses totales",
+      "NET_RESULT": "Résultat net",
+      "OCCUPANCY": "Taux d'occupation"
+    },
+    "UPCOMING": {
+      "TITLE": "Paiements à venir",
+      "LABEL": "Libellé",
+      "DUE": "Échéance",
+      "AMOUNT": "Montant",
+      "STATUS": "Statut"
+    },
+    "PROPERTIES": {
+      "TITLE": "Performance par bien",
+      "NAME": "Bien",
+      "REVENUE": "Revenus (€)",
+      "CHARGES": "Dépenses (€)",
+      "ROI": "Rentabilité (%)"
+    },
+    "CASHFLOW": {
+      "TITLE": "Résumé de trésorerie",
+      "INCOME": "Revenus",
+      "EXPENSE": "Dépenses",
+      "TOTAL": "Total"
+    },
+    "CHARGES": {
+      "TITLE": "Répartition des charges",
+      "LABEL": "Catégorie",
+      "AMOUNT": "Montant (€)",
+      "PERCENT": "Pourcentage (%)"
+    },
+    "OPTIMIZATIONS": {
+      "TITLE": "Suggestions d’optimisation",
+      "DESCRIPTION": "Idées pour améliorer la rentabilité"
+    },
+    "PROJECTIONS": {
+      "TITLE": "Projections financières",
+      "ESTIMATED_REVENUE": "Revenus estimés",
+      "ESTIMATED_EXPENSES": "Dépenses estimées",
+      "EXPECTED_RESULT": "Résultat attendu"
+    },
+    "OPPORTUNITIES": {
+      "TITLE": "Opportunités d’investissement",
+      "DESC": "Biens potentiels à fort rendement",
+      "PRICE": "Prix",
+      "RENT": "Loyer",
+      "ROI": "Rentabilité"
+    },
+    "COMMON": {
+      "NO_DATA": "Aucune donnée disponible",
+      "LOADING": "Chargement..."
+    }
+  },
+  "ANALYTICS": {
+    "TITLE": "Analyse de rentabilité",
+    "SUBTITLE": "Suivi des performances et optimisation des investissements",
+    "PERIOD": {
+      "3M": "3 derniers mois",
+      "6M": "6 derniers mois",
+      "12M": "12 derniers mois"
+    },
+    "PROPERTIES": {
+      "ALL": "Tous les biens"
+    },
+    "TOTAL_REVENUE": "Revenus totaux",
+    "TOTAL_EXPENSES": "Charges totales",
+    "NET_PROFIT": "Bénéfice net",
+    "AVERAGE_YIELD": "Rendement moyen",
+    "OPTIMIZATIONS": {
+      "TITLE": "Suggestions d’optimisation",
+      "OPPORTUNITY": "Opportunité",
+      "WARNING": "Avertissement",
+      "ADVICE": "Conseil"
+    },
+    "PERFORMANCE": {
+      "TITLE": "Performance par bien",
+      "NAME": "Nom du bien",
+      "VALUE": "Valeur",
+      "YIELD": "Rendement (%)"
     }
   },
   "SETTINGS": {
@@ -380,5 +569,10 @@
     },
     "COPYRIGHT": "Tous droits réservés.",
     "COPYRIGHT2": "© {{year}} {{app}} — Tous droits réservés"
-  }
+  },
+  "CHARTS": {
+  "CASHFLOW": "Flux de trésorerie",
+  "YIELD_SHARE": "Répartition du rendement"
+}
+
 }

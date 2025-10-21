@@ -1,6 +1,6 @@
 // core/auth/device.store.ts
 import { inject, Injectable, signal } from '@angular/core';
-import { AuthApi } from '../services/auth.api';
+import { AuthApi } from '../../api/auth.api';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceStore {

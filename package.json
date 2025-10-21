@@ -32,8 +32,10 @@
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@tailwindcss/postcss": "^4.1.13",
+    "framer-motion": "^12.23.24",
     "phosphor-icons": "^1.4.2",
     "postcss": "^8.5.6",
+    "recharts": "^3.3.0",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.1.13",
     "tslib": "^2.3.0"
