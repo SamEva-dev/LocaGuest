@@ -33,7 +33,8 @@ export const routes: Routes = [
       { path: 'settings', component: Settings },
       { path: 'contrats', component: Contracts },
       { path: 'financial', loadComponent: () => import('./features/financial/financial').then(m => m.Financial) },
-      { path: 'analytics', loadComponent: () => import('./features/analytics/analytics').then(m => m.Analytics) }
+      { path: 'analytics', loadComponent: () => import('./features/analytics/analytics').then(m => m.Analytics) },
+      {path: 'documents', component: Documents}
     ]
     },
  { path: '**', redirectTo: 'login' }

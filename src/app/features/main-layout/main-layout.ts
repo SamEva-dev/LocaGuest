@@ -23,7 +23,7 @@ export class MainLayout {
 
  activeMainTab = signal<MainTab>('dashboard');
 
-  tabs : MainTab []= ['dashboard', 'contrats', 'financial', 'analytics', 'planning', 'account', 'settings']; 
+  tabs : MainTab []= ['dashboard', 'contrats', 'financial', 'analytics', 'planning', 'account', 'settings', 'documents']; 
 
 
 

@@ -88,7 +88,8 @@
     "ANALYTICS": "Analytics",
     "FILES": "Files",
     "SETTINGS": "Settings",
-    "LOGOUT": "Logout"
+    "LOGOUT": "Logout",
+    "DOCUMENT": "Documents"
   },
   "HEADER": {
     "APP_NAME": "LocaGuest",

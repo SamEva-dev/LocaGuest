@@ -79,7 +79,8 @@
     "ANALYTICS": "Analyses",
     "FILES": "Documents",
     "SETTINGS": "Paramètres",
-    "LOGOUT": "Se déconnecter"
+    "LOGOUT": "Se déconnecter",
+    "DOCUMENT": "Documents"
   },
   "HEADER": {
     "APP_NAME": "Mon Application",
