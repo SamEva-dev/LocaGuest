@@ -34,6 +34,21 @@
     "APPLY": "Apply",
     "CLOSE": "Close"
   },
+  "TOAST": {
+  "TEMPLATE_SAVED": "Template saved successfully",
+  "PREVIEW_OK": "Preview generated",
+  "PREVIEW_ERROR": "Error generating preview",
+  "GENERATE_OK": "Document generated successfully",
+  "GENERATE_ERROR": "Error generating document",
+  "DOWNLOAD_OK": "Download started",
+  "DOWNLOAD_ERROR": "Download failed",
+  "CONTRACT_SAVED": "Contract saved successfully",
+  "CONTRACT_SAVE_ERROR": "Error saving contract",
+  "FILTER_APPLIED": "Filter applied",
+  "ANALYTICS_UPDATED": "Analytics data updated",
+  "DASHBOARD_REFRESH": "Dashboard refreshed"
+}
+,
   "AUTH": {
     "SENDING": "Envoi...",
     "SUBTITLE": "Log in to your property management platform",
@@ -569,8 +584,69 @@
     "COPYRIGHT2": "© {{year}} {{app}} — All rights reserved"
   },
   "CHARTS": {
-  "CASHFLOW": "Cash Flow Overview",
-  "YIELD_SHARE": "Yield Distribution"
+    "CASHFLOW": "Cash Flow Overview",
+    "YIELD_SHARE": "Yield Distribution"
+  },
+  "DOCUMENTS": {
+    "BACK_TO_DASHBOARD": "Back to dashboard",
+    "NEW_TEMPLATE": "New template",
+    "TITLE": "Document generation",
+    "MODELS": "Available templates",
+    "SEARCH_PLACEHOLDER": "Search a template...",
+    "CATEGORIES": {
+      "ALL": "All categories",
+      "CONTRACTS": "Contracts",
+      "INVENTORY": "Inventory",
+      "TERMINATION": "Termination",
+      "WORKS": "Works",
+      "ACCOUNTING": "Accounting",
+      "OTHER": "Other"
+    },
+    "STATUS": {
+    "LOADING": "Loading templates...",
+    "NO_TEMPLATES": "No templates available yet.",
+    "NO_RECENT_DOCS": "No recent documents found.",
+    "LOADING_GLOBAL": "Loading..."
+  },
+    "USES": "uses",
+    "PREVIEW": "Preview",
+    "USE": "Use",
+    "QUICK_GEN": "Quick generation",
+    "TYPE": "Document type",
+    "PROPERTY": "Property",
+    "PROPERTY_PLACEHOLDER": "e.g., 12 rue de Paris, Lyon",
+    "TENANT": "Tenant",
+    "TENANT_PLACEHOLDER": "e.g., John Doe",
+    "NOTES": "Notes",
+    "NOTES_PLACEHOLDER": "Additional information...",
+    "GENERATE": "Generate document",
+    "SEND": "Send",
+    "RECENT_DOCS": "Recent documents",
+    "TABLE": {
+      "NAME": "File name",
+      "DATE": "Creation date",
+      "TYPE": "Type",
+      "ACTION": "Action"
+    },
+    "DOWNLOAD": "Download"
+  },
+  "TEMPLATES": {
+  "NEW": {
+    "TITLE": "New Template",
+    "SUBTITLE": "Create a document template with dynamic variables",
+    "NAME": "Template Name",
+    "CATEGORY": "Category",
+    "DESCRIPTION": "Description",
+    "CONTENT": "HTML Content",
+    "VARIABLE_HINT": "variables use {{ variable }}"
+  },
+  "USE": {
+    "TITLE": "Use Template: {{name}}",
+    "PREVIEW": "Preview",
+    "GENERATE": "Generate & Download (PDF)"
+  },
+  "PREVIEW": {
+    "TITLE": "Template Preview"
+  }
 }
-
 }

@@ -8,7 +8,7 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "src/app/features/template/template-preview"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

@@ -1,24 +1,31 @@
 // core/ui/toast.service.ts
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
-export interface Toast { id: number; type: ToastType; message: string; }
+export interface ToastMessage { id: number; type: ToastType; message: string; }
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
-  private _items = signal<Toast[]>([]);
+  private _items = signal<ToastMessage[]>([]);
   readonly items = this._items.asReadonly();
 
-  show(type: ToastType, message: string) {
-    const id = Date.now() + Math.random();
-    this._items.update(list => [...list, { id, type, message }]);
-    setTimeout(() => this.dismiss(id), 4000);
-  }
+   private counter = 0;
+  private readonly i18n = inject(TranslateService);
 
-  success(msg: string) { this.show('success', msg); }
-  error(msg: string) { this.show('error', msg); }
-  info(msg: string) { this.show('info', msg); }
-  warn(msg: string) { this.show('warning', msg); }
+ private push(type: ToastMessage['type'], message: string) {
+    const toast: ToastMessage = { id: ++this.counter, type, message  };
+    this._items.update(list => [...list, toast]);
+    setTimeout(() => this.dismiss(toast.id), 4000);
+  }
+  show(key: string, type: ToastMessage['type'] = 'info') {
+    const text = this.i18n.instant(key) || key;
+    this.push(type, text);
+  }
+  success(key: string) { this.show(key, 'success'); }
+  error(key: string) { this.show(key, 'error'); }
+  info(key: string) { this.show(key, 'info'); }
+  warning(key: string) { this.show(key, 'warning'); }
 
   dismiss(id: number) {
     this._items.update(list => list.filter(t => t.id !== id));

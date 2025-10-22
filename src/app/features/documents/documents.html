@@ -1,304 +1,239 @@
-<div class="w-full space-y-6">
+@if (loading()) {
+  <div class="flex items-center justify-center gap-2 text-blue-600 text-sm">
+    <i class="ph ph-spinner animate-spin"></i>
+    {{ 'DOCUMENTS.STATUS.LOADING_GLOBAL' | translate }}
+  </div>
+}
 
+<div class="w-full space-y-6">
   <!-- Header -->
   <div class="flex items-center justify-between">
     <a href="#" class="text-sm text-blue-600 hover:underline flex items-center">
-      <i class="ph ph-arrow-left mr-1"></i> Retour au dashboard
+      <i class="ph ph-arrow-left mr-1"></i> {{ 'DOCUMENTS.BACK_TO_DASHBOARD' | translate }}
     </a>
     <button
-      class="px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm font-medium rounded-md flex items-center transition">
-      <i class="ph ph-plus mr-1"></i> Nouveau modèle
+      class="px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm font-medium rounded-md flex items-center transition"
+      (click)="openNewTemplate()">
+      <i class="ph ph-plus mr-1"></i> {{ 'DOCUMENTS.NEW_TEMPLATE' | translate }}
     </button>
   </div>
 
-  <h1 class="text-xl font-semibold text-gray-800">Génération de Documents</h1>
+  <h1 class="text-xl font-semibold text-gray-800">
+    {{ 'DOCUMENTS.TITLE' | translate }}
+  </h1>
 
-  <!-- Statistiques -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <div class="bg-white rounded-md shadow p-4 flex items-center justify-between">
-      <div>
-        <p class="text-sm text-gray-500">Documents générés</p>
-        <p class="text-2xl font-bold text-gray-800">2,847</p>
-      </div>
-      <i class="ph ph-file text-blue-600 text-3xl"></i>
-    </div>
-    <div class="bg-white rounded-md shadow p-4 flex items-center justify-between">
-      <div>
-        <p class="text-sm text-gray-500">Ce mois</p>
-        <p class="text-2xl font-bold text-green-600">156</p>
-      </div>
-      <i class="ph ph-download-simple text-green-600 text-3xl"></i>
-    </div>
-    <div class="bg-white rounded-md shadow p-4 flex items-center justify-between">
-      <div>
-        <p class="text-sm text-gray-500">Modèles actifs</p>
-        <p class="text-2xl font-bold text-gray-800">8</p>
-      </div>
-      <i class="ph ph-eye text-blue-600 text-3xl"></i>
-    </div>
-    <div class="bg-white rounded-md shadow p-4 flex items-center justify-between">
-      <div>
-        <p class="text-sm text-gray-500">Temps économisé</p>
-        <p class="text-2xl font-bold text-orange-600">127h</p>
-      </div>
-      <i class="ph ph-printer text-orange-600 text-3xl"></i>
-    </div>
-  </div>
-
+  <!-- Main grid -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Modèles de documents -->
+    
+    <!-- Section Modèles -->
     <div class="lg:col-span-2 bg-white rounded-md shadow p-4">
-      <h3 class="text-base font-semibold text-gray-800">Génération rapide</h3>
+      <h3 class="text-base font-semibold text-gray-800 mb-2">
+        {{ 'DOCUMENTS.MODELS' | translate }}
+      </h3>
+
+      <!-- Filtres -->
       <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <input type="text" placeholder="Rechercher un modèle..."
-          class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-        <select class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          <option>Toutes catégories</option>
-          <option>Contrats</option>
-          <option>États des lieux</option>
-          <option>Résiliation</option>
-          <option>Travaux</option>
+        <input
+          type="text"
+          placeholder="{{ 'DOCUMENTS.SEARCH_PLACEHOLDER' | translate }}"
+          class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          [(ngModel)]="search" />
+
+        <select
+          class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          [(ngModel)]="category">
+          <option value="all">{{ 'DOCUMENTS.CATEGORIES.ALL' | translate }}</option>
+          <option value="contracts">{{ 'DOCUMENTS.CATEGORIES.CONTRACTS' | translate }}</option>
+          <option value="inventory">{{ 'DOCUMENTS.CATEGORIES.INVENTORY' | translate }}</option>
+          <option value="termination">{{ 'DOCUMENTS.CATEGORIES.TERMINATION' | translate }}</option>
+          <option value="works">{{ 'DOCUMENTS.CATEGORIES.WORKS' | translate }}</option>
+          <option value="accounting">{{ 'DOCUMENTS.CATEGORIES.ACCOUNTING' | translate }}</option>
         </select>
       </div>
 
+      <!-- Cartes -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Modèle -->
-        <div class="border border-gray-300 rounded-md p-4 flex flex-col justify-between">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-start space-x-2">
-              <i class="ph ph-file text-blue-600 text-xl mt-1"></i>
-              <div>
-                <p class="text-sm font-semibold text-gray-800">Bail de location vide</p>
-                <p class="text-xs text-gray-500">Contrat de location pour logement non meublé</p>
-                <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">Contrats</span>
+        @for (template of filteredTemplates(); track template.id) {
+          <div class="border border-gray-300 rounded-md p-4 flex flex-col justify-between">
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex items-start space-x-2">
+                <i class="ph ph-file text-blue-600 text-xl mt-1"></i>
+                <div>
+                  <p class="text-sm font-semibold text-gray-800">{{ template.name }}</p>
+                  <p class="text-xs text-gray-500">{{ template.description }}</p>
+                  <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">
+                    {{ ('DOCUMENTS.CATEGORIES.' + (template.category | uppercase)) | translate }}
+                  </span>
+                </div>
               </div>
+              <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                {{ template.uses }} {{ 'DOCUMENTS.USES' | translate }}
+              </span>
             </div>
-            <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">45 usages</span>
-          </div>
-          <div class="flex justify-between mt-3">
-            <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-eye"></i> Aperçu</button>
-            <button class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md transition">Utiliser</button>
-          </div>
-        </div>
-
-        <!-- Exemple : Bail meublé -->
-        <div class="border border-gray-300 rounded-md p-4 flex flex-col justify-between">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-start space-x-2">
-              <i class="ph ph-file text-blue-600 text-xl mt-1"></i>
-              <div>
-                <p class="text-sm font-semibold text-gray-800">Bail de location meublé</p>
-                <p class="text-xs text-gray-500">Contrat de location pour logement meublé</p>
-                <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">Contrats</span>
-              </div>
+            <div class="flex justify-between mt-3">
+              <button
+                class="px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"
+                (click)="onPreview(template)">
+                <i class="ph ph-eye"></i> {{ 'DOCUMENTS.PREVIEW' | translate }}
+              </button>
+              <button
+                class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md transition"
+                (click)="onUse(template)">
+                {{ 'DOCUMENTS.USE' | translate }}
+              </button>
             </div>
-            <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">23 usages</span>
           </div>
-          <div class="flex justify-between mt-3">
-            <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-eye"></i> Aperçu</button>
-            <button class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md transition">Utiliser</button>
-          </div>
-        </div>
-
-        <!-- Exemple : Etat des lieux d'entrée -->
-        <div class="border border-gray-300 rounded-md p-4 flex flex-col justify-between">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-start space-x-2">
-              <i class="ph ph-file text-blue-600 text-xl mt-1"></i>
-              <div>
-                <p class="text-sm font-semibold text-gray-800">Etat des lieux d'entrée</p>
-                <p class="text-xs text-gray-500">Document d'inventaire à l'entrée du locataire</p>
-                <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">Etats des lieux</span>
-              </div>
-            </div>
-            <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">23 usages</span>
-          </div>
-          <div class="flex justify-between mt-3">
-            <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-eye"></i> Aperçu</button>
-            <button class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md transition">Utiliser</button>
-          </div>
-        </div>
-
-        <!-- Exemple : Etat des lieux de sortie -->
-        <div class="border border-gray-300 rounded-md p-4 flex flex-col justify-between">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-start space-x-2">
-              <i class="ph ph-file text-blue-600 text-xl mt-1"></i>
-              <div>
-                <p class="text-sm font-semibold text-gray-800">Etat des lieux de sortie</p>
-                <p class="text-xs text-gray-500">Document d'inventaire à la sortie du locataire</p>
-                <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">Etats des lieux</span>
-              </div>
-            </div>
-            <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">23 usages</span>
-          </div>
-          <div class="flex justify-between mt-3">
-            <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-eye"></i> Aperçu</button>
-            <button class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md transition">Utiliser</button>
-          </div>
-        </div>
-
-        <!-- Exemple : Quittance -->
-        <div class="border border-gray-300 rounded-md p-4 flex flex-col justify-between">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-start space-x-2">
-              <i class="ph ph-file text-blue-600 text-xl mt-1"></i>
-              <div>
-                <p class="text-sm font-semibold text-gray-800">Quittance de loyer</p>
-                <p class="text-xs text-gray-500">Reçu de paiement mensuel</p>
-                <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">Comptabilité</span>
-              </div>
-            </div>
-            <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">23 usages</span>
-          </div>
-          <div class="flex justify-between mt-3">
-            <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-eye"></i> Aperçu</button>
-            <button class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md transition">Utiliser</button>
-          </div>
-        </div>
-
-        <!-- Exemple : Congé pour vente -->
-        <div class="border border-gray-300 rounded-md p-4 flex flex-col justify-between">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-start space-x-2">
-              <i class="ph ph-file text-blue-600 text-xl mt-1"></i>
-              <div>
-                <p class="text-sm font-semibold text-gray-800">Congé pour vente</p>
-                <p class="text-xs text-gray-500">Notification de congé pour vendre le bien</p>
-                <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">Résiliation</span>
-              </div>
-            </div>
-            <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">23 usages</span>
-          </div>
-          <div class="flex justify-between mt-3">
-            <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-eye"></i> Aperçu</button>
-            <button class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md transition">Utiliser</button>
-          </div>
-        </div>
-
-        <!-- Exemple : Augmentation de loyer -->
-        <div class="border border-gray-300 rounded-md p-4 flex flex-col justify-between">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-start space-x-2">
-              <i class="ph ph-file text-blue-600 text-xl mt-1"></i>
-              <div>
-                <p class="text-sm font-semibold text-gray-800">Augmentation de loyer</p>
-                <p class="text-xs text-gray-500">Notification d'augmentation de loyer</p>
-                <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">Modifications</span>
-              </div>
-            </div>
-            <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">23 usages</span>
-          </div>
-          <div class="flex justify-between mt-3">
-            <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-eye"></i> Aperçu</button>
-            <button class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md transition">Utiliser</button>
-          </div>
-        </div>
-
-        <!-- Exemple : Autorisation des travaux -->
-        <div class="border border-gray-300 rounded-md p-4 flex flex-col justify-between">
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-start space-x-2">
-              <i class="ph ph-file text-blue-600 text-xl mt-1"></i>
-              <div>
-                <p class="text-sm font-semibold text-gray-800">Autorisation de travaux</p>
-                <p class="text-xs text-gray-500">Demande d'autorisation pour réaliser des travaux</p>
-                <span class="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">Travaux</span>
-              </div>
-            </div>
-            <span class="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full">23 usages</span>
-          </div>
-          <div class="flex justify-between mt-3">
-            <button class="px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-eye"></i> Aperçu</button>
-            <button class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md transition">Utiliser</button>
-          </div>
-        </div>
-
-
-
-        <!-- tu peux dupliquer les blocs pour les autres modèles -->
+        }
       </div>
+        @if (loading()) {
+          <div class="col-span-full text-center py-6 text-gray-500">
+            <i class="ph ph-spinner animate-spin text-2xl text-blue-500"></i>
+            <p class="mt-2 text-sm">{{ 'DOCUMENTS.STATUS.LOADING' | translate }}</p>
+          </div>
+        } @else if (filteredTemplates().length === 0) {
+          <div class="col-span-full text-center py-6 text-gray-400">
+            <i class="ph ph-file-x text-2xl"></i>
+            <p class="mt-2 text-sm">{{ 'DOCUMENTS.STATUS.NO_TEMPLATES' | translate }}</p>
+          </div>
+        }
+
     </div>
 
-    <!-- Génération rapide -->
+    <!-- Section Génération rapide -->
     <div class="bg-white rounded-md shadow p-4 space-y-4">
-      <h3 class="text-base font-semibold text-gray-800">Génération rapide</h3>
+      <h3 class="text-base font-semibold text-gray-800">
+        {{ 'DOCUMENTS.QUICK_GEN' | translate }}
+      </h3>
+
       <div class="space-y-3">
         <div>
-          <label class="block text-sm text-gray-700 mb-1">Type de document</label>
-          <select class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            <option>Sélectionner...</option>
+          <label class="block text-sm text-gray-700 mb-1">
+            {{ 'DOCUMENTS.TYPE' | translate }}
+          </label>
+          <select
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            #quickType>
+            <option value="contracts">{{ 'DOCUMENTS.CATEGORIES.CONTRACTS' | translate }}</option>
+            <option value="inventory">{{ 'DOCUMENTS.CATEGORIES.INVENTORY' | translate }}</option>
+            <option value="accounting">{{ 'DOCUMENTS.CATEGORIES.ACCOUNTING' | translate }}</option>
           </select>
         </div>
         <div>
-          <label class="block text-sm text-gray-700 mb-1">Bien immobilier</label>
-          <select class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            <option>Sélectionner...</option>
-          </select>
+          <label class="block text-sm text-gray-700 mb-1">
+            {{ 'DOCUMENTS.PROPERTY' | translate }}
+          </label>
+          <input
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            placeholder="{{ 'DOCUMENTS.PROPERTY_PLACEHOLDER' | translate }}"
+            #propAddr />
         </div>
         <div>
-          <label class="block text-sm text-gray-700 mb-1">Locataire</label>
-          <select class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            <option>Sélectionner...</option>
-          </select>
+          <label class="block text-sm text-gray-700 mb-1">
+            {{ 'DOCUMENTS.TENANT' | translate }}
+          </label>
+          <input
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            placeholder="{{ 'DOCUMENTS.TENANT_PLACEHOLDER' | translate }}"
+            #tenantName />
         </div>
         <div>
-          <label class="block text-sm text-gray-700 mb-1">Notes spéciales</label>
-          <textarea rows="2" placeholder="Informations supplémentaires..."
-            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+          <label class="block text-sm text-gray-700 mb-1">
+            {{ 'DOCUMENTS.NOTES' | translate }}
+          </label>
+          <textarea
+            rows="2"
+            placeholder="{{ 'DOCUMENTS.NOTES_PLACEHOLDER' | translate }}"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            #notes></textarea>
         </div>
       </div>
-      <button class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm font-medium rounded-md transition">
-        Générer le document
+
+      <button
+        class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm font-medium rounded-md transition"
+        (click)="quickGenerate(filteredTemplates()[0]?.id ?? 'default', {
+          'property.address': propAddr.value,
+          'tenant.name': tenantName.value,
+          'notes': notes.value
+        })">
+        {{ 'DOCUMENTS.GENERATE' | translate }}
       </button>
+
       <div class="flex gap-2">
-        <button class="flex-1 px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-eye"></i> Aperçu</button>
-        <button class="flex-1 px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"><i class="ph ph-paper-plane"></i> Envoyer</button>
+        <button
+          class="flex-1 px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition"
+          (click)="quickPreview(filteredTemplates()[0]?.id ?? 'default', {
+            'property.address': propAddr.value,
+            'tenant.name': tenantName.value,
+            'notes': notes.value
+          })">
+          <i class="ph ph-eye"></i> {{ 'DOCUMENTS.PREVIEW' | translate }}
+        </button>
+        <button
+          class="flex-1 px-3 py-1 text-sm bg-gray-100 hover:bg-amber-500 cursor-pointer rounded-md transition">
+          <i class="ph ph-paper-plane"></i> {{ 'DOCUMENTS.SEND' | translate }}
+        </button>
       </div>
-    </div>
-
-    <!-- Documents récents -->
-    <div class="bg-white border border-gray-300 rounded-lg shadow-sm p-4">
-      <h2 class="text-lg font-semibold text-gray-800 mb-3">Documents récents</h2>
-
-      <div class="space-y-3 text-sm">
-        <div class="flex justify-between items-center">
-          <div>
-            <p class="font-medium text-gray-800">Bail_Dupont_Jean...</p>
-            <p class="text-gray-500 text-xs">Appartement Centre Ville</p>
-          </div>
-          <div class="text-right">
-            <span class="block text-xs text-gray-500">15/01/2024</span>
-            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Bail de location</span>
-          </div>
-        </div>
-
-        <div class="flex justify-between items-center">
-          <div>
-            <p class="font-medium text-gray-800">Quittance_Janvier...</p>
-            <p class="text-gray-500 text-xs">Studio Quartier Latin</p>
-          </div>
-          <div class="text-right">
-            <span class="block text-xs text-gray-500">10/01/2024</span>
-            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Quittance</span>
-          </div>
-        </div>
-
-        <div class="flex justify-between items-center">
-          <div>
-            <p class="font-medium text-gray-800">Etat_lieux_sortie_B...</p>
-            <p class="text-gray-500 text-xs">2 pièces Montmartre</p>
-          </div>
-          <div class="text-right">
-            <span class="block text-xs text-gray-500">05/01/2024</span>
-            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">État des lieux</span>
-          </div>
-        </div>
-      </div>
-
-      <button class="w-full mt-3 text-blue-600 text-sm hover:underline">
-        Voir tous les documents
-      </button>
     </div>
   </div>
+
+  <!-- Section Documents récents -->
+  <div class="bg-white rounded-md shadow p-4">
+    <h3 class="text-base font-semibold text-gray-800 mb-4">
+      {{ 'DOCUMENTS.RECENT_DOCS' | translate }}
+    </h3>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-100 text-gray-600">
+          <tr>
+            <th class="py-2 px-3 text-left">{{ 'DOCUMENTS.TABLE.NAME' | translate }}</th>
+            <th class="py-2 px-3 text-left">{{ 'DOCUMENTS.TABLE.DATE' | translate }}</th>
+            <th class="py-2 px-3 text-left">{{ 'DOCUMENTS.TABLE.TYPE' | translate }}</th>
+            <th class="py-2 px-3 text-left">{{ 'DOCUMENTS.TABLE.ACTION' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (doc of recent(); track doc.id) {
+              @if (!loading() && recent().length === 0) {
+                <tr>
+                  <td colspan="4" class="py-4 text-center text-gray-500">
+                    <i class="ph ph-clock text-xl mr-1"></i>
+                    {{ 'DOCUMENTS.STATUS.NO_RECENT_DOCS' | translate }}
+                  </td>
+                </tr>
+              }
+
+            <tr class="border-t border-gray-100 hover:bg-gray-50">
+              <td class="py-2 px-3">{{ doc.filename }}</td>
+              <td class="py-2 px-3">{{ doc.createdAt | date:'short' }}</td>
+              <td class="py-2 px-3">{{ ('DOCUMENTS.CATEGORIES.' + (doc.mime || 'OTHER' | uppercase)) | translate }}</td>
+              <td class="py-2 px-3">
+                <button class="text-blue-600 hover:underline text-sm" (click)="svc.download(doc.id)">
+                  {{ 'DOCUMENTS.DOWNLOAD' | translate }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==== Modales ==== -->
+  @if (isNewTemplateOpen()) {
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+      <new-template (close)="closeNewTemplate()" (saved)="onNewTemplateSaved()"></new-template>
+    </div>
+  }
+
+  @if (isPreviewOpen() && previewDoc()) {
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+      <template-preview [html]="previewDoc()?.previewHtml ?? '<p>Aucun rendu</p>'" (close)="closePreview()"></template-preview>
+    </div>
+  }
+
+  @if (isUseOpen() && templateToUse()) {
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+      <use-template [template]="templateToUse()!" (close)="closeUse()"></use-template>
+    </div>
+  }
 </div>

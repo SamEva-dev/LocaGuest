@@ -5,10 +5,11 @@ import { Welcome } from './pages/welcome/welcome';
 import { AuthService } from './core/auth/services/auth.service';
 import { TokenExpirationService } from './core/auth/services/token/token-expiration.service';
 import { SessionMonitorService } from './core/auth/services/session-monitor.service';
+import { ToastContainerComponent } from './core/ui/toast-container.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ToastContainerComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

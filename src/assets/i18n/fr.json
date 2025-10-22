@@ -26,6 +26,21 @@
     "APPLY": "Appliquer",
     "CLOSE": "Fermer"
   },
+  "TOAST": {
+  "TEMPLATE_SAVED": "Modèle enregistré avec succès",
+  "PREVIEW_OK": "Aperçu généré",
+  "PREVIEW_ERROR": "Erreur lors de la génération de l’aperçu",
+  "GENERATE_OK": "Document généré avec succès",
+  "GENERATE_ERROR": "Erreur lors de la génération du document",
+  "DOWNLOAD_OK": "Téléchargement lancé",
+  "DOWNLOAD_ERROR": "Échec du téléchargement",
+  "CONTRACT_SAVED": "Contrat enregistré avec succès",
+  "CONTRACT_SAVE_ERROR": "Erreur lors de l’enregistrement du contrat",
+  "FILTER_APPLIED": "Filtre appliqué",
+  "ANALYTICS_UPDATED": "Données d’analyse mises à jour",
+  "DASHBOARD_REFRESH": "Tableau de bord actualisé"
+}
+,
   "AUTH": {
     "SENDING": "Sending...",
     "SUBTITLE": "Connectez-vous à votre plateforme de gestion immobilière",
@@ -572,8 +587,71 @@
     "COPYRIGHT2": "© {{year}} {{app}} — Tous droits réservés"
   },
   "CHARTS": {
-  "CASHFLOW": "Flux de trésorerie",
-  "YIELD_SHARE": "Répartition du rendement"
+    "CASHFLOW": "Flux de trésorerie",
+    "YIELD_SHARE": "Répartition du rendement"
+  },
+  "DOCUMENTS": {
+    "BACK_TO_DASHBOARD": "Retour au tableau de bord",
+    "NEW_TEMPLATE": "Nouveau modèle",
+    "TITLE": "Génération de documents",
+    "MODELS": "Modèles disponibles",
+    "SEARCH_PLACEHOLDER": "Rechercher un modèle...",
+    "CATEGORIES": {
+      "ALL": "Toutes catégories",
+      "CONTRACTS": "Contrats",
+      "INVENTORY": "États des lieux",
+      "TERMINATION": "Résiliation",
+      "WORKS": "Travaux",
+      "ACCOUNTING": "Comptabilité",
+      "OTHER": "Autre"
+    },
+    "STATUS": {
+    "LOADING": "Chargement des modèles...",
+    "NO_TEMPLATES": "Aucun modèle disponible pour le moment.",
+    "NO_RECENT_DOCS": "Aucun document récent trouvé.",
+    "LOADING_GLOBAL": "Chargement en cours..."
+  },
+    "USES": "usages",
+    "PREVIEW": "Aperçu",
+    "USE": "Utiliser",
+    "QUICK_GEN": "Génération rapide",
+    "TYPE": "Type de document",
+    "PROPERTY": "Bien immobilier",
+    "PROPERTY_PLACEHOLDER": "Ex: 12 rue de Paris, Lyon",
+    "TENANT": "Locataire",
+    "TENANT_PLACEHOLDER": "Ex: Jean Dupont",
+    "NOTES": "Notes spéciales",
+    "NOTES_PLACEHOLDER": "Informations supplémentaires...",
+    "GENERATE": "Générer le document",
+    "SEND": "Envoyer",
+    "RECENT_DOCS": "Documents récents",
+    "TABLE": {
+      "NAME": "Nom du fichier",
+      "DATE": "Date de création",
+      "TYPE": "Type",
+      "ACTION": "Action"
+    },
+    "DOWNLOAD": "Télécharger"
+  },
+  "TEMPLATES": {
+  "NEW": {
+    "TITLE": "Nouveau modèle",
+    "SUBTITLE": "Créez un modèle de document avec des variables dynamiques",
+    "NAME": "Nom du modèle",
+    "CATEGORY": "Catégorie",
+    "DESCRIPTION": "Description",
+    "CONTENT": "Contenu HTML",
+    "VARIABLE_HINT": "variables en {{ variable }}"
+  },
+  "USE": {
+    "TITLE": "Utiliser le modèle : {{name}}",
+    "PREVIEW": "Aperçu",
+    "GENERATE": "Générer & Télécharger (PDF)"
+  },
+  "PREVIEW": {
+    "TITLE": "Aperçu du modèle"
+  }
 }
+
 
 }
