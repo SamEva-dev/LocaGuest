@@ -1,0 +1,88 @@
+    <div class="p-6 md:p-8 space-y-6">
+      <!-- Header -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold">{{ property().name }}</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ property().address }}</p>
+        </div>
+        <button class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+          <i class="ph ph-pencil-simple mr-2"></i>{{ 'PROPERTY.EDIT' | translate }}
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+          <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'PROPERTY.STATUS' | translate }}</p>
+          <p class="text-lg font-semibold mt-1 text-emerald-600">{{ property().status | translate }}</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+          <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'PROPERTY.RENT' | translate }}</p>
+          <p class="text-lg font-semibold mt-1">{{ property().rent }}</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+          <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'PROPERTY.SURFACE' | translate }}</p>
+          <p class="text-lg font-semibold mt-1">{{ property().surface }} m²</p>
+        </div>
+      </div>
+
+      <!-- Tabs content -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
+        <div class="flex border-b border-slate-200 dark:border-slate-700 mb-6">
+          @for (t of tabs; track t.id) {
+            <button
+              (click)="activeTab.set(t.id)"
+              [class.border-b-2]="activeTab() === t.id"
+              [class.border-amber-500]="activeTab() === t.id"
+              [class.text-amber-600]="activeTab() === t.id"
+              class="px-4 py-2 text-sm font-medium transition"
+            >
+              {{ t.label | translate }}
+            </button>
+          }
+        </div>
+
+        @if (activeTab() === 'details') {
+          <div class="space-y-4">
+            <div><span class="font-medium">{{ 'PROPERTY.TYPE' | translate }}:</span> {{ property().type }}</div>
+            <div><span class="font-medium">{{ 'PROPERTY.ROOMS' | translate }}:</span> {{ property().rooms }}</div>
+            <div><span class="font-medium">{{ 'PROPERTY.FLOOR' | translate }}:</span> {{ property().floor }}</div>
+            <div><span class="font-medium">{{ 'PROPERTY.YEAR' | translate }}:</span> {{ property().year }}</div>
+          </div>
+        }
+
+        @if (activeTab() === 'tenants') {
+          <div class="space-y-3">
+            @for (tenant of property().tenants; track tenant.id) {
+              <div class="flex items-center justify-between p-3 rounded border border-slate-200 dark:border-slate-700">
+                <div>
+                  <p class="font-medium">{{ tenant.name }}</p>
+                  <p class="text-sm text-slate-500">{{ tenant.email }}</p>
+                </div>
+                <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                  {{ tenant.status | translate }}
+                </span>
+              </div>
+            } @empty {
+              <p class="text-center text-slate-400 py-8">{{ 'PROPERTY.NO_TENANTS' | translate }}</p>
+            }
+          </div>
+        }
+
+        @if (activeTab() === 'documents') {
+          <div class="grid sm:grid-cols-2 gap-3">
+            @for (doc of property().documents; track doc.id) {
+              <div class="flex items-center gap-3 p-3 rounded border border-slate-200 dark:border-slate-700">
+                <i class="ph ph-file-pdf text-2xl text-rose-500"></i>
+                <div class="flex-1">
+                  <p class="text-sm font-medium">{{ doc.name }}</p>
+                  <p class="text-xs text-slate-500">{{ doc.size }}</p>
+                </div>
+              </div>
+            } @empty {
+              <p class="col-span-2 text-center text-slate-400 py-8">{{ 'PROPERTY.NO_DOCUMENTS' | translate }}</p>
+            }
+          </div>
+        }
+      </div>
+    </div>

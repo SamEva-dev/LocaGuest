@@ -1,657 +1,189 @@
 {
-  "APP": {
-    "TITLE": "LocaGuest"
-  },
-  "COMMON": {
-    "CANCEL": "Annuler",
-    "CONFIRM": "Confirmer",
-    "EDIT": "Modifier",
-    "DELETE": "Supprimer",
-    "SAVE": "Sauvegarder",
-    "SEARCH": "Rechercher...",
-    "YES": "Oui",
-    "NO": "Non",
-    "LOADING": "Chargement...",
-    "SUBMIT": "Soumettre",
-    "ACTIONS": "Actions",
-    "BACK": "Retour",
-    "DESCRIOTION": "Description",
-    "NEXT": "Suivant",
-    "UPLOAD": "Télécharger",
-    "DOWNLOAD": "Télécharger",
-    "BACK_TO_DASHBOARD": "Retour au dashboard",
-    "ALL": "Tous",
-    "REFRESH": "Rafraîchir",
-    "RESET": "Réinitialiser",
-    "APPLY": "Appliquer",
-    "CLOSE": "Fermer"
-  },
-  "TOAST": {
-  "TEMPLATE_SAVED": "Modèle enregistré avec succès",
-  "PREVIEW_OK": "Aperçu généré",
-  "PREVIEW_ERROR": "Erreur lors de la génération de l’aperçu",
-  "GENERATE_OK": "Document généré avec succès",
-  "GENERATE_ERROR": "Erreur lors de la génération du document",
-  "DOWNLOAD_OK": "Téléchargement lancé",
-  "DOWNLOAD_ERROR": "Échec du téléchargement",
-  "CONTRACT_SAVED": "Contrat enregistré avec succès",
-  "CONTRACT_SAVE_ERROR": "Erreur lors de l’enregistrement du contrat",
-  "FILTER_APPLIED": "Filtre appliqué",
-  "ANALYTICS_UPDATED": "Données d’analyse mises à jour",
-  "DASHBOARD_REFRESH": "Tableau de bord actualisé"
-}
-,
-  "AUTH": {
-    "SENDING": "Sending...",
-    "SUBTITLE": "Connectez-vous à votre plateforme de gestion immobilière",
-    "WELCOME": "Bienvenue",
-    "DEMO_HINT": "Utilisez les identifiants de démonstration",
-    "EMAIL": "Email",
-    "PASSWORD": "Mot de passe",
-    "FULLNAME": "Nom complet",
-    "DEMO_CREDS": "Utilisez: demo@locaguest.com / demo123",
-    "LOGIN": "Se connecter",
-    "LOGGING": "Connexion...",
-    "REGISTER": "Créer un compte",
-    "REGISTERING": "Création...",
-    "DEMO_MODE": "Mode démonstration - Aucune données réelles",
-    "HAVE_ACCOUNT": "Déjà un compte ?",
-     "OR": "ou",
-    "LOGIN_GOOGLE": "Se connecter avec Google",
-    "LOGIN_FACEBOOK": "Se connecter avec Facebook",
-    "REMEMBER_ME": "Se souvenir de moi",
-    "FORGOT_PASSWORD": "Mot de passe oublié ?",
-    "RESET_PASSWORD": "Réinitialiser le mot de passe",
-    "RESET_INSTRUCTIONS": "Entrez votre email pour recevoir un lien de réinitialisation",
-    "SEND_LINK": "Envoyer le lien",
-    "BACK_TO_LOGIN": "Retour à la connexion",
-    "NO_ACCOUNT": "Pas encore de compte ?",
-    "INVALID_CREDENTIALS": "Email ou mot de passe invalide.",
-  "ACCOUNT_LOCKED": "Votre compte est verrouillé. Réessayez plus tard ou réinitialisez votre mot de passe.",
-  "SESSION_EXPIRED": "Votre session a expiré. Veuillez vous reconnecter.",
-  "SESSION_EXPIRING": "Votre session va expirer, renouvellement en cours...",
-  "MFA_SETUP_FAILED": "Impossible d’activer la double authentification.",
-  "MFA_VERIFIED": "Authentification à deux facteurs vérifiée.",
-  "MFA_INVALID": "Code de vérification invalide.",
-  "MFA_DISABLED": "Authentification à deux facteurs désactivée.",
-  "MFA_DISABLE_FAILED": "Impossible de désactiver la double authentification.",
-  "SESSION_REVOKED": "Votre session a été révoquée depuis un autre appareil."
-  },
-
-  "NAV": {
-    "LOGIN": "Connexion",
-    "START": "Commencer"
-  },
-  "SIDEBAR": {
-    "APP_NAME": "Tailwind",
-    "SEARCH": "Rechercher",
-    "DASHBOARD": "Tableau de bord",
-    "CONTRACTS": "Contrats",
-    "FINANCIALS": "Finances",
-    "ACCOUNTS": "Comptes",
-    "SCHEDULE": "Planning",
-    "SEARCH_MENU": "Recherche",
-    "ANALYTICS": "Analyses",
-    "FILES": "Documents",
-    "SETTINGS": "Paramètres",
-    "LOGOUT": "Se déconnecter",
-    "DOCUMENT": "Documents"
-  },
-  "HEADER": {
-    "APP_NAME": "Mon Application",
-    "THEME": "Thème"
-  },
+  "APP": { "TITLE": "LocaGuest" },
+  "NAV": { "LOGIN": "Se connecter", "START": "Commencer" },
+  "IMAGES": { "HERO_ALT": "Immeuble moderne", "DASHBOARD_ALT": "Aperçu du tableau de bord LocaGuest" },
   "HERO": {
-    "TITLE": "Gérez vos locations comme un pro",
-    "SUBTITLE": "LocaGuest simplifie la gestion de vos biens immobiliers : locataires, colocations, locations saisonnières – tout en un seul endroit.",
-    "CTA": {
-      "START": "Démarrer gratuitement",
-      "DEMO": "Voir la démo"
-    },
-    "BADGE": {
-      "TRIAL": "Essai gratuit 30 jours",
-      "NOCARD": "Aucune carte requise"
-    }
+    "TITLE": "Gérez vos biens immobiliers avec élégance",
+    "SUBTITLE": "Une plateforme moderne pour propriétaires et gestionnaires: contrats, loyers, locataires et tableaux de bord en temps réel.",
+    "CTA": { "START": "Démarrer", "DEMO": "Voir la démo" },
+    "BADGE": { "TRIAL": "Essai gratuit", "NOCARD": "Sans carte requise" }
   },
+  "STATS": { "PROPERTIES": "Biens gérés", "USERS": "Utilisateurs", "SATISFACTION": "Satisfaction" },
   "FEATURES": {
-    "TITLE": "Tout ce dont vous avez besoin pour réussir",
-    "SUBTITLE": "Une solution complète pour gérer efficacement votre patrimoine immobilier",
-    "ITEMS":{
+    "TITLE": "Toutes vos fonctionnalités, au même endroit",
+    "SUBTITLE": "De la gestion des biens aux paiements, gagnez du temps et de la sérénité.",
+    "ITEMS": {
       "PROPERTIES": {
         "TITLE": "Gestion des biens",
-        "DESCRIPTION": "Ajoutez, modifiez et organisez facilement vos propriétés, appartements et chambres."
+        "DESCRIPTION": "Créez, suivez et mettez à jour vos appartements, maisons et locaux."
       },
       "TENANTS": {
         "TITLE": "Gestion des locataires",
-        "DESCRIPTION": "Suivez les informations de vos locataires, contrats et paiements en un seul endroit."
-      },
-      "MAINTENANCE": {
-        "TITLE": "Maintenance & Support",
-        "DESCRIPTION": "Gérez les demandes de maintenance et communiquez avec vos locataires rapidement."
-      },
-      "FINANCE": {
-        "TITLE": "Suivi financier",
-        "DESCRIPTION": "Surveillez les loyers, dépenses et rapports financiers pour une gestion transparente."
+        "DESCRIPTION": "Dossiers locataires, contrats, paiements et communication centralisés."
       },
       "DOCUMENTS": {
-        "TITLE": "Stockage de documents",
-        "DESCRIPTION": "Centralisez tous vos documents importants liés à vos propriétés et locataires."
-      },
-      "REMINDERS": {
-        "TITLE": "Rappels automatiques",
-        "DESCRIPTION": "Recevez des notifications pour les paiements, renouvellements de bail et autres tâches importantes."
+        "TITLE": "Documents",
+        "DESCRIPTION": "Contrats, états des lieux, quittances et pièces jointes en un clic."
       },
       "ANALYTICS": {
-        "TITLE": "Analyses & Projections",
-        "DESCRIPTION": "Tableaux de bord complets avec analyses financières et projections."
+        "TITLE": "Analytique",
+        "DESCRIPTION": "Tableaux de bord et graphiques pour piloter vos revenus et l’occupation."
       },
       "LEGAL": {
-        "TITLE": "Conformité Légale",
-        "DESCRIPTION": "Restez conforme avec les dernières réglementations locatives."
-      },
-      "ACCOUNTING": {
-        "TITLE": "Comptabilité Simplifiée",
-        "DESCRIPTION": "Export automatique vers votre expert-comptable et suivi fiscal."
-      }
-    }
-  },
-  "DASHBOARDxx": {
-    "TITLE": "Interface moderne et intuitive",
-    "SUBTITLE": "Découvrez votre futur tableau de bord LocaGuest"
-  },
-  "DASHBOARD": {
-    "WELCOME_TITLE": "Bienvenue sur votre tableau de bord",
-    "WELCOME_SUBTITLE": "Voici un aperçu de votre activité locative",
-    "ADD_PROPERTY": "+ Ajouter un bien",
-    "PROPERTIES": {
-      "TITLE": "Mes Biens",
-      "SUBTITLE": "Gérez tous vos biens immobiliers",
-      "ADD": "Ajouter",
-      "SEARCH": "Rechercher un bien...",
-      "TENANT": "Locataire",
-      "DUE": "Échéance",
-      "DETAILS": "Voir détails",
-      "STATUS": {
-        "OCCUPIED": "Occupé",
-        "VACANT": "Vacant",
-        "INCONNU": "Inconnu"
-      },
-      "MENU": {
-        "DETAILS": "Voir détails",
-        "EDIT": "Modifier",
-        "DELETE": "Supprimer",
-        "DELETE_CONFIRM": "Confirmer la suppression du bien ?"
-      },
-       "FILTERS": "Filtres",
-    "NO_RESULT": "Aucun bien ne correspond à vos filtres"
-    },
-    "ACTIVITIES": {
-      "PAYMENT": "Paiement",
-      "DOCUMENT": "Document",
-      "ALERT": "Alerte",
-      "NEW": "Nouveau",
-      "TIME_AGO": {
-        "HOURS": "Il y a {{value}}h",
-        "DAYS": "Il y a {{value}}j"
-      }
-    },
-    
-    "STATS": {
-      "PROPERTIES": "Biens gérés",
-      "TENANTS": "Locataires actifs",
-      "REVENUE": "Revenus mensuels",
-      "OCCUPANCY": "Taux d'occupation"
-    },
-    "DEADLINES": {
-      "TITLE": "Échéances",
-      "LATE_RENT": "Loyer en retard",
-      "NEXT": "Prochaine échéance",
-      "RENEWAL": "Renouvellement contrat",
-      "DAYS": "jours"
-    },
-    "RECENT_ACTIVITY": {
-      "TITLE": "Activité récente"
-    },
-    "SHORTCUTS": {
-      "CONTRACTS": {
-        "TITLE": "Gestion des contrats",
-        "DESC": "Créez et gérez vos baux de location"
+        "TITLE": "Conformité",
+        "DESCRIPTION": "Respect des normes, renouvellements et rappels réglementaires."
       },
       "ACCOUNTING": {
         "TITLE": "Comptabilité",
-        "DESC": "Suivez vos revenus et dépenses"
-      },
-      "DOCS": {
-        "TITLE": "Documents",
-        "DESC": "Générez vos documents automatiquement"
-      },
-      "PROFIT": {
-        "TITLE": "Rentabilité",
-        "DESC": "Analysez vos performances financières"
-      },
-      "SETTINGS": {
-        "TITLE": "Paramètres",
-        "DESC": "Configurez votre compte et préférences"
-      }
-    },
-    "FILTER": {
-    "STATUS": "Statut",
-    "TYPE": "Type",
-    "RENT_MIN": "Loyer min (€)",
-    "RENT_MAX": "Loyer max (€)"
-  }
-  },
-  "CONTRACTS": {
-    "TITLE": "Gestion des contrats",
-    "NEW_CONTRACT": "Nouveau contrat",
-    "STATS": {
-      "ACTIVE": "Contrats actifs",
-      "EXPIRING": "Expirent dans 3 mois",
-      "REVENUE": "Revenus mensuels",
-      "TENANTS": "Locataires"
-    },
-    "SEARCH_PLACEHOLDER": "Rechercher par bien, locataire...",
-    "FILTERS": {
-      "ALL_STATUS": "Tous les statuts",
-      "ACTIVE": "Actif",
-      "EXPIRING": "Expire bientôt",
-      "ALL_TYPES": "Tous les types",
-      "FURNISHED": "Meublé",
-      "UNFURNISHED": "Non meublé",
-      "MORE": "Plus de filtres",
-      "TITLE": "Filtres",
-      "STATUS": "Statut",
-      "TYPE": "Type",
-      "TENANT": "Nom du locataire",
-      "PROPERTY": "Nom du bien",
-      "START_AFTER": "Début après le",
-      "END_BEFORE": "Fin avant le",
-      "MIN_RENT": "Loyer min (€)",
-      "MAX_RENT": "Loyer max (€)"
-    },
-    "STATUS": {
-    "ACTIVE": "Actif",
-    "EXPIRING": "Expire bientôt",
-    "TERMINATED": "Terminé"
-  },
-  "TYPE": {
-    "FURNISHED": "Meublé",
-    "UNFURNISHED": "Non meublé"
-  },
-    "LIST_TITLE": "Liste des contrats",
-    "ACTIONS": {
-      "VIEW": "Voir",
-      "EDIT": "Modifier",
-      "DOCS": "Documents"
-    },
-    "QUICK_ACTIONS": {
-      "GENERATE": {
-        "TITLE": "Générer un nouveau bail",
-        "DESC": "Créez rapidement un contrat de location"
-      },
-      "RENEWALS": {
-        "TITLE": "Renouvellements à venir",
-        "DESC": "Gérez les contrats qui arrivent à échéance"
-      },
-      "ADD_COTENANT": {
-        "TITLE": "Ajouter un colocataire",
-        "DESC": "Modifiez les contrats existants"
+        "DESCRIPTION": "Suivi des loyers, charges, dépôts de garantie et export comptable."
       }
     }
   },
-   "NEW_CONTRACT": {
-    "TITLE": "Créer un nouveau contrat",
-    "SUBTITLE": "Renseignez les informations du nouveau bail",
-    "PROPERTY": "Bien immobilier",
-    "TENANTS": "Locataires",
-    "START_DATE": "Date de début",
-    "END_DATE": "Date de fin",
-    "TYPE": "Type de contrat",
-    "TYPE_OPTIONS": {
-      "FURNISHED": "Meublé",
-      "UNFURNISHED": "Non meublé"
-    },
-    "DURATION": "Durée",
-    "RENT": "Loyer mensuel (€)",
-    "STATUS": "Statut",
-    "STATUS_OPTIONS": {
-      "ACTIVE": "Actif",
-      "EXPIRING": "Expire bientôt",
-      "TERMINATED": "Terminé"
-    },
-    "SAVE": "Enregistrer le contrat",
-    "CANCEL": "Annuler"
-  },
-  "FINANCIAL": {
-    "TITLE": "Tableau financier",
-    "SUBTITLE": "Suivez la performance et la trésorerie de votre portefeuille",
-    "TABS": {
-      "OVERVIEW": "Vue d'ensemble",
-      "CASHFLOW": "Flux de trésorerie",
-      "CHARGES": "Analyse des charges",
-      "PROJECTIONS": "Projections"
-    },
-    "ACTIONS": {
-      "EXPORT": "Exporter",
-      "CHANGE_YEAR": "Changer d'année"
-    },
-    "STATS": {
-      "TOTAL_REVENUE": "Revenus totaux",
-      "TOTAL_EXPENSES": "Dépenses totales",
-      "NET_RESULT": "Résultat net",
-      "OCCUPANCY": "Taux d'occupation"
-    },
-    "UPCOMING": {
-      "TITLE": "Paiements à venir",
-      "LABEL": "Libellé",
-      "DUE": "Échéance",
-      "AMOUNT": "Montant",
-      "STATUS": "Statut"
-    },
-    "PROPERTIES": {
-      "TITLE": "Performance par bien",
-      "NAME": "Bien",
-      "REVENUE": "Revenus (€)",
-      "CHARGES": "Dépenses (€)",
-      "ROI": "Rentabilité (%)"
-    },
-    "CASHFLOW": {
-      "TITLE": "Résumé de trésorerie",
-      "INCOME": "Revenus",
-      "EXPENSE": "Dépenses",
-      "TOTAL": "Total"
-    },
-    "CHARGES": {
-      "TITLE": "Répartition des charges",
-      "LABEL": "Catégorie",
-      "AMOUNT": "Montant (€)",
-      "PERCENT": "Pourcentage (%)"
-    },
-    "OPTIMIZATIONS": {
-      "TITLE": "Suggestions d’optimisation",
-      "DESCRIPTION": "Idées pour améliorer la rentabilité"
-    },
-    "PROJECTIONS": {
-      "TITLE": "Projections financières",
-      "ESTIMATED_REVENUE": "Revenus estimés",
-      "ESTIMATED_EXPENSES": "Dépenses estimées",
-      "EXPECTED_RESULT": "Résultat attendu"
-    },
-    "OPPORTUNITIES": {
-      "TITLE": "Opportunités d’investissement",
-      "DESC": "Biens potentiels à fort rendement",
-      "PRICE": "Prix",
-      "RENT": "Loyer",
-      "ROI": "Rentabilité"
-    },
-    "COMMON": {
-      "NO_DATA": "Aucune donnée disponible",
-      "LOADING": "Chargement..."
-    }
-  },
-  "ANALYTICS": {
-    "TITLE": "Analyse de rentabilité",
-    "SUBTITLE": "Suivi des performances et optimisation des investissements",
-    "PERIOD": {
-      "3M": "3 derniers mois",
-      "6M": "6 derniers mois",
-      "12M": "12 derniers mois"
-    },
-    "PROPERTIES": {
-      "ALL": "Tous les biens"
-    },
-    "TOTAL_REVENUE": "Revenus totaux",
-    "TOTAL_EXPENSES": "Charges totales",
-    "NET_PROFIT": "Bénéfice net",
-    "AVERAGE_YIELD": "Rendement moyen",
-    "OPTIMIZATIONS": {
-      "TITLE": "Suggestions d’optimisation",
-      "OPPORTUNITY": "Opportunité",
-      "WARNING": "Avertissement",
-      "ADVICE": "Conseil"
-    },
-    "PERFORMANCE": {
-      "TITLE": "Performance par bien",
-      "NAME": "Nom du bien",
-      "VALUE": "Valeur",
-      "YIELD": "Rendement (%)"
-    }
-  },
-  "SETTINGS": {
-    "TITLE": "Paramètres",
-    "SUBTITLE": "Gérez vos préférences et paramètres du compte",
-    "TABS": {
-      "PROFILE": "Profil",
-      "NOTIFICATIONS": "Notifications",
-      "SECURITY": "Sécurité",
-      "BILLING": "Facturation",
-      "PREFERENCES": "Préférences",
-      "LAYOUT": "Disposition"
-    },
-    "PROFILE": {
-      "TITLE": "Informations du Profil",
-      "SUBTITLE": "Mettez à jour vos informations personnelles",
-      "FIRST_NAME": "Prénom",
-      "LAST_NAME": "Nom",
-      "EMAIL": "Email",
-      "PHONE": "Téléphone",
-      "COMPANY": "Société",
-      "ROLE_OWNER": "Propriétaire",
-      "ROLE_MANAGER": "Gestionnaire",
-      "ROLE_ADMIN": "Administrateur",
-      "BIO": "Biographie",
-      "CHANGE_PHOTO": "Changer la photo",
-  "PHOTO_HINT": "JPG, GIF ou PNG. Taille max. 2MB",
-  "ROLE": "Rôle"
-    },
-    "NOTIFICATIONS": {
-      "TITLE": "Préférences de Notification",
-      "SUBTITLE": "Choisissez comment vous souhaitez être informé",
-      "EMAIL": "Notifications Email",
-      "SMS": "Notifications SMS",
-      "BOOKINGS": "Nouvelles réservations",
-      "PAYMENTS": "Rappels de paiement",
-      "REPORTS": "Rapports mensuels"
-    },
-    "SECURITY": {
-      "TITLE": "Sécurité du Compte",
-      "SUBTITLE": "Gérez la sécurité et les accès à votre compte",
-      "CURRENT_PASSWORD": "Mot de passe actuel",
-      "NEW_PASSWORD": "Nouveau mot de passe",
-      "CONFIRM_PASSWORD": "Confirmer le mot de passe",
-      "UPDATE_PASSWORD": "Mettre à jour le mot de passe",
-      "SESSIONS": "Sessions actives",
-      "CURRENT": "Actuel",
-      "DISCONNECT": "Déconnecter"
-    },
-    "BILLING": {
-      "TITLE": "Facturation et Abonnement",
-      "PLAN": "Plan Professionnel",
-      "RENEWAL": "Renouvellement",
-      "HISTORY": "Historique"
-    },
-    "PREFERENCES": {
-      "TITLE": "Préférences d'Application",
-      "DARK_MODE": "Mode sombre",
-      "DANGER_ZONE": "Zone de danger",
-      "DANGER_DESC": "Cette action est définitive et supprimera toutes vos données.",
-      "DELETE_ACCOUNT": "Supprimer le compte"
-    },
-    "LAYOUT": {
-      "TITLE": "Disposition de l'interface",
-      "SUBTITLE": "Choisissez où afficher le menu après connexion.",
-      "HEADER_MENU": "Menu dans l'en-tête",
-      "HEADER_DESC": "Le menu est affiché en haut, dans le header.",
-      "SIDEBAR_MENU": "Menu en barre latérale",
-      "SIDEBAR_DESC": "Le menu est affiché à gauche, en sidebar (recommandé).",
-      "USE_HEADER": "Utiliser le Header",
-      "USE_SIDEBAR": "Utiliser la Sidebar",
-      "CURRENT_MODE": "Mode actuel :",
-      "SIDEBAR": "Sidebar",
-      "HEADER": "Header"
-    },
-    "ACTIONS": {
-      "RESET": "Réinitialiser",
-      "SAVE": "Sauvegarder"
-    }
+  "DASHBOARD": {
+    "TITLE": "Tableau de bord",
+    "SUBTITLE": "Vue d'ensemble de votre activité",
+    "ACTIONS": { "NEW_PROPERTY": "Nouveau bien", "NEW_TENANT": "Nouveau locataire" },
+    "OCCUPANCY": { "TITLE": "Taux d'occupation", "LAST30": "30 derniers jours" },
+    "REVENUE": { "TITLE": "Revenus", "LAST12": "12 derniers mois" },
+    "ACTIVITIES": { "TITLE": "Activités récentes" },
+    "SHORTCUTS": { "TITLE": "Raccourcis", "MY_PROPERTIES": "Mes biens", "MY_TENANTS": "Mes locataires", "DOCUMENTS": "Documents", "REPORTS": "Rapports" },
+    "STATS": { "PROPERTIES": "Biens", "TENANTS": "Locataires", "OCCUPANCY": "Occupation", "REVENUE": "Revenus" },
+    "TREND": { "UP": "En hausse", "DOWN": "En baisse" }
   },
   "PROPERTY": {
-    "NAME":"Nom du bien",
-    "TITLE": "Ajouter un bien",
-    "SUBTITLE": "Saisissez les détails de votre nouveau bien immobilier",
-    "FINANCIAL_SUMMARY": "Résumé financier",
-    "FINANCIAL_SUBTITLE": "Aperçu rapide des performances financières",
-    "ADDRESS": "Adresse",
-    "CITY": "Ville",
-    "STATE": "État/Province/Région",
-    "ZIP": "Code postal",
-    "COUNTRY": "Pays",
-    "TYPE": "Type de bien",
-    "TYPE_PLACEHOLDER": "Sélectionner un type",
-    "ANNUAL_REVENUE": "Revenus annuels",
-    "PERFORMANCE": "Performance du bien",
-    "PER_MONTH": "par mois",
-    "TYPE_OPTIONS": {
-      "DETAILS":"Détails du bien",
-      "APARTMENT": "Appartement",
-      "HOUSE": "Maison",
-      "CONDO": "Copropriété",
-      "TOWNHOUSE": "Maison de ville",
-      "DUPLEX": "Duplex",
-      "STUDIO": "Studio",
-      "ADD_IMAGE": "Ajouter une image",
-      "ROOMS": "Pièces",
-      "FLOOR": "Étage",
-      "FURNISHED": "Meublé"
-    },
-    "ELEVATOR": "Ascenseur",
-    "PARKING": "Parking",
-    "CHARGES": "Charges",
-    "DEPOSIT": "Dépôt de garantie",
-    "BEDROOMS": "Chambres",
-    "BATHROOMS": "Salles de bain",
-    "SURFACE": "Surface (m²)",
-    "RENT": "Loyer mensuel (€)",
+    "EDIT": "Modifier",
     "STATUS": "Statut",
-    "STATUS_OPTIONS": {
-      "OCCUPIED": "Occupé",
-      "VACANT": "Libre"
-    },
-    "TENANT_NAME": "Nom du locataire",
-    "TENANT_EMAIL": "Email du locataire",
-    "TENANT_PHONE": "Téléphone du locataire",
-    "LEASE_START": "Date de début du bail",
-    "LEASE_END": "Date de fin du bail",
-    "NOTES": "Remarques",
-    "ACTIONS": {
-      "CANCEL": "Annuler",
-      "SAVE": "Enregistrer le bien"
-    },
-    "TABS": {
-      "OVERVIEW": "Vue d'ensemble",
+    "RENT": "Loyer",
+    "SURFACE": "Surface",
+    "TABS": { "DETAILS": "Détails", "TENANTS": "Locataires", "DOCUMENTS": "Documents" },
+    "TYPE": "Type",
+    "ROOMS": "Pièces",
+    "FLOOR": "Étage",
+    "YEAR": "Année",
+    "NO_TENANTS": "Aucun locataire",
+    "NO_DOCUMENTS": "Aucun document",
+    "STATUS_OCCUPIED": "Occupé",
+    "STATUS_VACANT": "Vacant",
+    "FINANCIAL_ANALYSIS": "Analyse financière",
+    "RECENT_PAYMENTS": "Paiements récents",
+    "OVERVIEW": "Aperçu",
+    "TENANTS": "Locataires",
+    "ADD_TENANT": "Ajouter un locataire",
+    "CONTRACTS": "Contrats",
+    "DOCUMENTS": "Documents",
+    "MAINTENANCE": "Maintenance",
+    "PAYMENTS": "Paiements",
+    "INVOICES": "Factures",
+    "PROJECTION": "Projection",
+    "SUB_TABS": {
+      "OVERVIEW": "Aperçu",
       "TENANTS": "Locataires",
       "CONTRACTS": "Contrats",
       "DOCUMENTS": "Documents",
-      "MAINTENANCE": "Maintenance"
-    }
+      "MAINTENANCE": "Maintenance",
+      "PAYMENTS": "Paiements",
+      "INVOICES": "Factures",
+      "PROJECTION": "Projection"
+    },
+    "ANALYTICS": {
+      "ROI": "ROI",
+      "PROFITABILITY": "Rentabilité",
+      "REVENUE": "Revenus",
+      "CHARGES": "Charges"
+    },
+    "CONTRACTS_PLACEHOLDER": "Liste des contrats de location...",
+    "MAINTENANCE_PLACEHOLDER": "Historique des interventions...",
+    "PAYMENTS_PLACEHOLDER": "Historique des paiements...",
+    "INVOICES_PLACEHOLDER": "Factures et charges..."
   },
   "CTA": {
-    "TITLE": "Prêt à transformer votre gestion locative ?",
-    "SUBTITLE": "Rejoignez les centaines de propriétaires qui nous font confiance",
-    "BUTTONS": {
-      "START": "Commencer maintenant",
-      "DEMO": "Planifier une démo"
-    }
+    "TITLE": "Passez à la vitesse supérieure",
+    "SUBTITLE": "Essayez LocaGuest dès aujourd'hui et simplifiez votre gestion",
+    "BUTTONS": { "START": "Commencer", "DEMO": "Voir la démo" }
   },
   "FOOTER": {
-    "DESCRIPTION": "La solution moderne pour gérer vos biens immobiliers en toute simplicité.",
-    "PRODUCT": {
-      "TITLE": "Produit",
-      "FEATURES": "Fonctionnalités",
-      "PRICING": "Tarifs",
-      "DOCS": "Documentation"
-    },
-    "SUPPORT": {
-      "TITLE": "Support",
-      "HELP": "Centre d'aide",
-      "CONTACT": "Contact",
-      "TRAINING": "Formation"
-    },
-    "LEGAL": {
-      "TITLE": "Légal",
-      "PRIVACY": "Confidentialité",
-      "TERMS": "CGU",
-      "IMPRINT": "Mentions légales"
-    },
-    "COPYRIGHT": "Tous droits réservés.",
-    "COPYRIGHT2": "© {{year}} {{app}} — Tous droits réservés"
+    "DESCRIPTION": "La solution simple et moderne pour la gestion locative.",
+    "PRODUCT": { "TITLE": "Produit", "FEATURES": "Fonctionnalités", "PRICING": "Tarifs", "DOCS": "Documentation" },
+    "SUPPORT": { "TITLE": "Support", "HELP": "Aide", "CONTACT": "Contact", "TRAINING": "Formation" },
+    "LEGAL": { "TITLE": "Légal", "PRIVACY": "Confidentialité", "TERMS": "Conditions", "IMPRINT": "Mentions légales" },
+    "COPYRIGHT": "Tous droits réservés."
   },
-  "CHARTS": {
-    "CASHFLOW": "Flux de trésorerie",
-    "YIELD_SHARE": "Répartition du rendement"
-  },
-  "DOCUMENTS": {
-    "BACK_TO_DASHBOARD": "Retour au tableau de bord",
-    "NEW_TEMPLATE": "Nouveau modèle",
-    "TITLE": "Génération de documents",
-    "MODELS": "Modèles disponibles",
-    "SEARCH_PLACEHOLDER": "Rechercher un modèle...",
-    "CATEGORIES": {
-      "ALL": "Toutes catégories",
-      "CONTRACTS": "Contrats",
-      "INVENTORY": "États des lieux",
-      "TERMINATION": "Résiliation",
-      "WORKS": "Travaux",
-      "ACCOUNTING": "Comptabilité",
-      "OTHER": "Autre"
+  "THEME": { "TOGGLE": "Changer de thème" },
+  "AUTH": {
+    "SUBTITLE": "Connectez-vous à votre espace LocaGuest",
+    "WELCOME": "Bienvenue",
+    "DEMO_HINT": "Utilisez le compte de démonstration pour tester",
+    "EMAIL": "Email",
+    "PASSWORD": "Mot de passe",
+    "EMAIL_PLACEHOLDER": "email@exemple.com",
+    "REMEMBER_ME": "Se souvenir de moi",
+    "FORGOT_PASSWORD": "Mot de passe oublié ?",
+    "LOGGING": "Connexion en cours...",
+    "LOGIN": "Se connecter",
+    "OR": "ou",
+    "LOGIN_GOOGLE": "Continuer avec Google",
+    "LOGIN_FACEBOOK": "Continuer avec Facebook",
+    "NO_ACCOUNT": "Pas de compte ?",
+    "REGISTER": "Créer un compte",
+    "DEMO_MODE": "Mode démo activé",
+    "LOGOUT": "Se déconnecter"
+  }
+  ,
+  "SUMMARY": {
+    "TITLE": "Vue d'ensemble",
+    "ADD_PROPERTY": "Ajouter un bien",
+    "VS_LAST_MONTH": "vs mois dernier",
+    "PROPERTIES": "Biens",
+    "TENANTS": "Locataires",
+    "NOTIFICATIONS": "Notifications",
+    "DEADLINES": "Échéances à venir",
+    "PROJECTIONS": "Projections annuelles",
+    "FILTERS": {
+      "STATUS_ALL": "Tous les statuts",
+      "FILTERS": "Filtres"
     },
-    "STATUS": {
-    "LOADING": "Chargement des modèles...",
-    "NO_TEMPLATES": "Aucun modèle disponible pour le moment.",
-    "NO_RECENT_DOCS": "Aucun document récent trouvé.",
-    "LOADING_GLOBAL": "Chargement en cours..."
-  },
-    "USES": "usages",
-    "PREVIEW": "Aperçu",
-    "USE": "Utiliser",
-    "QUICK_GEN": "Génération rapide",
-    "TYPE": "Type de document",
-    "PROPERTY": "Bien immobilier",
-    "PROPERTY_PLACEHOLDER": "Ex: 12 rue de Paris, Lyon",
-    "TENANT": "Locataire",
-    "TENANT_PLACEHOLDER": "Ex: Jean Dupont",
-    "NOTES": "Notes spéciales",
-    "NOTES_PLACEHOLDER": "Informations supplémentaires...",
-    "GENERATE": "Générer le document",
-    "SEND": "Envoyer",
-    "RECENT_DOCS": "Documents récents",
     "TABLE": {
-      "NAME": "Nom du fichier",
-      "DATE": "Date de création",
-      "TYPE": "Type",
-      "ACTION": "Action"
+      "PROPERTY": "Bien",
+      "ADDRESS": "Adresse",
+      "RENT": "Loyer",
+      "STATUS": "Statut",
+      "TENANT": "Locataire"
     },
-    "DOWNLOAD": "Télécharger"
+    "STATS": {
+      "PROPERTIES": "Biens",
+      "ACTIVE_TENANTS": "Locataires actifs",
+      "OCCUPANCY": "Occupation",
+      "REVENUE": "Revenus"
+    }
   },
-  "TEMPLATES": {
-  "NEW": {
-    "TITLE": "Nouveau modèle",
-    "SUBTITLE": "Créez un modèle de document avec des variables dynamiques",
-    "NAME": "Nom du modèle",
-    "CATEGORY": "Catégorie",
-    "DESCRIPTION": "Description",
-    "CONTENT": "Contenu HTML",
-    "VARIABLE_HINT": "variables en {{ variable }}"
+  "TENANT": {
+    "ACTIVE": "Actif",
+    "EDIT": "Modifier",
+    "STATUS": "Statut",
+    "PROPERTY": "Bien",
+    "RENT": "Loyer",
+    "SINCE": "Depuis",
+    "PHONE": "Téléphone",
+    "BIRTHDATE": "Date de naissance",
+    "OCCUPATION": "Profession",
+    "TABS": {
+      "INFO": "Informations",
+      "PAYMENTS": "Paiements",
+      "DOCUMENTS": "Documents"
+    },
+    "PAYMENT_PAID": "Payé",
+    "PAYMENT_PENDING": "En attente"
   },
-  "USE": {
-    "TITLE": "Utiliser le modèle : {{name}}",
-    "PREVIEW": "Aperçu",
-    "GENERATE": "Générer & Télécharger (PDF)"
+  "MON_LOCAGUEST": {
+    "TITLE": "Mon LocaGuest"
   },
-  "PREVIEW": {
-    "TITLE": "Aperçu du modèle"
+  "TABS": {
+    "SUMMARY": "Résumé"
+  },
+  "PAYMENT": {
+    "STATUS": {
+      "PAID": "Payé"
+    }
   }
 }
 
-
-}

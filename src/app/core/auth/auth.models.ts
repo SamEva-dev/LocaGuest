@@ -4,6 +4,7 @@ export interface UserDto {
   email: string;
   fullName: string;
   roles: string[];
+  permissions: string[];
   mfaEnabled: boolean;
 }
 
@@ -28,9 +29,13 @@ export interface Tokens {
 }
 
 export interface LoginResponse {
-  user: UserDto;
-  tokens: AuthTokens;
-  status: 'Success' | 'MfaRequired';
+  user?: UserDto;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  requiresMfa: boolean;
+  mfaToken?: string;
+  status?: 'Success' | 'MfaRequired';
 }
 
 export interface ApiError {

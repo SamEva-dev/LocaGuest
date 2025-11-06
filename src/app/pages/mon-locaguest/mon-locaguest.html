@@ -1,0 +1,55 @@
+    <div class="h-full flex flex-col bg-slate-50 dark:bg-slate-900">
+      <!-- Internal Tab Bar -->
+      <div class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-2 flex items-center gap-1 overflow-x-auto scrollbar-thin">
+        @for (tab of tabManager.tabs(); track tab.id) {
+          <div
+            (click)="selectTab(tab.id)"
+            [class.active]="tabManager.activeTabId() === tab.id"
+            class="group flex items-center gap-2 px-3 py-2 cursor-pointer rounded-t-lg transition-all min-w-fit"
+            [class.bg-slate-100]="tabManager.activeTabId() === tab.id"
+            [class.dark:bg-slate-700]="tabManager.activeTabId() === tab.id"
+            [style.border-bottom]="tabManager.activeTabId() === tab.id ? '2px solid ' + (tab.color || '#3b82f6') : '2px solid transparent'"
+          >
+            <i 
+              [class]="'ph ' + tab.icon + ' text-base'" 
+              [style.color]="tab.color || '#64748b'"
+            ></i>
+            <span 
+              class="text-sm font-medium whitespace-nowrap"
+              [class.text-slate-800]="tabManager.activeTabId() === tab.id"
+              [class.dark:text-white]="tabManager.activeTabId() === tab.id"
+              [class.text-slate-600]="tabManager.activeTabId() !== tab.id"
+              [class.dark:text-slate-300]="tabManager.activeTabId() !== tab.id"
+            >
+              {{ tab.title | translate }}
+            </span>
+            @if (tab.closable) {
+              <button
+                (click)="closeTab(tab.id, $event)"
+                class="ml-1 p-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-600 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <i class="ph ph-x text-xs text-slate-500 dark:text-slate-400"></i>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Tab Content -->
+      <div class="flex-1 overflow-auto">
+        @switch (tabManager.activeTab()?.type) {
+          @case ('summary') {
+            <summary-tab />
+          }
+          @case ('property') {
+            <property-detail-tab [data]="tabManager.activeTab()?.data" />
+          }
+          @case ('tenant') {
+            <tenant-detail-tab [data]="tabManager.activeTab()?.data" />
+          }
+          @case ('relation') {
+            <relation-tab [data]="tabManager.activeTab()?.data" />
+          }
+        }
+      </div>
+    </div>

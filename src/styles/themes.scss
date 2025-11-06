@@ -1,0 +1,249 @@
+/* ========================================
+   DESIGN SYSTEM - Thèmes personnalisables
+   ======================================== */
+
+:root {
+  /* Primary: Amber/Orange (par défaut) */
+  --color-primary: #f59e0b;
+  --color-primary-50: #fffbeb;
+  --color-primary-100: #fef3c7;
+  --color-primary-200: #fde68a;
+  --color-primary-300: #fcd34d;
+  --color-primary-400: #fbbf24;
+  --color-primary-500: #f59e0b;
+  --color-primary-600: #d97706;
+  --color-primary-700: #b45309;
+  --color-primary-800: #92400e;
+  --color-primary-900: #78350f;
+  --color-primary-950: #451a03;
+
+  /* Secondary: Emerald (pour biens) */
+  --color-secondary: #10b981;
+  --color-secondary-50: #ecfdf5;
+  --color-secondary-100: #d1fae5;
+  --color-secondary-200: #a7f3d0;
+  --color-secondary-300: #6ee7b7;
+  --color-secondary-400: #34d399;
+  --color-secondary-500: #10b981;
+  --color-secondary-600: #059669;
+  --color-secondary-700: #047857;
+  --color-secondary-800: #065f46;
+  --color-secondary-900: #064e3b;
+  --color-secondary-950: #022c22;
+
+  /* Accent: Indigo (pour relations) */
+  --color-accent: #6366f1;
+  --color-accent-50: #eef2ff;
+  --color-accent-100: #e0e7ff;
+  --color-accent-200: #c7d2fe;
+  --color-accent-300: #a5b4fc;
+  --color-accent-400: #818cf8;
+  --color-accent-500: #6366f1;
+  --color-accent-600: #4f46e5;
+  --color-accent-700: #4338ca;
+  --color-accent-800: #3730a3;
+  --color-accent-900: #312e81;
+  --color-accent-950: #1e1b4b;
+
+  /* Types de tabs */
+  --color-tab-property: #10b981; /* Emerald pour biens */
+  --color-tab-tenant: #f59e0b; /* Amber pour locataires */
+  --color-tab-relation: #6366f1; /* Indigo pour relation */
+
+  /* Background & Surface */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --surface: #ffffff;
+  --surface-hover: #f9fafb;
+  
+  /* Text */
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  
+  /* Borders */
+  --border-color: #e5e7eb;
+  --border-color-hover: #d1d5db;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+/* ========================================
+   DARK MODE
+   ======================================== */
+.dark {
+  /* Primary: Conserve Amber mais plus sombre */
+  --color-primary: #fbbf24;
+  --color-primary-50: #451a03;
+  --color-primary-100: #78350f;
+  --color-primary-200: #92400e;
+  --color-primary-300: #b45309;
+  --color-primary-400: #d97706;
+  --color-primary-500: #f59e0b;
+  --color-primary-600: #fbbf24;
+  --color-primary-700: #fcd34d;
+  --color-primary-800: #fde68a;
+  --color-primary-900: #fef3c7;
+  --color-primary-950: #fffbeb;
+
+  /* Secondary: Emerald sombre */
+  --color-secondary: #34d399;
+  --color-secondary-50: #022c22;
+  --color-secondary-100: #064e3b;
+  --color-secondary-200: #065f46;
+  --color-secondary-300: #047857;
+  --color-secondary-400: #059669;
+  --color-secondary-500: #10b981;
+  --color-secondary-600: #34d399;
+  --color-secondary-700: #6ee7b7;
+  --color-secondary-800: #a7f3d0;
+  --color-secondary-900: #d1fae5;
+  --color-secondary-950: #ecfdf5;
+
+  /* Accent: Indigo sombre */
+  --color-accent: #818cf8;
+  --color-accent-50: #1e1b4b;
+  --color-accent-100: #312e81;
+  --color-accent-200: #3730a3;
+  --color-accent-300: #4338ca;
+  --color-accent-400: #4f46e5;
+  --color-accent-500: #6366f1;
+  --color-accent-600: #818cf8;
+  --color-accent-700: #a5b4fc;
+  --color-accent-800: #c7d2fe;
+  --color-accent-900: #e0e7ff;
+  --color-accent-950: #eef2ff;
+
+  /* Background & Surface */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --surface: #1e293b;
+  --surface-hover: #334155;
+  
+  /* Text */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  
+  /* Borders */
+  --border-color: #334155;
+  --border-color-hover: #475569;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+  
+  /* Glassmorphism dark */
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================
+   CLASSES UTILITAIRES SEXY
+   ======================================== */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, var(--color-secondary-500), var(--color-secondary-600));
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, var(--color-accent-500), var(--color-accent-600));
+}
+
+.gradient-mesh {
+  background: 
+    radial-gradient(at 0% 0%, var(--color-primary-500) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, var(--color-accent-500) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, var(--color-secondary-500) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, var(--color-primary-600) 0px, transparent 50%);
+  opacity: 0.3;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-accent-500));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 0 20px var(--color-primary-500);
+  }
+}
+
+/* ========================================
+   SCROLLBAR SEXY
+   ======================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+  
+  &:hover {
+    background: var(--text-tertiary);
+  }
+}
+
+/* ========================================
+   ANIMATIONS GLOBALES
+   ======================================== */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 var(--color-primary-500);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 20px 5px var(--color-primary-500);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}

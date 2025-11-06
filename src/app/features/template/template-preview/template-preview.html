@@ -1,9 +1,0 @@
-<div class="bg-white rounded-xl shadow-xl w-full max-w-4xl p-6">
-  <div class="flex justify-between items-center mb-3">
-    <h3 class="text-lg font-semibold">{{ 'TEMPLATES.PREVIEW.TITLE' | translate }}</h3>
-    <button class="px-2 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200" (click)="close.emit()">
-      {{ 'COMMON.CLOSE' | translate }}
-    </button>
-  </div>
-  <div class="prose max-w-none" [innerHTML]="safeHtml()"></div>
-</div>

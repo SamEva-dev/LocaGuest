@@ -26,7 +26,7 @@ export class SessionMonitorService {
     async startRealtime() {
     await this.connection.start();
     this.connection.on('SessionRevoked', (deviceId: string) => {
-        this.toast.warn('AUTH.SESSION_REVOKED');
+        this.toast.warning('AUTH.SESSION_REVOKED');
         this.auth.logout();
         this.stop();
     });
@@ -49,7 +49,7 @@ export class SessionMonitorService {
 
         // Si la session courante n’existe plus → déconnexion
         if (!this.devices.devices().some(d => d.id === current.id)) {
-          this.toast.warn('AUTH.SESSION_REVOKED');
+          this.toast.warning('AUTH.SESSION_REVOKED');
           this.auth.logout();
           this.stop();
         }

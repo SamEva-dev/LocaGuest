@@ -38,8 +38,9 @@ export class Login {
     this.isLoading.set(true);
     try {
       this.auth.setRememberMe(this.rememberMe());
-      await this.auth.login(email, password);
-      this.router.navigate(['/dashboard']);
+      console.log("login")
+     await this.auth.login(email, password);
+      this.router.navigate(['/app']);
     } finally {
       this.isLoading.set(false);
     }

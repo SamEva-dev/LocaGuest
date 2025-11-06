@@ -1,8 +1,2 @@
-/* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
-
-html, body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden; /* 🔥 empêche le scroll général */
-}
+@import "styles/themes";

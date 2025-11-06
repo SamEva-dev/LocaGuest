@@ -1,652 +1,162 @@
 {
-  "APP": {
-    "TITLE": "LocaGuest"
-  },
-  "COMMON": {
-    "CANCEL": "Cancel",
-    "CONFIRM": "Confirm",
-    "EDIT": "Edit",
-    "DELETE": "Delete",
-    "SAVE": "Save",
-    "SEARCH": "Search",
-    "YES": "Yes",
-    "NO": "No",
-    "LOADING": "Loading...",
-    "BACK": "Back",
-    "NEXT": "Next",
-    "SUBMIT": "Submit",
-    "UPLOAD": "Upload",
-    "DOWNLOAD": "Download",
-    "VIEW": "View",
-    "ACTIONS": "Actions",
-    "DETAILS": "Details",
-    "CREATE": "Create",
-    "UPDATE": "Update",
-    "SELECT": "Select",
-    "OPTIONAL": "(optional)",
-    "REQUIRED": "(required)",
-    "MORE_INFO": "More info",
-    "DESCRIPTION": "Description",
-    "BACK_TO_DASHBOARD": "Back to dashboard",
-    "ALL": "All",
-    "REFRESH": "Refresh",
-    "RESET": "Reset",
-    "APPLY": "Apply",
-    "CLOSE": "Close"
-  },
-  "TOAST": {
-  "TEMPLATE_SAVED": "Template saved successfully",
-  "PREVIEW_OK": "Preview generated",
-  "PREVIEW_ERROR": "Error generating preview",
-  "GENERATE_OK": "Document generated successfully",
-  "GENERATE_ERROR": "Error generating document",
-  "DOWNLOAD_OK": "Download started",
-  "DOWNLOAD_ERROR": "Download failed",
-  "CONTRACT_SAVED": "Contract saved successfully",
-  "CONTRACT_SAVE_ERROR": "Error saving contract",
-  "FILTER_APPLIED": "Filter applied",
-  "ANALYTICS_UPDATED": "Analytics data updated",
-  "DASHBOARD_REFRESH": "Dashboard refreshed"
-}
-,
-  "AUTH": {
-    "SENDING": "Envoi...",
-    "SUBTITLE": "Log in to your property management platform",
-    "WELCOME": "Welcome",
-    "DEMO_HINT": "Use the demo credentials",
-    "EMAIL": "Email",
-    "PASSWORD": "Password",
-    "FULLNAME": "Full name",
-    "DEMO_CREDS": "Use: demo@locaguest.com / demo123",
-    "LOGIN": "Log in",
-    "LOGGING": "Logging in...",
-    "REGISTER": "Create account",
-    "REGISTERING": "Creating...",
-    "NO_ACCOUNT": "Don't have an account yet?",
-    "HAVE_ACCOUNT": "Already have an account?",
-    "OR": "or",
-    "LOGIN_GOOGLE": "Sign in with Google",
-    "LOGIN_FACEBOOK": "Sign in with Facebook",
-    "REMEMBER_ME": "Remember me",
-    "FORGOT_PASSWORD": "Forgot password?",
-    "RESET_PASSWORD": "Reset password",
-    "RESET_INSTRUCTIONS": "Enter your email to receive a reset link",
-    "SEND_LINK": "Send link",
-    "BACK_TO_LOGIN": "Back to login",
-    "DEMO_MODE": "Demo mode - No real data",
-    "INVALID_CREDENTIALS": "Invalid email or password.",
-  "ACCOUNT_LOCKED": "Your account has been locked. Please try again later or reset your password.",
-
-  "SESSION_EXPIRING": "Your session is about to expire, refreshing...",
-  "SESSION_EXPIRED": "Your session has expired. Please log in again.",
-  "MFA_SETUP_FAILED": "Unable to enable MFA.",
-  "MFA_VERIFIED": "Two-factor authentication verified.",
-  "MFA_INVALID": "Invalid verification code.",
-  "MFA_DISABLED": "Two-factor authentication disabled.",
-  "MFA_DISABLE_FAILED": "Unable to disable MFA.",
-  "SESSION_REVOKED": "Your session was revoked from another device."
-  
-  },
-  "NAV": {
-    "LOGIN": "Login",
-    "START": "Get Started"
-  },
-  "SIDEBAR": {
-    "APP_NAME": "LocaGuest",
-    "SEARCH": "Search",
-    "DASHBOARD": "Dashboard",
-    "CONTRACTS": "Contracts",
-    "FINANCIALS": "Financials",
-    "ACCOUNTS": "Accounts",
-    "SCHEDULE": "Schedule",
-    "SEARCH_MENU": "Search",
-    "ANALYTICS": "Analytics",
-    "FILES": "Files",
-    "SETTINGS": "Settings",
-    "LOGOUT": "Logout",
-    "DOCUMENT": "Documents"
-  },
-  "HEADER": {
-    "APP_NAME": "LocaGuest",
-    "THEME": "Theme"
-  },
+  "APP": { "TITLE": "LocaGuest" },
+  "NAV": { "LOGIN": "Sign in", "START": "Get started" },
+  "IMAGES": { "HERO_ALT": "Modern building", "DASHBOARD_ALT": "LocaGuest dashboard preview" },
   "HERO": {
-    "TITLE": "Manage your rentals like a pro",
-    "SUBTITLE": "LocaGuest makes it easy to manage your properties: tenants, co-living, short-term rentals – all in one place.",
-    "CTA": {
-      "START": "Start for free",
-      "DEMO": "See the demo"
-    },
-    "BADGE": {
-      "TRIAL": "30-day free trial",
-      "NOCARD": "No credit card required"
-    }
+    "TITLE": "Manage your properties with elegance",
+    "SUBTITLE": "A modern platform for owners and managers: contracts, rents, tenants and real-time dashboards.",
+    "CTA": { "START": "Start", "DEMO": "See demo" },
+    "BADGE": { "TRIAL": "Free trial", "NOCARD": "No credit card required" }
   },
+  "STATS": { "PROPERTIES": "Managed properties", "USERS": "Users", "SATISFACTION": "Satisfaction" },
   "FEATURES": {
-    "TITLE": "Everything you need to succeed",
-    "SUBTITLE": "A complete solution to efficiently manage your real estate portfolio",
+    "TITLE": "All your features in one place",
+    "SUBTITLE": "From property management to payments, save time and peace of mind.",
     "ITEMS": {
       "PROPERTIES": {
-        "TITLE": "Property Management",
-        "DESCRIPTION": "Easily add, edit and organize your properties, apartments and rooms."
+        "TITLE": "Property management",
+        "DESCRIPTION": "Create, track and update your apartments, houses and premises."
       },
       "TENANTS": {
-        "TITLE": "Tenant Management",
-        "DESCRIPTION": "Track tenant details, contracts, and payments in one place."
-      },
-      "MAINTENANCE": {
-        "TITLE": "Maintenance & Support",
-        "DESCRIPTION": "Handle maintenance requests and communicate quickly with tenants."
-      },
-      "FINANCE": {
-        "TITLE": "Financial Tracking",
-        "DESCRIPTION": "Monitor rents, expenses, and reports for transparent management."
+        "TITLE": "Tenant management",
+        "DESCRIPTION": "Tenant files, contracts, payments and communication centralized."
       },
       "DOCUMENTS": {
-        "TITLE": "Document Storage",
-        "DESCRIPTION": "Centralize all important files related to properties and tenants."
-      },
-      "REMINDERS": {
-        "TITLE": "Automatic Reminders",
-        "DESCRIPTION": "Get notifications for payments, lease renewals and important tasks."
+        "TITLE": "Documents",
+        "DESCRIPTION": "Contracts, inspections, receipts and attachments in one click."
       },
       "ANALYTICS": {
-        "TITLE": "Analytics & Insights",
-        "DESCRIPTION": "Comprehensive dashboards with financial analysis and projections."
+        "TITLE": "Analytics",
+        "DESCRIPTION": "Dashboards and charts to monitor your revenue and occupancy."
       },
       "LEGAL": {
-        "TITLE": "Legal Compliance",
-        "DESCRIPTION": "Stay compliant with the latest rental regulations."
+        "TITLE": "Compliance",
+        "DESCRIPTION": "Regulatory compliance, renewals and reminders."
       },
       "ACCOUNTING": {
-        "TITLE": "Simplified Accounting",
-        "DESCRIPTION": "Automatic export to your accountant and tax tracking."
+        "TITLE": "Accounting",
+        "DESCRIPTION": "Track rents, charges, deposits and accounting export."
       }
     }
   },
   "DASHBOARD": {
-    "WELCOME_TITLE": "Welcome to your dashboard",
-    "WELCOME_SUBTITLE": "Here is an overview of your rental activity",
-    "ADD_PROPERTY": "+ Add property",
-    "PROPERTIES": {
-      "TITLE": "My Properties",
-      "SUBTITLE": "Manage all your real estate",
-      "ADD": "Add",
-      "SEARCH": "Search a property...",
-      "TENANT": "Tenant",
-      "DUE": "Due",
-      "DETAILS": "View details",
-      "STATUS": {
-        "OCCUPIED": "Occupied",
-        "VACANT": "Vacant",
-        "INCONNU": "Unknown"
-      },
-      "MENU": {
-        "DETAILS": "View details",
-        "EDIT": "Edit",
-        "DELETE": "Delete",
-        "DELETE_CONFIRM": "Confirm property deletion?"
-      }
-    },
-    "STATS": {
-      "PROPERTIES": "Managed properties",
-      "TENANTS": "Active tenants",
-      "REVENUE": "Monthly revenue",
-      "OCCUPANCY": "Occupancy rate",
-        "FILTERS": "Filters",
-    "NO_RESULT": "No property matches your filters"
-    },
-    "DEADLINES": {
-      "TITLE": "Deadlines",
-      "LATE_RENT": "Late rent",
-      "NEXT": "Next due date",
-      "RENEWAL": "Lease renewal",
-      "DAYS": "days"
-    },
-    "RECENT_ACTIVITY": {
-      "TITLE": "Recent activity"
-    },
-    "SHORTCUTS": {
-      "CONTRACTS": {
-        "TITLE": "Contract management",
-        "DESC": "Create and manage your rental agreements"
-      },
-      "ACCOUNTING": {
-        "TITLE": "Accounting",
-        "DESC": "Track your income and expenses"
-      },
-      "DOCS": {
-        "TITLE": "Documents",
-        "DESC": "Generate your documents automatically"
-      },
-      "PROFIT": {
-        "TITLE": "Profitability",
-        "DESC": "Analyze your financial performance"
-      },
-      "SETTINGS": {
-        "TITLE": "Settings",
-        "DESC": "Configure your account and preferences"
-      }
-    },
-  
-  "FILTER": {
-    "STATUS": "Status",
-    "TYPE": "Type",
-    "RENT_MIN": "Min Rent (€)",
-    "RENT_MAX": "Max Rent (€)"
-  }
-  },
-  "CONTRACTS": {
-    "TITLE": "Contract Management",
-    "NEW_CONTRACT": "New Contract",
-    "STATS": {
-      "ACTIVE": "Active contracts",
-      "EXPIRING": "Expiring within 3 months",
-      "REVENUE": "Monthly revenue",
-      "TENANTS": "Tenants"
-    },
-    "SEARCH_PLACEHOLDER": "Search by property, tenant...",
-    "FILTERS": {
-      "ALL_STATUS": "All statuses",
-      "ACTIVE": "Active",
-      "EXPIRING": "Expiring soon",
-      "ALL_TYPES": "All types",
-      "FURNISHED": "Furnished",
-      "UNFURNISHED": "Unfurnished",
-      "MORE": "More filters",
-      "TITLE": "Filters",
-    "STATUS": "Status",
-    "TYPE": "Type",
-    "TENANT": "Tenant name",
-    "PROPERTY": "Property name",
-    "START_AFTER": "Start after",
-    "END_BEFORE": "End before",
-    "MIN_RENT": "Min rent (€)",
-    "MAX_RENT": "Max rent (€)"
-    },
-     "STATUS": {
-    "ACTIVE": "Active",
-    "EXPIRING": "Expiring soon",
-    "TERMINATED": "Terminated"
-  },
-  "TYPE": {
-    "FURNISHED": "Furnished",
-    "UNFURNISHED": "Unfurnished"
-  },
-    "LIST_TITLE": "Contract list",
-    "ACTIONS": {
-      "VIEW": "View",
-      "EDIT": "Edit",
-      "DOCS": "Documents"
-    },
-    "QUICK_ACTIONS": {
-      "GENERATE": {
-        "TITLE": "Generate new lease",
-        "DESC": "Quickly create a rental contract"
-      },
-      "RENEWALS": {
-        "TITLE": "Upcoming renewals",
-        "DESC": "Manage contracts nearing expiration"
-      },
-      "ADD_COTENANT": {
-        "TITLE": "Add co-tenant",
-        "DESC": "Modify existing contracts"
-      }
-    }
-  },
-  "NEW_CONTRACT": {
-    "TITLE": "Create new contract",
-    "SUBTITLE": "Fill in the details of the new rental contract",
-    "PROPERTY": "Property",
-    "TENANTS": "Tenants",
-    "START_DATE": "Start date",
-    "END_DATE": "End date",
-    "TYPE": "Contract type",
-    "TYPE_OPTIONS": {
-      "FURNISHED": "Furnished",
-      "UNFURNISHED": "Unfurnished"
-    },
-    "DURATION": "Duration",
-    "RENT": "Monthly rent (€)",
-    "STATUS": "Status",
-    "STATUS_OPTIONS": {
-      "ACTIVE": "Active",
-      "EXPIRING": "Expiring soon",
-      "TERMINATED": "Terminated"
-    },
-    "SAVE": "Save contract",
-    "CANCEL": "Cancel"
-  },
-  "FINANCIAL": {
-    "TITLE": "Financial Dashboard",
-    "SUBTITLE": "Track your portfolio's performance and cash flow",
-    "TABS": {
-      "OVERVIEW": "Overview",
-      "CASHFLOW": "Cash Flow",
-      "CHARGES": "Expenses Analysis",
-      "PROJECTIONS": "Projections"
-    },
-    "ACTIONS": {
-      "EXPORT": "Export",
-      "CHANGE_YEAR": "Select Year"
-    },
-    "STATS": {
-      "TOTAL_REVENUE": "Total Revenue",
-      "TOTAL_EXPENSES": "Total Expenses",
-      "NET_RESULT": "Net Result",
-      "OCCUPANCY": "Occupancy Rate"
-    },
-    "UPCOMING": {
-      "TITLE": "Upcoming Payments",
-      "LABEL": "Label",
-      "DUE": "Due date",
-      "AMOUNT": "Amount",
-      "STATUS": "Status"
-    },
-    "PROPERTIES": {
-      "TITLE": "Property Performance",
-      "NAME": "Property",
-      "REVENUE": "Revenue (€)",
-      "CHARGES": "Expenses (€)",
-      "ROI": "ROI (%)"
-    },
-    "CASHFLOW": {
-      "TITLE": "Cash Flow Summary",
-      "INCOME": "Incomes",
-      "EXPENSE": "Expenses",
-      "TOTAL": "Total"
-    },
-    "CHARGES": {
-      "TITLE": "Expense Breakdown",
-      "LABEL": "Category",
-      "AMOUNT": "Amount (€)",
-      "PERCENT": "Percent (%)"
-    },
-    "OPTIMIZATIONS": {
-      "TITLE": "Optimization Suggestions",
-      "DESCRIPTION": "Suggestions to improve profitability"
-    },
-    "PROJECTIONS": {
-      "TITLE": "Financial Projections",
-      "ESTIMATED_REVENUE": "Estimated Revenue",
-      "ESTIMATED_EXPENSES": "Estimated Expenses",
-      "EXPECTED_RESULT": "Expected Result"
-    },
-    "OPPORTUNITIES": {
-      "TITLE": "Investment Opportunities",
-      "DESC": "Potential acquisitions with good ROI",
-      "PRICE": "Price",
-      "RENT": "Rent",
-      "ROI": "ROI"
-    },
-    "COMMON": {
-      "NO_DATA": "No data available",
-      "LOADING": "Loading..."
-    }
-  },
-  "ANALYTICS": {
-  "TITLE": "Profitability Analysis",
-  "SUBTITLE": "Track performance and optimize your investments",
-  "PERIOD": {
-    "3M": "Last 3 months",
-    "6M": "Last 6 months",
-    "12M": "Last 12 months"
-  },
-  "PROPERTIES": {
-    "ALL": "All properties"
-  },
-  "TOTAL_REVENUE": "Total Revenue",
-  "TOTAL_EXPENSES": "Total Expenses",
-  "NET_PROFIT": "Net Profit",
-  "AVERAGE_YIELD": "Average Yield",
-  "OPTIMIZATIONS": {
-    "TITLE": "Optimization Suggestions",
-    "OPPORTUNITY": "Opportunity",
-    "WARNING": "Warning",
-    "ADVICE": "Advice"
-  },
-  "PERFORMANCE": {
-    "TITLE": "Property Performance",
-    "NAME": "Property",
-    "VALUE": "Value",
-    "YIELD": "Yield (%)"
-  }
-},
-
-
-  "SETTINGS": {
-    "TITLE": "Settings",
-    "SUBTITLE": "Manage your account preferences and settings",
-    "TABS": {
-      "PROFILE": "Profile",
-      "NOTIFICATIONS": "Notifications",
-      "SECURITY": "Security",
-      "BILLING": "Billing",
-      "PREFERENCES": "Preferences",
-      "LAYOUT": "Layout"
-    },
-    "PROFILE": {
-      "TITLE": "Profile Information",
-      "SUBTITLE": "Update your personal information",
-      "FIRST_NAME": "First name",
-      "LAST_NAME": "Last name",
-      "EMAIL": "Email",
-      "PHONE": "Phone",
-      "COMPANY": "Company",
-      "ROLE_OWNER": "Owner",
-      "ROLE_MANAGER": "Manager",
-      "ROLE_ADMIN": "Administrator",
-      "BIO": "Biography",
-      "CHANGE_PHOTO": "Change photo",
-      "PHOTO_HINT": "JPG, GIF or PNG. Max size 2MB",
-      "ROLE": "Role"
-    },
-    "NOTIFICATIONS": {
-      "TITLE": "Notification Preferences",
-      "SUBTITLE": "Choose how you want to be notified",
-      "EMAIL": "Email notifications",
-      "SMS": "SMS notifications",
-      "BOOKINGS": "New bookings",
-      "PAYMENTS": "Payment reminders",
-      "REPORTS": "Monthly reports"
-    },
-    "SECURITY": {
-      "TITLE": "Account Security",
-      "SUBTITLE": "Manage your account security and access",
-      "CURRENT_PASSWORD": "Current password",
-      "NEW_PASSWORD": "New password",
-      "CONFIRM_PASSWORD": "Confirm password",
-      "UPDATE_PASSWORD": "Update password",
-      "SESSIONS": "Active sessions",
-      "CURRENT": "Current",
-      "DISCONNECT": "Disconnect"
-    },
-    "BILLING": {
-      "TITLE": "Billing & Subscription",
-      "PLAN": "Professional plan",
-      "RENEWAL": "Next renewal",
-      "HISTORY": "Billing history"
-    },
-    "PREFERENCES": {
-      "TITLE": "Application Preferences",
-      "DARK_MODE": "Dark mode",
-      "DANGER_ZONE": "Danger zone",
-      "DANGER_DESC": "This action is irreversible and will permanently delete all your data.",
-      "DELETE_ACCOUNT": "Delete account"
-    },
-    "LAYOUT": {
-      "TITLE": "Interface Layout",
-      "SUBTITLE": "Choose where the menu is displayed after login.",
-      "HEADER_MENU": "Header menu",
-      "HEADER_DESC": "The menu will be displayed at the top inside the header.",
-      "SIDEBAR_MENU": "Sidebar menu",
-      "SIDEBAR_DESC": "The menu will be displayed on the left as a sidebar (recommended).",
-      "USE_HEADER": "Use Header",
-      "USE_SIDEBAR": "Use Sidebar",
-      "CURRENT_MODE": "Current mode:",
-      "SIDEBAR": "Sidebar",
-      "HEADER": "Header"
-    },
-    "ACTIONS": {
-      "RESET": "Reset",
-      "SAVE": "Save"
-    }
+    "TITLE": "Dashboard",
+    "SUBTITLE": "Overview of your activity",
+    "ACTIONS": { "NEW_PROPERTY": "New property", "NEW_TENANT": "New tenant" },
+    "OCCUPANCY": { "TITLE": "Occupancy rate", "LAST30": "Last 30 days" },
+    "REVENUE": { "TITLE": "Revenue", "LAST12": "Last 12 months" },
+    "ACTIVITIES": { "TITLE": "Recent activities" },
+    "SHORTCUTS": { "TITLE": "Shortcuts", "MY_PROPERTIES": "My properties", "MY_TENANTS": "My tenants", "DOCUMENTS": "Documents", "REPORTS": "Reports" },
+    "STATS": { "PROPERTIES": "Properties", "TENANTS": "Tenants", "OCCUPANCY": "Occupancy", "REVENUE": "Revenue" },
+    "TREND": { "UP": "Up", "DOWN": "Down" }
   },
   "PROPERTY": {
-    "NAME": "Property name",
-    "TITLE": "Add Property",
-    "SUBTITLE": "Enter the details of your new property",
-    "FINANCIAL_SUMMARY": "Financial Summary",
-    "FINANCIAL_SUBTITLE": "Quick overview of financial performance",
-    "ADDRESS": "Address",
-    "CITY": "City",
-    "STATE": "State/Province",
-    "ZIP": "ZIP/Postal Code",
-    "COUNTRY": "Country",
-    "TYPE": "Property Type",
-    "TYPE_PLACEHOLDER": "Select type",
-    "ANNUAL_REVENUE": "Annual revenue",
-    "PERFORMANCE": "Property performance",
-    "PER_MONTH": "per month",
-    "TYPE_OPTIONS": {
-      "DETAILS": "Property Details",
-      "APARTMENT": "Apartment",
-      "HOUSE": "House",
-      "CONDO": "Condominium",
-      "TOWNHOUSE": "Townhouse",
-      "DUPLEX": "Duplex",
-      "STUDIO": "Studio",
-      "ADD_IMAGE": "Add image",
-      "ROOMS": "Rooms",
-      "FLOOR": "Floor",
-      "FURNISHED": "Furnished"
-    },
-    "ELEVATOR": "Elevator",
-    "PARKING": "Parking",
-    "CHARGES": "Charges",
-    "DEPOSIT": "Security deposit",
-    "BEDROOMS": "Bedrooms",
-    "BATHROOMS": "Bathrooms",
-    "SURFACE": "Surface (m²)",
-    "RENT": "Monthly rent (€)",
+    "EDIT": "Edit",
     "STATUS": "Status",
-    "STATUS_OPTIONS": {
-      "OCCUPIED": "Occupied",
-      "VACANT": "Vacant"
-    },
-    "TENANT_NAME": "Tenant Name",
-    "TENANT_EMAIL": "Tenant Email",
-    "TENANT_PHONE": "Tenant Phone",
-    "LEASE_START": "Lease Start Date",
-    "LEASE_END": "Lease End Date",
-    "NOTES": "Notes",
-    "ACTIONS": {
-      "CANCEL": "Cancel",
-      "SAVE": "Save Property"
-    },
-    "TABS": {
+    "RENT": "Rent",
+    "SURFACE": "Area",
+    "TABS": { "DETAILS": "Details", "TENANTS": "Tenants", "DOCUMENTS": "Documents" },
+    "TYPE": "Type",
+    "ROOMS": "Rooms",
+    "FLOOR": "Floor",
+    "YEAR": "Year",
+    "NO_TENANTS": "No tenants",
+    "NO_DOCUMENTS": "No documents",
+    "STATUS_OCCUPIED": "Occupied",
+    "STATUS_VACANT": "Vacant",
+    "FINANCIAL_ANALYSIS": "Financial Analysis",
+    "RECENT_PAYMENTS": "Recent Payments",
+    "OVERVIEW": "Overview",
+    "TENANTS": "Tenants",
+    "ADD_TENANT": "Add Tenant",
+    "CONTRACTS": "Contracts",
+    "DOCUMENTS": "Documents",
+    "MAINTENANCE": "Maintenance",
+    "PAYMENTS": "Payments",
+    "INVOICES": "Invoices",
+    "PROJECTION": "Projection",
+    "SUB_TABS": {
       "OVERVIEW": "Overview",
       "TENANTS": "Tenants",
       "CONTRACTS": "Contracts",
       "DOCUMENTS": "Documents",
-      "MAINTENANCE": "Maintenance"
-    }
+      "MAINTENANCE": "Maintenance",
+      "PAYMENTS": "Payments",
+      "INVOICES": "Invoices",
+      "PROJECTION": "Projection"
+    },
+    "ANALYTICS": {
+      "ROI": "ROI",
+      "PROFITABILITY": "Profitability",
+      "REVENUE": "Revenue",
+      "CHARGES": "Charges"
+    },
+    "CONTRACTS_PLACEHOLDER": "List of rental contracts...",
+    "MAINTENANCE_PLACEHOLDER": "Maintenance history...",
+    "PAYMENTS_PLACEHOLDER": "Payment history...",
+    "INVOICES_PLACEHOLDER": "Invoices and charges..."
   },
   "CTA": {
-    "TITLE": "Ready to transform your rental management?",
-    "SUBTITLE": "Join the hundreds of landlords who trust us",
-    "BUTTONS": {
-      "START": "Start now",
-      "DEMO": "Schedule a demo"
-    }
+    "TITLE": "Take it to the next level",
+    "SUBTITLE": "Try LocaGuest today and simplify your management",
+    "BUTTONS": { "START": "Get started", "DEMO": "See demo" }
   },
   "FOOTER": {
-    "DESCRIPTION": "The modern solution to easily manage your real estate properties.",
-    "PRODUCT": {
-      "TITLE": "Product",
-      "FEATURES": "Features",
-      "PRICING": "Pricing",
-      "DOCS": "Documentation"
-    },
-    "SUPPORT": {
-      "TITLE": "Support",
-      "HELP": "Help Center",
-      "CONTACT": "Contact",
-      "TRAINING": "Training"
-    },
-    "LEGAL": {
-      "TITLE": "Legal",
-      "PRIVACY": "Privacy Policy",
-      "TERMS": "Terms of Use",
-      "IMPRINT": "Legal Notice"
-    },
-    "COPYRIGHT": "All rights reserved.",
-    "COPYRIGHT2": "© {{year}} {{app}} — All rights reserved"
+    "DESCRIPTION": "The simple and modern solution for rental management.",
+    "PRODUCT": { "TITLE": "Product", "FEATURES": "Features", "PRICING": "Pricing", "DOCS": "Documentation" },
+    "SUPPORT": { "TITLE": "Support", "HELP": "Help", "CONTACT": "Contact", "TRAINING": "Training" },
+    "LEGAL": { "TITLE": "Legal", "PRIVACY": "Privacy", "TERMS": "Terms", "IMPRINT": "Imprint" },
+    "COPYRIGHT": "All rights reserved."
   },
-  "CHARTS": {
-    "CASHFLOW": "Cash Flow Overview",
-    "YIELD_SHARE": "Yield Distribution"
-  },
-  "DOCUMENTS": {
-    "BACK_TO_DASHBOARD": "Back to dashboard",
-    "NEW_TEMPLATE": "New template",
-    "TITLE": "Document generation",
-    "MODELS": "Available templates",
-    "SEARCH_PLACEHOLDER": "Search a template...",
-    "CATEGORIES": {
-      "ALL": "All categories",
-      "CONTRACTS": "Contracts",
-      "INVENTORY": "Inventory",
-      "TERMINATION": "Termination",
-      "WORKS": "Works",
-      "ACCOUNTING": "Accounting",
-      "OTHER": "Other"
-    },
-    "STATUS": {
-    "LOADING": "Loading templates...",
-    "NO_TEMPLATES": "No templates available yet.",
-    "NO_RECENT_DOCS": "No recent documents found.",
-    "LOADING_GLOBAL": "Loading..."
-  },
-    "USES": "uses",
-    "PREVIEW": "Preview",
-    "USE": "Use",
-    "QUICK_GEN": "Quick generation",
-    "TYPE": "Document type",
-    "PROPERTY": "Property",
-    "PROPERTY_PLACEHOLDER": "e.g., 12 rue de Paris, Lyon",
-    "TENANT": "Tenant",
-    "TENANT_PLACEHOLDER": "e.g., John Doe",
-    "NOTES": "Notes",
-    "NOTES_PLACEHOLDER": "Additional information...",
-    "GENERATE": "Generate document",
-    "SEND": "Send",
-    "RECENT_DOCS": "Recent documents",
-    "TABLE": {
-      "NAME": "File name",
-      "DATE": "Creation date",
-      "TYPE": "Type",
-      "ACTION": "Action"
-    },
-    "DOWNLOAD": "Download"
-  },
-  "TEMPLATES": {
-  "NEW": {
-    "TITLE": "New Template",
-    "SUBTITLE": "Create a document template with dynamic variables",
-    "NAME": "Template Name",
-    "CATEGORY": "Category",
-    "DESCRIPTION": "Description",
-    "CONTENT": "HTML Content",
-    "VARIABLE_HINT": "variables use {{ variable }}"
-  },
-  "USE": {
-    "TITLE": "Use Template: {{name}}",
-    "PREVIEW": "Preview",
-    "GENERATE": "Generate & Download (PDF)"
-  },
-  "PREVIEW": {
-    "TITLE": "Template Preview"
+  "THEME": { "TOGGLE": "Toggle theme" },
+  "AUTH": {
+    "SUBTITLE": "Sign in to your LocaGuest space",
+    "WELCOME": "Welcome",
+    "DEMO_HINT": "Use the demo account to test",
+    "EMAIL": "Email",
+    "PASSWORD": "Password",
+    "EMAIL_PLACEHOLDER": "email@example.com",
+    "REMEMBER_ME": "Remember me",
+    "FORGOT_PASSWORD": "Forgot password?",
+    "LOGGING": "Signing in...",
+    "LOGIN": "Sign in",
+    "OR": "or",
+    "LOGIN_GOOGLE": "Continue with Google",
+    "LOGIN_FACEBOOK": "Continue with Facebook",
+    "NO_ACCOUNT": "No account?",
+    "REGISTER": "Create account",
+    "DEMO_MODE": "Demo mode enabled",
+    "LOGOUT": "Log out"
   }
-}
+  ,
+  "SUMMARY": {
+    "TITLE": "Overview",
+    "ADD_PROPERTY": "Add property",
+    "VS_LAST_MONTH": "vs last month",
+    "PROPERTIES": "Properties",
+    "TENANTS": "Tenants",
+    "NOTIFICATIONS": "Notifications",
+    "DEADLINES": "Upcoming deadlines",
+    "PROJECTIONS": "Annual projections",
+    "FILTERS": {
+      "STATUS_ALL": "All statuses",
+      "FILTERS": "Filters"
+    },
+    "TABLE": {
+      "PROPERTY": "Property",
+      "ADDRESS": "Address",
+      "RENT": "Rent",
+      "STATUS": "Status",
+      "TENANT": "Tenant"
+    },
+    "STATS": {
+      "PROPERTIES": "Properties",
+      "ACTIVE_TENANTS": "Active tenants",
+      "OCCUPANCY": "Occupancy",
+      "REVENUE": "Revenue"
+    }
+  },
+  "TENANT": {
+    "ACTIVE": "Active"
+  }
 }

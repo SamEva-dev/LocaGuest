@@ -1,43 +1,62 @@
-import { inject, Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LocaGuestApi } from './locaguest.api';
-import { ActivityItem, DashboardPayload, DashboardStatItem, PropertyRow } from '../../models/models';
-//import { ActivityItem, DashboardPayload, DashboardStatItem, PropertyRow } from './models';
+import { environment } from '../../../environnements/environment';
+
+export interface DashboardSummary {
+  propertiesCount: number;
+  activeTenants: number;
+  occupancyRate: number;
+  monthlyRevenue: number;
+}
+
+export interface Activity {
+  type: string;
+  title: string;
+  date: Date;
+}
+
+export interface Deadline {
+  lateRent: Array<{ propertyName: string; amount: number; daysLate: number }>;
+  nextDue: Array<{ propertyName: string; amount: number; daysUntil: number }>;
+  renewals: Array<{ propertyName: string; daysUntil: number }>;
+}
+
+export interface OccupancyChartData {
+  month: number;
+  rate: number;
+}
+
+export interface RevenueChartData {
+  month: number;
+  revenue: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class DashboardApi {
-  private readonly http = inject(LocaGuestApi);
+  private http = inject(HttpClient);
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/dashboard`;
 
-  /** Récupère la payload complète du Dashboard */
-  getDashboard(): Observable<DashboardPayload> {
-    return this.http.get<DashboardPayload>('/dashboard');
+  getSummary(): Observable<DashboardSummary> {
+    return this.http.get<DashboardSummary>(`${this.baseUrl}/summary`);
   }
 
-  /** Endpoints granulaires si tu préfères charger en lazy */
-  getStats(): Observable<DashboardStatItem[]> {
-    return this.http.get<DashboardStatItem[]>('/dashboard/stats');
+  getActivities(limit: number = 20): Observable<Activity[]> {
+    const params = new HttpParams().set('limit', limit.toString());
+    return this.http.get<Activity[]>(`${this.baseUrl}/activities`, { params });
   }
 
-  getProperties(): Observable<PropertyRow[]> {
-    return this.http.get<PropertyRow[]>('/dashboard/properties');
+  getDeadlines(): Observable<Deadline> {
+    return this.http.get<Deadline>(`${this.baseUrl}/deadlines`);
   }
 
-  getActivities(): Observable<ActivityItem[]> {
-    return this.http.get<ActivityItem[]>('/dashboard/activities');
+  getOccupancyChart(year: number = 2025): Observable<OccupancyChartData[]> {
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<OccupancyChartData[]>(`${this.baseUrl}/charts/occupancy`, { params });
   }
 
-  getFilteredProperties(filter: Record<string, any>): Observable<PropertyRow[]> {
-      const query = new URLSearchParams();
-      Object.entries(filter).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          query.append(key, value.toString());
-        }
-      });
-      return this.http.get<PropertyRow[]>(`/dashboard/properties/filter?${query.toString()}`);
-    }
-
-  /** Suppression d’un bien (If-Match en option) */
-  deleteProperty(id: string, etag?: string): Observable<void> {
-    return this.http.delete<void>(`/properties/${id}`, { etag });
+  getRevenueChart(year: number = 2025): Observable<RevenueChartData[]> {
+    const params = new HttpParams().set('year', year.toString());
+    return this.http.get<RevenueChartData[]>(`${this.baseUrl}/charts/revenue`, { params });
   }
 }

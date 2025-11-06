@@ -1,44 +1,27 @@
+// Analytics models
 export interface AnalyticsOverview {
   totalRevenue: number;
   totalExpenses: number;
   netProfit: number;
-  averageYield: number;
-  revenueChange: number;
-  expensesChange: number;
-  profitChange: number;
+  occupancyRate: number;
 }
 
 export interface AnalyticsPropertyPerformance {
-  name: string;
-  value: number;
-  monthlyIncome: number;
-  yield: number;
+  propertyId: string;
+  propertyName: string;
+  revenue: number;
+  expenses: number;
+  roi: number;
 }
 
 export interface AnalyticsOptimization {
-  type: 'warning' | 'opportunity' | 'advice';
+  type: 'opportunity' | 'warning' | 'advice';
   title: string;
-  message: string;
-  action: string;
+  description: string;
 }
 
-export interface AnalyticsChartPoint {
-  month: string;
-  revenue: number;
-  expense: number;
-}
-
-export interface AnalyticsYieldShare {
-  property: string;
-  yield: number;
-}
-
-
-// ✅ réponse typée (inclut cashflow & yieldShare)
 export interface AnalyticsResponse {
   overview: AnalyticsOverview;
-  performances: AnalyticsPropertyPerformance[];
+  propertyPerformances: AnalyticsPropertyPerformance[];
   optimizations: AnalyticsOptimization[];
-  cashflow: AnalyticsChartPoint[];
-  yieldShare: AnalyticsYieldShare[];
 }

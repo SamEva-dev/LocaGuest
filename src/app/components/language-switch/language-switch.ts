@@ -27,16 +27,20 @@ export class LanguageSwitch {
     { code: 'fr', label: 'Français', flag: '🇫🇷' }
   ]
 
-  selectedLang = this.languages[0].code
+  selectedLang = 'fr'
 
   constructor(private translate: TranslateService) {
-      translate.setDefaultLang('fr');
-      translate.use('fr'); // 
+    const saved = localStorage.getItem('lang')
+    const initial = saved || translate.currentLang || 'fr'
+    translate.setDefaultLang('fr')
+    translate.use(initial)
+    this.selectedLang = initial
   }
 
   onLangChange(code: string) {
     this.translate.use(code)
     this.selectedLang = code
+    localStorage.setItem('lang', code)
   }
 
 }

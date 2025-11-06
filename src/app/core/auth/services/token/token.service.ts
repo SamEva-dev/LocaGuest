@@ -13,6 +13,7 @@ export class TokenService {
   setRememberMe(value: boolean) { this._persist.set(value); }
 
   save(tokens: AuthTokens) {
+    console.log("save tokens", tokens); 
     if (this._persist()) {
       localStorage.setItem(ACCESS, tokens.accessToken);
       tokens.refreshToken && localStorage.setItem(REFRESH, tokens.refreshToken);
@@ -43,5 +44,18 @@ export class TokenService {
 
   get accessToken(): string | null {
     return sessionStorage.getItem(ACCESS) ?? localStorage.getItem(ACCESS);
+  }
+
+  decode(token: string): any | null {
+    try {
+      const parts = token.split('.');
+      if (parts.length < 2) return null;
+      const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const pad = b64.length % 4 === 2 ? '==' : b64.length % 4 === 3 ? '=' : '';
+      const json = atob(b64 + pad);
+      return JSON.parse(json);
+    } catch {
+      return null;
+    }
   }
 }

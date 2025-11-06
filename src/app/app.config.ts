@@ -5,9 +5,7 @@ import { HttpClient, provideHttpClient, withInterceptors, withInterceptorsFromDi
 import { TRANSLATE_HTTP_LOADER_CONFIG, TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { routes } from './app.routes';
-import { refreshInterceptor } from './core/auth/interceptors/refresh.interceptor';
-import { ApiInterceptor } from './core/auth/interceptors/auth.interceptor';
-import { errorInterceptor } from './core/api/error.interceptor';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader();
@@ -18,12 +16,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi(),
-      withInterceptors([
-        refreshInterceptor, 
-        ApiInterceptor,
-        errorInterceptor    
-    ])),
+    provideHttpClient(
+      withInterceptorsFromDi(),
+      withInterceptors([authInterceptor])
+    ),
     importProvidersFrom(
       TranslateModule.forRoot({
         defaultLanguage: 'fr',

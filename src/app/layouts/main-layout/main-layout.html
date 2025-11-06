@@ -1,0 +1,98 @@
+<div class="h-screen flex flex-col bg-slate-50 dark:bg-slate-900">
+  
+  <!-- Header -->
+  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between shadow-sm">
+    
+    <!-- Logo -->
+    <div class="flex items-center gap-3">
+      <i class="ph-fill ph-buildings text-primary-600 dark:text-primary-400 text-2xl"></i>
+      <span class="text-xl font-bold text-slate-800 dark:text-white">{{ 'APP.TITLE' | translate }}</span>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-4">
+      
+      <!-- Theme toggle -->
+      <button
+        (click)="toggleTheme()"
+        class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        [title]="'THEME.TOGGLE' | translate"
+      >
+        @if (theme.isDark()) {
+          <i class="ph ph-sun text-xl text-slate-600 dark:text-slate-300"></i>
+        } @else {
+          <i class="ph ph-moon text-xl text-slate-600 dark:text-slate-300"></i>
+        }
+      </button>
+
+      <!-- Notifications -->
+      <button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors relative">
+        <i class="ph ph-bell text-xl text-slate-600 dark:text-slate-300"></i>
+        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+      </button>
+
+      <!-- User menu -->
+      <div class="flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-slate-700">
+        <div class="text-right">
+          <p class="text-sm font-medium text-slate-800 dark:text-white">{{ user()?.fullName }}</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">{{ user()?.email }}</p>
+        </div>
+        <button
+          (click)="logout()"
+          class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group"
+          [title]="'AUTH.LOGOUT' | translate"
+        >
+          <i class="ph ph-sign-out text-xl text-slate-600 dark:text-slate-300 group-hover:text-red-600 dark:group-hover:text-red-400"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tab Bar -->
+  <div class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 flex items-center gap-1 overflow-x-auto scrollbar-thin">
+    @for (tab of tabs(); track tab.id) {
+      <div
+        (click)="selectTab(tab.id)"
+        [class.active]="activeTabId() === tab.id"
+        class="tab-item group flex items-center gap-2 px-4 py-2.5 cursor-pointer border-b-2 border-transparent hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all"
+        [class.border-primary-600]="activeTabId() === tab.id"
+        [class.bg-slate-50]="activeTabId() === tab.id"
+        [class.dark:bg-slate-700/50]="activeTabId() === tab.id"
+      >
+        <i [class]="'ph ' + tab.icon + ' text-lg'" 
+           [class.text-primary-600]="activeTabId() === tab.id"
+           [class.dark:text-primary-400]="activeTabId() === tab.id"
+           [class.text-slate-500]="activeTabId() !== tab.id"
+           [class.dark:text-slate-400]="activeTabId() !== tab.id"
+        ></i>
+        <span class="text-sm font-medium whitespace-nowrap"
+              [class.text-slate-800]="activeTabId() === tab.id"
+              [class.dark:text-white]="activeTabId() === tab.id"
+              [class.text-slate-600]="activeTabId() !== tab.id"
+              [class.dark:text-slate-300]="activeTabId() !== tab.id"
+        >
+          {{ tab.title | translate }}
+        </span>
+        @if (tab.closable) {
+          <button
+            (click)="closeTab(tab.id, $event)"
+            class="ml-2 p-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-600 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <i class="ph ph-x text-xs"></i>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Content -->
+  <main class="flex-1 overflow-auto">
+    <router-outlet />
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-6 py-2 text-center text-xs text-slate-500 dark:text-slate-400">
+    &copy; 2025 {{ 'APP.TITLE' | translate }} - {{ 'FOOTER.COPYRIGHT' | translate }}
+  </footer>
+
+</div>

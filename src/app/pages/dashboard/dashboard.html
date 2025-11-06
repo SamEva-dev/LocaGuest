@@ -1,0 +1,102 @@
+    <div class="p-6 md:p-8 space-y-8">
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-3xl font-bold">{{ 'DASHBOARD.TITLE' | translate }}</h1>
+          <p class="text-slate-600 dark:text-slate-400 mt-1">{{ 'DASHBOARD.SUBTITLE' | translate }}</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="px-4 py-2 rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition">
+            {{ 'DASHBOARD.ACTIONS.NEW_PROPERTY' | translate }}
+          </button>
+          <button class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            {{ 'DASHBOARD.ACTIONS.NEW_TENANT' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        @for (s of stats(); track s.key) {
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-slate-500 dark:text-slate-400">{{ s.label | translate }}</p>
+                <p class="text-2xl font-semibold text-slate-800 dark:text-white mt-1">{{ s.value }}</p>
+              </div>
+              <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                <i [class]="'ph ' + s.icon + ' text-lg text-slate-600 dark:text-slate-300'"></i>
+              </div>
+            </div>
+            @if (s.delta) {
+              <p class="text-xs mt-3" [class]="s.deltaPositive ? 'text-emerald-600' : 'text-rose-600'">
+                {{ s.deltaPositive ? ('DASHBOARD.TREND.UP' | translate) : ('DASHBOARD.TREND.DOWN' | translate) }}
+                {{ s.delta }}%
+              </p>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Two columns -->
+      <div class="grid lg:grid-cols-3 gap-6">
+        <!-- Occupancy & Revenue placeholders -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold">{{ 'DASHBOARD.OCCUPANCY.TITLE' | translate }}</h3>
+              <span class="text-xs text-slate-500">{{ 'DASHBOARD.OCCUPANCY.LAST30' | translate }}</span>
+            </div>
+            <occupancy-chart />
+          </div>
+
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold">{{ 'DASHBOARD.REVENUE.TITLE' | translate }}</h3>
+              <span class="text-xs text-slate-500">{{ 'DASHBOARD.REVENUE.LAST12' | translate }}</span>
+            </div>
+            <revenue-chart />
+          </div>
+        </div>
+
+        <!-- Recent activities -->
+        <div class="space-y-6">
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+            <h3 class="text-lg font-semibold mb-4">{{ 'DASHBOARD.ACTIVITIES.TITLE' | translate }}</h3>
+            <div class="space-y-4">
+              @for (a of dashboard.activities(); track $index) {
+                <div class="flex items-start gap-3">
+                  <div class="mt-1 w-2 h-2 rounded-full" [class]="a.type === 'info' ? 'bg-blue-500' : a.type === 'success' ? 'bg-emerald-500' : 'bg-amber-500'"></div>
+                  <div>
+                    <p class="text-sm text-slate-800 dark:text-slate-200">{{ a.title }}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">{{ a.date }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+            <h3 class="text-lg font-semibold mb-4">{{ 'DASHBOARD.SHORTCUTS.TITLE' | translate }}</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <button 
+                (click)="openPropertyDemo()"
+                class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm">
+                <i class="ph ph-house-line mr-2"></i>{{ 'DASHBOARD.SHORTCUTS.MY_PROPERTIES' | translate }}
+              </button>
+              <button 
+                (click)="openTenantDemo()"
+                class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm">
+                <i class="ph ph-users-three mr-2"></i>{{ 'DASHBOARD.SHORTCUTS.MY_TENANTS' | translate }}
+              </button>
+              <button class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm">
+                <i class="ph ph-file-text mr-2"></i>{{ 'DASHBOARD.SHORTCUTS.DOCUMENTS' | translate }}
+              </button>
+              <button class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm">
+                <i class="ph ph-chart-line-up mr-2"></i>{{ 'DASHBOARD.SHORTCUTS.REPORTS' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

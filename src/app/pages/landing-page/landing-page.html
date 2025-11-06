@@ -4,7 +4,7 @@
   <nav class=" bg-white fixed top-0 inset-x-0 z-50  shadow-sm">
     <div class="container mx-auto px-6 py-4 flex items-center justify-between">
       <div class="flex items-center space-x-2">
-        <img src="assets/images/logo.png" alt="LocaGuest Logo" class="object-contain">
+        <img src="assets/images/logo.png" [attr.alt]="('APP.TITLE' | translate) + ' Logo'" class="object-contain">
       </div>
       <div class="flex items-center space-x-4">
         <a routerLink="/login" class="px-4 py-2 text-gray-600 cursor-pointer
@@ -23,8 +23,9 @@
   </nav>
 
   <!-- Hero -->
-  <section class="pt-32 pb-20 px-6">
-    <div class="container mx-auto grid lg:grid-cols-2 gap-12 items-center">
+  <section class="pt-32 pb-20 px-6 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-amber-50 to-emerald-50 dark:from-slate-900 dark:to-slate-800 opacity-50"></div>
+    <div class="container mx-auto grid lg:grid-cols-2 gap-12 items-center relative z-10">
       <div class="space-y-6">
         <h2 class="text-5xl lg:text-6xl font-bold leading-tight">
           {{ 'HERO.TITLE' | translate }}
@@ -57,28 +58,48 @@
       </div>
 
       <div>
-        <img src="assets/images/hero-building.jpg" alt="Immeuble moderne"
+        <img src="assets/images/hero-building.jpg" [attr.alt]="'IMAGES.HERO_ALT' | translate"
              class="rounded-2xl shadow-lg w-full">
       </div>
     </div>
   </section>
 
+  <!-- Stats -->
+  <section class="py-16 px-6 bg-gradient-to-r from-amber-600 to-emerald-600 text-white reveal">
+    <div class="container mx-auto">
+      <div class="grid md:grid-cols-3 gap-8 text-center">
+        <div>
+          <p class="text-5xl font-bold mb-2">{{ propertiesCount() }}+</p>
+          <p class="text-lg opacity-90">{{ 'STATS.PROPERTIES' | translate }}</p>
+        </div>
+        <div>
+          <p class="text-5xl font-bold mb-2">{{ usersCount() }}+</p>
+          <p class="text-lg opacity-90">{{ 'STATS.USERS' | translate }}</p>
+        </div>
+        <div>
+          <p class="text-5xl font-bold mb-2">{{ satisfactionCount() }}%</p>
+          <p class="text-lg opacity-90">{{ 'STATS.SATISFACTION' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Features -->
-  <section class="py-20 px-6 bg-gray-50">
+  <section class="py-20 px-6 bg-gray-50 dark:bg-slate-900">
     <div class="container mx-auto text-center">
-      <h3 class="text-3xl lg:text-4xl font-bold mb-4">{{ 'FEATURES.TITLE' | translate }}</h3>
-      <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-12">
+      <h3 class="text-3xl lg:text-4xl font-bold mb-4 reveal">{{ 'FEATURES.TITLE' | translate }}</h3>
+      <p class="text-lg text-gray-600 dark:text-slate-400 max-w-2xl mx-auto mb-12 reveal">
         {{ 'FEATURES.SUBTITLE' | translate }}
       </p>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         @for (feature of features; track feature) {
-          <div class="bg-white  rounded-xl p-6 shadow-sm hover:shadow-xl transition">
-            <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
+          <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm hover:shadow-xl transition reveal feature-card">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-emerald-500 rounded-lg flex items-center justify-center mb-4 mx-auto">
               <i [class]="feature.icon" class="text-white text-xl"></i>
             </div>
             <h4 class="text-xl font-semibold">{{ feature.title | translate }}</h4>
-            <p class="text-gray-600 mt-2">{{ feature.description | translate }}</p>
+            <p class="text-gray-600 dark:text-slate-400 mt-2">{{ feature.description | translate }}</p>
           </div>
         }
       </div>
@@ -92,7 +113,7 @@
       <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-12">
         {{ 'DASHBOARD.SUBTITLE' | translate }}
       </p>
-      <img src="assets/images/dashboard-preview.jpg" alt="Dashboard LocaGuest"
+      <img src="assets/images/dashboard-preview.jpg" [attr.alt]="'IMAGES.DASHBOARD_ALT' | translate"
            class="rounded-2xl shadow-lg w-full max-w-5xl mx-auto">
     </div>
   </section>
