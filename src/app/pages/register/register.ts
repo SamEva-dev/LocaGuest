@@ -2,10 +2,13 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/services/auth.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../core/ui/toast.service';
 
 @Component({
   selector: 'app-register',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, CommonModule, FormsModule],
   templateUrl: './register.html',
   styleUrl: './register.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,34 +20,36 @@ export class Register {
   }
  private auth = inject(AuthService);
  private router = inject(Router);
+  private toast = inject(ToastService);
 
  showPassword = signal(false);
   isLoading = signal(false);
 
-  async register(fullName: string, email: string, password: string) {
+  async register(firstName: string, lastName: string, email: string, password: string, confirmPassword: string) {
+    
     this.isLoading.set(true);
     try {
-      console.log('🔐 Register avec:', { fullName, email, passwordLength: password.length });
+      console.log('🔐 Register avec:', { firstName, lastName, email, passwordLength: password.length });
       
-      // Extraire prénom et nom du fullName
-      const names = fullName.trim().split(' ');
-      const firstName = names[0] || '';
-      const lastName = names.slice(1).join(' ') || names[0]; // Si pas de nom, utiliser le prénom
+      // Valider que les mots de passe correspondent
+      if (password !== confirmPassword) {
+        throw new Error('Les mots de passe ne correspondent pas');
+      }
       
-      console.log('📝 Données extraites:', { firstName, lastName });
+      console.log('📝 Données envoyées:', { firstName, lastName, email });
       
-      await this.auth.register(fullName, email, password);
+      await this.auth.register({ 
+        email, 
+        password, 
+        confirmPassword,
+        firstName, 
+        lastName
+      });
       
       console.log('✅ Register réussi');
-      
-      // Après register, login automatique
-      await this.auth.login(email, password);
-      
-      console.log('✅ Login automatique réussi');
-      console.log('🎫 Token stocké:', this.auth.getAccessToken()?.substring(0, 50) + '...');
-      console.log('👤 User:', this.auth.user());
-      
-      this.router.navigate(['/app']);
+      this.toast.success('AUTH.REGISTER_SUCCESS');
+      this.router.navigate(['/login']);
+    
     } catch (error) {
       console.error('❌ Erreur register:', error);
       throw error;

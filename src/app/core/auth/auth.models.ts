@@ -9,7 +9,20 @@ export interface UserDto {
 }
 
 export interface LoginRequest { email: string; password: string; code?: string; }
-export interface RegisterRequest { fullName: string; email: string; password: string; }
+export interface RegisterRequest { 
+  email: string; 
+  password: string; 
+  confirmPassword: string;
+  firstName?: string; 
+  lastName?: string; 
+  phoneNumber?: string; 
+}
+
+export interface RegisterResponse {
+  userId: string;
+  email: string;
+  message?: string;
+}
 
 export interface MfaLoginRequest {
   userId: string;

@@ -2,7 +2,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environnements/environment';
-import { LoginRequest, LoginResponse, RegisterRequest } from '../auth/auth.models';
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '../auth/auth.models';
 import { MfaSetupResponse, MfaVerifyRequest } from '../mfa/mfa.models';
 
 @Injectable({ providedIn: 'root' })
@@ -29,7 +29,7 @@ export class AuthApi {
   }
 
   register(body: RegisterRequest) {
-    return this.http.post<LoginResponse>(`${this.base}/Register`, body);
+    return this.http.post<RegisterResponse>(`${this.base}/auth/register`, body);
   }
 
   forgotPassword(email: string) {

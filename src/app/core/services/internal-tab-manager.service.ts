@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, effect } from '@angular/core';
 
 export type InternalTabType = 'summary' | 'property' | 'tenant' | 'relation';
 
@@ -14,6 +14,7 @@ export interface InternalTab {
 
 @Injectable({ providedIn: 'root' })
 export class InternalTabManagerService {
+  private static readonly STORAGE_KEY = 'lg.internal.activeTab';
   private readonly _tabs = signal<InternalTab[]>([
     {
       id: 'summary',
@@ -32,6 +33,23 @@ export class InternalTabManagerService {
     const id = this._activeTabId();
     return this._tabs().find((t) => t.id === id);
   });
+
+  constructor() {
+    // Restore active tab from storage if exists and is valid
+    const savedId = localStorage.getItem(InternalTabManagerService.STORAGE_KEY);
+    if (savedId) {
+      const exists = this._tabs().some((t) => t.id === savedId);
+      this._activeTabId.set(exists ? savedId : 'summary');
+    }
+
+    // Persist active tab changes
+    effect(() => {
+      const current = this._activeTabId();
+      try {
+        localStorage.setItem(InternalTabManagerService.STORAGE_KEY, current);
+      } catch {}
+    });
+  }
 
   openProperty(propertyId: string, propertyName: string, data?: any): void {
     const tabId = `property-${propertyId}`;

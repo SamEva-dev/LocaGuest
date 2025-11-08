@@ -10,7 +10,7 @@ export const AuthGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const isAuthenticated = await authService.isAuthenticated();
+  const isAuthenticated = await authService.checkAuth();
 
   if (!isAuthenticated) {
     // Rediriger vers login avec l'URL de retour

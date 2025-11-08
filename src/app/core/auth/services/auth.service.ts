@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { AuthApi } from '../../api/auth.api';
 import { TokenService } from './token/token.service';
 import { AuthState } from '../auth.state';
-import { LoginRequest, LoginResponse, MfaLoginRequest, RegisterRequest, UserDto } from '../auth.models';
+import { LoginRequest, LoginResponse, MfaLoginRequest, RegisterRequest, RegisterResponse, UserDto } from '../auth.models';
 import { ToastService } from '../../ui/toast.service';
 import { Router } from '@angular/router';
 import { AuthUser } from '../../models/auth.models';
@@ -50,21 +50,24 @@ export class AuthService {
     }
   }
 
-  async register(fullName: string, email: string, password: string): Promise<void> {
+  async register(request: RegisterRequest): Promise<void> {
     try {
-      const res = await this.api
-        .register({ fullName, email, password } as RegisterRequest)
-        .toPromise();
+      console.log('🔐 Register avec:', request);
+      const res = await this.api.register(request).toPromise();
       if (!res) throw new Error('No response from API');
-      this.applyLogin(res);
+      
+      console.log('✅ Register response:', res);
       this.toast.success('AUTH.REGISTER_SUCCESS');
+      
     } catch (err: any) {
+      console.error('❌ Register error:', err);
       this.toast.error('AUTH.REGISTER_FAILED');
       throw err;
     }
   }
 
   async refreshIfNeeded(): Promise<boolean> {
+    console.log('Refreshing tokens...');
     const current = this.state.tokens();
     if (!current?.refreshToken) return false;
     try {
@@ -158,6 +161,28 @@ export class AuthService {
     return user.roles?.includes(role) ?? false;
   }
 
+  /**
+   * Check if user is authenticated (for guards)
+   */
+  async checkAuth(): Promise<boolean> {
+    // Vérifier si on a des tokens
+    const tokens = this.state.tokens();
+    if (!tokens?.accessToken) return false;
+    
+    // Vérifier si le token n'est pas expiré
+    if (tokens.expiresAtUtc) {
+      const expiry = new Date(tokens.expiresAtUtc);
+      if (expiry < new Date()) {
+        // Token expiré, essayer de rafraîchir
+        return await this.refreshIfNeeded();
+      }
+    }
+    
+    // Vérifier si on a un user
+    const user = this.state.user();
+    return !!user;
+  }
+
   private applyLogin(res: LoginResponse) {
     // Créer l'objet AuthTokens attendu par TokenService
     const authTokens = {
@@ -168,6 +193,11 @@ export class AuthService {
     
     this.tokens.save(authTokens);
     this.state.tokens.set(authTokens);
+
+    // Reset persisted internal tab so post-login defaults to Dashboard (summary)
+    try {
+      localStorage.removeItem('lg.internal.activeTab');
+    } catch {}
 
     try {
       const token = res.accessToken;

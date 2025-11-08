@@ -11,7 +11,7 @@ export const GuestGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const isAuthenticated = await authService.isAuthenticated();
+  const isAuthenticated = await authService.checkAuth();
 
   if (isAuthenticated) {
     // Utilisateur déjà connecté, rediriger vers l'application
