@@ -5,6 +5,7 @@ import { AuthState } from '../auth.state';
 import { LoginRequest, LoginResponse, MfaLoginRequest, RegisterRequest, UserDto } from '../auth.models';
 import { ToastService } from '../../ui/toast.service';
 import { Router } from '@angular/router';
+import { AuthUser } from '../../models/auth.models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -16,6 +17,8 @@ export class AuthService {
    private router = inject(Router);
   user = this.state.user.asReadonly();
   isAuthenticated = this.state.isAuthenticated;
+
+  // Computed signals
 
   bootstrapFromStorage() {
     const t = this.tokens.load();

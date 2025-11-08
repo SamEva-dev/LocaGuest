@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormGroup } from '@angular/forms';
-import { AuthService } from '../../core/auth/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-mfa',

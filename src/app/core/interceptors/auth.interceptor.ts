@@ -1,8 +1,8 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
 import { catchError, switchMap, throwError, from } from 'rxjs';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth/services/auth.service';
 
 /**
  * Intercepteur HTTP pour ajouter le token JWT aux requêtes
@@ -32,7 +32,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       // Si 401 Unauthorized et pas déjà sur refresh, essayer de rafraîchir le token
       if (error.status === 401 && !req.url.includes('/api/auth/refresh')) {
-        return from(authService.refreshToken()).pipe(
+        return from(authService.refreshIfNeeded()).pipe(
           switchMap(() => {
             // Retry original request with new token
             const newToken = authService.getAccessToken();

@@ -3,8 +3,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../core/auth/services/auth.service';
 import { ToastService } from '../../core/ui/toast.service';
+import { AuthService } from '../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -38,9 +38,19 @@ export class Login {
     this.isLoading.set(true);
     try {
       this.auth.setRememberMe(this.rememberMe());
-      console.log("login")
-     await this.auth.login(email, password);
+      console.log('🔐 Login avec:', email);
+      console.log('📝 Remember me:', this.rememberMe());
+      
+      await this.auth.login(email, password);
       this.router.navigate(['/app']);
+      
+      console.log('✅ Login réussi');
+      console.log('🎫 Token stocké:', this.auth.getAccessToken()?.substring(0, 50) + '...');
+      console.log('🔄 Refresh token:', sessionStorage.getItem('lg.refresh') ? 'Présent' : 'Absent');
+       console.log('👤 User:', this.auth.user());
+    } catch (error) {
+      console.error('❌ Erreur login:', error);
+      this.toast.error('Erreur de connexion');
     } finally {
       this.isLoading.set(false);
     }
@@ -58,6 +68,7 @@ export class Login {
 
   goToRegister() {
   // Navigation Angular
+  console.log('Naviguer vers /register'); 
   this.router.navigate(['/register']);
 }
 goToForgotPassword() {

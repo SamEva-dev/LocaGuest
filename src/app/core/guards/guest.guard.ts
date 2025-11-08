@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../auth/services/auth.service';
 
 /**
  * Guard pour les routes accessibles uniquement aux utilisateurs non authentifiés
@@ -11,7 +11,7 @@ export const GuestGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  const isAuthenticated = await authService.checkAuth();
+  const isAuthenticated = await authService.isAuthenticated();
 
   if (isAuthenticated) {
     // Utilisateur déjà connecté, rediriger vers l'application

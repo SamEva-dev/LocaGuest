@@ -21,11 +21,33 @@ export class Register {
  showPassword = signal(false);
   isLoading = signal(false);
 
-  async register(name: string, email: string, password: string) {
+  async register(fullName: string, email: string, password: string) {
     this.isLoading.set(true);
     try {
-      await this.auth.register(name, email, password);
-      this.router.navigate(['/dashboard']);
+      console.log('🔐 Register avec:', { fullName, email, passwordLength: password.length });
+      
+      // Extraire prénom et nom du fullName
+      const names = fullName.trim().split(' ');
+      const firstName = names[0] || '';
+      const lastName = names.slice(1).join(' ') || names[0]; // Si pas de nom, utiliser le prénom
+      
+      console.log('📝 Données extraites:', { firstName, lastName });
+      
+      await this.auth.register(fullName, email, password);
+      
+      console.log('✅ Register réussi');
+      
+      // Après register, login automatique
+      await this.auth.login(email, password);
+      
+      console.log('✅ Login automatique réussi');
+      console.log('🎫 Token stocké:', this.auth.getAccessToken()?.substring(0, 50) + '...');
+      console.log('👤 User:', this.auth.user());
+      
+      this.router.navigate(['/app']);
+    } catch (error) {
+      console.error('❌ Erreur register:', error);
+      throw error;
     } finally {
       this.isLoading.set(false);
     }

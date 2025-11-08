@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthService } from '../../core/auth/services/auth.service';
 import { TabManagerService } from '../../core/services/tab-manager.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { AuthService } from '../../core/auth/services/auth.service';
 
 @Component({
   selector: 'main-layout',
