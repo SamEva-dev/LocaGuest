@@ -111,4 +111,16 @@ export class PropertiesApi {
   getFinancialSummary(id: string): Observable<FinancialSummary> {
     return this.http.get<FinancialSummary>(`${this.baseUrl}/${id}/financial-summary`);
   }
+
+  createProperty(dto: any): Observable<PropertyDetail> {
+    return this.http.post<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/v2/properties`, dto);
+  }
+
+  updateProperty(id: string, dto: any): Observable<PropertyDetail> {
+    return this.http.put<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/v2/properties/${id}`, dto);
+  }
+
+  deleteProperty(id: string): Observable<void> {
+    return this.http.delete<void>(`${environment.BASE_LOCAGUEST_API}/api/v2/properties/${id}`);
+  }
 }

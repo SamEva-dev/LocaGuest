@@ -73,4 +73,16 @@ export class TenantsApi {
   getPaymentStats(id: string): Observable<TenantPaymentStats> {
     return this.http.get<TenantPaymentStats>(`${this.baseUrl}/${id}/payment-stats`);
   }
+
+  createTenant(dto: any): Observable<TenantDetail> {
+    return this.http.post<TenantDetail>(`${environment.BASE_LOCAGUEST_API}/api/v2/tenants`, dto);
+  }
+
+  updateTenant(id: string, dto: any): Observable<TenantDetail> {
+    return this.http.put<TenantDetail>(`${environment.BASE_LOCAGUEST_API}/api/v2/tenants/${id}`, dto);
+  }
+
+  deleteTenant(id: string): Observable<void> {
+    return this.http.delete<void>(`${environment.BASE_LOCAGUEST_API}/api/v2/tenants/${id}`);
+  }
 }

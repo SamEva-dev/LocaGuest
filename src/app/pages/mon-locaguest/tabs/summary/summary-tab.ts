@@ -5,11 +5,13 @@ import { OccupancyChart } from '../../../../components/charts/occupancy-chart/oc
 import { PropertiesApi, PropertyListItem } from '../../../../core/api/properties.api';
 import { TenantsApi, TenantListItem } from '../../../../core/api/tenants.api';
 import { DashboardApi } from '../../../../core/api/dashboard.api';
+import { AddPropertyForm } from '../../forms/add-property/add-property-form';
+import { AddTenantForm } from '../../forms/add-tenant/add-tenant-form';
 
 @Component({
   selector: 'summary-tab',
   standalone: true,
-  imports: [TranslatePipe, OccupancyChart],
+  imports: [TranslatePipe, OccupancyChart, AddPropertyForm, AddTenantForm],
   templateUrl: './summary-tab.html'
 })
 export class SummaryTab {
@@ -21,6 +23,8 @@ export class SummaryTab {
   viewMode = signal<'properties' | 'tenants'>('properties');
   displayMode = signal<'card' | 'table'>('card');
   isLoading = signal(false);
+  showAddPropertyForm = signal(false);
+  showAddTenantForm = signal(false);
   
   properties = signal<PropertyListItem[]>([]);
   tenants = signal<TenantListItem[]>([]);
@@ -30,14 +34,14 @@ export class SummaryTab {
   stats = computed(() => {
     const props = this.properties();
     const tens = this.tenants();
-    const occupied = props.filter(p => p.status === 'Occupied' || p.status === 'Occupé').length;
-    const total = props.length;
+    const occupied = props?.filter(p => p.status === 'Occupied' || p.status === 'Occupé').length;
+    const total = props?.length;
     const occupancy = total > 0 ? Math.round((occupied / total) * 100) : 0;
     const revenue = props.reduce((sum, p) => sum + (p.rent || 0), 0);
     
     return [
-      { key: 'properties', label: 'SUMMARY.STATS.PROPERTIES', value: total.toString(), icon: 'ph-house', bgColor: '#38B2AC', delta: undefined, deltaPositive: true },
-      { key: 'tenants', label: 'SUMMARY.STATS.ACTIVE_TENANTS', value: tens.length.toString(), icon: 'ph-users-three', bgColor: '#ED8936', delta: undefined, deltaPositive: true },
+      { key: 'properties', label: 'SUMMARY.STATS.PROPERTIES', value: total?.toString(), icon: 'ph-house', bgColor: '#38B2AC', delta: undefined, deltaPositive: true },
+      { key: 'tenants', label: 'SUMMARY.STATS.ACTIVE_TENANTS', value: tens?.length.toString(), icon: 'ph-users-three', bgColor: '#ED8936', delta: undefined, deltaPositive: true },
       { key: 'occupancy', label: 'SUMMARY.STATS.OCCUPANCY', value: `${occupancy}%`, icon: 'ph-chart-line-up', bgColor: '#4299E1', delta: undefined, deltaPositive: false },
       { key: 'revenue', label: 'SUMMARY.STATS.REVENUE', value: `€ ${revenue.toLocaleString()}`, icon: 'ph-currency-eur', bgColor: '#48BB78', delta: undefined, deltaPositive: true },
     ];
@@ -52,9 +56,9 @@ export class SummaryTab {
     // Reload when view mode changes
     effect(() => {
       const mode = this.viewMode();
-      if (mode === 'properties' && this.properties().length === 0) {
+      if (mode === 'properties' && this.properties()?.length === 0) {
         this.loadProperties();
-      } else if (mode === 'tenants' && this.tenants().length === 0) {
+      } else if (mode === 'tenants' && this.tenants()?.length === 0) {
         this.loadTenants();
       }
     });
@@ -66,7 +70,7 @@ export class SummaryTab {
       next: (result) => {
         this.properties.set(result.data);
         this.isLoading.set(false);
-        console.log('✅ Properties loaded:', result.data.length);
+        console.log('✅ Properties loaded:', result.data?.length);
       },
       error: (err) => {
         console.error('❌ Error loading properties:', err);
@@ -81,7 +85,7 @@ export class SummaryTab {
       next: (result) => {
         this.tenants.set(result.data);
         this.isLoading.set(false);
-        console.log('✅ Tenants loaded:', result.data.length);
+        console.log('✅ Tenants loaded:', result.data?.length);
       },
       error: (err) => {
         console.error('❌ Error loading tenants:', err);
@@ -139,5 +143,32 @@ export class SummaryTab {
 
   getInitials(name: string): string {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  }
+
+  // Form handlers
+  openAddPropertyForm() {
+    this.showAddPropertyForm.set(true);
+  }
+
+  closeAddPropertyForm() {
+    this.showAddPropertyForm.set(false);
+  }
+
+  onPropertyCreated(property: any) {
+    console.log('Property created, reloading list...');
+    this.loadProperties();
+  }
+
+  openAddTenantForm() {
+    this.showAddTenantForm.set(true);
+  }
+
+  closeAddTenantForm() {
+    this.showAddTenantForm.set(false);
+  }
+
+  onTenantCreated(tenant: any) {
+    console.log('Tenant created, reloading list...');
+    this.loadTenants();
   }
 }

@@ -2,9 +2,18 @@
   <!-- Header with Add Property button -->
   <div class="flex items-center justify-between">
     <h2 class="text-2xl font-bold">{{ 'SUMMARY.TITLE' | translate }}</h2>
-    <button class="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-emerald-500 text-white hover:shadow-lg transition">
-      <i class="ph ph-plus mr-2"></i>{{ 'SUMMARY.ADD_PROPERTY' | translate }}
-    </button>
+    <div class="flex items-center gap-3">
+      <button 
+        (click)="openAddTenantForm()"
+        class="px-4 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:shadow-lg transition">
+        <i class="ph ph-plus mr-2"></i>{{ 'SUMMARY.ADD_TENANT' | translate }}
+      </button>
+      <button 
+        (click)="openAddPropertyForm()"
+        class="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:shadow-lg transition">
+        <i class="ph ph-plus mr-2"></i>{{ 'SUMMARY.ADD_PROPERTY' | translate }}
+      </button>
+    </div>
   </div>
 
   <!-- Stats Row -->
@@ -252,4 +261,19 @@
       </div>
     </div>
   </div>
+
+  <!-- Forms -->
+  @if (showAddPropertyForm()) {
+    <add-property-form
+      (propertyCreated)="onPropertyCreated($event)"
+      (closeForm)="closeAddPropertyForm()"
+    />
+  }
+
+  @if (showAddTenantForm()) {
+    <add-tenant-form
+      (tenantCreated)="onTenantCreated($event)"
+      (closeForm)="closeAddTenantForm()"
+    />
+  }
 </div>

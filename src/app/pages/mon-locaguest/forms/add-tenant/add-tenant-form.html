@@ -1,0 +1,260 @@
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <!-- Header -->
+    <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
+      <h2 class="text-2xl font-bold">{{ 'TENANT.ADD_TENANT' | translate }}</h2>
+      <button (click)="close()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition">
+        <i class="ph ph-x text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-6">
+      <div class="space-y-6">
+        <!-- Section: Informations personnelles -->
+        <div>
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-user text-orange-500"></i>
+            {{ 'TENANT.FORM.PERSONAL_INFO' | translate }}
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Prénom -->
+            <div>
+              <label class="block text-sm font-medium mb-2">
+                {{ 'TENANT.FORM.FIRST_NAME' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                formControlName="firstName"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+                [placeholder]="'TENANT.FORM.FIRST_NAME_PLACEHOLDER' | translate"
+              />
+              @if (form.get('firstName')?.invalid && form.get('firstName')?.touched) {
+                <p class="text-red-500 text-xs mt-1">{{ 'TENANT.FORM.FIRST_NAME_REQUIRED' | translate }}</p>
+              }
+            </div>
+
+            <!-- Nom -->
+            <div>
+              <label class="block text-sm font-medium mb-2">
+                {{ 'TENANT.FORM.LAST_NAME' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                formControlName="lastName"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+                [placeholder]="'TENANT.FORM.LAST_NAME_PLACEHOLDER' | translate"
+              />
+              @if (form.get('lastName')?.invalid && form.get('lastName')?.touched) {
+                <p class="text-red-500 text-xs mt-1">{{ 'TENANT.FORM.LAST_NAME_REQUIRED' | translate }}</p>
+              }
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label class="block text-sm font-medium mb-2">
+                {{ 'TENANT.FORM.EMAIL' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                formControlName="email"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+                [placeholder]="'TENANT.FORM.EMAIL_PLACEHOLDER' | translate"
+              />
+              @if (form.get('email')?.invalid && form.get('email')?.touched) {
+                <p class="text-red-500 text-xs mt-1">{{ 'TENANT.FORM.EMAIL_INVALID' | translate }}</p>
+              }
+            </div>
+
+            <!-- Téléphone -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.PHONE' | translate }}</label>
+              <input
+                type="tel"
+                formControlName="phone"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+                [placeholder]="'TENANT.FORM.PHONE_PLACEHOLDER' | translate"
+              />
+            </div>
+
+            <!-- Date de naissance -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.DATE_OF_BIRTH' | translate }}</label>
+              <input
+                type="date"
+                formControlName="dateOfBirth"
+                [max]="maxBirthDate"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Nationalité -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.NATIONALITY' | translate }}</label>
+              <input
+                type="text"
+                formControlName="nationality"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Numéro d'identité -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.ID_NUMBER' | translate }}</label>
+              <input
+                type="text"
+                formControlName="idNumber"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Adresse -->
+        <div>
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-map-pin text-orange-500"></i>
+            {{ 'TENANT.FORM.ADDRESS' | translate }}
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Adresse complète -->
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.FULL_ADDRESS' | translate }}</label>
+              <input
+                type="text"
+                formControlName="address"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+                [placeholder]="'TENANT.FORM.ADDRESS_PLACEHOLDER' | translate"
+              />
+            </div>
+
+            <!-- Ville -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.CITY' | translate }}</label>
+              <input
+                type="text"
+                formControlName="city"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Code postal -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.POSTAL_CODE' | translate }}</label>
+              <input
+                type="text"
+                formControlName="postalCode"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Pays -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.COUNTRY' | translate }}</label>
+              <input
+                type="text"
+                formControlName="country"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Contact d'urgence -->
+        <div>
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-phone text-orange-500"></i>
+            {{ 'TENANT.FORM.EMERGENCY_CONTACT' | translate }}
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Contact d'urgence -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.EMERGENCY_CONTACT_NAME' | translate }}</label>
+              <input
+                type="text"
+                formControlName="emergencyContact"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Téléphone d'urgence -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.EMERGENCY_PHONE' | translate }}</label>
+              <input
+                type="tel"
+                formControlName="emergencyPhone"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Informations professionnelles -->
+        <div>
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-briefcase text-orange-500"></i>
+            {{ 'TENANT.FORM.PROFESSIONAL_INFO' | translate }}
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Profession -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.OCCUPATION' | translate }}</label>
+              <input
+                type="text"
+                formControlName="occupation"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Revenu mensuel -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.MONTHLY_INCOME' | translate }} (€)</label>
+              <input
+                type="number"
+                formControlName="monthlyIncome"
+                min="0"
+                step="0.01"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Notes -->
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium mb-2">{{ 'TENANT.FORM.NOTES' | translate }}</label>
+              <textarea
+                formControlName="notes"
+                rows="3"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 dark:bg-slate-700"
+                [placeholder]="'TENANT.FORM.NOTES_PLACEHOLDER' | translate"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+        <button
+          type="button"
+          (click)="close()"
+          [disabled]="isSubmitting()"
+          class="px-6 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition disabled:opacity-50"
+        >
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button
+          type="submit"
+          [disabled]="form.invalid || isSubmitting()"
+          class="px-6 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          @if (isSubmitting()) {
+            <i class="ph ph-spinner animate-spin"></i>
+          } @else {
+            <i class="ph ph-plus"></i>
+          }
+          {{ 'TENANT.FORM.CREATE' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

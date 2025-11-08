@@ -1,0 +1,323 @@
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <!-- Header -->
+    <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
+      <h2 class="text-2xl font-bold">{{ 'PROPERTY.ADD_PROPERTY' | translate }}</h2>
+      <button (click)="close()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition">
+        <i class="ph ph-x text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-6">
+      <div class="space-y-6">
+        <!-- Section: Informations générales -->
+        <div>
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-house text-emerald-500"></i>
+            {{ 'PROPERTY.FORM.GENERAL_INFO' | translate }}
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Nom -->
+            <div>
+              <label class="block text-sm font-medium mb-2">
+                {{ 'PROPERTY.FORM.NAME' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                formControlName="name"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+                [placeholder]="'PROPERTY.FORM.NAME_PLACEHOLDER' | translate"
+              />
+              @if (form.get('name')?.invalid && form.get('name')?.touched) {
+                <p class="text-red-500 text-xs mt-1">{{ 'PROPERTY.FORM.NAME_REQUIRED' | translate }}</p>
+              }
+            </div>
+
+            <!-- Type -->
+            <div>
+              <label class="block text-sm font-medium mb-2">
+                {{ 'PROPERTY.FORM.TYPE' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <select
+                formControlName="type"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              >
+                <option value="">{{ 'PROPERTY.FORM.SELECT_TYPE' | translate }}</option>
+                <option value="Apartment">{{ 'PROPERTY.TYPE_LABELS.APARTMENT' | translate }}</option>
+                <option value="House">{{ 'PROPERTY.TYPE_LABELS.HOUSE' | translate }}</option>
+                <option value="Condo">{{ 'PROPERTY.TYPE_LABELS.CONDO' | translate }}</option>
+                <option value="Townhouse">{{ 'PROPERTY.TYPE_LABELS.TOWNHOUSE' | translate }}</option>
+                <option value="Duplex">{{ 'PROPERTY.TYPE_LABELS.DUPLEX' | translate }}</option>
+                <option value="Studio">{{ 'PROPERTY.TYPE_LABELS.STUDIO' | translate }}</option>
+              </select>
+              @if (form.get('type')?.invalid && form.get('type')?.touched) {
+                <p class="text-red-500 text-xs mt-1">{{ 'PROPERTY.FORM.TYPE_REQUIRED' | translate }}</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Adresse -->
+        <div>
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-map-pin text-emerald-500"></i>
+            {{ 'PROPERTY.FORM.ADDRESS' | translate }}
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Adresse complète -->
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium mb-2">
+                {{ 'PROPERTY.FORM.FULL_ADDRESS' | translate }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                formControlName="address"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+                [placeholder]="'PROPERTY.FORM.ADDRESS_PLACEHOLDER' | translate"
+              />
+              @if (form.get('address')?.invalid && form.get('address')?.touched) {
+                <p class="text-red-500 text-xs mt-1">{{ 'PROPERTY.FORM.ADDRESS_REQUIRED' | translate }}</p>
+              }
+            </div>
+
+            <!-- Ville -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.CITY' | translate }}</label>
+              <input
+                type="text"
+                formControlName="city"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Code postal -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.POSTAL_CODE' | translate }}</label>
+              <input
+                type="text"
+                formControlName="postalCode"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Pays -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.COUNTRY' | translate }}</label>
+              <input
+                type="text"
+                formControlName="country"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Caractéristiques -->
+        <div>
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-list-bullets text-emerald-500"></i>
+            {{ 'PROPERTY.FORM.FEATURES' | translate }}
+          </h3>
+          <div class="grid md:grid-cols-3 gap-4">
+            <!-- Surface -->
+            <div>
+              <label class="block text-sm font-medium mb-2">
+                {{ 'PROPERTY.FORM.SURFACE' | translate }} (m²) <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                formControlName="surface"
+                min="0"
+                step="0.01"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Chambres -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.BEDROOMS' | translate }}</label>
+              <input
+                type="number"
+                formControlName="bedrooms"
+                min="0"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Salles de bains -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.BATHROOMS' | translate }}</label>
+              <input
+                type="number"
+                formControlName="bathrooms"
+                min="0"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Étage -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.FLOOR' | translate }}</label>
+              <input
+                type="number"
+                formControlName="floor"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Checkboxes -->
+            <div class="md:col-span-2 flex flex-wrap gap-4">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" formControlName="hasElevator" class="w-4 h-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500" />
+                <span class="text-sm">{{ 'PROPERTY.FORM.HAS_ELEVATOR' | translate }}</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" formControlName="hasParking" class="w-4 h-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500" />
+                <span class="text-sm">{{ 'PROPERTY.FORM.HAS_PARKING' | translate }}</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" formControlName="hasBalcony" class="w-4 h-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500" />
+                <span class="text-sm">{{ 'PROPERTY.FORM.HAS_BALCONY' | translate }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Financier -->
+        <div>
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-currency-eur text-emerald-500"></i>
+            {{ 'PROPERTY.FORM.FINANCIAL' | translate }}
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Loyer -->
+            <div>
+              <label class="block text-sm font-medium mb-2">
+                {{ 'PROPERTY.FORM.RENT' | translate }} (€) <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                formControlName="rent"
+                min="0"
+                step="0.01"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+              @if (form.get('rent')?.invalid && form.get('rent')?.touched) {
+                <p class="text-red-500 text-xs mt-1">{{ 'PROPERTY.FORM.RENT_REQUIRED' | translate }}</p>
+              }
+            </div>
+
+            <!-- Charges -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.CHARGES' | translate }} (€)</label>
+              <input
+                type="number"
+                formControlName="charges"
+                min="0"
+                step="0.01"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Prix d'achat -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.PURCHASE_PRICE' | translate }} (€)</label>
+              <input
+                type="number"
+                formControlName="purchasePrice"
+                min="0"
+                step="0.01"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Date d'achat -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.PURCHASE_DATE' | translate }}</label>
+              <input
+                type="date"
+                formControlName="purchaseDate"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Informations complémentaires -->
+        <div>
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ph ph-info text-emerald-500"></i>
+            {{ 'PROPERTY.FORM.ADDITIONAL_INFO' | translate }}
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Classe énergétique -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.ENERGY_CLASS' | translate }}</label>
+              <select
+                formControlName="energyClass"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              >
+                <option value="">{{ 'PROPERTY.FORM.SELECT_ENERGY_CLASS' | translate }}</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+              </select>
+            </div>
+
+            <!-- Année de construction -->
+            <div>
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.CONSTRUCTION_YEAR' | translate }}</label>
+              <input
+                type="number"
+                formControlName="constructionYear"
+                min="1800"
+                [max]="currentYear"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+              />
+            </div>
+
+            <!-- Description -->
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium mb-2">{{ 'PROPERTY.FORM.DESCRIPTION' | translate }}</label>
+              <textarea
+                formControlName="description"
+                rows="4"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700"
+                [placeholder]="'PROPERTY.FORM.DESCRIPTION_PLACEHOLDER' | translate"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+        <button
+          type="button"
+          (click)="close()"
+          [disabled]="isSubmitting()"
+          class="px-6 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition disabled:opacity-50"
+        >
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button
+          type="submit"
+          [disabled]="form.invalid || isSubmitting()"
+          class="px-6 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          @if (isSubmitting()) {
+            <i class="ph ph-spinner animate-spin"></i>
+          } @else {
+            <i class="ph ph-plus"></i>
+          }
+          {{ 'PROPERTY.FORM.CREATE' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
