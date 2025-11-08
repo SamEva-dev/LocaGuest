@@ -37,13 +37,14 @@ export class SummaryTab {
     const occupied = props?.filter(p => p.status === 'Occupied' || p.status === 'Occupé').length;
     const total = props?.length;
     const occupancy = total > 0 ? Math.round((occupied / total) * 100) : 0;
-    const revenue = props.reduce((sum, p) => sum + (p.rent || 0), 0);
+    const revenue = props?.reduce((sum, p) => sum + (p.rent || 0), 0);
+    console.log('tens', tens);
     
     return [
       { key: 'properties', label: 'SUMMARY.STATS.PROPERTIES', value: total?.toString(), icon: 'ph-house', bgColor: '#38B2AC', delta: undefined, deltaPositive: true },
       { key: 'tenants', label: 'SUMMARY.STATS.ACTIVE_TENANTS', value: tens?.length.toString(), icon: 'ph-users-three', bgColor: '#ED8936', delta: undefined, deltaPositive: true },
       { key: 'occupancy', label: 'SUMMARY.STATS.OCCUPANCY', value: `${occupancy}%`, icon: 'ph-chart-line-up', bgColor: '#4299E1', delta: undefined, deltaPositive: false },
-      { key: 'revenue', label: 'SUMMARY.STATS.REVENUE', value: `€ ${revenue.toLocaleString()}`, icon: 'ph-currency-eur', bgColor: '#48BB78', delta: undefined, deltaPositive: true },
+      { key: 'revenue', label: 'SUMMARY.STATS.REVENUE', value: `€ ${revenue?.toLocaleString()}`, icon: 'ph-currency-eur', bgColor: '#48BB78', delta: undefined, deltaPositive: true },
     ];
   });
 
@@ -66,11 +67,12 @@ export class SummaryTab {
 
   private loadProperties() {
     this.isLoading.set(true);
-    this.propertiesApi.getProperties({ pageSize: 50 }).subscribe({
+    this.propertiesApi.getProperties({ page: 1, pageSize: 50 }).subscribe({
       next: (result) => {
-        this.properties.set(result.data);
+        console.log('✅ result:', result);
+        this.properties.set(result.items);
         this.isLoading.set(false);
-        console.log('✅ Properties loaded:', result.data?.length);
+        console.log('✅ Properties loaded:', result.items?.length);
       },
       error: (err) => {
         console.error('❌ Error loading properties:', err);
@@ -81,11 +83,11 @@ export class SummaryTab {
 
   private loadTenants() {
     this.isLoading.set(true);
-    this.tenantsApi.getTenants({ pageSize: 50 }).subscribe({
+    this.tenantsApi.getTenants({ page: 1, pageSize: 50 }).subscribe({
       next: (result) => {
-        this.tenants.set(result.data);
+        this.tenants.set(result.items);
         this.isLoading.set(false);
-        console.log('✅ Tenants loaded:', result.data?.length);
+        console.log('✅ Tenants loaded:', result.items?.length);
       },
       error: (err) => {
         console.error('❌ Error loading tenants:', err);

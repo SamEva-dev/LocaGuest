@@ -3,8 +3,10 @@ import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RevenueChart } from '../../../../components/charts/revenue-chart/revenue-chart';
 import { OccupancyChart } from '../../../../components/charts/occupancy-chart/occupancy-chart';
-import { PropertiesApi, PropertyDetail, FinancialSummary, Payment, Contract } from '../../../../core/api/properties.api';
-import { TenantsApi, TenantDetail, TenantPaymentStats } from '../../../../core/api/tenants.api';
+import { PropertyDetail, FinancialSummary, Payment, Contract } from '../../../../core/api/properties.api';
+import { TenantDetail, TenantPaymentStats } from '../../../../core/api/tenants.api';
+import { PropertiesService } from '../../../../core/services/properties.service';
+import { TenantsService } from '../../../../core/services/tenants.service';
 
 @Component({
   selector: 'relation-tab',
@@ -14,8 +16,8 @@ import { TenantsApi, TenantDetail, TenantPaymentStats } from '../../../../core/a
 })
 export class RelationTab {
   data = input<any>();
-  private propertiesApi = inject(PropertiesApi);
-  private tenantsApi = inject(TenantsApi);
+  private propertiesService = inject(PropertiesService);
+  private tenantsService = inject(TenantsService);
 
   activeSubTab = signal('overview');
   isLoading = signal(false);
@@ -55,7 +57,7 @@ export class RelationTab {
     this.isLoading.set(true);
     
     // Load property
-    this.propertiesApi.getProperty(propertyId).subscribe({
+    this.propertiesService.getProperty(propertyId).subscribe({
       next: (property) => {
         this.property.set(property);
         console.log('✅ Property loaded:', property.name);
@@ -64,7 +66,7 @@ export class RelationTab {
     });
 
     // Load tenant
-    this.tenantsApi.getTenant(tenantId).subscribe({
+    this.tenantsService.getTenant(tenantId).subscribe({
       next: (tenant) => {
         this.tenant.set(tenant);
         this.isLoading.set(false);
@@ -77,7 +79,7 @@ export class RelationTab {
     });
 
     // Load property payments
-    this.propertiesApi.getPropertyPayments(propertyId).subscribe({
+    this.propertiesService.getPropertyPayments(propertyId).subscribe({
       next: (payments) => {
         this.payments.set(payments);
         console.log('✅ Payments loaded:', payments.length);
@@ -86,7 +88,7 @@ export class RelationTab {
     });
 
     // Load contracts
-    this.propertiesApi.getPropertyContracts(propertyId).subscribe({
+    this.propertiesService.getPropertyContracts(propertyId).subscribe({
       next: (contracts) => {
         this.contracts.set(contracts);
         // Find active contract for this tenant
@@ -98,7 +100,7 @@ export class RelationTab {
     });
 
     // Load financial summary
-    this.propertiesApi.getFinancialSummary(propertyId).subscribe({
+    this.propertiesService.getFinancialSummary(propertyId).subscribe({
       next: (summary) => {
         this.financialSummary.set(summary);
         console.log('✅ Financial summary loaded');
@@ -107,7 +109,7 @@ export class RelationTab {
     });
 
     // Load tenant payment stats
-    this.tenantsApi.getPaymentStats(tenantId).subscribe({
+    this.tenantsService.getPaymentStats(tenantId).subscribe({
       next: (stats) => {
         this.paymentStats.set(stats);
         console.log('✅ Payment stats loaded');

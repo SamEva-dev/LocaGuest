@@ -3,7 +3,8 @@ import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
 import { RevenueChart } from '../../../../components/charts/revenue-chart/revenue-chart';
-import { PropertiesApi, PropertyDetail, Payment, Contract, FinancialSummary } from '../../../../core/api/properties.api';
+import { PropertyDetail, Payment, Contract, FinancialSummary } from '../../../../core/api/properties.api';
+import { PropertiesService } from '../../../../core/services/properties.service';
 
 @Component({
   selector: 'property-detail-tab',
@@ -14,7 +15,7 @@ import { PropertiesApi, PropertyDetail, Payment, Contract, FinancialSummary } fr
 export class PropertyDetailTab {
   data = input<any>();
   private tabManager = inject(InternalTabManagerService);
-  private propertiesApi = inject(PropertiesApi);
+  private propertiesService = inject(PropertiesService);
 
   activeSubTab = signal('overview');
   isLoading = signal(false);
@@ -47,7 +48,7 @@ export class PropertyDetailTab {
     this.isLoading.set(true);
     
     // Load property details
-    this.propertiesApi.getProperty(id).subscribe({
+    this.propertiesService.getProperty(id).subscribe({
       next: (property) => {
         this.property.set(property);
         this.isLoading.set(false);
@@ -60,7 +61,7 @@ export class PropertyDetailTab {
     });
 
     // Load payments
-    this.propertiesApi.getPropertyPayments(id).subscribe({
+    this.propertiesService.getPropertyPayments(id).subscribe({
       next: (payments) => {
         this.payments.set(payments);
         this.recentPayments.set(payments.slice(0, 3));
@@ -70,7 +71,7 @@ export class PropertyDetailTab {
     });
 
     // Load contracts
-    this.propertiesApi.getPropertyContracts(id).subscribe({
+    this.propertiesService.getPropertyContracts(id).subscribe({
       next: (contracts) => {
         this.contracts.set(contracts);
         console.log('✅ Contracts loaded:', contracts.length);
@@ -79,7 +80,7 @@ export class PropertyDetailTab {
     });
 
     // Load financial summary
-    this.propertiesApi.getFinancialSummary(id).subscribe({
+    this.propertiesService.getFinancialSummary(id).subscribe({
       next: (summary) => {
         this.financialSummary.set(summary);
         console.log('✅ Financial summary loaded');

@@ -195,9 +195,11 @@
     "TABLE": {
       "PROPERTY": "Property",
       "ADDRESS": "Address",
+      "EMAIL": "Email",
       "RENT": "Rent",
       "STATUS": "Status",
-      "TENANT": "Tenant"
+      "TENANT": "Tenant",
+      "CONTRACTS": "Contracts"
     },
     "STATS": {
       "PROPERTIES": "Properties",

@@ -3,7 +3,8 @@ import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
 import { OccupancyChart } from '../../../../components/charts/occupancy-chart/occupancy-chart';
-import { TenantsApi, TenantDetail, TenantPayment, TenantPaymentStats } from '../../../../core/api/tenants.api';
+import { TenantDetail, TenantPayment, TenantPaymentStats } from '../../../../core/api/tenants.api';
+import { TenantsService } from '../../../../core/services/tenants.service';
 import { Contract } from '../../../../core/api/properties.api';
 
 @Component({
@@ -15,7 +16,7 @@ import { Contract } from '../../../../core/api/properties.api';
 export class TenantDetailTab {
   data = input<any>();
   private tabManager = inject(InternalTabManagerService);
-  private tenantsApi = inject(TenantsApi);
+  private tenantsService = inject(TenantsService);
 
   activeSubTab = signal('contracts');
   isLoading = signal(false);
@@ -44,7 +45,7 @@ export class TenantDetailTab {
     this.isLoading.set(true);
     
     // Load tenant details
-    this.tenantsApi.getTenant(id).subscribe({
+    this.tenantsService.getTenant(id).subscribe({
       next: (tenant) => {
         this.tenant.set(tenant);
         this.isLoading.set(false);
@@ -57,7 +58,7 @@ export class TenantDetailTab {
     });
 
     // Load payments
-    this.tenantsApi.getTenantPayments(id).subscribe({
+    this.tenantsService.getTenantPayments(id).subscribe({
       next: (payments) => {
         this.payments.set(payments);
         console.log('✅ Tenant payments loaded:', payments.length);
@@ -66,7 +67,7 @@ export class TenantDetailTab {
     });
 
     // Load contracts
-    this.tenantsApi.getTenantContracts(id).subscribe({
+    this.tenantsService.getTenantContracts(id).subscribe({
       next: (contracts) => {
         this.contracts.set(contracts);
         console.log('✅ Tenant contracts loaded:', contracts.length);
@@ -75,7 +76,7 @@ export class TenantDetailTab {
     });
 
     // Load payment stats
-    this.tenantsApi.getPaymentStats(id).subscribe({
+    this.tenantsService.getPaymentStats(id).subscribe({
       next: (stats) => {
         this.paymentStats.set(stats);
         console.log('✅ Payment stats loaded');

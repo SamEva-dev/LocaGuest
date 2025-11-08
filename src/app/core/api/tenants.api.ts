@@ -34,6 +34,27 @@ export interface TenantPaymentStats {
   lastPayment?: { amount: number; paymentDate: Date; status: string };
 }
 
+export interface CreateTenantDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  dateOfBirth?: string | null;
+  address?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  nationality?: string;
+  idNumber?: string;
+  emergencyContact?: string;
+  emergencyPhone?: string;
+  occupation?: string;
+  monthlyIncome?: number | null;
+  notes?: string;
+}
+
+export interface UpdateTenantDto extends Partial<CreateTenantDto> {}
+
 @Injectable({ providedIn: 'root' })
 export class TenantsApi {
   private http = inject(HttpClient);
@@ -74,15 +95,16 @@ export class TenantsApi {
     return this.http.get<TenantPaymentStats>(`${this.baseUrl}/${id}/payment-stats`);
   }
 
-  createTenant(dto: any): Observable<TenantDetail> {
-    return this.http.post<TenantDetail>(`${environment.BASE_LOCAGUEST_API}/api/v2/tenants`, dto);
+  createTenant(dto: CreateTenantDto): Observable<TenantDetail> {
+    console.log(dto);
+    return this.http.post<TenantDetail>(`${environment.BASE_LOCAGUEST_API}/api/tenants`, dto);
   }
 
-  updateTenant(id: string, dto: any): Observable<TenantDetail> {
-    return this.http.put<TenantDetail>(`${environment.BASE_LOCAGUEST_API}/api/v2/tenants/${id}`, dto);
+  updateTenant(id: string, dto: UpdateTenantDto): Observable<TenantDetail> {
+    return this.http.put<TenantDetail>(`${environment.BASE_LOCAGUEST_API}/api/tenants/${id}`, dto);
   }
 
   deleteTenant(id: string): Observable<void> {
-    return this.http.delete<void>(`${environment.BASE_LOCAGUEST_API}/api/v2/tenants/${id}`);
+    return this.http.delete<void>(`${environment.BASE_LOCAGUEST_API}/api/tenants/${id}`);
   }
 }

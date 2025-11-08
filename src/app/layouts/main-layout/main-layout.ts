@@ -23,6 +23,7 @@ export class MainLayout {
 
   ngOnInit() {
     // Open Dashboard and Mon LocaGuest as fixed tabs
+    console.log("tabs",this.tabs());
     if (this.tabs().length === 0) {
       // First tab: Dashboard (fixed)
       this.tabManager.openTab({
@@ -43,10 +44,12 @@ export class MainLayout {
         icon: 'ph-house',
         closable: false
       });
+      this.tabManager.setActiveTab('dashboard');
     }
   }
 
   selectTab(tabId: string) {
+    console.log("tabId",tabId);
     this.tabManager.setActiveTab(tabId);
     const tab = this.tabs().find(t => t.id === tabId);
     if (tab) {

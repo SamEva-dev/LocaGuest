@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { TenantsApi, TenantListItem, TenantDetail, TenantPayment, TenantPaymentStats } from '../api/tenants.api';
+import { TenantsApi, TenantListItem, TenantDetail, TenantPayment, TenantPaymentStats, CreateTenantDto, UpdateTenantDto } from '../api/tenants.api';
 import { Contract, PaginatedResult } from '../api/properties.api';
 import { Observable, catchError, of, shareReplay, tap } from 'rxjs';
 
@@ -24,13 +24,13 @@ export class TenantsService {
     this.loading.set(true);
     return this.tenantsApi.getTenants(params).pipe(
       tap(result => {
-        this.tenants.set(result.data);
+        this.tenants.set(result.items);
         this.loading.set(false);
       }),
       catchError((err: unknown) => {
         console.error('Error loading tenants:', err);
         this.loading.set(false);
-        return of({ total: 0, page: 1, pageSize: 10, data: [] });
+        return of({ total: 0, page: 1, pageSize: 10, items: [] });
       }),
       shareReplay(1)
     );
@@ -80,6 +80,43 @@ export class TenantsService {
           latePayments: 0,
           onTimeRate: 1.0
         });
+      })
+    );
+  }
+
+  // Mutations
+  createTenant(dto: CreateTenantDto): Observable<TenantDetail> {
+    console.log('Creating tenant:', dto);
+    return this.tenantsApi.createTenant(dto).pipe(
+      tap((created) => {
+        if (this.tenants()?.length) {
+          this.tenants.set([created as unknown as TenantListItem, ...this.tenants()]);
+        }
+      }),
+      catchError((err: unknown) => {
+        console.error('Error creating tenant:', err);
+        throw err;
+      })
+    );
+  }
+
+  updateTenant(id: string, dto: UpdateTenantDto): Observable<TenantDetail> {
+    return this.tenantsApi.updateTenant(id, dto).pipe(
+      catchError((err: unknown) => {
+        console.error('Error updating tenant:', err);
+        throw err;
+      })
+    );
+  }
+
+  deleteTenant(id: string): Observable<void> {
+    return this.tenantsApi.deleteTenant(id).pipe(
+      tap(() => {
+        this.tenants.set(this.tenants().filter(t => t.id !== id));
+      }),
+      catchError((err: unknown) => {
+        console.error('Error deleting tenant:', err);
+        throw err;
       })
     );
   }

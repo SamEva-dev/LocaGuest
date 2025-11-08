@@ -62,11 +62,36 @@ export interface FinancialSummary {
   occupancyRate: number;
 }
 
+export interface CreatePropertyDto {
+  name: string;
+  address: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  type: string;
+  surface: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  floor?: number | null;
+  hasElevator?: boolean;
+  hasParking?: boolean;
+  hasBalcony?: boolean;
+  rent: number;
+  charges?: number;
+  description?: string;
+  purchaseDate?: string | null;
+  purchasePrice?: number | null;
+  energyClass?: string;
+  constructionYear?: number | null;
+}
+
+export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {}
+
 export interface PaginatedResult<T> {
   total: number;
   page: number;
   pageSize: number;
-  data: T[];
+  items: T[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -112,15 +137,15 @@ export class PropertiesApi {
     return this.http.get<FinancialSummary>(`${this.baseUrl}/${id}/financial-summary`);
   }
 
-  createProperty(dto: any): Observable<PropertyDetail> {
-    return this.http.post<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/v2/properties`, dto);
+  createProperty(dto: CreatePropertyDto): Observable<PropertyDetail> {
+    return this.http.post<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/properties`, dto);
   }
 
-  updateProperty(id: string, dto: any): Observable<PropertyDetail> {
-    return this.http.put<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/v2/properties/${id}`, dto);
+  updateProperty(id: string, dto: UpdatePropertyDto): Observable<PropertyDetail> {
+    return this.http.put<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/properties/${id}`, dto);
   }
 
   deleteProperty(id: string): Observable<void> {
-    return this.http.delete<void>(`${environment.BASE_LOCAGUEST_API}/api/v2/properties/${id}`);
+    return this.http.delete<void>(`${environment.BASE_LOCAGUEST_API}/api/properties/${id}`);
   }
 }

@@ -1,7 +1,8 @@
 import { Component, output, signal, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { TenantsApi } from '../../../../core/api/tenants.api';
+import { TenantsService } from '../../../../core/services/tenants.service';
+import { CreateTenantDto, TenantDetail } from '../../../../core/api/tenants.api';
 
 @Component({
   selector: 'add-tenant-form',
@@ -11,10 +12,10 @@ import { TenantsApi } from '../../../../core/api/tenants.api';
 })
 export class AddTenantForm {
   private fb = inject(FormBuilder);
-  private tenantsApi = inject(TenantsApi);
+  private tenantsService = inject(TenantsService);
 
   // Outputs
-  tenantCreated = output<any>();
+  tenantCreated = output<TenantDetail>();
   closeForm = output<void>();
 
   // State
@@ -61,7 +62,7 @@ export class AddTenantForm {
     this.isSubmitting.set(true);
 
     const formValue = this.form.value;
-    const createTenantDto = {
+    const createTenantDto: CreateTenantDto = {
       firstName: formValue.firstName,
       lastName: formValue.lastName,
       email: formValue.email,
@@ -80,18 +81,19 @@ export class AddTenantForm {
       notes: formValue.notes
     };
 
-    this.tenantsApi.createTenant(createTenantDto).subscribe({
-      next: (tenant: any) => {
+    this.tenantsService.createTenant(createTenantDto).subscribe({
+      next: (tenant: TenantDetail) => {
         console.log('✅ Tenant created successfully:', tenant);
         this.isSubmitting.set(false);
         this.tenantCreated.emit(tenant);
         this.close();
       },
-      error: (error: any) => {
+      error: (error: unknown) => {
         console.error('❌ Error creating tenant:', error);
         this.isSubmitting.set(false);
         // TODO: Show error notification
-        alert('Erreur lors de la création du locataire: ' + (error.error?.message || error.message));
+        const errMsg = (error as any)?.error?.message || (error as any)?.message || 'Erreur inconnue';
+        alert('Erreur lors de la création du locataire: ' + errMsg);
       }
     });
   }

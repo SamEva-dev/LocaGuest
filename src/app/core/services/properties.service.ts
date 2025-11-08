@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { PropertiesApi, PropertyListItem, PropertyDetail, Payment, Contract, FinancialSummary, PaginatedResult } from '../api/properties.api';
+import { PropertiesApi, PropertyListItem, PropertyDetail, Payment, Contract, FinancialSummary, PaginatedResult, CreatePropertyDto, UpdatePropertyDto } from '../api/properties.api';
 import { Observable, catchError, of, shareReplay, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -24,13 +24,13 @@ export class PropertiesService {
     this.loading.set(true);
     return this.propertiesApi.getProperties(params).pipe(
       tap(result => {
-        this.properties.set(result.data);
+        this.properties.set(result.items);
         this.loading.set(false);
       }),
       catchError((err: unknown) => {
         console.error('Error loading properties:', err);
         this.loading.set(false);
-        return of({ total: 0, page: 1, pageSize: 10, data: [] });
+        return of({ total: 0, page: 1, pageSize: 10, items: [] });
       }),
       shareReplay(1)
     );
@@ -79,6 +79,44 @@ export class PropertiesService {
           monthlyRent: 0,
           occupancyRate: 0
         });
+      })
+    );
+  }
+
+  // Mutations
+  createProperty(dto: CreatePropertyDto): Observable<PropertyDetail> {
+    console.log('Creating property:', dto);
+    return this.propertiesApi.createProperty(dto).pipe(
+      tap((created) => {
+        // Optimistic refresh of list if present
+        if (this.properties()?.length) {
+          this.properties.set([created as unknown as PropertyListItem, ...this.properties()]);
+        }
+      }),
+      catchError((err: unknown) => {
+        console.error('Error creating property:', err);
+        throw err;
+      })
+    );
+  }
+
+  updateProperty(id: string, dto: UpdatePropertyDto): Observable<PropertyDetail> {
+    return this.propertiesApi.updateProperty(id, dto).pipe(
+      catchError((err: unknown) => {
+        console.error('Error updating property:', err);
+        throw err;
+      })
+    );
+  }
+
+  deleteProperty(id: string): Observable<void> {
+    return this.propertiesApi.deleteProperty(id).pipe(
+      tap(() => {
+        this.properties.set(this.properties().filter(p => p.id !== id));
+      }),
+      catchError((err: unknown) => {
+        console.error('Error deleting property:', err);
+        throw err;
       })
     );
   }

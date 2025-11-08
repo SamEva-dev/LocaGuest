@@ -1,7 +1,8 @@
 import { Component, output, signal, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { PropertiesApi } from '../../../../core/api/properties.api';
+import { PropertiesService } from '../../../../core/services/properties.service';
+import { CreatePropertyDto, PropertyDetail } from '../../../../core/api/properties.api';
 
 @Component({
   selector: 'add-property-form',
@@ -11,10 +12,10 @@ import { PropertiesApi } from '../../../../core/api/properties.api';
 })
 export class AddPropertyForm {
   private fb = inject(FormBuilder);
-  private propertiesApi = inject(PropertiesApi);
+  private propertiesService = inject(PropertiesService);
 
   // Outputs
-  propertyCreated = output<any>();
+  propertyCreated = output<PropertyDetail>();
   closeForm = output<void>();
 
   // State
@@ -67,7 +68,7 @@ export class AddPropertyForm {
     this.isSubmitting.set(true);
 
     const formValue = this.form.value;
-    const createPropertyDto = {
+    const createPropertyDto: CreatePropertyDto = {
       name: formValue.name,
       address: formValue.address,
       city: formValue.city,
@@ -90,18 +91,19 @@ export class AddPropertyForm {
       constructionYear: formValue.constructionYear
     };
 
-    this.propertiesApi.createProperty(createPropertyDto).subscribe({
-      next: (property: any) => {
+    this.propertiesService.createProperty(createPropertyDto).subscribe({
+      next: (property: PropertyDetail) => {
         console.log('✅ Property created successfully:', property);
         this.isSubmitting.set(false);
         this.propertyCreated.emit(property);
         this.close();
       },
-      error: (error: any) => {
+      error: (error: unknown) => {
         console.error('❌ Error creating property:', error);
         this.isSubmitting.set(false);
         // TODO: Show error notification
-        alert('Erreur lors de la création du bien: ' + (error.error?.message || error.message));
+        const errMsg = (error as any)?.error?.message || (error as any)?.message || 'Erreur inconnue';
+        alert('Erreur lors de la création du bien: ' + errMsg);
       }
     });
   }

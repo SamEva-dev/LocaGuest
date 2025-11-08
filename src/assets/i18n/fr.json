@@ -195,9 +195,11 @@
     "TABLE": {
       "PROPERTY": "Bien",
       "ADDRESS": "Adresse",
+      "EMAIL": "Email",
       "RENT": "Loyer",
       "STATUS": "Statut",
-      "TENANT": "Locataire"
+      "TENANT": "Locataire",
+      "CONTRACTS": "Contrats"
     },
     "STATS": {
       "PROPERTIES": "Biens",
