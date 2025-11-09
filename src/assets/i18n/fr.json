@@ -304,6 +304,39 @@
     "CREATE": "Créer le contrat",
     "CREATED": "Contrat créé"
   },
+  "CONTRACTS": {
+    "TITLE": "Gestion des Contrats",
+    "SUBTITLE": "Gérez vos contrats de location",
+    "NEW": "Nouveau contrat",
+    "LIST": "Liste des contrats",
+    "SEARCH": "Rechercher par bien, locataire...",
+    "ALL_STATUS": "Tous les statuts",
+    "ALL_TYPES": "Tous les types",
+    "EXPIRES_SOON": "Expire bientôt",
+    "PER_MONTH": "par mois",
+    "DOCUMENTS": "Documents",
+    "NO_RESULTS": "Aucun contrat trouvé",
+    "STATS": {
+      "ACTIVE": "Contrats actifs",
+      "EXPIRING": "Expirent dans 3 mois",
+      "REVENUE": "Revenus mensuels",
+      "PER_MONTH": "par mois",
+      "TENANTS": "Locataires"
+    },
+    "STATUS": {
+      "ACTIVE": "Actif",
+      "EXPIRING": "En fin de validité",
+      "TERMINATED": "Terminé"
+    }
+  },
+  "PROFITABILITY": {
+    "TITLE": "Comptabilité & Projections",
+    "SUBTITLE": "Analysez vos performances financières"
+  },
+  "DOCUMENTS_TAB": {
+    "TITLE": "Génération de Documents",
+    "SUBTITLE": "Créez vos documents rapidement"
+  },
   "MON_LOCAGUEST": {
     "TITLE": "Mon LocaGuest"
   },

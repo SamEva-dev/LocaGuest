@@ -42,6 +42,18 @@ export const routes: Routes = [
       {
         path: 'tenant/:id',
         loadComponent: () => import('./pages/tenant/tenant').then(m => m.Tenant)
+      },
+      {
+        path: 'contracts',
+        loadComponent: () => import('./pages/mon-locaguest/tabs/contracts/contracts-tab').then(m => m.ContractsTab)
+      },
+      {
+        path: 'documents',
+        loadComponent: () => import('./pages/mon-locaguest/tabs/documents/documents-tab').then(m => m.DocumentsTab)
+      },
+      {
+        path: 'profitability',
+        loadComponent: () => import('./pages/mon-locaguest/tabs/profitability/profitability-tab').then(m => m.ProfitabilityTab)
       }
     ]
   },

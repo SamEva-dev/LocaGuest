@@ -303,5 +303,38 @@
     "TYPE_UNFURNISHED": "Unfurnished",
     "CREATE": "Create contract",
     "CREATED": "Contract created"
+  },
+  "CONTRACTS": {
+    "TITLE": "Contract Management",
+    "SUBTITLE": "Manage your rental contracts",
+    "NEW": "New contract",
+    "LIST": "Contracts list",
+    "SEARCH": "Search by property, tenant...",
+    "ALL_STATUS": "All statuses",
+    "ALL_TYPES": "All types",
+    "EXPIRES_SOON": "Expires soon",
+    "PER_MONTH": "per month",
+    "DOCUMENTS": "Documents",
+    "NO_RESULTS": "No contracts found",
+    "STATS": {
+      "ACTIVE": "Active contracts",
+      "EXPIRING": "Expiring in 3 months",
+      "REVENUE": "Monthly revenue",
+      "PER_MONTH": "per month",
+      "TENANTS": "Tenants"
+    },
+    "STATUS": {
+      "ACTIVE": "Active",
+      "EXPIRING": "Expiring",
+      "TERMINATED": "Terminated"
+    }
+  },
+  "PROFITABILITY": {
+    "TITLE": "Accounting & Projections",
+    "SUBTITLE": "Analyze your financial performance"
+  },
+  "DOCUMENTS_TAB": {
+    "TITLE": "Document Generation",
+    "SUBTITLE": "Create your documents quickly"
   }
 }

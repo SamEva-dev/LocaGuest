@@ -22,10 +22,10 @@ export class MainLayout {
   activeTabId = this.tabManager.activeTabId;
 
   ngOnInit() {
-    // Open Dashboard and Mon LocaGuest as fixed tabs
+    // Open fixed tabs
     console.log("tabs",this.tabs());
     if (this.tabs().length === 0) {
-      // First tab: Dashboard (fixed)
+      // Tab 1: Dashboard (fixed)
       this.tabManager.openTab({
         id: 'dashboard',
         type: 'summary',
@@ -35,7 +35,7 @@ export class MainLayout {
         closable: false
       });
       
-      // Second tab: Mon LocaGuest (fixed)
+      // Tab 2: Mon LocaGuest (fixed)
       this.tabManager.openTab({
         id: 'mon-locaguest',
         type: 'summary',
@@ -44,6 +44,37 @@ export class MainLayout {
         icon: 'ph-house',
         closable: false
       });
+
+      // Tab 3: Contrats (fixed)
+      this.tabManager.openTab({
+        id: 'contracts',
+        type: 'summary',
+        title: 'CONTRACTS.TITLE',
+        route: '/app/contracts',
+        icon: 'ph-file-text',
+        closable: false
+      });
+
+      // Tab 4: Documents (fixed)
+      this.tabManager.openTab({
+        id: 'documents',
+        type: 'summary',
+        title: 'DOCUMENTS_TAB.TITLE',
+        route: '/app/documents',
+        icon: 'ph-file-doc',
+        closable: false
+      });
+
+      // Tab 5: Rentabilité (fixed)
+      this.tabManager.openTab({
+        id: 'profitability',
+        type: 'summary',
+        title: 'PROFITABILITY.TITLE',
+        route: '/app/profitability',
+        icon: 'ph-chart-bar',
+        closable: false
+      });
+
       this.tabManager.setActiveTab('dashboard');
     }
   }
