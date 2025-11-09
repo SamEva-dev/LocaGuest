@@ -61,14 +61,14 @@ export class TenantsApi {
   private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/tenants`;
 
   getTenants(params?: {
-    q?: string;
+    search?: string;
     status?: string;
     page?: number;
     pageSize?: number;
   }): Observable<PaginatedResult<TenantListItem>> {
     let httpParams = new HttpParams();
     if (params) {
-      if (params.q) httpParams = httpParams.set('q', params.q);
+      if (params.search) httpParams = httpParams.set('search', params.search);
       if (params.status) httpParams = httpParams.set('status', params.status);
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
@@ -96,7 +96,6 @@ export class TenantsApi {
   }
 
   createTenant(dto: CreateTenantDto): Observable<TenantDetail> {
-    console.log(dto);
     return this.http.post<TenantDetail>(`${environment.BASE_LOCAGUEST_API}/api/tenants`, dto);
   }
 

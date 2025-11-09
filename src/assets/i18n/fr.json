@@ -90,8 +90,14 @@
       "ROI": "ROI",
       "PROFITABILITY": "Rentabilité",
       "REVENUE": "Revenus",
-      "CHARGES": "Charges"
+      "CHARGES": "Charges",
+      "MONTHLY_RENT": "Loyer mensuel",
+      "OCCUPANCY": "Taux d'occupation",
+      "LAST_PAYMENT": "Dernier paiement"
     },
+    "NOT_FOUND": "Bien introuvable",
+    "NO_CONTRACTS": "Aucun contrat",
+    "NO_PAYMENTS": "Aucun paiement",
     "CONTRACTS_PLACEHOLDER": "Liste des contrats de location...",
     "MAINTENANCE_PLACEHOLDER": "Historique des interventions...",
     "PAYMENTS_PLACEHOLDER": "Historique des paiements...",
@@ -192,6 +198,14 @@
       "STATUS_ALL": "Tous les statuts",
       "FILTERS": "Filtres"
     },
+    "SEARCH": {
+      "PROPERTIES": "Rechercher un bien...",
+      "TENANTS": "Rechercher un locataire..."
+    },
+    "PAGINATION": {
+      "SHOWING": "Affichage",
+      "OF": "sur"
+    },
     "TABLE": {
       "PROPERTY": "Bien",
       "ADDRESS": "Adresse",
@@ -213,6 +227,8 @@
     "ACTIVE": "Actif",
     "EDIT": "Modifier",
     "STATUS": "Statut",
+    "STATUS_ACTIVE": "Actif",
+    "STATUS_INACTIVE": "Inactif",
     "PROPERTY": "Bien",
     "RENT": "Loyer",
     "SINCE": "Depuis",
@@ -256,6 +272,21 @@
       "PAYMENTS": "Paiements",
       "DOCUMENTS": "Documents"
     },
+    "SUB_TABS": {
+      "CONTRACTS": "Contrats",
+      "PAYMENT_HISTORY": "Historique des paiements",
+      "DOCUMENTS": "Documents"
+    },
+    "CONTRACTS": "Contrats",
+    "PAYMENT_HISTORY": "Historique des paiements",
+    "CONTRACTS_DOCS": "Documents du locataire",
+    "NOT_FOUND": "Locataire introuvable",
+    "PAYMENT_STATS": "Statistiques de paiement",
+    "TOTAL_PAID": "Total payé",
+    "ON_TIME_RATE": "Taux de ponctualité",
+    "LATE_PAYMENTS": "Paiements en retard",
+    "NO_CONTRACTS": "Aucun contrat",
+    "NO_PAYMENTS": "Aucun paiement",
     "PAYMENT_PAID": "Payé",
     "PAYMENT_PENDING": "En attente"
   },

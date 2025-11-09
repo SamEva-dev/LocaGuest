@@ -35,8 +35,12 @@ export class TenantDetailTab {
   constructor() {
     effect(() => {
       const tabData = this.data();
+      console.log('🔍 TenantDetailTab data:', tabData);
       if (tabData?.tenantId) {
+        console.log('✅ Loading tenant:', tabData.tenantId);
         this.loadTenant(tabData.tenantId);
+      } else {
+        console.warn('⚠️ No tenantId found in data');
       }
     });
   }

@@ -38,8 +38,12 @@ export class PropertyDetailTab {
   constructor() {
     effect(() => {
       const tabData = this.data();
+      console.log('🔍 PropertyDetailTab data:', tabData);
       if (tabData?.propertyId) {
+        console.log('✅ Loading property:', tabData.propertyId);
         this.loadProperty(tabData.propertyId);
+      } else {
+        console.warn('⚠️ No propertyId found in data');
       }
     });
   }
@@ -83,7 +87,7 @@ export class PropertyDetailTab {
     this.propertiesService.getFinancialSummary(id).subscribe({
       next: (summary) => {
         this.financialSummary.set(summary);
-        console.log('✅ Financial summary loaded');
+        console.log('✅ Financial summary loaded', summary);
       },
       error: (err) => console.error('❌ Error loading financial summary:', err)
     });

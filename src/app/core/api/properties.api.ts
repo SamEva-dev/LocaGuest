@@ -88,7 +88,7 @@ export interface CreatePropertyDto {
 export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {}
 
 export interface PaginatedResult<T> {
-  total: number;
+  totalCount: number;
   page: number;
   pageSize: number;
   items: T[];
@@ -102,7 +102,7 @@ export class PropertiesApi {
   getProperties(params?: {
     status?: string;
     city?: string;
-    q?: string;
+    search?: string;
     page?: number;
     pageSize?: number;
   }): Observable<PaginatedResult<PropertyListItem>> {
@@ -110,7 +110,7 @@ export class PropertiesApi {
     if (params) {
       if (params.status) httpParams = httpParams.set('status', params.status);
       if (params.city) httpParams = httpParams.set('city', params.city);
-      if (params.q) httpParams = httpParams.set('q', params.q);
+      if (params.search) httpParams = httpParams.set('search', params.search);
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
     }

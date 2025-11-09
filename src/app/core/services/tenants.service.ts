@@ -30,7 +30,7 @@ export class TenantsService {
       catchError((err: unknown) => {
         console.error('Error loading tenants:', err);
         this.loading.set(false);
-        return of({ total: 0, page: 1, pageSize: 10, items: [] });
+        return of({ totalCount: 0, page: 1, pageSize: 10, items: [] });
       }),
       shareReplay(1)
     );

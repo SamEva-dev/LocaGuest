@@ -76,6 +76,9 @@
     "PAYMENTS": "Payments",
     "INVOICES": "Invoices",
     "PROJECTION": "Projection",
+    "NOT_FOUND": "Property not found",
+    "NO_CONTRACTS": "No contracts",
+    "NO_PAYMENTS": "No payments",
     "FORM": {
       "GENERAL_INFO": "General information",
       "NAME": "Property name",
@@ -131,6 +134,9 @@
       "PROJECTION": "Projection"
     },
     "ANALYTICS": {
+      "MONTHLY_RENT": "Monthly rent",
+      "OCCUPANCY": "Occupancy rate",
+      "LAST_PAYMENT": "Last payment",
       "ROI": "ROI",
       "PROFITABILITY": "Profitability",
       "REVENUE": "Revenue",
@@ -192,6 +198,14 @@
       "STATUS_ALL": "All statuses",
       "FILTERS": "Filters"
     },
+    "SEARCH": {
+      "PROPERTIES": "Search properties...",
+      "TENANTS": "Search tenants..."
+    },
+    "PAGINATION": {
+      "SHOWING": "Showing",
+      "OF": "of"
+    },
     "TABLE": {
       "PROPERTY": "Property",
       "ADDRESS": "Address",
@@ -209,10 +223,12 @@
     }
   },
   "TENANT": {
-    "ADD_TENANT": "Add tenant",
+    "ADD_TENANT": "Add Tenant",
     "ACTIVE": "Active",
     "EDIT": "Edit",
     "STATUS": "Status",
+    "STATUS_ACTIVE": "Active",
+    "STATUS_INACTIVE": "Inactive",
     "PROPERTY": "Property",
     "RENT": "Rent",
     "SINCE": "Since",
@@ -256,6 +272,21 @@
       "PAYMENTS": "Payments",
       "DOCUMENTS": "Documents"
     },
+    "SUB_TABS": {
+      "CONTRACTS": "Contracts",
+      "PAYMENT_HISTORY": "Payment history",
+      "DOCUMENTS": "Documents"
+    },
+    "CONTRACTS": "Contracts",
+    "PAYMENT_HISTORY": "Payment history",
+    "CONTRACTS_DOCS": "Tenant documents",
+    "NOT_FOUND": "Tenant not found",
+    "PAYMENT_STATS": "Payment statistics",
+    "TOTAL_PAID": "Total paid",
+    "ON_TIME_RATE": "On-time rate",
+    "LATE_PAYMENTS": "Late payments",
+    "NO_CONTRACTS": "No contracts",
+    "NO_PAYMENTS": "No payments",
     "PAYMENT_PAID": "Paid",
     "PAYMENT_PENDING": "Pending"
   }
