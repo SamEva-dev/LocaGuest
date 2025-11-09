@@ -58,8 +58,22 @@ export interface FinancialSummary {
   propertyId: string;
   totalRevenue: number;
   monthlyRent: number;
-  lastPayment?: { amount: number; paymentDate: Date };
+  lastPaymentAmount?: number;
+  lastPaymentDate?: Date;
   occupancyRate: number;
+  totalPayments: number;
+  activeContracts: number;
+}
+
+export interface CreateContractDto {
+  propertyId: string;
+  tenantId: string;
+  type: string;
+  startDate: Date;
+  endDate: Date;
+  rent: number;
+  deposit?: number;
+  notes?: string;
 }
 
 export interface CreatePropertyDto {
@@ -147,5 +161,13 @@ export class PropertiesApi {
 
   deleteProperty(id: string): Observable<void> {
     return this.http.delete<void>(`${environment.BASE_LOCAGUEST_API}/api/properties/${id}`);
+  }
+
+  getAvailableTenants(propertyId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/${propertyId}/available-tenants`);
+  }
+
+  assignTenant(propertyId: string, contractDto: CreateContractDto): Observable<Contract> {
+    return this.http.post<Contract>(`${this.baseUrl}/${propertyId}/assign-tenant`, contractDto);
   }
 }

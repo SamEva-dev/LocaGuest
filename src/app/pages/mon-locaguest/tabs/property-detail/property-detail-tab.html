@@ -37,10 +37,13 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400">{{ 'PROPERTY.ANALYTICS.OCCUPANCY' | translate }}</p>
                 <p class="text-lg font-semibold">{{ financialSummary()!.occupancyRate }}%</p>
               </div>
-              @if (financialSummary()!.lastPayment) {
+              @if (financialSummary()!.lastPaymentAmount) {
                 <div>
                   <p class="text-xs text-slate-500 dark:text-slate-400">{{ 'PROPERTY.ANALYTICS.LAST_PAYMENT' | translate }}</p>
-                  <p class="text-lg font-semibold">€ {{ financialSummary()!.lastPayment!.amount }}</p>
+                  <p class="text-lg font-semibold">€ {{ financialSummary()!.lastPaymentAmount }}</p>
+                  @if (financialSummary()!.lastPaymentDate) {
+                    <p class="text-xs text-slate-400">{{ financialSummary()!.lastPaymentDate | date:'dd/MM/yyyy' }}</p>
+                  }
                 </div>
               }
             </div>
@@ -308,5 +311,14 @@
     <div class="text-center text-slate-500 py-12">
       <p>{{ 'PROPERTY.NOT_FOUND' | translate }}</p>
     </div>
+  }
+
+  <!-- Tenant Selection Modal -->
+  @if (showTenantModal()) {
+    <tenant-selection-modal
+      #tenantModal
+      (close)="closeTenantModal()"
+      (confirm)="onTenantAssigned($event)"
+    ></tenant-selection-modal>
   }
 </div>

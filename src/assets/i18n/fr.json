@@ -224,6 +224,8 @@
   },
   "TENANT": {
     "ADD_TENANT": "Ajouter un locataire",
+    "SELECT": "Sélectionner un locataire",
+    "NO_AVAILABLE": "Aucun locataire disponible",
     "ACTIVE": "Actif",
     "EDIT": "Modifier",
     "STATUS": "Statut",
@@ -289,6 +291,18 @@
     "NO_PAYMENTS": "Aucun paiement",
     "PAYMENT_PAID": "Payé",
     "PAYMENT_PENDING": "En attente"
+  },
+  "CONTRACT": {
+    "DETAILS": "Détails du contrat",
+    "START_DATE": "Date de début",
+    "END_DATE": "Date de fin",
+    "RENT": "Loyer mensuel",
+    "DEPOSIT": "Dépôt de garantie",
+    "TYPE": "Type de contrat",
+    "TYPE_FURNISHED": "Meublé",
+    "TYPE_UNFURNISHED": "Non meublé",
+    "CREATE": "Créer le contrat",
+    "CREATED": "Contrat créé"
   },
   "MON_LOCAGUEST": {
     "TITLE": "Mon LocaGuest"

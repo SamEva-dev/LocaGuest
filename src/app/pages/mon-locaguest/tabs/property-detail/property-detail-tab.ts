@@ -1,21 +1,24 @@
-import { Component, input, signal, inject, effect } from '@angular/core';
+import { Component, input, signal, inject, effect, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
 import { RevenueChart } from '../../../../components/charts/revenue-chart/revenue-chart';
-import { PropertyDetail, Payment, Contract, FinancialSummary } from '../../../../core/api/properties.api';
+import { PropertyDetail, Payment, Contract, FinancialSummary, CreateContractDto } from '../../../../core/api/properties.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
+import { TenantSelectionModal, TenantSelectionResult } from '../../components/tenant-selection-modal/tenant-selection-modal';
 
 @Component({
   selector: 'property-detail-tab',
   standalone: true,
-  imports: [TranslatePipe, DatePipe, RevenueChart],
+  imports: [TranslatePipe, DatePipe, RevenueChart, TenantSelectionModal],
   templateUrl: './property-detail-tab.html'
 })
 export class PropertyDetailTab {
   data = input<any>();
   private tabManager = inject(InternalTabManagerService);
   private propertiesService = inject(PropertiesService);
+  
+  tenantModal = viewChild<TenantSelectionModal>('tenantModal');
 
   activeSubTab = signal('overview');
   isLoading = signal(false);
@@ -25,6 +28,9 @@ export class PropertyDetailTab {
   recentPayments = signal<Payment[]>([]);
   contracts = signal<Contract[]>([]);
   financialSummary = signal<FinancialSummary | null>(null);
+  
+  showTenantModal = signal(false);
+  availableTenants = signal<any[]>([]);
 
   subTabs = [
     { id: 'overview', label: 'PROPERTY.SUB_TABS.OVERVIEW', icon: 'ph-house' },
@@ -98,7 +104,66 @@ export class PropertyDetailTab {
   }
 
   addTenant() {
-    alert('Ajouter un locataire - À implémenter');
+    const propertyId = this.data()?.propertyId;
+    if (!propertyId) {
+      console.error('⚠️ No propertyId available');
+      return;
+    }
+
+    console.log('🔍 Loading available tenants for property:', propertyId);
+    this.propertiesService.getAvailableTenants(propertyId).subscribe({
+      next: (tenants: any) => {
+        console.log('✅ Available tenants loaded:', tenants.length);
+        this.availableTenants.set(tenants);
+        this.showTenantModal.set(true);
+        
+        // Passer les locataires au modal après rendu
+        setTimeout(() => {
+          const modal = this.tenantModal();
+          if (modal) {
+            modal.setTenants(tenants);
+          }
+        }, 0);
+      },
+      error: (err: any) => {
+        console.error('❌ Error loading available tenants:', err);
+        alert('Erreur lors du chargement des locataires disponibles');
+      }
+    });
+  }
+
+  closeTenantModal() {
+    this.showTenantModal.set(false);
+  }
+
+  onTenantAssigned(result: TenantSelectionResult) {
+    const propertyId = this.data()?.propertyId;
+    if (!propertyId) return;
+
+    const contractDto: CreateContractDto = {
+      propertyId,
+      tenantId: result.tenantId,
+      type: result.type,
+      startDate: result.startDate,
+      endDate: result.endDate,
+      rent: result.rent,
+      deposit: result.deposit
+    };
+
+    console.log('🔄 Assigning tenant to property:', contractDto);
+    this.propertiesService.assignTenant(propertyId, contractDto).subscribe({
+      next: (contract: any) => {
+        console.log('✅ Tenant assigned successfully:', contract);
+        this.showTenantModal.set(false);
+        // Recharger les contrats
+        this.loadProperty(propertyId);
+        alert(`Locataire ${result.tenantName} associé avec succès !`);
+      },
+      error: (err: any) => {
+        console.error('❌ Error assigning tenant:', err);
+        alert('Erreur lors de l\'association du locataire');
+      }
+    });
   }
 
   openTenantTab(contract: Contract) {

@@ -77,7 +77,9 @@ export class PropertiesService {
           propertyId: id,
           totalRevenue: 0,
           monthlyRent: 0,
-          occupancyRate: 0
+          occupancyRate: 0,
+          totalPayments: 0,
+          activeContracts: 0
         });
       })
     );
@@ -119,6 +121,14 @@ export class PropertiesService {
         throw err;
       })
     );
+  }
+
+  getAvailableTenants(propertyId: string): Observable<any[]> {
+    return this.propertiesApi.getAvailableTenants(propertyId);
+  }
+
+  assignTenant(propertyId: string, contractDto: any): Observable<any> {
+    return this.propertiesApi.assignTenant(propertyId, contractDto);
   }
 
   // Clear cache

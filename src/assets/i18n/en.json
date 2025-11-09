@@ -224,6 +224,8 @@
   },
   "TENANT": {
     "ADD_TENANT": "Add Tenant",
+    "SELECT": "Select a tenant",
+    "NO_AVAILABLE": "No available tenants",
     "ACTIVE": "Active",
     "EDIT": "Edit",
     "STATUS": "Status",
@@ -289,5 +291,17 @@
     "NO_PAYMENTS": "No payments",
     "PAYMENT_PAID": "Paid",
     "PAYMENT_PENDING": "Pending"
+  },
+  "CONTRACT": {
+    "DETAILS": "Contract details",
+    "START_DATE": "Start date",
+    "END_DATE": "End date",
+    "RENT": "Monthly rent",
+    "DEPOSIT": "Security deposit",
+    "TYPE": "Contract type",
+    "TYPE_FURNISHED": "Furnished",
+    "TYPE_UNFURNISHED": "Unfurnished",
+    "CREATE": "Create contract",
+    "CREATED": "Contract created"
   }
 }
