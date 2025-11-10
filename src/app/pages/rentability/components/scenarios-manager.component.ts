@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RentabilityScenariosService } from '../../../core/services/rentability-scenarios.service';
 import { RentabilityScenarioDto } from '../../../core/api/rentability-scenarios.api';
+import { VersionHistoryComponent } from './version-history.component';
 
 @Component({
   selector: 'app-scenarios-manager',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, VersionHistoryComponent],
   template: `
     <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6">
       <div class="flex items-center justify-between mb-6">
@@ -85,6 +86,11 @@ import { RentabilityScenarioDto } from '../../../core/api/rentability-scenarios.
                       <i class="ph ph-folder-open"></i>
                       {{ 'RENTABILITY.SCENARIOS.LOAD' | translate }}
                     </button>
+                    <button (click)="toggleVersions(scenario.id)" 
+                      class="px-3 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-100 dark:hover:bg-slate-700"
+                      title="Historique">
+                      <i class="ph ph-clock-counter-clockwise"></i>
+                    </button>
                     <button (click)="cloneScenario(scenario)" 
                       class="px-3 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
                       <i class="ph ph-copy"></i>
@@ -95,6 +101,17 @@ import { RentabilityScenarioDto } from '../../../core/api/rentability-scenarios.
                     </button>
                   </div>
                 </div>
+                
+                <!-- Version History (collapsible) -->
+                @if (showVersionsForScenario() === scenario.id) {
+                  <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                    <app-version-history 
+                      [scenarioId]="scenario.id"
+                      [currentVersion]="getCurrentVersion(scenario)"
+                      (onRestore)="handleVersionRestore()">
+                    </app-version-history>
+                  </div>
+                }
               </div>
             }
           </div>
@@ -156,6 +173,7 @@ export class ScenariosManagerComponent {
   scenarios = this.scenariosService.scenarios;
   isLoading = this.scenariosService.isLoading;
   viewMode = signal<'list' | 'compare'>('list');
+  showVersionsForScenario = signal<string | null>(null);
 
   compareScenario1: string | null = null;
   compareScenario2: string | null = null;
@@ -230,5 +248,24 @@ export class ScenariosManagerComponent {
 
   updateComparison() {
     // Update comparison view
+  }
+
+  toggleVersions(scenarioId: string) {
+    if (this.showVersionsForScenario() === scenarioId) {
+      this.showVersionsForScenario.set(null);
+    } else {
+      this.showVersionsForScenario.set(scenarioId);
+    }
+  }
+
+  getCurrentVersion(scenario: RentabilityScenarioDto): number {
+    // Parse from resultsJson or return 1 by default
+    return 1; // TODO: Get from scenario if stored
+  }
+
+  handleVersionRestore() {
+    // Reload scenarios after restore
+    this.scenariosService.loadUserScenarios();
+    alert('Version restaurée avec succès!');
   }
 }

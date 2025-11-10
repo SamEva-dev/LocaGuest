@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RentabilityCalculatorService } from '../../core/services/rentability-calculator.service';
 import { RentabilityScenariosService } from '../../core/services/rentability-scenarios.service';
+import { ExportService } from '../../core/services/export.service';
 import { 
   RentabilityInput, 
   RentabilityResult, 
@@ -41,6 +42,7 @@ import { ScenariosManagerComponent } from './components/scenarios-manager.compon
 export class RentabilityPage {
   private calculator = inject(RentabilityCalculatorService);
   scenariosService = inject(RentabilityScenariosService); // Public for template
+  private exportService = inject(ExportService);
 
   // State management avec signals
   currentStep = signal<number>(1);
@@ -237,9 +239,36 @@ export class RentabilityPage {
       clearTimeout(this.autoSaveTimeout);
     }
 
-    this.autoSaveTimeout = setTimeout(() => {
-      this.save();
-    }, 2000);
+    this.autoSaveTimeout = window.setTimeout(() => {
+      if (this.isDirty()) {
+        this.save();
+      }
+    }, 2000); // 2 secondes
+  }
+
+  // Export methods
+  exportPDF() {
+    this.exportService.exportToPDF(
+      this.scenarioName(),
+      this.inputData(),
+      this.result()
+    );
+  }
+
+  exportExcel() {
+    this.exportService.exportToExcel(
+      this.scenarioName(),
+      this.inputData(),
+      this.result()
+    );
+  }
+
+  exportJSON() {
+    this.exportService.exportToJSON(
+      this.scenarioName(),
+      this.inputData(),
+      this.result()
+    );
   }
 
   /**
@@ -271,28 +300,6 @@ export class RentabilityPage {
       console.error('Save error:', error);
       this.isSaving.set(false);
     }
-  }
-
-  /**
-   * Export PDF
-   */
-  exportPDF() {
-    if (!this.result()) {
-      return;
-    }
-    // TODO: Implémenter l'export PDF
-    console.log('Export PDF:', this.result());
-  }
-
-  /**
-   * Export Excel
-   */
-  exportExcel() {
-    if (!this.result()) {
-      return;
-    }
-    // TODO: Implémenter l'export Excel
-    console.log('Export Excel:', this.result());
   }
 
   /**

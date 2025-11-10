@@ -29,6 +29,30 @@
       </div>
     
     <div class="flex items-center gap-3">
+      <!-- Export buttons -->
+      @if (result()) {
+        <div class="flex gap-2 mr-4">
+          <button (click)="exportPDF()"
+            class="px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2"
+            title="Export PDF">
+            <i class="ph ph-file-pdf text-red-600"></i>
+            PDF
+          </button>
+          <button (click)="exportExcel()"
+            class="px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2"
+            title="Export Excel">
+            <i class="ph ph-file-xls text-green-600"></i>
+            Excel
+          </button>
+          <button (click)="exportJSON()"
+            class="px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-2"
+            title="Export JSON">
+            <i class="ph ph-file-code text-blue-600"></i>
+            JSON
+          </button>
+        </div>
+      }
+      
       @if (isSaving()) {
         <span class="text-sm text-slate-500">
           <i class="ph ph-circle-notch animate-spin"></i>

@@ -671,6 +671,13 @@
       "EMPTY": "Aucun scénario enregistré",
       "MODIFIED": "Modifié le",
       "DELETE_CONFIRM": "Supprimer ce scénario ?"
+    },
+    "VERSIONS": {
+      "TITLE": "Historique des versions",
+      "REFRESH": "Actualiser",
+      "EMPTY": "Aucune version enregistrée",
+      "RESTORE": "Restaurer",
+      "PREVIEW": "Aperçu"
     }
   }
 }
