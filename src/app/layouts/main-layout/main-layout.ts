@@ -75,7 +75,17 @@ export class MainLayout {
         closable: false
       });
 
-      // Tab 6: Paramètres (fixed)
+      // Tab 6: Calcul Rentabilité (fixed)
+      this.tabManager.openTab({
+        id: 'rentability',
+        type: 'summary',
+        title: 'RENTABILITY.TITLE',
+        route: '/app/rentability',
+        icon: 'ph-calculator',
+        closable: false
+      });
+
+      // Tab 7: Paramètres (fixed)
       this.tabManager.openTab({
         id: 'settings',
         type: 'summary',

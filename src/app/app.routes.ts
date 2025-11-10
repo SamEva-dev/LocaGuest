@@ -56,6 +56,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/mon-locaguest/tabs/profitability/profitability-tab').then(m => m.ProfitabilityTab)
       },
       {
+        path: 'rentability',
+        loadComponent: () => import('./pages/rentability/rentability-page').then(m => m.RentabilityPage)
+      },
+      {
         path: 'settings',
         loadComponent: () => import('./pages/settings/settings-tab').then(m => m.SettingsTab)
       }

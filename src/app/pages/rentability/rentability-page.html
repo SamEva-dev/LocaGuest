@@ -1,0 +1,177 @@
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900 p-6">
+  <!-- Scenarios Manager (collapsible) -->
+  <div class="mb-6">
+    <button (click)="showScenarios.set(!showScenarios())" 
+      class="w-full text-left px-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 flex items-center justify-between">
+      <span class="font-medium">
+        <i class="ph ph-folders"></i>
+        Mes scénarios ({{ scenariosService.scenarios().length }})
+      </span>
+      <i [class.ph-caret-down]="!showScenarios()" [class.ph-caret-up]="showScenarios()" class="ph"></i>
+    </button>
+    @if (showScenarios()) {
+      <div class="mt-3">
+        <app-scenarios-manager></app-scenarios-manager>
+      </div>
+    }
+  </div>
+
+  <!-- Header -->
+  <div class="bg-white dark:bg-slate-800 rounded-t-xl shadow-sm p-6 border-b border-slate-200 dark:border-slate-700">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+          {{ scenarioName() }}
+        </h1>
+        <p class="text-slate-600 dark:text-slate-400 mt-1">
+          {{ 'RENTABILITY.SUBTITLE' | translate }}
+        </p>
+      </div>
+    
+    <div class="flex items-center gap-3">
+      @if (isSaving()) {
+        <span class="text-sm text-slate-500">
+          <i class="ph ph-circle-notch animate-spin"></i>
+          {{ 'RENTABILITY.SAVING' | translate }}
+        </span>
+      } @else if (lastSaved()) {
+        <span class="text-sm text-emerald-600 dark:text-emerald-400">
+          <i class="ph ph-check-circle"></i>
+          {{ 'RENTABILITY.SAVED' | translate }}
+        </span>
+      }
+      
+      @if (hasResults()) {
+        <button
+          (click)="exportPDF()"
+          class="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-white dark:hover:bg-slate-800 transition">
+          <i class="ph ph-file-pdf"></i>
+          {{ 'RENTABILITY.EXPORT_PDF' | translate }}
+        </button>
+        
+        <button
+          (click)="exportExcel()"
+          class="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-white dark:hover:bg-slate-800 transition">
+          <i class="ph ph-file-xls"></i>
+          {{ 'RENTABILITY.EXPORT_EXCEL' | translate }}
+        </button>
+      }
+      
+      <button
+        (click)="reset()"
+        class="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-white dark:hover:bg-slate-800 transition">
+        <i class="ph ph-arrow-counter-clockwise"></i>
+        {{ 'RENTABILITY.NEW' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="bg-white dark:bg-slate-800 rounded-t-xl border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
+    <div class="flex">
+      @for (tab of tabs; track tab.id) {
+        <button
+          [disabled]="!canActivateStep(tab.id)"
+          (click)="goToStep(tab.id)"
+          [class.border-blue-600]="currentStep() === tab.id"
+          [class.text-blue-600]="currentStep() === tab.id"
+          [class.bg-slate-50]="currentStep() === tab.id"
+          [class.dark:bg-slate-700]="currentStep() === tab.id"
+          [class.opacity-50]="!canActivateStep(tab.id)"
+          [class.cursor-not-allowed]="!canActivateStep(tab.id)"
+          class="relative flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 border-transparent hover:text-blue-600 transition whitespace-nowrap disabled:hover:text-current">
+          <i [class]="tab.icon" class="text-lg"></i>
+          <span>{{ tab.label | translate }}</span>
+          
+          @if (getStepStatus(tab.id) === 'valid') {
+            <i class="ph ph-check-circle text-emerald-500"></i>
+          }
+          @if (getStepStatus(tab.id) === 'invalid') {
+            <i class="ph ph-warning-circle text-red-500"></i>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="bg-white dark:bg-slate-800 rounded-b-xl shadow-sm p-8">
+    @switch (currentStep()) {
+      @case (1) {
+        <app-step1-context
+          [data]="inputData().context"
+          (dataChange)="updateStepData(1, {context: $event.data}, $event.isValid)">
+        </app-step1-context>
+      }
+      @case (2) {
+        <app-step2-revenues
+          [data]="inputData().revenues"
+          (dataChange)="updateStepData(2, {revenues: $event.data}, $event.isValid)">
+        </app-step2-revenues>
+      }
+      @case (3) {
+        <app-step3-charges
+          [data]="inputData().charges"
+          (dataChange)="updateStepData(3, {charges: $event.data}, $event.isValid)">
+        </app-step3-charges>
+      }
+      @case (4) {
+        <app-step4-financing
+          [data]="inputData().financing"
+          (dataChange)="updateStepData(4, {financing: $event.data}, $event.isValid)">
+        </app-step4-financing>
+      }
+      @case (5) {
+        <app-step5-tax
+          [data]="inputData().tax"
+          [context]="inputData().context"
+          (dataChange)="updateStepData(5, {tax: $event.data}, $event.isValid)">
+        </app-step5-tax>
+      }
+      @case (6) {
+        <app-step6-results
+          [result]="result()!">
+        </app-step6-results>
+      }
+      @case (7) {
+        <app-step7-analysis
+          [input]="inputData()"
+          [result]="result()!"
+          (recalculate)="recalculate()">
+        </app-step7-analysis>
+      }
+    }
+  </div>
+
+  <!-- Navigation Footer -->
+  <div class="mt-6 flex items-center justify-between">
+    <button
+      *ngIf="currentStep() > 1"
+      (click)="previous()"
+      class="px-6 py-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-white dark:hover:bg-slate-800 transition">
+      <i class="ph ph-arrow-left mr-2"></i>
+      {{ 'RENTABILITY.PREVIOUS' | translate }}
+    </button>
+    
+    <div class="flex-1"></div>
+    
+    @if (currentStep() < 5) {
+      <button
+        (click)="next()"
+        [disabled]="getStepStatus(currentStep()) !== 'valid'"
+        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+        {{ 'RENTABILITY.NEXT' | translate }}
+        <i class="ph ph-arrow-right ml-2"></i>
+      </button>
+    }
+    
+    @if (currentStep() === 5 && canCalculate()) {
+      <button
+        (click)="calculate()"
+        class="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition">
+        <i class="ph ph-calculator mr-2"></i>
+        {{ 'RENTABILITY.CALCULATE' | translate }}
+      </button>
+    }
+  </div>
+</div>
