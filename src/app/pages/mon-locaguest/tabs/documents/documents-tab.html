@@ -1,0 +1,190 @@
+<div class="p-6 space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold">Génération de Documents</h1>
+      <p class="text-slate-500 text-sm">Créez vos documents rapidement</p>
+    </div>
+    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+      <i class="ph ph-plus mr-2"></i>Nouveau modèle
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-sm text-slate-500">Documents générés</p>
+        <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+          <i class="ph ph-file-text text-xl text-blue-600"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold">{{ stats()?.totalDocuments?.toLocaleString() || 0 }}</p>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-sm text-slate-500">Ce mois</p>
+        <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+          <i class="ph ph-download text-xl text-green-600"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold text-green-600">{{ stats()?.thisMonthDocuments || 0 }}</p>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-sm text-slate-500">Modèles actifs</p>
+        <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+          <i class="ph ph-eye text-xl text-purple-600"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold">{{ stats()?.activeTemplates || 0 }}</p>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-sm text-slate-500">Temps économisé</p>
+        <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+          <i class="ph ph-clock text-xl text-orange-600"></i>
+        </div>
+      </div>
+      <p class="text-2xl font-bold text-orange-600">{{ stats()?.timeSavedHours || 0 }}h</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Templates Grid -->
+    <div class="lg:col-span-2">
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+        <h2 class="text-lg font-semibold mb-4">Modèles de documents</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (template of templates(); track template.id) {
+            <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition cursor-pointer"
+                 (click)="useTemplate(template)">
+              <div class="flex items-start justify-between mb-2">
+                <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                  <i class="ph ph-file-text text-xl text-blue-600"></i>
+                </div>
+                <span [class]="'text-xs px-2 py-0.5 rounded-full ' + getCategoryColor(template.category)">
+                  {{ template.category }}
+                </span>
+              </div>
+              <h3 class="font-medium mb-1">{{ template.name }}</h3>
+              <p class="text-sm text-slate-500 mb-2">{{ template.description }}</p>
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span class="px-2 py-1 rounded bg-green-100 dark:bg-green-900/30 text-green-700">
+                  {{ template.usageCount }} usages
+                </span>
+                <div class="flex gap-2">
+                  <button class="px-3 py-1 rounded bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 transition">
+                    <i class="ph ph-eye mr-1"></i>Aperçu
+                  </button>
+                  <button class="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 transition">
+                    <i class="ph ph-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Generation Form -->
+    <div>
+      <div id="quickGeneration" class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 sticky top-6">
+        <h2 class="text-lg font-semibold mb-4">
+          <i class="ph ph-lightning text-orange-600 mr-2"></i>
+          Génération rapide
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">Type de document</label>
+            <select [(ngModel)]="selectedTemplate" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700">
+              <option value="">Sélectionner...</option>
+              @for (template of templates(); track template.id) {
+                <option [value]="template.name">{{ template.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Bien immobilier</label>
+            <select [(ngModel)]="selectedProperty" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700">
+              <option value="">Sélectionner un bien...</option>
+              <option value="1">Appartement Centre Ville</option>
+              <option value="2">Studio Quartier Latin</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Locataire</label>
+            <select [(ngModel)]="selectedTenant" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700">
+              <option value="">Sélectionner...</option>
+              <option value="1">Jean Dupont</option>
+              <option value="2">Marie Lefebvre</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Notes spéciales</label>
+            <textarea 
+              [(ngModel)]="notes"
+              rows="3" 
+              placeholder="Informations supplémentaires..."
+              class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700">
+            </textarea>
+          </div>
+
+          <div class="flex gap-2">
+            <button (click)="generateDocument()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+              <i class="ph ph-file-arrow-down mr-2"></i>Générer le document
+            </button>
+            <button class="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+              <i class="ph ph-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Documents -->
+  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+    <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+      <h2 class="text-lg font-semibold">Documents récents</h2>
+    </div>
+    <div class="divide-y divide-slate-200 dark:divide-slate-700">
+      @for (doc of recentDocs(); track doc.id) {
+        <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                <i class="ph ph-file-pdf text-xl text-blue-600"></i>
+              </div>
+              <div>
+                <h3 class="font-medium">{{ doc.fileName }}</h3>
+                <div class="flex items-center gap-2 text-sm text-slate-500 mt-1">
+                  <span>{{ doc.propertyName }}</span>
+                  <span class="text-slate-300">•</span>
+                  <span>{{ doc.tenantName }}</span>
+                  <span class="text-slate-300">•</span>
+                  <span>{{ doc.generatedAt | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="px-3 py-1.5 text-sm rounded-lg border border-slate-300 hover:bg-slate-50 transition">
+                <i class="ph ph-download mr-1"></i>Télécharger
+              </button>
+              <button class="px-3 py-1.5 text-sm rounded-lg border border-slate-300 hover:bg-slate-50 transition">
+                <i class="ph ph-paper-plane-tilt mr-1"></i>Envoyer
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
