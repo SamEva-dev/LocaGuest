@@ -336,5 +336,108 @@
   "DOCUMENTS_TAB": {
     "TITLE": "Document Generation",
     "SUBTITLE": "Create your documents quickly"
+  },
+  "SETTINGS": {
+    "TITLE": "Settings",
+    "SUBTITLE": "Manage your preferences and account settings",
+    "SAVE": "Save",
+    "RESET": "Reset",
+    "TABS": {
+      "PROFILE": "Profile",
+      "NOTIFICATIONS": "Notifications",
+      "SECURITY": "Security",
+      "BILLING": "Billing",
+      "PREFERENCES": "Preferences",
+      "INTERFACE": "Interface"
+    },
+    "PROFILE": {
+      "TITLE": "Profile Information",
+      "SUBTITLE": "Update your personal information",
+      "PHOTO": "Profile photo",
+      "CHANGE_PHOTO": "Change photo",
+      "PHOTO_HELP": "JPG, GIF or PNG. Max size 2MB",
+      "FIRST_NAME": "First name",
+      "LAST_NAME": "Last name",
+      "EMAIL": "Email",
+      "PHONE": "Phone",
+      "COMPANY": "Company",
+      "ROLE": "Role",
+      "BIO": "Bio / Description"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notification Preferences",
+      "SUBTITLE": "Choose your notification channels",
+      "EMAIL_ALERTS": "Email Notifications",
+      "EMAIL_ALERTS_DESC": "Receive important alerts by email",
+      "SMS_ALERTS": "SMS Notifications",
+      "SMS_ALERTS_DESC": "Urgent alerts by SMS",
+      "NEW_RESERVATIONS": "New Reservations",
+      "NEW_RESERVATIONS_DESC": "Notifications for new reservations",
+      "PAYMENT_REMINDERS": "Payment Reminders",
+      "PAYMENT_REMINDERS_DESC": "Automatic reminders for deadlines",
+      "MONTHLY_REPORTS": "Monthly Reports",
+      "MONTHLY_REPORTS_DESC": "Monthly performance report"
+    },
+    "SECURITY": {
+      "TITLE": "Security",
+      "SUBTITLE": "Manage your account security",
+      "CHANGE_PASSWORD": "Change password",
+      "CURRENT_PASSWORD": "Current password",
+      "NEW_PASSWORD": "New password",
+      "CONFIRM_PASSWORD": "Confirm password",
+      "UPDATE_PASSWORD": "Update password",
+      "TWO_FACTOR": "Two-factor authentication",
+      "TWO_FACTOR_DESC": "Secure your account with two-factor authentication",
+      "ENABLE": "Enable",
+      "INACTIVE": "Inactive",
+      "ENABLE_2FA": "Enable 2FA",
+      "ACTIVE_SESSIONS": "Active Sessions",
+      "CURRENT": "Current",
+      "DISCONNECT": "Disconnect"
+    },
+    "BILLING": {
+      "TITLE": "Billing and Subscription",
+      "SUBTITLE": "Manage your subscription and payment methods",
+      "PLAN": "Plan",
+      "MONTHLY_RENEWAL": "Monthly billing",
+      "NEXT_RENEWAL": "Next renewal on",
+      "MONTH": "month",
+      "CHANGE_PLAN": "Change plan",
+      "CANCEL_SUBSCRIPTION": "Cancel subscription",
+      "PAYMENT_METHOD": "Payment methods",
+      "EXPIRES": "Expires",
+      "DEFAULT": "Default",
+      "MODIFY": "Modify",
+      "ADD_PAYMENT_METHOD": "Add a payment method",
+      "HISTORY": "Billing history",
+      "PAID": "Paid",
+      "DOWNLOAD": "Download"
+    },
+    "PREFERENCES": {
+      "TITLE": "Application Preferences",
+      "SUBTITLE": "Customize your user experience",
+      "DARK_MODE": "Dark Mode",
+      "DARK_MODE_DESC": "Enable dark theme for the interface",
+      "LANGUAGE": "Language",
+      "TIMEZONE": "Timezone",
+      "DATE_FORMAT": "Date Format",
+      "CURRENCY": "Currency",
+      "DANGER_ZONE": "Danger Zone",
+      "DELETE_ACCOUNT": "Delete account",
+      "DELETE_ACCOUNT_DESC": "This action is irreversible and will delete all your data"
+    },
+    "INTERFACE": {
+      "TITLE": "Interface Configuration",
+      "SUBTITLE": "Customize your interface display",
+      "SIDEBAR_NAV": "Sidebar Navigation",
+      "SIDEBAR_NAV_DESC": "Use a sidebar for navigation (recommended)",
+      "HEADER_NAV": "Header Navigation",
+      "HEADER_NAV_DESC": "Use a classic menu in the header",
+      "RECOMMENDED": "Recommended",
+      "RECOMMENDATION_TEXT": "Sidebar navigation offers a better user experience with quick access to all features and a more modern and intuitive interface."
+    }
+  },
+  "MON_LOCAGUEST": {
+    "TITLE": "My LocaGuest"
   }
 }

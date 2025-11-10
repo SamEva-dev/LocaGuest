@@ -75,6 +75,16 @@ export class MainLayout {
         closable: false
       });
 
+      // Tab 6: Paramètres (fixed)
+      this.tabManager.openTab({
+        id: 'settings',
+        type: 'summary',
+        title: 'SETTINGS.TITLE',
+        route: '/app/settings',
+        icon: 'ph-gear',
+        closable: false
+      });
+
       this.tabManager.setActiveTab('dashboard');
     }
   }

@@ -1,0 +1,544 @@
+<div class="p-6 bg-slate-50 dark:bg-slate-900 min-h-screen">
+  <!-- Sub-tabs -->
+  <div class="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700">
+    @for (tab of subTabs; track tab.id) {
+      <button 
+        (click)="selectSubTab(tab.id)"
+        [class.text-blue-600]="activeSubTab() === tab.id"
+        [class.border-blue-600]="activeSubTab() === tab.id"
+        class="px-4 py-3 text-sm font-medium border-b-2 border-transparent hover:text-blue-600 transition whitespace-nowrap">
+        {{ tab.label | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- Profile Tab -->
+  @if (activeSubTab() === 'profile') {
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <i class="ph ph-user text-xl text-slate-700 dark:text-slate-300"></i>
+        <h2 class="text-xl font-semibold text-slate-800 dark:text-white">{{ 'SETTINGS.PROFILE.TITLE' | translate }}</h2>
+      </div>
+      <p class="text-sm text-slate-500 mb-6">{{ 'SETTINGS.PROFILE.SUBTITLE' | translate }}</p>
+
+      <!-- Photo -->
+      <div class="mb-6">
+        <div class="flex items-center gap-4">
+          <div class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 text-2xl font-bold">
+            {{ (profileData().firstName && profileData().firstName.charAt(0)) || 'J' }}
+          </div>
+          <div>
+            <label class="px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded-lg cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition inline-block">
+              {{ 'SETTINGS.PROFILE.CHANGE_PHOTO' | translate }}
+              <input type="file" class="hidden" accept="image/*" (change)="onPhotoChange($event)">
+            </label>
+            <p class="text-xs text-slate-400 mt-1">{{ 'SETTINGS.PROFILE.PHOTO_HELP' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PROFILE.FIRST_NAME' | translate }}</label>
+          <input 
+            type="text" 
+            [(ngModel)]="profileData().firstName"
+            class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PROFILE.LAST_NAME' | translate }}</label>
+          <input 
+            type="text" 
+            [(ngModel)]="profileData().lastName"
+            class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PROFILE.EMAIL' | translate }}</label>
+          <input 
+            type="email" 
+            [(ngModel)]="profileData().email"
+            class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PROFILE.PHONE' | translate }}</label>
+          <input 
+            type="tel" 
+            [(ngModel)]="profileData().phone"
+            class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PROFILE.COMPANY' | translate }}</label>
+          <input 
+            type="text" 
+            [(ngModel)]="profileData().company"
+            class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PROFILE.ROLE' | translate }}</label>
+          <select 
+            [(ngModel)]="profileData().role"
+            class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+            <option>Propriétaire</option>
+            <option>Gestionnaire</option>
+            <option>Agent</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PROFILE.BIO' | translate }}</label>
+        <textarea 
+          [(ngModel)]="profileData().bio"
+          rows="3"
+          class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white"></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+        <button class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition flex items-center gap-2">
+          <i class="ph ph-arrow-counter-clockwise"></i>
+          {{ 'SETTINGS.RESET' | translate }}
+        </button>
+        <button 
+          (click)="saveProfile()"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+          <i class="ph ph-floppy-disk"></i>
+          {{ 'SETTINGS.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Notifications Tab -->
+  @if (activeSubTab() === 'notifications') {
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <i class="ph ph-bell text-xl text-slate-700 dark:text-slate-300"></i>
+        <h2 class="text-xl font-semibold text-slate-800 dark:text-white">{{ 'SETTINGS.NOTIFICATIONS.TITLE' | translate }}</h2>
+      </div>
+      <p class="text-sm text-slate-500 mb-6">{{ 'SETTINGS.NOTIFICATIONS.SUBTITLE' | translate }}</p>
+
+      <div class="space-y-4">
+        @for (notif of notificationsList; track notif.key) {
+          <div class="flex items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <div>
+              <h3 class="font-medium text-slate-800 dark:text-white">{{ notif.label | translate }}</h3>
+              <p class="text-sm text-slate-500">{{ notif.desc | translate }}</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input 
+                type="checkbox" 
+                [checked]="getNotificationValue(notif.key)"
+                (change)="toggleNotification(notif.key)"
+                class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+        }
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-slate-200 dark:border-slate-700">
+        <button class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition flex items-center gap-2">
+          <i class="ph ph-arrow-counter-clockwise"></i>
+          {{ 'SETTINGS.RESET' | translate }}
+        </button>
+        <button 
+          (click)="saveNotifications()"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+          <i class="ph ph-floppy-disk"></i>
+          {{ 'SETTINGS.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Security Tab -->
+  @if (activeSubTab() === 'security') {
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <i class="ph ph-lock text-xl text-slate-700 dark:text-slate-300"></i>
+        <h2 class="text-xl font-semibold text-slate-800 dark:text-white">{{ 'SETTINGS.SECURITY.TITLE' | translate }}</h2>
+      </div>
+      <p class="text-sm text-slate-500 mb-6">{{ 'SETTINGS.SECURITY.SUBTITLE' | translate }}</p>
+
+      <!-- Change Password -->
+      <div class="mb-8">
+        <h3 class="font-medium text-slate-800 dark:text-white mb-3">{{ 'SETTINGS.SECURITY.CHANGE_PASSWORD' | translate }}</h3>
+        <div class="space-y-3 max-w-md">
+          <div class="relative">
+            <input 
+              [type]="showCurrentPassword ? 'text' : 'password'"
+              placeholder="{{ 'SETTINGS.SECURITY.CURRENT_PASSWORD' | translate }}"
+              class="w-full px-4 py-2 pr-10 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+            <button 
+              (click)="showCurrentPassword = !showCurrentPassword"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <i [class]="showCurrentPassword ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
+            </button>
+          </div>
+          <div class="relative">
+            <input 
+              [type]="showNewPassword ? 'text' : 'password'"
+              placeholder="{{ 'SETTINGS.SECURITY.NEW_PASSWORD' | translate }}"
+              class="w-full px-4 py-2 pr-10 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+            <button 
+              (click)="showNewPassword = !showNewPassword"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <i [class]="showNewPassword ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
+            </button>
+          </div>
+          <div class="relative">
+            <input 
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              placeholder="{{ 'SETTINGS.SECURITY.CONFIRM_PASSWORD' | translate }}"
+              class="w-full px-4 py-2 pr-10 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+            <button 
+              (click)="showConfirmPassword = !showConfirmPassword"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <i [class]="showConfirmPassword ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
+            </button>
+          </div>
+          <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            {{ 'SETTINGS.SECURITY.UPDATE_PASSWORD' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <!-- 2FA -->
+      <div class="pb-8 mb-8 border-b border-slate-200 dark:border-slate-700">
+        <h3 class="font-medium text-slate-800 dark:text-white mb-1">{{ 'SETTINGS.SECURITY.TWO_FACTOR' | translate }}</h3>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-slate-500 mb-3">{{ 'SETTINGS.SECURITY.TWO_FACTOR_DESC' | translate }}</p>
+            <span class="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 rounded">{{ 'SETTINGS.SECURITY.INACTIVE' | translate }}</span>
+          </div>
+          <button class="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+            {{ 'SETTINGS.SECURITY.ENABLE_2FA' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Sessions -->
+      <div>
+        <h3 class="font-medium text-slate-800 dark:text-white mb-4">{{ 'SETTINGS.SECURITY.ACTIVE_SESSIONS' | translate }}</h3>
+        <div class="space-y-3">
+          @for (session of activeSessions; track session.id) {
+            <div class="flex items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+              <div>
+                <h4 class="font-medium text-slate-800 dark:text-white">{{ session.device }}</h4>
+                <p class="text-sm text-slate-500">{{ session.location }} • {{ session.time }}</p>
+              </div>
+              @if (session.current) {
+                <span class="px-3 py-1 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 rounded-full font-medium">
+                  {{ 'SETTINGS.SECURITY.CURRENT' | translate }}
+                </span>
+              } @else {
+                <button class="px-3 py-1 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                  {{ 'SETTINGS.SECURITY.DISCONNECT' | translate }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-slate-200 dark:border-slate-700">
+        <button class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition flex items-center gap-2">
+          <i class="ph ph-arrow-counter-clockwise"></i>
+          {{ 'SETTINGS.RESET' | translate }}
+        </button>
+        <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+          <i class="ph ph-floppy-disk"></i>
+          {{ 'SETTINGS.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Billing Tab -->
+  @if (activeSubTab() === 'billing') {
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <i class="ph ph-credit-card text-xl text-slate-700 dark:text-slate-300"></i>
+        <h2 class="text-xl font-semibold text-slate-800 dark:text-white">{{ 'SETTINGS.BILLING.TITLE' | translate }}</h2>
+      </div>
+      <p class="text-sm text-slate-500 mb-6">{{ 'SETTINGS.BILLING.SUBTITLE' | translate }}</p>
+
+      <!-- Current Plan -->
+      <div class="bg-slate-50 dark:bg-slate-700/30 p-6 rounded-lg mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-slate-800 dark:text-white">{{ 'SETTINGS.BILLING.PLAN' | translate }} {{ billingInfo().plan }}</h3>
+            <p class="text-sm text-slate-500">{{ 'SETTINGS.BILLING.MONTHLY_RENEWAL' | translate }} • {{ 'SETTINGS.BILLING.NEXT_RENEWAL' | translate }} {{ billingInfo().renewalDate }}</p>
+          </div>
+          <div class="text-right">
+            <div class="text-3xl font-bold text-slate-800 dark:text-white">{{ billingInfo().price }}€</div>
+            <div class="text-sm text-slate-500">/{{ 'SETTINGS.BILLING.MONTH' | translate }}</div>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button (click)="changePlan()" class="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-white dark:hover:bg-slate-700">
+            {{ 'SETTINGS.BILLING.CHANGE_PLAN' | translate }}
+          </button>
+          <button (click)="cancelSubscription()" class="px-4 py-2 text-sm border border-red-300 text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
+            {{ 'SETTINGS.BILLING.CANCEL_SUBSCRIPTION' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="mb-6">
+        <h3 class="font-medium text-slate-800 dark:text-white mb-4">{{ 'SETTINGS.BILLING.PAYMENT_METHOD' | translate }}</h3>
+        <div class="flex items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-lg mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-8 bg-gradient-to-r from-blue-600 to-blue-400 rounded flex items-center justify-center">
+              <i class="ph ph-credit-card text-white"></i>
+            </div>
+            <div>
+              <div class="font-medium text-slate-800 dark:text-white">{{ billingInfo().paymentMethod }}</div>
+              <div class="text-sm text-slate-500">Visa • {{ 'SETTINGS.BILLING.EXPIRES' | translate }} {{ billingInfo().cardExpiry }}</div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <span class="px-3 py-1 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 rounded-full font-medium">
+              {{ 'SETTINGS.BILLING.DEFAULT' | translate }}
+            </span>
+            <button class="px-3 py-1 text-sm border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-700">
+              {{ 'SETTINGS.BILLING.MODIFY' | translate }}
+            </button>
+          </div>
+        </div>
+        <button (click)="addPaymentMethod()" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+          + {{ 'SETTINGS.BILLING.ADD_PAYMENT_METHOD' | translate }}
+        </button>
+      </div>
+
+      <!-- Billing History -->
+      <div>
+        <h3 class="font-medium text-slate-800 dark:text-white mb-4">{{ 'SETTINGS.BILLING.HISTORY' | translate }}</h3>
+        <div class="border border-slate-200 dark:border-slate-700 rounded-lg divide-y divide-slate-200 dark:divide-slate-700">
+          @for (invoice of invoices(); track invoice.date) {
+            <div class="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/30 transition">
+              <div>
+                <div class="font-medium text-slate-800 dark:text-white">{{ invoice.date }}</div>
+                <div class="text-sm text-slate-500">{{ invoice.type }}</div>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="px-3 py-1 text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 rounded-full font-medium">
+                  {{ 'SETTINGS.BILLING.PAID' | translate }}
+                </span>
+                <span class="font-semibold text-slate-800 dark:text-white">{{ invoice.amount }}€</span>
+                <button (click)="downloadInvoice(invoice)" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400">
+                  {{ 'SETTINGS.BILLING.DOWNLOAD' | translate }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-slate-200 dark:border-slate-700">
+        <button class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition flex items-center gap-2">
+          <i class="ph ph-arrow-counter-clockwise"></i>
+          {{ 'SETTINGS.RESET' | translate }}
+        </button>
+        <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+          <i class="ph ph-floppy-disk"></i>
+          {{ 'SETTINGS.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Preferences Tab -->
+  @if (activeSubTab() === 'preferences') {
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <i class="ph ph-gear text-xl text-slate-700 dark:text-slate-300"></i>
+        <h2 class="text-xl font-semibold text-slate-800 dark:text-white">{{ 'SETTINGS.PREFERENCES.TITLE' | translate }}</h2>
+      </div>
+      <p class="text-sm text-slate-500 mb-6">{{ 'SETTINGS.PREFERENCES.SUBTITLE' | translate }}</p>
+
+      <div class="space-y-6 mb-8">
+        <!-- Dark Mode -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-medium text-slate-800 dark:text-white">{{ 'SETTINGS.PREFERENCES.DARK_MODE' | translate }}</h3>
+            <p class="text-sm text-slate-500">{{ 'SETTINGS.PREFERENCES.DARK_MODE_DESC' | translate }}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button 
+              (click)="toggleDarkMode()"
+              [class.bg-blue-600]="preferences().darkMode"
+              class="relative w-16 h-8 bg-slate-200 dark:bg-slate-700 rounded-full transition-colors">
+              <div 
+                [class.translate-x-9]="preferences().darkMode"
+                class="absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform flex items-center justify-center">
+                <i [class]="preferences().darkMode ? 'ph ph-moon text-xs' : 'ph ph-sun text-xs'"></i>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Language -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PREFERENCES.LANGUAGE' | translate }}</label>
+          <select 
+            [(ngModel)]="preferences().language"
+            (change)="onLanguageChange()"
+            class="w-full max-w-xs px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+
+        <!-- Timezone -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PREFERENCES.TIMEZONE' | translate }}</label>
+          <select 
+            [(ngModel)]="preferences().timezone"
+            class="w-full max-w-xs px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+            <option value="Europe/Paris">Europe/Paris (GMT+1)</option>
+            <option value="America/New_York">America/New_York (GMT-5)</option>
+            <option value="Asia/Tokyo">Asia/Tokyo (GMT+9)</option>
+          </select>
+        </div>
+
+        <!-- Date Format -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PREFERENCES.DATE_FORMAT' | translate }}</label>
+          <select 
+            [(ngModel)]="preferences().dateFormat"
+            class="w-full max-w-xs px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+            <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+            <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+            <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+          </select>
+        </div>
+
+        <!-- Currency -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ 'SETTINGS.PREFERENCES.CURRENCY' | translate }}</label>
+          <select 
+            [(ngModel)]="preferences().currency"
+            class="w-full max-w-xs px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+            <option value="EUR">Euro (€)</option>
+            <option value="USD">Dollar ($)</option>
+            <option value="GBP">Pound (£)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
+        <h3 class="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">{{ 'SETTINGS.PREFERENCES.DANGER_ZONE' | translate }}</h3>
+        <div class="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 p-4 rounded-lg">
+          <h4 class="font-medium text-red-900 dark:text-red-300 mb-1">{{ 'SETTINGS.PREFERENCES.DELETE_ACCOUNT' | translate }}</h4>
+          <p class="text-sm text-red-700 dark:text-red-400 mb-3">{{ 'SETTINGS.PREFERENCES.DELETE_ACCOUNT_DESC' | translate }}</p>
+          <button 
+            (click)="deleteAccount()"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2">
+            <i class="ph ph-trash"></i>
+            {{ 'SETTINGS.PREFERENCES.DELETE_ACCOUNT' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-slate-200 dark:border-slate-700">
+        <button class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition flex items-center gap-2">
+          <i class="ph ph-arrow-counter-clockwise"></i>
+          {{ 'SETTINGS.RESET' | translate }}
+        </button>
+        <button 
+          (click)="savePreferences()"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+          <i class="ph ph-floppy-disk"></i>
+          {{ 'SETTINGS.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Interface Tab -->
+  @if (activeSubTab() === 'interface') {
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-sm">
+      <div class="flex items-center gap-2 mb-2">
+        <i class="ph ph-layout text-xl text-slate-700 dark:text-slate-300"></i>
+        <h2 class="text-xl font-semibold text-slate-800 dark:text-white">{{ 'SETTINGS.INTERFACE.TITLE' | translate }}</h2>
+      </div>
+      <p class="text-sm text-slate-500 mb-6">{{ 'SETTINGS.INTERFACE.SUBTITLE' | translate }}</p>
+
+      <div class="space-y-4 mb-6">
+        <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-medium text-slate-800 dark:text-white flex items-center gap-2">
+                <i class="ph ph-sidebar"></i>
+                {{ 'SETTINGS.INTERFACE.SIDEBAR_NAV' | translate }}
+              </h3>
+              <p class="text-sm text-slate-500 mt-1">{{ 'SETTINGS.INTERFACE.SIDEBAR_NAV_DESC' | translate }}</p>
+            </div>
+            <input 
+              type="checkbox" 
+              [(ngModel)]="interface().sidebarNavigation"
+              class="w-5 h-5 text-blue-600 bg-white border-slate-300 rounded">
+          </div>
+        </div>
+
+        <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-medium text-slate-800 dark:text-white flex items-center gap-2">
+                <i class="ph ph-rows"></i>
+                {{ 'SETTINGS.INTERFACE.HEADER_NAV' | translate }}
+              </h3>
+              <p class="text-sm text-slate-500 mt-1">{{ 'SETTINGS.INTERFACE.HEADER_NAV_DESC' | translate }}</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="interface().headerNavigation"
+                class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendation -->
+      <div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 p-4 rounded-lg mb-6">
+        <div class="flex items-start gap-3">
+          <div class="px-2 py-0.5 bg-blue-600 text-white text-xs rounded font-medium">{{ 'SETTINGS.INTERFACE.RECOMMENDED' | translate }}</div>
+          <div>
+            <h4 class="font-medium text-blue-900 dark:text-blue-300 mb-1">Sidebar Navigation</h4>
+            <p class="text-sm text-blue-700 dark:text-blue-400">{{ 'SETTINGS.INTERFACE.RECOMMENDATION_TEXT' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+        <button class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition flex items-center gap-2">
+          <i class="ph ph-arrow-counter-clockwise"></i>
+          {{ 'SETTINGS.RESET' | translate }}
+        </button>
+        <button 
+          (click)="saveInterface()"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+          <i class="ph ph-floppy-disk"></i>
+          {{ 'SETTINGS.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

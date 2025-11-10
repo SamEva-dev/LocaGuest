@@ -79,6 +79,13 @@ export class ThemeService {
   }
 
   /**
+   * Set dark mode on/off
+   */
+  setDarkMode(isDark: boolean): void {
+    this.theme.set(isDark ? 'dark' : 'light');
+  }
+
+  /**
    * Set custom colors (user preference)
    */
   setCustomColors(colors: CustomColors): void {

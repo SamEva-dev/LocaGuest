@@ -347,6 +347,106 @@
     "STATUS": {
       "PAID": "Payé"
     }
+  },
+  "SETTINGS": {
+    "TITLE": "Paramètres",
+    "SUBTITLE": "Gérez vos préférences et paramètres du compte",
+    "SAVE": "Sauvegarder",
+    "RESET": "Réinitialiser",
+    "TABS": {
+      "PROFILE": "Profil",
+      "NOTIFICATIONS": "Notifications",
+      "SECURITY": "Sécurité",
+      "BILLING": "Facturation",
+      "PREFERENCES": "Préférences",
+      "INTERFACE": "Interface"
+    },
+    "PROFILE": {
+      "TITLE": "Informations du Profil",
+      "SUBTITLE": "Mettez à jour vos informations personnelles",
+      "PHOTO": "Photo de profil",
+      "CHANGE_PHOTO": "Changer la photo",
+      "PHOTO_HELP": "JPG, GIF ou PNG. Taille max 2MB",
+      "FIRST_NAME": "Prénom",
+      "LAST_NAME": "Nom",
+      "EMAIL": "Email",
+      "PHONE": "Téléphone",
+      "COMPANY": "Société",
+      "ROLE": "Rôle",
+      "BIO": "Bio / Description"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Préférences de Notification",
+      "SUBTITLE": "Choisissez vos canaux de notification",
+      "EMAIL_ALERTS": "Notifications par Email",
+      "EMAIL_ALERTS_DESC": "Recevez les alertes importantes par email",
+      "SMS_ALERTS": "Notifications SMS",
+      "SMS_ALERTS_DESC": "Alertes urgentes par SMS",
+      "NEW_RESERVATIONS": "Nouvelles Réservations",
+      "NEW_RESERVATIONS_DESC": "Notifications lors de nouvelles réservations",
+      "PAYMENT_REMINDERS": "Rappels de Paiement",
+      "PAYMENT_REMINDERS_DESC": "Rappels automatiques pour les échéances",
+      "MONTHLY_REPORTS": "Rapports Mensuels",
+      "MONTHLY_REPORTS_DESC": "Rapport de performance mensuel"
+    },
+    "SECURITY": {
+      "TITLE": "Sécurité",
+      "SUBTITLE": "Gérez la sécurité de votre compte",
+      "CHANGE_PASSWORD": "Changer le mot de passe",
+      "CURRENT_PASSWORD": "Mot de passe actuel",
+      "NEW_PASSWORD": "Nouveau mot de passe",
+      "CONFIRM_PASSWORD": "Confirmer le mot de passe",
+      "UPDATE_PASSWORD": "Mettre à jour le mot de passe",
+      "TWO_FACTOR": "Authentification à deux facteurs",
+      "TWO_FACTOR_DESC": "Sécurisez votre compte avec une authentification à deux facteurs",
+      "ENABLE": "Activer",
+      "INACTIVE": "Inactif",
+      "ENABLE_2FA": "Activer 2FA",
+      "ACTIVE_SESSIONS": "Sessions Actives",
+      "CURRENT": "Actuel",
+      "DISCONNECT": "Déconnecter"
+    },
+    "BILLING": {
+      "TITLE": "Facturation et Abonnement",
+      "SUBTITLE": "Gérez votre abonnement et vos méthodes de paiement",
+      "PLAN": "Plan",
+      "MONTHLY_RENEWAL": "Facturation mensuelle",
+      "NEXT_RENEWAL": "Prochain renouvellement le",
+      "MONTH": "mois",
+      "CHANGE_PLAN": "Changer de plan",
+      "CANCEL_SUBSCRIPTION": "Annuler l'abonnement",
+      "PAYMENT_METHOD": "Méthodes de paiement",
+      "EXPIRES": "Expire",
+      "DEFAULT": "Défaut",
+      "MODIFY": "Modifier",
+      "ADD_PAYMENT_METHOD": "Ajouter une méthode de paiement",
+      "HISTORY": "Historique de facturation",
+      "PAID": "Payé",
+      "DOWNLOAD": "Télécharger"
+    },
+    "PREFERENCES": {
+      "TITLE": "Préférences d'Application",
+      "SUBTITLE": "Personnalisez votre expérience utilisateur",
+      "DARK_MODE": "Mode Sombre",
+      "DARK_MODE_DESC": "Activer le thème sombre de l'interface",
+      "LANGUAGE": "Langue",
+      "TIMEZONE": "Fuseau horaire",
+      "DATE_FORMAT": "Format de Date",
+      "CURRENCY": "Devise",
+      "DANGER_ZONE": "Zone de Danger",
+      "DELETE_ACCOUNT": "Supprimer le compte",
+      "DELETE_ACCOUNT_DESC": "Cette action est irréversible et supprimera toutes vos données"
+    },
+    "INTERFACE": {
+      "TITLE": "Configuration de l'Interface",
+      "SUBTITLE": "Personnalisez l'affichage de votre interface",
+      "SIDEBAR_NAV": "Navigation par Sidebar",
+      "SIDEBAR_NAV_DESC": "Utilisez une barre latérale pour la navigation (recommandé)",
+      "HEADER_NAV": "Navigation par Header",
+      "HEADER_NAV_DESC": "Utilisez un menu classique dans le titre",
+      "RECOMMENDED": "Recommandé",
+      "RECOMMENDATION_TEXT": "La navigation par sidebar offre une meilleure expérience utilisateur avec un accès rapide à toutes les fonctionnalités et une interface plus moderne et intuitive."
+    }
   }
 }
 
