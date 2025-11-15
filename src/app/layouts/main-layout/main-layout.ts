@@ -1,13 +1,14 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, HostListener } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
 import { TabManagerService } from '../../core/services/tab-manager.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { AuthService } from '../../core/auth/services/auth.service';
 
 @Component({
   selector: 'main-layout',
-  imports: [RouterOutlet, TranslatePipe],
+  imports: [CommonModule, RouterOutlet, TranslatePipe],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
@@ -20,6 +21,7 @@ export class MainLayout {
   user = this.auth.user;
   tabs = this.tabManager.tabs;
   activeTabId = this.tabManager.activeTabId;
+  showUserMenu = signal(false);
 
   ngOnInit() {
     // Open fixed tabs
@@ -120,5 +122,22 @@ export class MainLayout {
 
   toggleTheme() {
     this.theme.toggleTheme();
+  }
+
+  toggleUserMenu() {
+    this.showUserMenu.set(!this.showUserMenu());
+  }
+
+  goToPricing() {
+    this.showUserMenu.set(false);
+    this.router.navigate(['/pricing']);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (this.showUserMenu() && !target.closest('.relative')) {
+      this.showUserMenu.set(false);
+    }
   }
 }

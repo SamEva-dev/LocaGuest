@@ -1,24 +1,31 @@
-import { ChangeDetectionStrategy, Component, inject, signal, effect, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, effect, PLATFORM_ID, OnInit } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitch } from '../../components/language-switch/language-switch';
-import { RouterLink } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
+import { RouterLink, Router } from '@angular/router';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { SubscriptionService, Plan } from '../../core/services/subscription.service';
 
 @Component({
   selector: 'landing-page',
-  imports: [RouterLink,TranslatePipe, LanguageSwitch],
+  imports: [CommonModule, RouterLink, TranslatePipe, LanguageSwitch],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LandingPage {
+export class LandingPage implements OnInit {
   private translate = inject(TranslateService);
   private platformId = inject(PLATFORM_ID);
+  private subscriptionService = inject(SubscriptionService);
+  private router = inject(Router);
 
   // Animated counters
   propertiesCount = signal(0);
   usersCount = signal(0);
   satisfactionCount = signal(0);
+
+  // Pricing plans
+  plans = signal<Plan[]>([]);
+  isAnnual = signal(false);
 
   features = [
     { icon: 'ph ph-buildings', title: 'FEATURES.ITEMS.PROPERTIES.TITLE', description: 'FEATURES.ITEMS.PROPERTIES.DESCRIPTION' },
@@ -29,11 +36,31 @@ export class LandingPage {
     { icon: 'ph ph-gear-six', title: 'FEATURES.ITEMS.ACCOUNTING.TITLE', description: 'FEATURES.ITEMS.ACCOUNTING.DESCRIPTION' }
   ];
 
+  ngOnInit() {
+    this.subscriptionService.loadPlans().subscribe(
+      plans => this.plans.set(plans)
+    );
+  }
+
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.setupScrollAnimations();
       this.animateCounters();
     }
+  }
+
+  selectPlan(plan: Plan) {
+    if (plan.monthlyPrice === 0) {
+      // Free plan - redirect to signup/login
+      this.router.navigate(['/login']);
+    } else {
+      // Paid plan - redirect to login with plan preselected
+      this.router.navigate(['/login'], { queryParams: { plan: plan.code } });
+    }
+  }
+
+  contactSales() {
+    window.location.href = 'mailto:contact@locaguest.com?subject=Plan Enterprise';
   }
 
   private setupScrollAnimations() {

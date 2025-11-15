@@ -121,14 +121,191 @@
   <!-- CTA -->
   <section class="py-20 px-6 bg-gradient-to-r from-blue-600 to-teal-500 text-center text-white">
     <h3 class="text-3xl lg:text-4xl font-bold mb-4">{{ 'CTA.TITLE' | translate }}</h3>
-    <p class="text-lg text-white/90 mb-8">{{ 'CTA.SUBTITLE' | translate }}</p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a routerLink="/login" class="px-6 py-3 rounded-lg bg-white text-blue-600 font-semibold hover:bg-gray-100 transition">
-        {{ 'CTA.BUTTONS.START' | translate }}
-      </a>
-      <a routerLink="/login" class="px-6 py-3 rounded-lg border border-white text-white font-semibold hover:bg-white hover:text-blue-600 transition">
-        {{ 'CTA.BUTTONS.DEMO' | translate }}
-      </a>
+    <p class="text-lg text-white/90">{{ 'CTA.SUBTITLE' | translate }}</p>
+  </section>
+
+  <!-- Pricing Plans -->
+  <section class="py-20 px-6 bg-white dark:bg-slate-900">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold text-slate-900 dark:text-white mb-4">
+          Choisissez le plan qui vous convient
+        </h2>
+        <p class="text-xl text-slate-600 dark:text-slate-300 mb-6">
+          Tarifs simples et transparents. Changez de plan à tout moment.
+        </p>
+        
+        <!-- Toggle Annual/Monthly -->
+        <div class="inline-flex items-center gap-3 bg-slate-100 dark:bg-slate-800 rounded-full p-1 shadow-lg">
+          <button (click)="isAnnual.set(false)"
+                  [class.bg-white]="!isAnnual()"
+                  [class.dark:bg-slate-700]="!isAnnual()"
+                  [class.shadow-md]="!isAnnual()"
+                  class="px-6 py-2 rounded-full transition-all text-slate-700 dark:text-slate-300">
+            Mensuel
+          </button>
+          <button (click)="isAnnual.set(true)"
+                  [class.bg-white]="isAnnual()"
+                  [class.dark:bg-slate-700]="isAnnual()"
+                  [class.shadow-md]="isAnnual()"
+                  class="px-6 py-2 rounded-full transition-all flex items-center gap-2 text-slate-700 dark:text-slate-300">
+            Annuel
+            <span class="text-xs bg-green-500 text-white px-2 py-1 rounded-full">-20%</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Plans Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (plan of plans(); track plan.id) {
+          <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 relative hover:shadow-2xl transition-shadow"
+               [class.ring-4]="plan.code === 'pro'"
+               [class.ring-blue-500]="plan.code === 'pro'"
+               [class.scale-105]="plan.code === 'pro'">
+            
+            @if (plan.code === 'pro') {
+              <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span class="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                  ⭐ Populaire
+                </span>
+              </div>
+            }
+
+            <!-- Plan Header -->
+            <div class="text-center mb-6">
+              <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+                {{ plan.name }}
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400 mb-4 h-12">
+                {{ plan.description }}
+              </p>
+              
+              <!-- Price -->
+              <div class="mb-6">
+                @if (plan.code === 'enterprise') {
+                  <div class="text-3xl font-bold text-slate-900 dark:text-white">
+                    Sur devis
+                  </div>
+                } @else if (plan.monthlyPrice === 0) {
+                  <div class="text-4xl font-bold text-slate-900 dark:text-white">
+                    Gratuit
+                  </div>
+                } @else {
+                  <div class="text-4xl font-bold text-slate-900 dark:text-white">
+                    {{ isAnnual() ? (plan.annualPrice / 12).toFixed(0) : plan.monthlyPrice }}€
+                    <span class="text-lg font-normal text-slate-500">/mois</span>
+                  </div>
+                  @if (isAnnual()) {
+                    <div class="text-sm text-slate-500 mt-1">
+                      {{ plan.annualPrice }}€ facturé annuellement
+                    </div>
+                  }
+                }
+              </div>
+
+              <!-- CTA Button -->
+              @if (plan.code === 'enterprise') {
+                <button (click)="contactSales()"
+                        class="w-full px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-100 transition-all font-semibold shadow-lg hover:shadow-xl">
+                  Nous contacter
+                </button>
+              } @else {
+                <button (click)="selectPlan(plan)"
+                        [class.bg-gradient-to-r]="plan.code === 'pro'"
+                        [class.from-blue-600]="plan.code === 'pro'"
+                        [class.to-blue-500]="plan.code === 'pro'"
+                        [class.hover:from-blue-700]="plan.code === 'pro'"
+                        [class.hover:to-blue-600]="plan.code === 'pro'"
+                        [class.bg-slate-900]="plan.code !== 'pro'"
+                        [class.dark:bg-white]="plan.code !== 'pro'"
+                        [class.hover:bg-slate-700]="plan.code !== 'pro'"
+                        [class.dark:hover:bg-slate-100]="plan.code !== 'pro'"
+                        class="w-full px-6 py-3 text-white dark:text-slate-900 rounded-lg transition-all font-semibold shadow-lg hover:shadow-xl">
+                  {{ plan.monthlyPrice === 0 ? '🚀 Commencer gratuitement' : 'Choisir ce plan' }}
+                </button>
+              }
+            </div>
+
+            <!-- Features List -->
+            <div class="space-y-2">
+              <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                <i class="ph ph-check text-green-500 mt-0.5 text-lg"></i>
+                <span>
+                  <strong>{{ plan.maxScenarios === 2147483647 ? 'Illimité' : plan.maxScenarios }}</strong> scénarios
+                </span>
+              </div>
+              
+              <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                <i class="ph ph-check text-green-500 mt-0.5 text-lg"></i>
+                <span>
+                  <strong>{{ plan.hasUnlimitedExports ? 'Illimité' : plan.maxExportsPerMonth }}</strong> exports/mois
+                </span>
+              </div>
+              
+              <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                <i class="ph ph-check text-green-500 mt-0.5 text-lg"></i>
+                <span>
+                  <strong>{{ plan.hasUnlimitedVersioning ? 'Illimité' : plan.maxVersionsPerScenario }}</strong> versions
+                </span>
+              </div>
+              
+              <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                <i class="ph ph-check text-green-500 mt-0.5 text-lg"></i>
+                <span>
+                  <strong>{{ plan.hasUnlimitedAi ? 'Illimité' : plan.maxAiSuggestionsPerMonth }}</strong> suggestions IA/mois
+                </span>
+              </div>
+              
+              <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                <i class="ph ph-check text-green-500 mt-0.5 text-lg"></i>
+                <span>
+                  Partage avec <strong>{{ plan.maxShares }}</strong> utilisateurs
+                </span>
+              </div>
+
+              @if (plan.hasPrivateTemplates) {
+                <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                  <i class="ph ph-check text-green-500 mt-0.5 text-lg"></i>
+                  <span>Templates privés</span>
+                </div>
+              }
+
+              @if (plan.hasAdvancedComparison) {
+                <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                  <i class="ph ph-check text-green-500 mt-0.5 text-lg"></i>
+                  <span>Comparaison avancée</span>
+                </div>
+              }
+
+              @if (plan.hasApiAccess) {
+                <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                  <i class="ph ph-check text-green-500 mt-0.5 text-lg"></i>
+                  <span>API {{ plan.hasApiReadWrite ? 'R+W' : 'Read' }}</span>
+                </div>
+              }
+
+              @if (plan.hasPrioritySupport) {
+                <div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                  <i class="ph ph-check text-green-500 mt-0.5 text-lg"></i>
+                  <span>Support prioritaire</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Trust badges -->
+      <div class="mt-16 text-center">
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Ils nous font confiance</p>
+        <div class="flex justify-center items-center gap-8 opacity-50">
+          <div class="text-2xl font-bold text-slate-400">🏢 100+ Entreprises</div>
+          <div class="text-2xl font-bold text-slate-400">⭐ 4.8/5 Satisfaction</div>
+          <div class="text-2xl font-bold text-slate-400">🔒 100% Sécurisé</div>
+        </div>
+      </div>
     </div>
   </section>
 
