@@ -6,6 +6,7 @@ import { PaginatedResult, Payment, Contract } from './properties.api';
 
 export interface TenantListItem {
   id: string;
+  code: string;  // T0001-L0001
   fullName: string;
   email: string;
   phone?: string;

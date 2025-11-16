@@ -5,6 +5,7 @@ import { environment } from '../../../environnements/environment';
 
 export interface PropertyListItem {
   id: string;
+  code: string;  // T0001-APP0001
   name: string;
   address: string;
   city: string;
@@ -34,6 +35,7 @@ export interface PropertyDetail extends PropertyListItem {
 
 export interface Payment {
   id: string;
+  code: string;  // T0001-PAY0001
   amount: number;
   paymentDate: Date;
   method: string;
@@ -43,6 +45,7 @@ export interface Payment {
 
 export interface Contract {
   id: string;
+  code: string;  // T0001-CTR0001
   tenantId: string;
   tenantName?: string;
   type: string;

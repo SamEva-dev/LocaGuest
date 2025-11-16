@@ -13,7 +13,10 @@
             {{ getInitials(tenant()!.fullName) }}
           </div>
           <div>
-            <h3 class="text-xl font-bold">{{ tenant()!.fullName }}</h3>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="text-xl font-bold">{{ tenant()!.fullName }}</h3>
+              <span class="text-sm px-2 py-1 rounded-lg bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 font-mono">{{ tenant()!.code }}</span>
+            </div>
             <p class="text-sm text-slate-500 dark:text-slate-400">{{ tenant()!.email }}</p>
             @if (tenant()!.phone) {
               <p class="text-sm text-slate-500 dark:text-slate-400">{{ tenant()!.phone }}</p>
@@ -98,11 +101,14 @@
                       <div class="flex items-center gap-4">
                         <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg"></div>
                         <div class="flex-1">
-                          <h4 class="font-semibold">{{ contract.type }}</h4>
+                          <div class="flex items-center gap-2 mb-1">
+                            <h4 class="font-semibold">{{ contract.type }}</h4>
+                            <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">{{ contract.code }}</span>
+                          </div>
                           <p class="text-sm text-slate-500">{{ contract.startDate | date:'dd/MM/yyyy' }} - {{ contract.endDate | date:'dd/MM/yyyy' }}</p>
                           <p class="text-sm font-medium mt-1">€ {{ contract.rent }}/mois</p>
                         </div>
-                        <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">{{ contract.status }}</span>
+                        <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">{{ contract.status }}</span>
                       </div>
                     </div>
                   }

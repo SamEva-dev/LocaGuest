@@ -94,7 +94,10 @@
           @case ('overview') {
             <div class="space-y-6">
               <div>
-                <h3 class="text-lg font-semibold mb-4">{{ 'PROPERTY.OVERVIEW' | translate }}</h3>
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-lg font-semibold">{{ 'PROPERTY.OVERVIEW' | translate }}</h3>
+                  <span class="text-sm px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-mono">{{ property()!.code }}</span>
+                </div>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                   <div class="flex items-start gap-2">
                     <i class="ph ph-map-pin text-emerald-600 mt-0.5"></i>
