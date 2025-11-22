@@ -160,7 +160,16 @@
     "COPYRIGHT": "Tous droits réservés."
   },
   "THEME": { "TOGGLE": "Changer de thème" },
-  "COMMON": { "CANCEL": "Annuler" },
+  "COMMON": {
+    "CANCEL": "Annuler",
+    "CLOSE": "Fermer",
+    "VIEW": "Voir",
+    "EDIT": "Modifier",
+    "ERROR": "Une erreur est survenue",
+    "NETWORK_ERROR": "Erreur réseau",
+    "SERVER_ERROR": "Erreur serveur",
+    "ACCESS_DENIED": "Accès refusé"
+  },
   "AUTH": {
     "SUBTITLE": "Connectez-vous à votre espace LocaGuest",
     "WELCOME": "Bienvenue",
@@ -332,6 +341,12 @@
   "PROFITABILITY": {
     "TITLE": "Comptabilité & Projections",
     "SUBTITLE": "Analysez vos performances financières"
+  },
+  "DOCUMENTS": {
+    "TITLE": "Documents du locataire",
+    "UPLOAD": "Importer un document",
+    "CREATE_CONTRACT": "Créer un document/contrat",
+    "UPLOAD_NEW": "Importer un nouveau document"
   },
   "DOCUMENTS_TAB": {
     "TITLE": "Génération de Documents",

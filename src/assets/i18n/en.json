@@ -160,7 +160,16 @@
     "COPYRIGHT": "All rights reserved."
   },
   "THEME": { "TOGGLE": "Toggle theme" },
-  "COMMON": { "CANCEL": "Cancel" },
+  "COMMON": {
+    "CANCEL": "Cancel",
+    "CLOSE": "Close",
+    "VIEW": "View",
+    "EDIT": "Edit",
+    "ERROR": "An error occurred",
+    "NETWORK_ERROR": "Network error",
+    "SERVER_ERROR": "Server error",
+    "ACCESS_DENIED": "Access denied"
+  },
   "AUTH": {
     "SUBTITLE": "Sign in to your LocaGuest space",
     "WELCOME": "Welcome",
@@ -332,6 +341,12 @@
   "PROFITABILITY": {
     "TITLE": "Accounting & Projections",
     "SUBTITLE": "Analyze your financial performance"
+  },
+  "DOCUMENTS": {
+    "TITLE": "Tenant documents",
+    "UPLOAD": "Upload document",
+    "CREATE_CONTRACT": "Create document/contract",
+    "UPLOAD_NEW": "Upload new document"
   },
   "DOCUMENTS_TAB": {
     "TITLE": "Document Generation",

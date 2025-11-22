@@ -13,6 +13,8 @@ export interface TenantListItem {
   moveInDate?: Date;
   status: string;
   activeContracts: number;
+  propertyId?: string;  // Associated property ID
+  propertyCode?: string;  // Associated property code (T0001-APP0001)
 }
 
 export interface TenantDetail extends TenantListItem {

@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environnements/environment';
+import { TenantListItem } from './tenants.api';
 
 export interface PropertyListItem {
   id: string;
@@ -69,11 +70,11 @@ export interface FinancialSummary {
 }
 
 export interface CreateContractDto {
-  propertyId: string;
-  tenantId: string;
+  propertyId: string;  // Sera converti en Guid côté backend
+  tenantId: string;    // Sera converti en Guid côté backend
   type: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;   // Format ISO 8601 pour l'API
+  endDate: string;     // Format ISO 8601 pour l'API
   rent: number;
   deposit?: number;
   notes?: string;
@@ -172,5 +173,13 @@ export class PropertiesApi {
 
   assignTenant(propertyId: string, contractDto: CreateContractDto): Observable<Contract> {
     return this.http.post<Contract>(`${this.baseUrl}/${propertyId}/assign-tenant`, contractDto);
+  }
+
+  dissociateTenant(propertyId: string, tenantId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${propertyId}/dissociate-tenant/${tenantId}`);
+  }
+
+  getAssociatedTenants(propertyId: string): Observable<TenantListItem[]> {
+    return this.http.get<TenantListItem[]>(`${this.baseUrl}/${propertyId}/associated-tenants`);
   }
 }

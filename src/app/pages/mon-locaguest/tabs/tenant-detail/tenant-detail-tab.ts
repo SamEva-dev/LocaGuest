@@ -6,11 +6,12 @@ import { OccupancyChart } from '../../../../components/charts/occupancy-chart/oc
 import { TenantDetail, TenantPayment, TenantPaymentStats } from '../../../../core/api/tenants.api';
 import { TenantsService } from '../../../../core/services/tenants.service';
 import { Contract } from '../../../../core/api/properties.api';
+import { DocumentsManager } from '../../components/documents-manager/documents-manager';
 
 @Component({
   selector: 'tenant-detail-tab',
   standalone: true,
-  imports: [TranslatePipe, DatePipe, OccupancyChart],
+  imports: [TranslatePipe, DatePipe, OccupancyChart, DocumentsManager],
   templateUrl: './tenant-detail-tab.html'
 })
 export class TenantDetailTab {
@@ -71,13 +72,7 @@ export class TenantDetailTab {
     });
 
     // Load contracts
-    this.tenantsService.getTenantContracts(id).subscribe({
-      next: (contracts) => {
-        this.contracts.set(contracts);
-        console.log('✅ Tenant contracts loaded:', contracts.length);
-      },
-      error: (err) => console.error('❌ Error loading tenant contracts:', err)
-    });
+    this.loadContracts(id);
 
     // Load payment stats
     this.tenantsService.getPaymentStats(id).subscribe({
@@ -89,6 +84,23 @@ export class TenantDetailTab {
     });
   }
 
+  private loadContracts(id: string) {
+    this.tenantsService.getTenantContracts(id).subscribe({
+      next: (contracts) => {
+        this.contracts.set(contracts);
+        console.log('✅ Tenant contracts loaded:', contracts.length, contracts);
+      },
+      error: (err) => console.error('❌ Error loading tenant contracts:', err)
+    });
+  }
+
+  refreshContracts() {
+    const t = this.tenant();
+    if (t?.id) {
+      this.loadContracts(t.id);
+    }
+  }
+
   getInitials(name: string): string {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   }
@@ -97,5 +109,20 @@ export class TenantDetailTab {
     // Extract property ID from contract if available
     // Assuming contract has propertyId field or we need to navigate based on contract data
     alert('Ouvrir property - À implémenter avec propertyId du contract');
+  }
+
+  getTenantInfo() {
+    const t = this.tenant();
+    if (!t) return null;
+    
+    return {
+      id: t.id,
+      fullName: t.fullName,
+      email: t.email,
+      phone: t.phone,
+      propertyId: t.propertyId,
+      propertyCode: t.propertyCode,
+      contracts: this.contracts() || []
+    };
   }
 }

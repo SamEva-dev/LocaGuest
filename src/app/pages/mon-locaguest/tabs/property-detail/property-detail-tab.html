@@ -213,22 +213,38 @@
                   <i class="ph ph-plus mr-1"></i>{{ 'PROPERTY.ADD_TENANT' | translate }}
                 </button>
               </div>
-              @for (contract of contracts(); track contract.id) {
-                <div 
-                  (click)="openTenantTab(contract)"
-                  class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition cursor-pointer"
-                >
+              @for (tenant of associatedTenants(); track tenant.id) {
+                <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition">
                   <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white font-bold text-sm">
-                      {{ getInitials(contract.tenantName || 'T') }}
+                    <div 
+                      (click)="openTenantTab(tenant)"
+                      class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white font-bold text-sm cursor-pointer"
+                    >
+                      {{ getInitials(tenant.fullName || 'T') }}
                     </div>
-                    <div class="flex-1">
-                      <p class="font-medium">{{ contract.tenantName || 'Tenant' }}</p>
-                      <p class="text-xs text-slate-500">{{ contract.startDate | date:'dd/MM/yyyy' }} - {{ contract.endDate | date:'dd/MM/yyyy' }}</p>
+                    <div 
+                      (click)="openTenantTab(tenant)"
+                      class="flex-1 cursor-pointer"
+                    >
+                      <p class="font-medium">{{ tenant.fullName || 'Tenant' }}</p>
+                      <p class="text-xs text-slate-500">
+                        <span class="text-slate-600 dark:text-slate-400">{{ tenant.code }}</span>
+                        @if (tenant.email) {
+                          <span class="ml-2">{{ tenant.email }}</span>
+                        }
+                      </p>
                     </div>
-                    <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30">
-                      {{ contract.status }}
+                    <span class="text-xs px-2 py-1 rounded-full" 
+                          [class]="tenant.status === 'Active' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30' : 'bg-slate-100 text-slate-700 dark:bg-slate-900/30'">
+                      {{ tenant.status }}
                     </span>
+                    <button
+                      (click)="dissociateTenant(tenant); $event.stopPropagation()"
+                      class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 transition"
+                      title="Retirer l'association"
+                    >
+                      <i class="ph ph-link-break text-lg"></i>
+                    </button>
                   </div>
                 </div>
               }
@@ -318,10 +334,100 @@
 
   <!-- Tenant Selection Modal -->
   @if (showTenantModal()) {
-    <tenant-selection-modal
-      #tenantModal
-      (close)="closeTenantModal()"
-      (confirm)="onTenantAssigned($event)"
-    ></tenant-selection-modal>
+    <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+      <tenant-selection-modal
+        #tenantModal
+        (close)="closeTenantModal()"
+        (confirm)="onTenantAssigned($event)"
+      />
+    </div>
+  }
+
+  <!-- Dissociation Modal -->
+  @if (showDissociationModal() && dissociationForm()) {
+    <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+      <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-lg w-full mx-4">
+        <!-- Header -->
+        <div class="border-b border-slate-200 dark:border-slate-700 p-6">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+              <i class="ph ph-warning text-2xl text-red-600"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold">Retirer l'association</h3>
+              <p class="text-sm text-slate-500">{{ dissociationForm()!.tenantName }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-4">
+          <!-- Warning Message -->
+          <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+            <div class="flex gap-3">
+              <i class="ph ph-warning-circle text-amber-600 text-xl flex-shrink-0"></i>
+              <div class="text-sm text-amber-800 dark:text-amber-200">
+                <p class="font-semibold mb-1">Cette action va :</p>
+                <ul class="list-disc list-inside space-y-1 text-xs">
+                  <li>Désassocier le locataire du bien</li>
+                  <li>Marquer le locataire comme INACTIF</li>
+                  <li>Désactiver la génération de contrats</li>
+                </ul>
+                <p class="mt-2 text-xs">Les contrats existants seront conservés.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reason Select -->
+          <div>
+            <label class="block text-sm font-medium mb-2">
+              Motif de dissociation <span class="text-red-500">*</span>
+            </label>
+            <select
+              [(ngModel)]="dissociationForm()!.reason"
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            >
+              <option value="" disabled>Sélectionnez un motif</option>
+              @for (reason of dissociationReasons; track reason) {
+                <option [value]="reason">{{ reason }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Custom Reason Textarea -->
+          @if (dissociationForm()!.reason === 'Autre (préciser)') {
+            <div>
+              <label class="block text-sm font-medium mb-2">
+                Précisez le motif <span class="text-red-500">*</span>
+              </label>
+              <textarea
+                [(ngModel)]="dissociationForm()!.customReason"
+                rows="3"
+                placeholder="Veuillez décrire le motif de la dissociation..."
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none"
+              ></textarea>
+            </div>
+          }
+
+          <!-- Notes are part of customReason when reason is 'Autre' -->
+        </div>
+
+        <!-- Footer -->
+        <div class="border-t border-slate-200 dark:border-slate-700 p-6 flex gap-3">
+          <button
+            (click)="closeDissociationModal()"
+            class="flex-1 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+          >
+            Annuler
+          </button>
+          <button
+            (click)="confirmDissociation()"
+            class="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition font-medium"
+          >
+            Confirmer la dissociation
+          </button>
+        </div>
+      </div>
+    </div>
   }
 </div>

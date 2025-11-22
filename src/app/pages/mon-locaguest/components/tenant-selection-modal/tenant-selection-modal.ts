@@ -18,7 +18,7 @@ export interface TenantSelectionResult {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe],
   template: `
-    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" (click)="onBackdropClick($event)">
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden" (click)="$event.stopPropagation()">
         <!-- Header -->
         <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">

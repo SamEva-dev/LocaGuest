@@ -147,20 +147,10 @@
             </div>
           }
           @case ('documents') {
-            <div>
-              <h3 class="text-lg font-semibold mb-4">{{ 'TENANT.CONTRACTS_DOCS' | translate }}</h3>
-              <div class="grid sm:grid-cols-2 gap-3">
-                @for (i of [1,2,3]; track i) {
-                  <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex items-center gap-3">
-                    <i class="ph ph-file-pdf text-2xl text-rose-500"></i>
-                    <div>
-                      <p class="text-sm font-medium">Document {{ i }}.pdf</p>
-                      <p class="text-xs text-slate-500">{{ i * 850 }} KB</p>
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
+            <documents-manager 
+              [tenantId]="tenant()!.id" 
+              [tenantInfo]="getTenantInfo()" 
+            />
           }
         }
       </div>

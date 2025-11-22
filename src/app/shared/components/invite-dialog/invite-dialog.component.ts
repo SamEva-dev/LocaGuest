@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InvitationsApi } from '../../../core/api/invitations.api';
@@ -177,7 +177,7 @@ export class InviteDialogComponent {
       role: this.selectedRole,
       message: this.message || undefined
     }).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Invitation sent:', response);
         this.isSubmitting.set(false);
         this.invitationSent.emit();
@@ -186,7 +186,7 @@ export class InviteDialogComponent {
         // Show success message (you can use a toast service)
         alert(`✅ Invitation envoyée à ${this.email}`);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to send invitation:', err);
         this.error.set(err.error?.error || 'Erreur lors de l\'envoi de l\'invitation');
         this.isSubmitting.set(false);

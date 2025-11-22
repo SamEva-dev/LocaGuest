@@ -131,6 +131,14 @@ export class PropertiesService {
     return this.propertiesApi.assignTenant(propertyId, contractDto);
   }
 
+  dissociateTenant(propertyId: string, tenantId: string): Observable<void> {
+    return this.propertiesApi.dissociateTenant(propertyId, tenantId);
+  }
+
+  getAssociatedTenants(propertyId: string) {
+    return this.propertiesApi.getAssociatedTenants(propertyId);
+  }
+
   // Clear cache
   refresh(): void {
     this.propertiesCache$ = undefined;
