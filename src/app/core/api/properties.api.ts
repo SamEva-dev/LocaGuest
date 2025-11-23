@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environnements/environment';
 import { TenantListItem } from './tenants.api';
 
+export type PropertyUsageType = 'complete' | 'colocation' | 'airbnb';
+
 export interface PropertyListItem {
   id: string;
   code: string;  // T0001-APP0001
@@ -17,6 +19,11 @@ export interface PropertyListItem {
   bathrooms: number;
   surface?: number;
   imageUrl?: string;
+  // Nouveau: Type d'utilisation
+  propertyUsageType: PropertyUsageType;
+  // Pour les colocations
+  totalRooms?: number;  // Nombre total de chambres disponibles
+  occupiedRooms?: number;  // Nombre de chambres occupées
 }
 
 export interface PropertyDetail extends PropertyListItem {
@@ -32,6 +39,10 @@ export interface PropertyDetail extends PropertyListItem {
   imageUrls: string[];
   createdAt: Date;
   createdBy: string;
+  // Airbnb specifics
+  minimumStay?: number;  // Durée minimum de séjour en jours
+  maximumStay?: number;  // Durée maximum de séjour en jours
+  pricePerNight?: number;  // Prix par nuit pour Airbnb
 }
 
 export interface Payment {
@@ -101,6 +112,14 @@ export interface CreatePropertyDto {
   purchasePrice?: number | null;
   energyClass?: string;
   constructionYear?: number | null;
+  // Nouveau: Type d'utilisation
+  propertyUsageType: PropertyUsageType;
+  // Pour les colocations
+  totalRooms?: number;
+  // Pour Airbnb
+  minimumStay?: number;
+  maximumStay?: number;
+  pricePerNight?: number;
 }
 
 export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {}
@@ -121,6 +140,7 @@ export class PropertiesApi {
     status?: string;
     city?: string;
     search?: string;
+    propertyUsageType?: PropertyUsageType;
     page?: number;
     pageSize?: number;
   }): Observable<PaginatedResult<PropertyListItem>> {
@@ -129,6 +149,7 @@ export class PropertiesApi {
       if (params.status) httpParams = httpParams.set('status', params.status);
       if (params.city) httpParams = httpParams.set('city', params.city);
       if (params.search) httpParams = httpParams.set('search', params.search);
+      if (params.propertyUsageType) httpParams = httpParams.set('propertyUsageType', params.propertyUsageType);
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
     }

@@ -93,109 +93,281 @@
         @switch (activeSubTab()) {
           @case ('overview') {
             <div class="space-y-6">
-              <div>
-                <div class="flex items-center justify-between mb-4">
-                  <h3 class="text-lg font-semibold">{{ 'PROPERTY.OVERVIEW' | translate }}</h3>
-                  <span class="text-sm px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-mono">{{ property()!.code }}</span>
+              <!-- Header avec badges -->
+              <div class="flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-slate-200 dark:border-slate-700">
+                <div>
+                  <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ property()!.name }}</h1>
+                  <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ property()!.code }}</p>
                 </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                  <div class="flex items-start gap-2">
-                    <i class="ph ph-map-pin text-emerald-600 mt-0.5"></i>
-                    <div>
-                      <p class="font-medium text-slate-600 dark:text-slate-400">Adresse</p>
-                      <p>{{ property()!.address }}</p>
-                      <p class="text-slate-500">{{ property()!.city }} @if(property()!.zipCode) {- {{ property()!.zipCode }} }</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <i class="ph ph-buildings text-emerald-600 mt-0.5"></i>
-                    <div>
-                      <p class="font-medium text-slate-600 dark:text-slate-400">Type</p>
-                      <p>{{ property()!.type }}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <i class="ph ph-ruler text-emerald-600 mt-0.5"></i>
-                    <div>
-                      <p class="font-medium text-slate-600 dark:text-slate-400">Surface</p>
-                      <p>{{ property()!.surface }} m²</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <i class="ph ph-bed text-emerald-600 mt-0.5"></i>
-                    <div>
-                      <p class="font-medium text-slate-600 dark:text-slate-400">Chambres</p>
-                      <p>{{ property()!.bedrooms }}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <i class="ph ph-bathtub text-emerald-600 mt-0.5"></i>
-                    <div>
-                      <p class="font-medium text-slate-600 dark:text-slate-400">Salles de bains</p>
-                      <p>{{ property()!.bathrooms }}</p>
-                    </div>
-                  </div>
-                  @if (property()!.floor !== undefined) {
-                    <div class="flex items-start gap-2">
-                      <i class="ph ph-stairs text-emerald-600 mt-0.5"></i>
-                      <div>
-                        <p class="font-medium text-slate-600 dark:text-slate-400">Étage</p>
-                        <p>{{ property()!.floor }}</p>
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
-              
-              <!-- Amenities -->
-              <div>
-                <h4 class="font-semibold mb-3">Équipements</h4>
-                <div class="flex flex-wrap gap-2">
-                  @if (property()!.hasElevator) {
-                    <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 text-sm">
-                      <i class="ph ph-elevator mr-1"></i>Ascenseur
+                <div class="flex items-center gap-2 flex-wrap">
+                  @if (property()!.propertyUsageType) {
+                    <span 
+                      class="px-3 py-1.5 rounded-lg font-medium inline-flex items-center gap-2 shadow-sm"
+                      [ngClass]="{
+                        'bg-gradient-to-r from-emerald-500 to-teal-500 text-white': getUsageTypeColor(property()!.propertyUsageType) === 'emerald',
+                        'bg-gradient-to-r from-blue-500 to-cyan-500 text-white': getUsageTypeColor(property()!.propertyUsageType) === 'blue',
+                        'bg-gradient-to-r from-purple-500 to-pink-500 text-white': getUsageTypeColor(property()!.propertyUsageType) === 'purple'
+                      }"
+                    >
+                      <i [class]="'ph ' + getUsageTypeIcon(property()!.propertyUsageType) + ' text-lg'"></i>
+                      {{ getUsageTypeLabel(property()!.propertyUsageType) }}
                     </span>
                   }
-                  @if (property()!.hasParking) {
-                    <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 text-sm">
-                      <i class="ph ph-car mr-1"></i>Parking
-                    </span>
-                  }
-                  @if (property()!.isFurnished) {
-                    <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 text-sm">
-                      <i class="ph ph-couch mr-1"></i>Meublé
-                    </span>
-                  }
+                  <span [class]="'px-3 py-1.5 rounded-lg font-medium shadow-sm ' + getStatusClass(property()!.status)">
+                    <i class="ph ph-circle-fill text-xs mr-1"></i>
+                    {{ getStatusLabel(property()!.status) }}
+                  </span>
                 </div>
               </div>
 
-              <!-- Financial Details -->
-              <div>
-                <h4 class="font-semibold mb-3">Finances</h4>
-                <div class="grid sm:grid-cols-3 gap-4 text-sm">
-                  <div>
-                    <p class="text-slate-600 dark:text-slate-400">Loyer mensuel</p>
-                    <p class="text-xl font-bold text-emerald-600">€ {{ property()!.rent }}</p>
+              <!-- Statistiques rapides -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl p-4 border border-emerald-200 dark:border-emerald-800">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center">
+                      <i class="ph ph-currency-eur text-white text-xl"></i>
+                    </div>
+                    <div>
+                      <p class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Loyer mensuel</p>
+                      <p class="text-xl font-bold text-emerald-700 dark:text-emerald-300">€{{ property()!.rent }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center">
+                      <i class="ph ph-ruler text-white text-xl"></i>
+                    </div>
+                    <div>
+                      <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Surface</p>
+                      <p class="text-xl font-bold text-blue-700 dark:text-blue-300">{{ property()!.surface }} m²</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl p-4 border border-orange-200 dark:border-orange-800">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-orange-500 flex items-center justify-center">
+                      <i class="ph ph-bed text-white text-xl"></i>
+                    </div>
+                    <div>
+                      <p class="text-xs text-orange-600 dark:text-orange-400 font-medium">Chambres</p>
+                      <p class="text-xl font-bold text-orange-700 dark:text-orange-300">{{ property()!.bedrooms }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center">
+                      <i class="ph ph-bathtub text-white text-xl"></i>
+                    </div>
+                    <div>
+                      <p class="text-xs text-purple-600 dark:text-purple-400 font-medium">Salles de bain</p>
+                      <p class="text-xl font-bold text-purple-700 dark:text-purple-300">{{ property()!.bathrooms }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Informations spécifiques Colocation -->
+              @if (property()!.propertyUsageType === 'colocation' && property()!.totalRooms) {
+                <div class="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl p-6 text-white shadow-lg">
+                  <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+                      <i class="ph ph-door text-3xl"></i>
+                    </div>
+                    <div class="flex-1">
+                      <h4 class="text-lg font-bold mb-2">Gestion Colocation</h4>
+                      <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                          <p class="text-sm opacity-90 mb-1">Occupation actuelle</p>
+                          <p class="text-2xl font-bold">{{ property()!.occupiedRooms || 0 }}/{{ property()!.totalRooms }} chambres</p>
+                        </div>
+                        @if ((property()!.totalRooms || 0) - (property()!.occupiedRooms || 0) > 0) {
+                          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                            <p class="text-sm opacity-90 mb-1">Chambres disponibles</p>
+                            <p class="text-2xl font-bold">{{ (property()!.totalRooms || 0) - (property()!.occupiedRooms || 0) }}</p>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+              
+              <!-- Informations spécifiques Airbnb -->
+              @if (property()!.propertyUsageType === 'airbnb') {
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-6 text-white shadow-lg">
+                  <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+                      <i class="ph ph-airplane-in-flight text-3xl"></i>
+                    </div>
+                    <div class="flex-1">
+                      <h4 class="text-lg font-bold mb-2">Configuration Airbnb</h4>
+                      <div class="grid md:grid-cols-3 gap-4">
+                        @if (property()!.pricePerNight) {
+                          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                            <p class="text-sm opacity-90 mb-1">Prix par nuit</p>
+                            <p class="text-2xl font-bold">€{{ property()!.pricePerNight }}</p>
+                          </div>
+                        }
+                        @if (property()!.minimumStay) {
+                          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                            <p class="text-sm opacity-90 mb-1">Séjour minimum</p>
+                            <p class="text-2xl font-bold">{{ property()!.minimumStay }} jour(s)</p>
+                          </div>
+                        }
+                        @if (property()!.maximumStay) {
+                          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                            <p class="text-sm opacity-90 mb-1">Séjour maximum</p>
+                            <p class="text-2xl font-bold">{{ property()!.maximumStay }} jour(s)</p>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Grille principale avec cards -->
+              <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Localisation -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg transition-shadow">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+                      <i class="ph ph-map-pin text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Localisation</h3>
+                  </div>
+                  <div class="space-y-3">
+                    <div>
+                      <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Adresse</p>
+                      <p class="font-medium">{{ property()!.address }}</p>
+                    </div>
+                    <div class="flex gap-4">
+                      <div class="flex-1">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Ville</p>
+                        <p class="font-medium">{{ property()!.city }}</p>
+                      </div>
+                      @if(property()!.zipCode) {
+                        <div>
+                          <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Code postal</p>
+                          <p class="font-medium">{{ property()!.zipCode }}</p>
+                        </div>
+                      }
+                    </div>
+                    @if(property()!.floor !== undefined) {
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Étage</p>
+                        <p class="font-medium inline-flex items-center gap-2">
+                          <i class="ph ph-stairs text-emerald-500"></i>
+                          {{ property()!.floor }}
+                        </p>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <!-- Caractéristiques -->
+                <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg transition-shadow">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center">
+                      <i class="ph ph-buildings text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Caractéristiques</h3>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                      <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Type</p>
+                      <p class="font-semibold">{{ property()!.type }}</p>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                      <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Surface</p>
+                      <p class="font-semibold">{{ property()!.surface }} m²</p>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                      <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Chambres</p>
+                      <p class="font-semibold">{{ property()!.bedrooms }}</p>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50">
+                      <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Salles de bain</p>
+                      <p class="font-semibold">{{ property()!.bathrooms }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Équipements & Confort -->
+              @if (property()!.hasElevator || property()!.hasParking || property()!.isFurnished) {
+                <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg transition-shadow">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center">
+                      <i class="ph ph-check-circle text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold">Équipements & Confort</h3>
+                  </div>
+                  <div class="grid md:grid-cols-3 gap-3">
+                    @if (property()!.hasElevator) {
+                      <div class="flex items-center gap-3 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+                        <i class="ph ph-elevator text-emerald-600 text-2xl"></i>
+                        <span class="font-medium text-emerald-700 dark:text-emerald-400">Ascenseur</span>
+                      </div>
+                    }
+                    @if (property()!.hasParking) {
+                      <div class="flex items-center gap-3 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                        <i class="ph ph-car text-blue-600 text-2xl"></i>
+                        <span class="font-medium text-blue-700 dark:text-blue-400">Parking</span>
+                      </div>
+                    }
+                    @if (property()!.isFurnished) {
+                      <div class="flex items-center gap-3 p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
+                        <i class="ph ph-couch text-purple-600 text-2xl"></i>
+                        <span class="font-medium text-purple-700 dark:text-purple-400">Meublé</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Informations financières -->
+              <div class="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+                    <i class="ph ph-wallet text-white text-xl"></i>
+                  </div>
+                  <h3 class="text-lg font-semibold">Informations Financières</h3>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4">
+                  <div class="bg-white dark:bg-slate-700 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Loyer mensuel</p>
+                    <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">€{{ property()!.rent }}</p>
                   </div>
                   @if (property()!.charges) {
-                    <div>
-                      <p class="text-slate-600 dark:text-slate-400">Charges</p>
-                      <p class="text-xl font-bold">€ {{ property()!.charges }}</p>
+                    <div class="bg-white dark:bg-slate-700 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                      <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Charges</p>
+                      <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">€{{ property()!.charges }}</p>
                     </div>
                   }
                   @if (property()!.deposit) {
-                    <div>
-                      <p class="text-slate-600 dark:text-slate-400">Dépôt de garantie</p>
-                      <p class="text-xl font-bold">€ {{ property()!.deposit }}</p>
+                    <div class="bg-white dark:bg-slate-700 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                      <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">Dépôt de garantie</p>
+                      <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">€{{ property()!.deposit }}</p>
                     </div>
                   }
                 </div>
               </div>
 
               @if (property()!.notes) {
-                <div>
-                  <h4 class="font-semibold mb-2">Notes</h4>
-                  <p class="text-sm text-slate-600 dark:text-slate-400">{{ property()!.notes }}</p>
+                <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800 p-6">
+                  <div class="flex items-start gap-3">
+                    <i class="ph ph-note text-amber-600 text-2xl mt-0.5"></i>
+                    <div class="flex-1">
+                      <h4 class="font-semibold text-amber-900 dark:text-amber-100 mb-2">Notes importantes</h4>
+                      <p class="text-sm text-amber-700 dark:text-amber-300">{{ property()!.notes }}</p>
+                    </div>
+                  </div>
                 </div>
               }
 
@@ -273,19 +445,97 @@
             </div>
           }
           @case ('documents') {
-            <div>
-              <h3 class="text-lg font-semibold mb-4">{{ 'PROPERTY.DOCUMENTS' | translate }}</h3>
-              <div class="grid sm:grid-cols-2 gap-3">
-                @for (i of [1,2,3]; track i) {
-                  <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex items-center gap-3">
-                    <i class="ph ph-file-pdf text-2xl text-rose-500"></i>
-                    <div>
-                      <p class="text-sm font-medium">Document {{ i }}.pdf</p>
-                      <p class="text-xs text-slate-500">2.4 MB</p>
+            <div class="space-y-6">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold">{{ 'PROPERTY.DOCUMENTS' | translate }}</h3>
+                <button class="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:shadow-lg transition">
+                  <i class="ph ph-upload-simple mr-2"></i>Ajouter un document
+                </button>
+              </div>
+
+              @if (documentCategories().length === 0) {
+                <div class="text-center py-12">
+                  <i class="ph ph-folder-open text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
+                  <p class="text-slate-500 dark:text-slate-400">Aucun document pour ce bien</p>
+                </div>
+              }
+
+              @for (category of documentCategories(); track category.category) {
+                <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  <!-- Category Header -->
+                  <div class="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 px-5 py-3 border-b border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center">
+                        <i [class]="'ph ' + getCategoryIcon(category.category) + ' text-white text-xl'"></i>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-semibold">{{ getCategoryLabel(category.category) }}</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">{{ category.count }} document(s)</p>
+                      </div>
                     </div>
                   </div>
-                }
-              </div>
+
+                  <!-- Documents List -->
+                  <div class="divide-y divide-slate-200 dark:divide-slate-700">
+                    @for (doc of category.documents; track doc.id) {
+                      <div class="px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                        <div class="flex items-center gap-4">
+                          <!-- Icon -->
+                          <div class="flex-shrink-0">
+                            <i [class]="'ph ' + getDocumentIcon(doc.fileName) + ' text-3xl ' + getDocumentIconColor(doc.fileName)"></i>
+                          </div>
+
+                          <!-- Info -->
+                          <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                              <p class="font-medium truncate">{{ doc.fileName }}</p>
+                              <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono flex-shrink-0">{{ doc.code }}</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                              <span class="inline-flex items-center gap-1">
+                                <i class="ph ph-calendar-blank"></i>
+                                {{ doc.createdAt | date:'dd/MM/yyyy' }}
+                              </span>
+                              <span class="inline-flex items-center gap-1">
+                                <i class="ph ph-file"></i>
+                                {{ formatFileSize(doc.fileSizeBytes) }}
+                              </span>
+                              @if (doc.description) {
+                                <span class="truncate">{{ doc.description }}</span>
+                              }
+                            </div>
+                          </div>
+
+                          <!-- Actions -->
+                          <div class="flex items-center gap-2 flex-shrink-0">
+                            <button
+                              (click)="viewDocument(doc)"
+                              class="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/20 text-blue-600 transition"
+                              title="Voir"
+                            >
+                              <i class="ph ph-eye text-lg"></i>
+                            </button>
+                            <button
+                              (click)="downloadDocument(doc)"
+                              class="p-2 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/20 text-emerald-600 transition"
+                              title="Télécharger"
+                            >
+                              <i class="ph ph-download-simple text-lg"></i>
+                            </button>
+                            <button
+                              (click)="deleteDocument(doc)"
+                              class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 transition"
+                              title="Dissocier"
+                            >
+                              <i class="ph ph-trash text-lg"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
             </div>
           }
           @case ('payments') {

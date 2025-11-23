@@ -419,7 +419,8 @@ export interface TenantInfo {
                   @for (cType of contractTypes; track cType.value) {
                     <button
                       type="button"
-                      (click)="contractFormType.set(cType.value); allowEditContractFields.set(false);"
+                      (click)="contractFormType.set(cType.value); 
+                      allowEditContractFields.set(false);"
                       [class.ring-2]="contractFormType() === cType.value"
                       [class.ring-blue-500]="contractFormType() === cType.value"
                       [class.bg-blue-50]="contractFormType() === cType.value"

@@ -7,7 +7,7 @@ export interface DocumentDto {
   id: string;
   code: string;
   fileName: string;
-  filePath: string;
+  filePath?: string;
   type: string;
   category: string;
   fileSizeBytes: number;
@@ -17,8 +17,14 @@ export interface DocumentDto {
   tenantName?: string;
   propertyId?: string;
   propertyName?: string;
-  isArchived: boolean;
+  isArchived?: boolean;
   createdAt: Date;
+}
+
+export interface DocumentCategory {
+  category: string;
+  count: number;
+  documents: DocumentDto[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +38,10 @@ export class DocumentsApi {
 
   getTenantDocuments(tenantId: string): Observable<DocumentDto[]> {
     return this.http.get<DocumentDto[]>(`${this.baseUrl}/tenant/${tenantId}`);
+  }
+
+  getPropertyDocuments(propertyId: string): Observable<DocumentCategory[]> {
+    return this.http.get<DocumentCategory[]>(`${this.baseUrl}/property/${propertyId}`);
   }
 
   uploadDocument(formData: FormData): Observable<DocumentDto> {

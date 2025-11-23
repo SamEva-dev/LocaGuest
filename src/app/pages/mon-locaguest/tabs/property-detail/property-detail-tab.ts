@@ -1,24 +1,26 @@
 import { Component, input, signal, inject, effect, viewChild } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
 import { RevenueChart } from '../../../../components/charts/revenue-chart/revenue-chart';
 import { PropertyDetail, Payment, Contract, FinancialSummary, CreateContractDto } from '../../../../core/api/properties.api';
 import { TenantListItem } from '../../../../core/api/tenants.api';
+import { DocumentsApi, DocumentCategory, DocumentDto } from '../../../../core/api/documents.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { TenantSelectionModal, TenantSelectionResult } from '../../components/tenant-selection-modal/tenant-selection-modal';
 
 @Component({
   selector: 'property-detail-tab',
   standalone: true,
-  imports: [TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal],
+  imports: [NgClass, TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal],
   templateUrl: './property-detail-tab.html'
 })
 export class PropertyDetailTab {
   data = input<any>();
   private tabManager = inject(InternalTabManagerService);
   private propertiesService = inject(PropertiesService);
+  private documentsApi = inject(DocumentsApi);
   
   tenantModal = viewChild<TenantSelectionModal>('tenantModal');
 
@@ -31,6 +33,7 @@ export class PropertyDetailTab {
   contracts = signal<Contract[]>([]);
   associatedTenants = signal<TenantListItem[]>([]);
   financialSummary = signal<FinancialSummary | null>(null);
+  documentCategories = signal<DocumentCategory[]>([]);
   
   showTenantModal = signal(false);
   availableTenants = signal<any[]>([]);
@@ -125,6 +128,15 @@ export class PropertyDetailTab {
         console.log('✅ Financial summary loaded', summary);
       },
       error: (err) => console.error('❌ Error loading financial summary:', err)
+    });
+
+    // Load documents
+    this.documentsApi.getPropertyDocuments(id).subscribe({
+      next: (categories) => {
+        this.documentCategories.set(categories);
+        console.log('✅ Documents loaded:', categories.length, 'categories');
+      },
+      error: (err) => console.error('❌ Error loading documents:', err)
     });
   }
 
@@ -269,5 +281,180 @@ export class PropertyDetailTab {
         alert(`Erreur lors de la dissociation: ${errorMsg}`);
       }
     });
+  }
+
+  getUsageTypeIcon(usageType?: string): string {
+    switch(usageType) {
+      case 'complete': return 'ph-house';
+      case 'colocation': return 'ph-users-three';
+      case 'airbnb': return 'ph-airplane-in-flight';
+      default: return 'ph-house';
+    }
+  }
+
+  getUsageTypeLabel(usageType?: string): string {
+    switch(usageType) {
+      case 'complete': return 'Location complète';
+      case 'colocation': return 'Colocation';
+      case 'airbnb': return 'Airbnb';
+      default: return 'Non défini';
+    }
+  }
+
+  getUsageTypeColor(usageType?: string): string {
+    switch(usageType) {
+      case 'complete': return 'emerald';
+      case 'colocation': return 'blue';
+      case 'airbnb': return 'purple';
+      default: return 'slate';
+    }
+  }
+
+  getStatusClass(status: string): string {
+    switch(status) {
+      case 'Vacant': return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
+      case 'Occupied': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+      case 'PartiallyOccupied': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+      default: return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
+    }
+  }
+
+  getStatusLabel(status: string): string {
+    switch(status) {
+      case 'Vacant': return 'Vacant';
+      case 'Occupied': return 'Occupé';
+      case 'PartiallyOccupied': return 'Partiellement occupé';
+      default: return status;
+    }
+  }
+
+  downloadDocument(doc: DocumentDto) {
+    console.log('📥 Downloading document:', doc.fileName);
+    this.documentsApi.downloadDocument(doc.id).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = doc.fileName;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        console.log('✅ Document downloaded');
+      },
+      error: (err: any) => {
+        console.error('❌ Error downloading document:', err);
+        alert('Erreur lors du téléchargement du document');
+      }
+    });
+  }
+
+  viewDocument(doc: DocumentDto) {
+    console.log('👁️ Viewing document:', doc.fileName);
+    this.documentsApi.downloadDocument(doc.id).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        console.log('✅ Document opened in new tab');
+      },
+      error: (err: any) => {
+        console.error('❌ Error viewing document:', err);
+        alert('Erreur lors de l\'ouverture du document');
+      }
+    });
+  }
+
+  deleteDocument(doc: DocumentDto) {
+    const propertyId = this.data()?.propertyId;
+    if (!propertyId) return;
+
+    if (!confirm(`Êtes-vous sûr de vouloir dissocier le document "${doc.fileName}" ?`)) {
+      return;
+    }
+
+    console.log('🗑️ Dissociating document:', doc.fileName);
+    this.documentsApi.dissociateDocument(doc.id).subscribe({
+      next: () => {
+        console.log('✅ Document dissociated');
+        alert('Document dissocié avec succès');
+        // Recharger les documents
+        this.documentsApi.getPropertyDocuments(propertyId).subscribe({
+          next: (categories) => {
+            this.documentCategories.set(categories);
+          },
+          error: (err) => console.error('❌ Error reloading documents:', err)
+        });
+      },
+      error: (err: any) => {
+        console.error('❌ Error dissociating document:', err);
+        alert('Erreur lors de la dissociation du document');
+      }
+    });
+  }
+
+  getDocumentIcon(fileName: string): string {
+    const ext = fileName.split('.').pop()?.toLowerCase();
+    switch(ext) {
+      case 'pdf': return 'ph-file-pdf';
+      case 'doc':
+      case 'docx': return 'ph-file-doc';
+      case 'xls':
+      case 'xlsx': return 'ph-file-xls';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif': return 'ph-file-image';
+      case 'zip':
+      case 'rar': return 'ph-file-zip';
+      default: return 'ph-file';
+    }
+  }
+
+  getDocumentIconColor(fileName: string): string {
+    const ext = fileName.split('.').pop()?.toLowerCase();
+    switch(ext) {
+      case 'pdf': return 'text-rose-500';
+      case 'doc':
+      case 'docx': return 'text-blue-500';
+      case 'xls':
+      case 'xlsx': return 'text-emerald-500';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif': return 'text-purple-500';
+      case 'zip':
+      case 'rar': return 'text-amber-500';
+      default: return 'text-slate-500';
+    }
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  getCategoryIcon(category: string): string {
+    switch(category) {
+      case 'Contrats': return 'ph-file-text';
+      case 'EtatsLieux': return 'ph-clipboard-text';
+      case 'Factures': return 'ph-receipt';
+      case 'Quittances': return 'ph-currency-eur';
+      case 'Diagnostics': return 'ph-first-aid-kit';
+      case 'Photos': return 'ph-images';
+      case 'Autres': return 'ph-folder';
+      default: return 'ph-file';
+    }
+  }
+
+  getCategoryLabel(category: string): string {
+    switch(category) {
+      case 'Contrats': return 'Contrats';
+      case 'EtatsLieux': return 'États des lieux';
+      case 'Factures': return 'Factures';
+      case 'Quittances': return 'Quittances';
+      case 'Diagnostics': return 'Diagnostics';
+      case 'Photos': return 'Photos';
+      case 'Autres': return 'Autres';
+      default: return category;
+    }
   }
 }

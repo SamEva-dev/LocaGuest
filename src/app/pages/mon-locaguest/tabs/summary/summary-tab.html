@@ -106,13 +106,30 @@
 
         <!-- Filters -->
         <div class="flex items-center gap-2">
+          @if (viewMode() === 'properties') {
+            <!-- Filtre par type d'utilisation -->
+            <select 
+              [value]="usageTypeFilter()"
+              (change)="onUsageTypeFilterChange($any($event.target).value)"
+              class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:ring-2 focus:ring-emerald-500">
+              <option value="all">Tous les types</option>
+              <option value="complete">Location complète</option>
+              <option value="colocation">Colocation</option>
+              <option value="airbnb">Airbnb</option>
+            </select>
+          }
+          
+          <!-- Filtre par statut -->
           <select 
             [value]="statusFilter()"
             (change)="onStatusFilterChange($any($event.target).value)"
             class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm focus:ring-2 focus:ring-emerald-500">
             <option value="all">{{ 'SUMMARY.FILTERS.STATUS_ALL' | translate }}</option>
-            <option value="Occupied">{{ 'PROPERTY.STATUS_OCCUPIED' | translate }}</option>
-            <option value="Vacant">{{ 'PROPERTY.STATUS_VACANT' | translate }}</option>
+            @if (viewMode() === 'properties') {
+              <option value="Occupied">Occupé</option>
+              <option value="Vacant">Vacant</option>
+              <option value="PartiallyOccupied">Partiellement occupé</option>
+            }
             @if (viewMode() === 'tenants') {
               <option value="Active">{{ 'TENANT.STATUS_ACTIVE' | translate }}</option>
               <option value="Inactive">{{ 'TENANT.STATUS_INACTIVE' | translate }}</option>
@@ -135,18 +152,46 @@
                 class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition cursor-pointer"
               >
                 <div class="flex items-start gap-3">
-                  <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex-shrink-0"></div>
+                  <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex-shrink-0 flex items-center justify-center text-white text-2xl">
+                    <i [class]="'ph ' + getUsageTypeIcon(property.propertyUsageType || 'complete')"></i>
+                  </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-1">
                       <h4 class="font-semibold text-sm truncate">{{ property.name }}</h4>
                       <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">{{ property.code }}</span>
                     </div>
                     <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ property.address }}</p>
-                    <div class="flex items-center gap-2 mt-2">
-                      <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                        {{ property.status }}
+                    <div class="flex items-center gap-2 mt-2 flex-wrap">
+                      <!-- Badge type d'utilisation -->
+                      @if (property.propertyUsageType) {
+                        <span 
+                          class="text-xs px-2 py-0.5 rounded-full font-medium"
+                          [ngClass]="{
+                            'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': getUsageTypeColor(property.propertyUsageType) === 'emerald',
+                            'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400': getUsageTypeColor(property.propertyUsageType) === 'blue',
+                            'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400': getUsageTypeColor(property.propertyUsageType) === 'purple'
+                          }"
+                        >
+                          <i [class]="'ph ' + getUsageTypeIcon(property.propertyUsageType) + ' mr-1'"></i>
+                          {{ getUsageTypeLabel(property.propertyUsageType) }}
+                        </span>
+                      }
+                      
+                      <!-- Badge statut -->
+                      <span [class]="'text-xs px-2 py-0.5 rounded-full font-medium ' + getStatusClass(property.status)">
+                        {{ getStatusLabel(property.status) }}
                       </span>
-                      <span class="text-sm font-medium">€ {{ property.rent }}</span>
+                      
+                      <!-- Info colocation -->
+                      @if (property.propertyUsageType === 'colocation' && property.totalRooms) {
+                        <span class="text-xs px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium">
+                          <i class="ph ph-door mr-1"></i>
+                          {{ property.occupiedRooms || 0 }}/{{ property.totalRooms }} chambres
+                        </span>
+                      }
+                      
+                      <!-- Loyer -->
+                      <span class="text-sm font-medium text-slate-800 dark:text-white">€ {{ property.rent }}</span>
                     </div>
                   </div>
                 </div>
@@ -160,7 +205,9 @@
                 <tr class="text-left text-xs text-slate-500 dark:text-slate-400">
                   <th class="pb-2 font-medium">{{ 'SUMMARY.TABLE.PROPERTY' | translate }}</th>
                   <th class="pb-2 font-medium">Code</th>
+                  <th class="pb-2 font-medium">Type</th>
                   <th class="pb-2 font-medium">{{ 'SUMMARY.TABLE.ADDRESS' | translate }}</th>
+                  <th class="pb-2 font-medium">Info</th>
                   <th class="pb-2 font-medium">{{ 'SUMMARY.TABLE.RENT' | translate }}</th>
                   <th class="pb-2 font-medium">{{ 'SUMMARY.TABLE.STATUS' | translate }}</th>
                 </tr>
@@ -175,11 +222,34 @@
                     <td class="py-3">
                       <span class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">{{ property.code }}</span>
                     </td>
+                    <td class="py-3">
+                      @if (property.propertyUsageType) {
+                        <span 
+                          class="text-xs px-2 py-1 rounded-full font-medium inline-flex items-center gap-1"
+                          [ngClass]="{
+                            'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': getUsageTypeColor(property.propertyUsageType) === 'emerald',
+                            'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400': getUsageTypeColor(property.propertyUsageType) === 'blue',
+                            'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400': getUsageTypeColor(property.propertyUsageType) === 'purple'
+                          }"
+                        >
+                          <i [class]="'ph ' + getUsageTypeIcon(property.propertyUsageType)"></i>
+                          <span>{{ getUsageTypeLabel(property.propertyUsageType) }}</span>
+                        </span>
+                      }
+                    </td>
                     <td class="py-3 text-sm text-slate-600 dark:text-slate-400">{{ property.address }}</td>
+                    <td class="py-3 text-xs">
+                      @if (property.propertyUsageType === 'colocation' && property.totalRooms) {
+                        <span class="px-2 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium inline-flex items-center gap-1">
+                          <i class="ph ph-door"></i>
+                          {{ property.occupiedRooms || 0 }}/{{ property.totalRooms }}
+                        </span>
+                      }
+                    </td>
                     <td class="py-3 text-sm font-medium">€ {{ property.rent }}</td>
                     <td class="py-3">
-                      <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                        {{ property.status }}
+                      <span [class]="'text-xs px-2 py-1 rounded-full font-medium ' + getStatusClass(property.status)">
+                        {{ getStatusLabel(property.status) }}
                       </span>
                     </td>
                   </tr>
@@ -310,7 +380,7 @@
       <!-- Notifications -->
       <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
         <h3 class="text-lg font-semibold mb-4">{{ 'SUMMARY.NOTIFICATIONS' | translate }}</h3>
-        <div class="space-y-3">
+        <div class="max-h-[400px] overflow-y-auto space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
           @for (notif of notifications(); track notif.id) {
             <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
               <div class="w-2 h-2 rounded-full mt-1.5" [class]="notif.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'"></div>

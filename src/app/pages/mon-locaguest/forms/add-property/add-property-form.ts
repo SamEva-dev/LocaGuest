@@ -30,6 +30,7 @@ export class AddPropertyForm {
       // Informations générales
       name: ['', [Validators.required, Validators.maxLength(200)]],
       type: ['', Validators.required],
+      propertyUsageType: ['complete', Validators.required],  // complete, colocation, airbnb
       
       // Adresse
       address: ['', [Validators.required, Validators.maxLength(300)]],
@@ -55,7 +56,15 @@ export class AddPropertyForm {
       // Informations complémentaires
       energyClass: [''],
       constructionYear: [null, [Validators.min(1800), Validators.max(this.currentYear)]],
-      description: ['', Validators.maxLength(1000)]
+      description: ['', Validators.maxLength(1000)],
+      
+      // Pour colocation
+      totalRooms: [null, Validators.min(1)],
+      
+      // Pour Airbnb
+      minimumStay: [null, Validators.min(1)],
+      maximumStay: [null, Validators.min(1)],
+      pricePerNight: [null, Validators.min(0)]
     });
   }
 
@@ -75,6 +84,7 @@ export class AddPropertyForm {
       postalCode: formValue.postalCode,
       country: formValue.country,
       type: formValue.type,
+      propertyUsageType: formValue.propertyUsageType,
       surface: formValue.surface,
       bedrooms: formValue.bedrooms,
       bathrooms: formValue.bathrooms,
@@ -88,7 +98,11 @@ export class AddPropertyForm {
       purchaseDate: formValue.purchaseDate,
       purchasePrice: formValue.purchasePrice,
       energyClass: formValue.energyClass,
-      constructionYear: formValue.constructionYear
+      constructionYear: formValue.constructionYear,
+      totalRooms: formValue.totalRooms,
+      minimumStay: formValue.minimumStay,
+      maximumStay: formValue.maximumStay,
+      pricePerNight: formValue.pricePerNight
     };
 
     this.propertiesService.createProperty(createPropertyDto).subscribe({

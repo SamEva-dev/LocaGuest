@@ -1,4 +1,5 @@
 import { Component, inject, signal, computed, effect } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -14,7 +15,7 @@ import { AddTenantForm } from '../../forms/add-tenant/add-tenant-form';
 @Component({
   selector: 'summary-tab',
   standalone: true,
-  imports: [TranslatePipe, OccupancyChart, AddPropertyForm, AddTenantForm, FormsModule],
+  imports: [NgClass, TranslatePipe, OccupancyChart, AddPropertyForm, AddTenantForm, FormsModule],
   templateUrl: './summary-tab.html'
 })
 export class SummaryTab {
@@ -32,6 +33,7 @@ export class SummaryTab {
   // Search & Filters
   searchQuery = signal('');
   statusFilter = signal<string>('all');
+  usageTypeFilter = signal<string>('all');
   currentPage = signal(1);
   pageSize = signal(50);
   totalItems = signal(0);
@@ -48,7 +50,7 @@ export class SummaryTab {
   stats = computed(() => {
     const props = this.properties();
     const tens = this.tenants();
-    const occupied = props?.filter(p => p.status === 'Occupied' || p.status === 'Occupé').length;
+    const occupied = props?.filter(p => p.status === 'Occupied' || p.status === 'Occupé' || p.status === 'PartiallyOccupied').length;
     const total = props?.length;
     const occupancy = total > 0 ? Math.round((occupied / total) * 100) : 0;
     const revenue = props?.reduce((sum, p) => sum + (p.rent || 0), 0);
@@ -119,6 +121,10 @@ export class SummaryTab {
     
     if (this.statusFilter() && this.statusFilter() !== 'all') {
       params.status = this.statusFilter();
+    }
+    
+    if (this.usageTypeFilter() && this.usageTypeFilter() !== 'all') {
+      params.propertyUsageType = this.usageTypeFilter();
     }
     
     this.propertiesApi.getProperties(params).subscribe({
@@ -256,6 +262,58 @@ export class SummaryTab {
     this.statusFilter.set(status);
     this.currentPage.set(1);
     this.reloadCurrentView();
+  }
+
+  onUsageTypeFilterChange(usageType: string) {
+    console.log('Usage type filter:', usageType);
+    this.usageTypeFilter.set(usageType);
+    this.currentPage.set(1);
+    this.reloadCurrentView();
+  }
+
+  getUsageTypeIcon(usageType: string): string {
+    switch(usageType) {
+      case 'complete': return 'ph-house';
+      case 'colocation': return 'ph-users-three';
+      case 'airbnb': return 'ph-airplane-in-flight';
+      default: return 'ph-house';
+    }
+  }
+
+  getUsageTypeLabel(usageType: string): string {
+    switch(usageType) {
+      case 'complete': return 'Location complète';
+      case 'colocation': return 'Colocation';
+      case 'airbnb': return 'Airbnb';
+      default: return 'Non défini';
+    }
+  }
+
+  getUsageTypeColor(usageType: string): string {
+    switch(usageType) {
+      case 'complete': return 'emerald';
+      case 'colocation': return 'blue';
+      case 'airbnb': return 'purple';
+      default: return 'slate';
+    }
+  }
+
+  getStatusClass(status: string): string {
+    switch(status) {
+      case 'Vacant': return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
+      case 'Occupied': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+      case 'PartiallyOccupied': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+      default: return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
+    }
+  }
+
+  getStatusLabel(status: string): string {
+    switch(status) {
+      case 'Vacant': return 'Vacant';
+      case 'Occupied': return 'Occupé';
+      case 'PartiallyOccupied': return 'Partiellement occupé';
+      default: return status;
+    }
   }
 
   reloadCurrentView() {
