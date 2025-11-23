@@ -38,6 +38,7 @@ export class DashboardApi {
   private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/dashboard`;
 
   getSummary(): Observable<DashboardSummary> {
+    console.log("call summary here");
     return this.http.get<DashboardSummary>(`${this.baseUrl}/summary`);
   }
 

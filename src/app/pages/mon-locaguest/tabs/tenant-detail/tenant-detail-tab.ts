@@ -6,12 +6,12 @@ import { OccupancyChart } from '../../../../components/charts/occupancy-chart/oc
 import { TenantDetail, TenantPayment, TenantPaymentStats } from '../../../../core/api/tenants.api';
 import { TenantsService } from '../../../../core/services/tenants.service';
 import { Contract } from '../../../../core/api/properties.api';
-import { DocumentsManager } from '../../components/documents-manager/documents-manager';
+import { DocumentsManagerComponent } from '../../components/documents-manager/documents-manager';
 
 @Component({
   selector: 'tenant-detail-tab',
   standalone: true,
-  imports: [TranslatePipe, DatePipe, OccupancyChart, DocumentsManager],
+  imports: [TranslatePipe, DatePipe, OccupancyChart, DocumentsManagerComponent],
   templateUrl: './tenant-detail-tab.html'
 })
 export class TenantDetailTab {

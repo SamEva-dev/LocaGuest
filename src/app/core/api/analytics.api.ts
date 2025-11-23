@@ -30,6 +30,10 @@ export interface PropertyPerformance {
   roi: number;
 }
 
+export interface OccupancyDataPoint {
+  date: string;
+  occupancyRate: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsApi {
@@ -58,5 +62,9 @@ export class AnalyticsApi {
 
   getAvailableYears(): Observable<number[]> {
     return this.http.get<number[]>(`${this.baseUrl}/available-years`);
+  }
+
+  getOccupancyTrend(days: number = 30): Observable<OccupancyDataPoint[]> {
+    return this.http.get<OccupancyDataPoint[]>(`${this.baseUrl}/occupancy-trend?days=${days}`);
   }
 }

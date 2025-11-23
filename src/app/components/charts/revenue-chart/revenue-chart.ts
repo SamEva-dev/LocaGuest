@@ -1,5 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit, inject } from '@angular/core';
 import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
+import { AnalyticsApi } from '../../../core/api/analytics.api';
 
 @Component({
   selector: 'revenue-chart',
@@ -20,14 +21,15 @@ import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
     ></apx-chart>
   `
 })
-export class RevenueChart {
+export class RevenueChart implements OnInit {
+  private analyticsApi = inject(AnalyticsApi);
   @ViewChild('chart') chart?: ChartComponent;
 
   chartOptions: any = {
     series: [
       {
         name: 'Revenus',
-        data: [12400, 13200, 12800, 14100, 13900, 14500, 15200, 14800, 15600, 14900, 15100, 14320]
+        data: []
       }
     ],
     chart: {
@@ -44,7 +46,7 @@ export class RevenueChart {
     dataLabels: { enabled: false },
     colors: ['#10b981'],
     xaxis: {
-      categories: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+      categories: [],
       labels: {
         style: { fontSize: '12px' }
       }
@@ -65,4 +67,29 @@ export class RevenueChart {
     },
     legend: { show: false }
   };
+
+  ngOnInit() {
+    this.loadRevenueData();
+  }
+
+  loadRevenueData() {
+    this.analyticsApi.getRevenueEvolution(12).subscribe({
+      next: (data) => {
+        const revenues = data.map(d => d.revenue);
+        const months = data.map(d => d.month);
+        
+        this.chartOptions.series = [{
+          name: 'Revenus',
+          data: revenues
+        }];
+        this.chartOptions.xaxis.categories = months;
+        
+        // Update chart if needed
+        if (this.chart) {
+          this.chart.updateOptions(this.chartOptions);
+        }
+      },
+      error: (err) => console.error('Error loading revenue data:', err)
+    });
+  }
 }

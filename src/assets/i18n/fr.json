@@ -325,6 +325,20 @@
     "PER_MONTH": "par mois",
     "DOCUMENTS": "Documents",
     "NO_RESULTS": "Aucun contrat trouvé",
+    "CREATE_NEW": "Créer un nouveau contrat",
+    "PROPERTY": "Bien immobilier",
+    "TENANT": "Locataire",
+    "TYPE": "Type de contrat",
+    "RENT": "Loyer mensuel",
+    "START_DATE": "Date de début",
+    "END_DATE": "Date de fin",
+    "DEPOSIT": "Dépôt de garantie",
+    "RECORD_PAYMENT": "Enregistrer paiement",
+    "TERMINATE": "Résilier",
+    "TERMINATE_CONTRACT": "Résilier le contrat",
+    "TERMINATE_WARNING": "Cette action marquera le contrat comme terminé. Cette action est irréversible.",
+    "TERMINATION_DATE": "Date de résiliation",
+    "MARK_PROPERTY_VACANT": "Marquer le bien comme vacant",
     "STATS": {
       "ACTIVE": "Contrats actifs",
       "EXPIRING": "Expirent dans 3 mois",
@@ -338,6 +352,25 @@
       "TERMINATED": "Terminé"
     }
   },
+  "PAYMENT": {
+    "AMOUNT": "Montant",
+    "DATE": "Date",
+    "METHOD": "Méthode de paiement",
+    "METHOD_BANK": "Virement bancaire",
+    "METHOD_CHECK": "Chèque",
+    "METHOD_CASH": "Espèces",
+    "METHOD_CARD": "Carte bancaire"
+  },
+  "COMMON": {
+    "VIEW": "Voir",
+    "EDIT": "Modifier",
+    "DELETE": "Supprimer",
+    "CANCEL": "Annuler",
+    "SAVE": "Enregistrer",
+    "CREATE": "Créer",
+    "CONFIRM": "Confirmer",
+    "CLOSE": "Fermer"
+  },
   "PROFITABILITY": {
     "TITLE": "Comptabilité & Projections",
     "SUBTITLE": "Analysez vos performances financières"
@@ -346,7 +379,31 @@
     "TITLE": "Documents du locataire",
     "UPLOAD": "Importer un document",
     "CREATE_CONTRACT": "Créer un document/contrat",
-    "UPLOAD_NEW": "Importer un nouveau document"
+    "UPLOAD_NEW": "Importer un nouveau document",
+    "PAGE_TITLE": "Tous les Documents",
+    "PAGE_SUBTITLE": "Vue centralisée de tous les documents de vos locataires",
+    "REFRESH": "Actualiser",
+    "ALL_DOCUMENTS": "Tous les documents",
+    "DOCUMENTS": "documents",
+    "NO_DOCUMENTS": "Aucun document trouvé",
+    "LOADING": "Chargement...",
+    "SEARCH_PLACEHOLDER": "Rechercher un document, locataire, bien...",
+    "VIEW": "Voir",
+    "DOWNLOAD": "Télécharger",
+    "STATS": {
+      "TOTAL": "Total documents",
+      "THIS_MONTH": "Ce mois",
+      "FILTERED": "Filtrés"
+    },
+    "CATEGORIES": {
+      "ALL": "Toutes les catégories",
+      "IDENTITY": "Identité",
+      "CONTRACTS": "Contrats",
+      "INVENTORIES": "États des lieux",
+      "PROOFS": "Justificatifs",
+      "RECEIPTS": "Quittances",
+      "OTHERS": "Autres"
+    }
   },
   "DOCUMENTS_TAB": {
     "TITLE": "Génération de Documents",

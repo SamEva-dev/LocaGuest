@@ -102,7 +102,6 @@ export class MainLayout {
   }
 
   selectTab(tabId: string) {
-    console.log("tabId",tabId);
     this.tabManager.setActiveTab(tabId);
     const tab = this.tabs().find(t => t.id === tabId);
     if (tab) {

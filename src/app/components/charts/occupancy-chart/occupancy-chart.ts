@@ -1,5 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit, inject } from '@angular/core';
 import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
+import { AnalyticsApi } from '../../../core/api/analytics.api';
 
 @Component({
   selector: 'occupancy-chart',
@@ -21,14 +22,15 @@ import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
     ></apx-chart>
   `
 })
-export class OccupancyChart {
+export class OccupancyChart implements OnInit {
+  private analyticsApi = inject(AnalyticsApi);
   @ViewChild('chart') chart?: ChartComponent;
 
   chartOptions: any = {
     series: [
       {
         name: 'Taux d\'occupation',
-        data: [85, 88, 92, 89, 91, 94, 92, 90, 93, 95, 92, 91, 94, 92, 89, 91, 93, 95, 92, 94, 96, 93, 91, 92, 94, 95, 93, 92, 94, 92]
+        data: []
       }
     ],
     chart: {
@@ -61,4 +63,25 @@ export class OccupancyChart {
     },
     legend: { show: false }
   };
+
+  ngOnInit() {
+    this.loadOccupancyData();
+  }
+
+  loadOccupancyData() {
+    this.analyticsApi.getOccupancyTrend(30).subscribe({
+      next: (data) => {
+        const occupancyRates = data.map(d => d.occupancyRate);
+        this.chartOptions.series = [{
+          name: 'Taux d\'occupation',
+          data: occupancyRates
+        }];
+        // Update chart if needed
+        if (this.chart) {
+          this.chart.updateSeries(this.chartOptions.series);
+        }
+      },
+      error: (err) => console.error('Error loading occupancy data:', err)
+    });
+  }
 }

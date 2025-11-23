@@ -1,8 +1,11 @@
-import { Component, input, signal, inject, effect } from '@angular/core';
+import { Component, input, signal, inject, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
+import { DocumentsApi, DocumentDto } from '../../../../core/api/documents.api';
+import { TenantsApi } from '../../../../core/api/tenants.api';
+import { Contract } from '../../../../core/api/properties.api';
 
 export interface TenantDocument {
   id?: string;
@@ -76,10 +79,29 @@ export interface TenantInfo {
   imports: [CommonModule, FormsModule, TranslatePipe],
   template: `
     <div class="space-y-6">
+      <!-- Loading State -->
+      @if (isLoading()) {
+        <div class="flex items-center justify-center py-12">
+          <div class="flex flex-col items-center gap-3">
+            <div class="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-sm text-slate-600 dark:text-slate-400">Chargement des documents...</p>
+          </div>
+        </div>
+      }
+      
       <!-- Header Actions -->
       <div class="flex items-center justify-between">
         <h3 class="text-lg font-semibold">{{ 'DOCUMENTS.TITLE' | translate }}</h3>
         <div class="flex gap-2">
+          <button
+            (click)="exportAllDocuments()"
+            [disabled]="documents().length === 0"
+            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Exporter tous les documents en ZIP"
+          >
+            <i class="ph ph-download-simple"></i>
+            <span>Export ZIP</span>
+          </button>
           <button
             (click)="showUploadModal.set(true)"
             class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition flex items-center gap-2"
@@ -88,7 +110,7 @@ export interface TenantInfo {
             <span>{{ 'DOCUMENTS.UPLOAD' | translate }}</span>
           </button>
           <button
-            (click)="showContractModal.set(true)"
+            (click)="openContractModal()"
             [disabled]="!hasActiveContract()"
             [title]="!hasActiveContract() ? 'Le locataire doit avoir un contrat actif' : ''"
             class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -99,17 +121,44 @@ export interface TenantInfo {
         </div>
       </div>
 
+      <!-- Search & Filter -->
+      @if (!isLoading()) {
+        <div class="flex items-center gap-3">
+          <div class="flex-1 relative">
+            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              (input)="onSearchChange()"
+              placeholder="Rechercher un document..."
+              class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+            />
+          </div>
+          <select
+            [(ngModel)]="selectedCategory"
+            (change)="onCategoryChange()"
+            class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+          >
+            <option value="">Toutes les catégories</option>
+            @for (cat of documentCategories; track cat.label) {
+              <option [value]="cat.label">{{ cat.label }}</option>
+            }
+          </select>
+        </div>
+      }
+      
       <!-- Documents Grid by Category -->
-      <div class="space-y-6">
-        @for (category of documentCategories; track category.label) {
-          @if (getDocumentsByType(category.type).length > 0 || category.showEmpty) {
-            <div>
-              <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3 flex items-center gap-2">
-                <i [class]="'ph ' + category.icon"></i>
-                {{ category.label }}
-              </h4>
-              <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                @for (doc of getDocumentsByType(category.type); track doc.id || doc.fileName) {
+      @if (!isLoading()) {
+        <div class="space-y-6">
+          @for (category of documentCategories; track category.label) {
+            @if (getFilteredDocumentsByType(category.type).length > 0 || category.showEmpty) {
+              <div>
+                <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3 flex items-center gap-2">
+                  <i [class]="'ph ' + category.icon"></i>
+                  {{ category.label }}
+                </h4>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  @for (doc of getFilteredDocumentsByType(category.type); track doc.id || doc.fileName) {
                   <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition group">
                     <div class="flex items-start justify-between mb-2">
                       <div class="flex items-center gap-3">
@@ -160,9 +209,10 @@ export interface TenantInfo {
                 }
               </div>
             </div>
+            }
           }
-        }
-      </div>
+        </div>
+      }
 
       <!-- Upload Modal -->
       @if (showUploadModal()) {
@@ -186,15 +236,37 @@ export interface TenantInfo {
                 >
                   <option value="">Sélectionner un type...</option>
                   @for (template of documentTemplates; track template.type) {
-                    <option [value]="template.type">{{ template.label }}</option>
+                    <option 
+                      [value]="template.type"
+                      [disabled]="!canUploadDocumentType(template.type)"
+                      [class.text-slate-400]="!canUploadDocumentType(template.type)"
+                    >
+                      {{ template.label }}
+                      @if (!canUploadDocumentType(template.type)) {
+                        (Déjà existant)
+                      }
+                    </option>
                   }
                 </select>
+                @if (showUniqueDocumentWarning()) {
+                  <p class="text-sm text-amber-600 mt-1 flex items-start gap-2">
+                    <i class="ph ph-warning-circle"></i>
+                    <span>Ce type de document existe déjà pour ce locataire. Un seul document de ce type est autorisé.</span>
+                  </p>
+                }
               </div>
 
-              <!-- File Upload -->
+              <!-- File Upload with Drag & Drop -->
               <div>
                 <label class="block text-sm font-medium mb-2">Fichier *</label>
-                <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6">
+                <div 
+                  class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 transition"
+                  [class.border-emerald-500]="isDragging()"
+                  [class.bg-emerald-50]="isDragging()"
+                  (dragover)="onDragOver($event)"
+                  (dragleave)="onDragLeave($event)"
+                  (drop)="onDrop($event)"
+                >
                   <input
                     type="file"
                     #fileInput
@@ -209,24 +281,39 @@ export interface TenantInfo {
                       class="w-full flex flex-col items-center justify-center text-center py-4"
                     >
                       <i class="ph ph-upload-simple text-4xl text-slate-400 mb-2"></i>
-                      <p class="text-sm font-medium">Cliquez pour sélectionner un fichier</p>
+                      <p class="text-sm font-medium">{{ isDragging() ? 'Déposez le fichier ici' : 'Cliquez ou glissez un fichier' }}</p>
                       <p class="text-xs text-slate-500 mt-1">PDF, Image, Word (Max 10MB)</p>
                     </button>
                   } @else {
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center gap-3">
-                        <i class="ph ph-file text-2xl text-emerald-600"></i>
-                        <div>
-                          <p class="text-sm font-medium">{{ uploadForm.file.name }}</p>
-                          <p class="text-xs text-slate-500">{{ formatFileSize(uploadForm.file.size) }}</p>
+                    <div class="space-y-3">
+                      <!-- Preview for PDF/Images -->
+                      @if (filePreviewUrl()) {
+                        <div class="flex justify-center">
+                          @if (uploadForm.file.type.includes('pdf')) {
+                            <div class="w-32 h-40 border border-slate-300 rounded-lg flex items-center justify-center bg-slate-50">
+                              <i class="ph ph-file-pdf text-6xl text-red-600"></i>
+                            </div>
+                          } @else {
+                            <img [src]="filePreviewUrl()" class="max-h-40 rounded-lg" alt="Preview" />
+                          }
                         </div>
+                      }
+                      
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                          <i class="ph ph-file text-2xl text-emerald-600"></i>
+                          <div>
+                            <p class="text-sm font-medium">{{ uploadForm.file.name }}</p>
+                            <p class="text-xs text-slate-500">{{ formatFileSize(uploadForm.file.size) }}</p>
+                          </div>
+                        </div>
+                        <button
+                          (click)="clearFile()"
+                          class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                        >
+                          <i class="ph ph-x text-slate-600"></i>
+                        </button>
                       </div>
-                      <button
-                        (click)="uploadForm.file = null"
-                        class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
-                      >
-                        <i class="ph ph-x text-slate-600"></i>
-                      </button>
                     </div>
                   }
                 </div>
@@ -332,10 +419,10 @@ export interface TenantInfo {
                   @for (cType of contractTypes; track cType.value) {
                     <button
                       type="button"
-                      (click)="contractForm.type = cType.value"
-                      [class.ring-2]="contractForm.type === cType.value"
-                      [class.ring-blue-500]="contractForm.type === cType.value"
-                      [class.bg-blue-50]="contractForm.type === cType.value"
+                      (click)="contractFormType.set(cType.value); allowEditContractFields.set(false);"
+                      [class.ring-2]="contractFormType() === cType.value"
+                      [class.ring-blue-500]="contractFormType() === cType.value"
+                      [class.bg-blue-50]="contractFormType() === cType.value"
                       class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition text-left"
                     >
                       <i [class]="'ph ' + cType.icon + ' text-2xl mb-2'"></i>
@@ -345,6 +432,30 @@ export interface TenantInfo {
                   }
                 </div>
               </div>
+
+              <!-- Checkbox to allow editing protected fields -->
+              @if (['BAIL', 'ETAT_LIEUX_ENTREE', 'ETAT_LIEUX_SORTIE'].includes(contractFormType())) {
+                <div class="border border-blue-200 dark:border-blue-800 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20">
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="allowEditContractFields"
+                      [checked]="allowEditContractFields()"
+                      (change)="allowEditContractFields.set(!allowEditContractFields())"
+                      class="w-4 h-4 text-blue-600 rounded"
+                    />
+                    <div>
+                      <p class="font-medium text-blue-900 dark:text-blue-100">
+                        <i class="ph ph-pencil mr-2"></i>
+                        Autoriser la modification des champs du contrat
+                      </p>
+                      <p class="text-xs text-blue-700 dark:text-blue-300">
+                        Les champs pré-remplis depuis le contrat actif sont en lecture seule par défaut. Cochez pour les modifier.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              }
 
               <!-- Landlord Selection -->
               <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-800/50">
@@ -447,19 +558,35 @@ export interface TenantInfo {
               <!-- Date Range -->
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium mb-2">Date de début *</label>
+                  <label class="block text-sm font-medium mb-2">
+                    Date de début *
+                    @if (isContractFieldsReadonly()) {
+                      <span class="text-xs text-blue-600">(depuis contrat actif)</span>
+                    }
+                  </label>
                   <input
                     type="date"
                     [(ngModel)]="contractForm.startDate"
+                    [readonly]="isContractFieldsReadonly()"
+                    [class.bg-slate-100]="isContractFieldsReadonly()"
+                    [class.cursor-not-allowed]="isContractFieldsReadonly()"
                     class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
                     required
                   />
                 </div>
                 <div>
-                  <label class="block text-sm font-medium mb-2">Date de fin *</label>
+                  <label class="block text-sm font-medium mb-2">
+                    Date de fin *
+                    @if (isContractFieldsReadonly()) {
+                      <span class="text-xs text-blue-600">(depuis contrat actif)</span>
+                    }
+                  </label>
                   <input
                     type="date"
                     [(ngModel)]="contractForm.endDate"
+                    [readonly]="isContractFieldsReadonly()"
+                    [class.bg-slate-100]="isContractFieldsReadonly()"
+                    [class.cursor-not-allowed]="isContractFieldsReadonly()"
                     class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
                     required
                   />
@@ -469,10 +596,18 @@ export interface TenantInfo {
               <!-- Rent, Deposit & Charges -->
               <div class="grid grid-cols-3 gap-4">
                 <div>
-                  <label class="block text-sm font-medium mb-2">Loyer mensuel (€) *</label>
+                  <label class="block text-sm font-medium mb-2">
+                    Loyer mensuel (€) *
+                    @if (isContractFieldsReadonly()) {
+                      <span class="text-xs text-blue-600">(depuis contrat actif)</span>
+                    }
+                  </label>
                   <input
                     type="number"
                     [(ngModel)]="contractForm.rent"
+                    [readonly]="isContractFieldsReadonly()"
+                    [class.bg-slate-100]="isContractFieldsReadonly()"
+                    [class.cursor-not-allowed]="isContractFieldsReadonly()"
                     min="0"
                     step="0.01"
                     class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
@@ -490,10 +625,18 @@ export interface TenantInfo {
                   />
                 </div>
                 <div>
-                  <label class="block text-sm font-medium mb-2">Dépôt de garantie (€)</label>
+                  <label class="block text-sm font-medium mb-2">
+                    Dépôt de garantie (€)
+                    @if (isContractFieldsReadonly()) {
+                      <span class="text-xs text-blue-600">(depuis contrat actif)</span>
+                    }
+                  </label>
                   <input
                     type="number"
                     [(ngModel)]="contractForm.deposit"
+                    [readonly]="isContractFieldsReadonly()"
+                    [class.bg-slate-100]="isContractFieldsReadonly()"
+                    [class.cursor-not-allowed]="isContractFieldsReadonly()"
                     min="0"
                     step="0.01"
                     class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
@@ -536,17 +679,53 @@ export interface TenantInfo {
   `,
   styles: []
 })
-export class DocumentsManager {
+export class DocumentsManagerComponent {
+  tenantInfo = input.required<TenantInfo>();
   private http = inject(HttpClient);
+  private documentsApi = inject(DocumentsApi);
+  private tenantsApi = inject(TenantsApi);
+  
+  // Documents from API
+  realDocuments = signal<DocumentDto[]>([]);
+  isLoading = signal(false);
+  
+  // Search & Filter
+  searchQuery = signal('');
+  selectedCategory = signal('');
+  filteredDocuments = computed(() => {
+    let docs = this.documents();
+    
+    // Filter by search query
+    if (this.searchQuery()) {
+      const query = this.searchQuery().toLowerCase();
+      docs = docs.filter(d => 
+        d.fileName.toLowerCase().includes(query) ||
+        d.description?.toLowerCase().includes(query)
+      );
+    }
+    
+    // Filter by category
+    if (this.selectedCategory()) {
+      const categoryTypes = this.documentCategories
+        .find(c => c.label === this.selectedCategory())?.type || [];
+      docs = docs.filter(d => categoryTypes.includes(d.type));
+    }
+    
+    return docs;
+  });
   
   tenantId = input.required<string>();
-  tenantInfo = input<TenantInfo | null>(null);
+  // Mock documents for demo - will be replaced with real API calls
   documents = signal<TenantDocument[]>([]);
   
   showUploadModal = signal(false);
   showContractModal = signal(false);
   uploading = signal(false);
   uploadProgress = signal(0);
+  
+  // File preview
+  filePreviewUrl = signal<string | null>(null);
+  isDragging = signal(false);
 
   uploadForm = {
     type: '' as DocumentType | '',
@@ -555,8 +734,13 @@ export class DocumentsManager {
     description: ''
   };
 
+  // Signal pour le type de contrat (réactif)
+  contractFormType = signal<DocumentType>('BAIL');
+
+  // Signal pour la checkbox "Modifier"
+  allowEditContractFields = signal<boolean>(false);
+
   contractForm = {
-    type: 'BAIL' as DocumentType,
     startDate: '',
     endDate: '',
     rent: 0,
@@ -572,6 +756,15 @@ export class DocumentsManager {
     landlordEmail: '',
     landlordPhone: ''
   };
+
+  // Computed: Les champs sont en lecture seule si type = BAIL, ETAT_LIEUX_ENTREE ou ETAT_LIEUX_SORTIE ET que la checkbox n'est pas cochée
+  isContractFieldsReadonly = computed(() => {
+    const protectedTypes: DocumentType[] = ['BAIL', 'ETAT_LIEUX_ENTREE', 'ETAT_LIEUX_SORTIE'];
+    return protectedTypes.includes(this.contractFormType()) && !this.allowEditContractFields();
+  });
+
+  // Types de documents uniques (1 seul par locataire)
+  uniqueDocumentTypes: DocumentType[] = ['BAIL', 'ETAT_LIEUX_ENTREE', 'ETAT_LIEUX_SORTIE'];
 
   documentTemplates: DocumentTemplate[] = [
     { type: 'CNI', label: 'Carte d\'identité', icon: 'ph-identification-card', color: 'bg-blue-100 text-blue-600', requiresExpiry: true },
@@ -627,24 +820,73 @@ export class DocumentsManager {
     const id = this.tenantId();
     if (!id) return;
 
-    // TODO: Call API to load tenant documents
-    // For now, using mock data
-    this.documents.set([
-      {
-        id: '1',
-        tenantId: id,
-        type: 'CNI',
-        fileName: 'CNI_Dupont_Jean.pdf',
-        fileSize: 1024000,
-        uploadDate: new Date('2024-01-15'),
-        expiryDate: new Date('2029-12-31'),
-        url: '/api/documents/1'
+    this.isLoading.set(true);
+    
+    // Load from API
+    this.documentsApi.getTenantDocuments(id).subscribe({
+      next: (docs) => {
+        this.realDocuments.set(docs);
+        
+        // Convert API documents to TenantDocument format for existing UI
+        const converted: TenantDocument[] = docs.map(doc => ({
+          id: doc.id,
+          tenantId: id,
+          type: this.mapCategoryToType(doc.category, doc.type),
+          fileName: doc.fileName,
+          fileSize: doc.fileSizeBytes,
+          uploadDate: new Date(doc.createdAt),
+          expiryDate: doc.expiryDate ? new Date(doc.expiryDate) : undefined,
+          url: `/api/documents/download/${doc.id}`,
+          description: doc.description
+        }));
+        
+        this.documents.set(converted);
+        this.isLoading.set(false);
+        console.log('✅ Documents loaded:', converted.length);
+      },
+      error: (err) => {
+        console.error('❌ Error loading documents:', err);
+        this.isLoading.set(false);
+        this.documents.set([]);
       }
-    ]);
+    });
+  }
+  
+  // Map backend category/type to frontend DocumentType
+  mapCategoryToType(category: string, type: string): DocumentType {
+    // Map backend types to frontend types
+    const typeMap: Record<string, DocumentType> = {
+      'Bail': 'BAIL',
+      'Colocation': 'BAIL',
+      'EtatDesLieuxEntree': 'ETAT_LIEUX_ENTREE',
+      'EtatDesLieuxSortie': 'ETAT_LIEUX_SORTIE',
+      'PieceIdentite': 'CNI',
+      'Assurance': 'ASSURANCE',
+      'JustificatifDomicile': 'OTHER',
+      'BulletinSalaire': 'BULLETIN_SALAIRE',
+      'AvisImposition': 'AVIS_IMPOSITION',
+      'Quittance': 'OTHER',
+      'Avenant': 'AVENANT',
+      'Autre': 'OTHER'
+    };
+    
+    return typeMap[type] || 'OTHER';
   }
 
   getDocumentsByType(types: string[] | DocumentType[]): TenantDocument[] {
     return this.documents().filter(doc => types.includes(doc.type));
+  }
+  
+  getFilteredDocumentsByType(types: string[] | DocumentType[]): TenantDocument[] {
+    return this.filteredDocuments().filter(doc => types.includes(doc.type));
+  }
+  
+  onSearchChange() {
+    // Signal is already bound with [(ngModel)], no need to do anything
+  }
+  
+  onCategoryChange() {
+    // Signal will automatically update filteredDocuments
   }
 
   getDocumentIcon(type: DocumentType): string {
@@ -675,12 +917,57 @@ export class DocumentsManager {
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      const file = input.files[0];
-      if (file.size > 10 * 1024 * 1024) {
-        alert('Le fichier ne doit pas dépasser 10MB');
-        return;
-      }
-      this.uploadForm.file = file;
+      this.processFile(input.files[0]);
+    }
+  }
+  
+  processFile(file: File) {
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Le fichier ne doit pas dépasser 10MB');
+      return;
+    }
+    
+    this.uploadForm.file = file;
+    
+    // Generate preview for images
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.filePreviewUrl.set(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else if (file.type === 'application/pdf') {
+      this.filePreviewUrl.set('pdf');
+    } else {
+      this.filePreviewUrl.set(null);
+    }
+  }
+  
+  clearFile() {
+    this.uploadForm.file = null;
+    this.filePreviewUrl.set(null);
+  }
+  
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging.set(true);
+  }
+  
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging.set(false);
+  }
+  
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging.set(false);
+    
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.processFile(files[0]);
     }
   }
 
@@ -697,7 +984,17 @@ export class DocumentsManager {
     const formData = new FormData();
     formData.append('file', this.uploadForm.file!);
     formData.append('tenantId', this.tenantId());
-    formData.append('type', this.uploadForm.type as string);
+    
+    const tenant = this.tenantInfo();
+    if (tenant?.propertyId) {
+      formData.append('propertyId', tenant.propertyId);
+    }
+    
+    // Map frontend type to backend type and category
+    const typeInfo = this.mapFrontendTypeToBackend(this.uploadForm.type as DocumentType);
+    formData.append('type', typeInfo.type);
+    formData.append('category', typeInfo.category);
+    
     if (this.uploadForm.expiryDate) {
       formData.append('expiryDate', this.uploadForm.expiryDate);
     }
@@ -705,22 +1002,14 @@ export class DocumentsManager {
       formData.append('description', this.uploadForm.description);
     }
 
-    // TODO: Replace with actual API call
-    this.http.post(`https://localhost:5001/api/documents/upload`, formData, {
-      reportProgress: true,
-      observe: 'events'
-    }).subscribe({
-      next: (event) => {
-        if (event.type === HttpEventType.UploadProgress && event.total) {
-          this.uploadProgress.set(Math.round(100 * event.loaded / event.total));
-        } else if (event.type === HttpEventType.Response) {
-          console.log('✅ Document uploaded:', event.body);
-          this.uploading.set(false);
-          this.uploadProgress.set(100);
-          this.showUploadModal.set(false);
-          this.resetUploadForm();
-          this.loadDocuments();
-        }
+    this.documentsApi.uploadDocument(formData).subscribe({
+      next: (doc) => {
+        console.log('✅ Document uploaded:', doc);
+        this.uploading.set(false);
+        this.uploadProgress.set(100);
+        this.showUploadModal.set(false);
+        this.resetUploadForm();
+        this.loadDocuments(); // Refresh list
       },
       error: (err) => {
         console.error('❌ Upload error:', err);
@@ -729,6 +1018,25 @@ export class DocumentsManager {
         alert('Erreur lors de l\'upload du document');
       }
     });
+  }
+  
+  // Map frontend DocumentType to backend type and category
+  mapFrontendTypeToBackend(frontendType: DocumentType): { type: string, category: string } {
+    const mapping: Record<DocumentType, { type: string, category: string }> = {
+      'CNI': { type: 'PieceIdentite', category: 'Identite' },
+      'PASSPORT': { type: 'PieceIdentite', category: 'Identite' },
+      'ASSURANCE': { type: 'Assurance', category: 'Justificatifs' },
+      'BAIL': { type: 'Bail', category: 'Contrats' },
+      'AVENANT': { type: 'Avenant', category: 'Contrats' },
+      'ETAT_LIEUX_ENTREE': { type: 'EtatDesLieuxEntree', category: 'EtatsDesLieux' },
+      'ETAT_LIEUX_SORTIE': { type: 'EtatDesLieuxSortie', category: 'EtatsDesLieux' },
+      'ATTESTATION_EMPLOI': { type: 'Autre', category: 'Justificatifs' },
+      'BULLETIN_SALAIRE': { type: 'BulletinSalaire', category: 'Justificatifs' },
+      'AVIS_IMPOSITION': { type: 'AvisImposition', category: 'Justificatifs' },
+      'OTHER': { type: 'Autre', category: 'Autres' }
+    };
+    
+    return mapping[frontendType] || { type: 'Autre', category: 'Autres' };
   }
 
   resetUploadForm() {
@@ -739,6 +1047,33 @@ export class DocumentsManager {
       description: ''
     };
     this.uploadProgress.set(0);
+  }
+
+  /**
+   * Vérifie si un type de document unique existe déjà pour le locataire
+   */
+  hasDocumentType(type: DocumentType): boolean {
+    return this.documents().some(doc => doc.type === type);
+  }
+
+  /**
+   * Vérifie si un type de document peut être uploadé
+   * (retourne false si c'est un document unique qui existe déjà)
+   */
+  canUploadDocumentType(type: DocumentType): boolean {
+    if (this.uniqueDocumentTypes.includes(type)) {
+      return !this.hasDocumentType(type);
+    }
+    return true; // Les documents non-uniques peuvent toujours être uploadés
+  }
+
+  /**
+   * Vérifie si on doit afficher l'avertissement pour document unique
+   */
+  showUniqueDocumentWarning(): boolean {
+    if (!this.uploadForm.type) return false;
+    const type = this.uploadForm.type as DocumentType;
+    return !this.canUploadDocumentType(type);
   }
 
   hasActiveContract(): boolean {
@@ -759,16 +1094,75 @@ export class DocumentsManager {
     if (!tenant?.propertyId) {
       return null;
     }
-    // Retourner un objet simulé avec le propertyId pour la génération de contrat
+    // Retourner le premier contrat s'il existe, sinon un objet simulé avec le propertyId
+    if (tenant.contracts && tenant.contracts.length > 0) {
+      const contract = tenant.contracts[0];
+      return {
+        propertyId: tenant.propertyId,
+        propertyCode: tenant.propertyCode,
+        propertyName: contract.propertyName || tenant.propertyCode,
+        startDate: contract.startDate,
+        endDate: contract.endDate,
+        rent: contract.rent,
+        deposit: contract.deposit,
+        type: contract.type
+      };
+    }
     return {
       propertyId: tenant.propertyId,
       propertyCode: tenant.propertyCode
     };
   }
 
+  // Ouvrir le modal et pré-remplir les champs depuis l'API
+  openContractModal() {
+    const tenantId = this.tenantId();
+    if (!tenantId) {
+      alert('Aucun locataire sélectionné');
+      return;
+    }
+
+    // Réinitialiser le type par défaut et la checkbox
+    this.contractFormType.set('BAIL');
+    this.allowEditContractFields.set(false);
+
+    // Charger les contrats depuis l'API
+    this.tenantsApi.getTenantContracts(tenantId).subscribe({
+      next: (contracts: Contract[]) => {
+        // Prendre le premier contrat actif s'il existe
+        const activeContract = contracts.find(c => c.status === 'Active') || contracts[0];
+        
+        if (activeContract) {
+          // Pré-remplir les champs
+          this.contractForm.startDate = new Date(activeContract.startDate).toISOString().split('T')[0];
+          this.contractForm.endDate = new Date(activeContract.endDate).toISOString().split('T')[0];
+          this.contractForm.rent = activeContract.rent || 0;
+          this.contractForm.deposit = activeContract.deposit || 0;
+        } else {
+          // Pas de contrat trouvé, réinitialiser
+          this.contractForm.startDate = '';
+          this.contractForm.endDate = '';
+          this.contractForm.rent = 0;
+          this.contractForm.deposit = 0;
+        }
+        
+        this.showContractModal.set(true);
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des contrats:', err);
+        // Ouvrir quand même le modal avec des champs vides
+        this.contractForm.startDate = '';
+        this.contractForm.endDate = '';
+        this.contractForm.rent = 0;
+        this.contractForm.deposit = 0;
+        this.showContractModal.set(true);
+      }
+    });
+  }
+
   canGenerateContract(): boolean {
     const basicValidation = !!(
-      this.contractForm.type &&
+      this.contractFormType() &&
       this.contractForm.startDate &&
       this.contractForm.endDate &&
       this.contractForm.rent > 0
@@ -801,7 +1195,7 @@ export class DocumentsManager {
     const dto: GenerateContractDto = {
       tenantId: this.tenantId(),
       propertyId: activeContract.propertyId,
-      contractType: this.contractForm.type,
+      contractType: this.contractFormType(),
       startDate: this.contractForm.startDate,
       endDate: this.contractForm.endDate,
       rent: this.contractForm.rent,
@@ -838,16 +1232,20 @@ export class DocumentsManager {
           const url = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `Contrat_${this.contractForm.type}_${new Date().toISOString().split('T')[0]}.pdf`;
+          
+          // Format: Contrat_{Type}_{Nom_du_locataire}_Date_{numero}
+          const tenantName = this.tenantInfo()?.fullName.replace(/\s+/g, '_') || 'Locataire';
+          const date = new Date().toISOString().split('T')[0];
+          const numero = this.documents().length + 1;
+          link.download = `Contrat_${this.contractFormType()}_${tenantName}_${date}_${numero}.pdf`;
+          
           link.click();
           window.URL.revokeObjectURL(url);
           
           console.log('✅ Contract generated successfully');
           alert('Contrat généré avec succès !');
           this.showContractModal.set(false);
-          
-          // Reload documents
-          this.loadDocuments();
+          this.loadDocuments(); // Refresh documents list to show the new contract
         }
       },
       error: (err) => {
@@ -859,16 +1257,72 @@ export class DocumentsManager {
   }
 
   downloadDocument(doc: TenantDocument) {
-    if (doc.url) {
-      window.open(doc.url, '_blank');
+    if (!doc.id) {
+      console.error('❌ Document ID missing');
+      return;
     }
+    
+    this.documentsApi.downloadDocument(doc.id).subscribe({
+      next: (blob) => {
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = doc.fileName;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        console.log('✅ Document downloaded:', doc.fileName);
+      },
+      error: (err) => {
+        console.error('❌ Download error:', err);
+        alert('Erreur lors du téléchargement du document');
+      }
+    });
   }
 
   deleteDocument(doc: TenantDocument) {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer ${doc.fileName} ?`)) return;
+    if (!confirm(`Êtes-vous sûr de vouloir dissocier ${doc.fileName} ?\n\nLe document sera archivé mais pas supprimé définitivement.`)) return;
+    
+    if (!doc.id) {
+      console.error('❌ Document ID missing');
+      return;
+    }
 
-    // TODO: Call API to delete document
-    this.documents.set(this.documents().filter(d => d.id !== doc.id));
-    console.log('🗑️ Document deleted:', doc.fileName);
+    this.documentsApi.dissociateDocument(doc.id).subscribe({
+      next: () => {
+        console.log('✅ Document dissociated:', doc.fileName);
+        this.loadDocuments(); // Refresh list
+      },
+      error: (err) => {
+        console.error('❌ Dissociate error:', err);
+        alert('Erreur lors de la dissociation du document');
+      }
+    });
+  }
+
+  exportAllDocuments() {
+    const tenantId = this.tenantId();
+    if (!tenantId) return;
+
+    this.isLoading.set(true);
+    
+    this.documentsApi.exportDocumentsZip(tenantId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Documents_Locataire_${new Date().toISOString().split('T')[0]}.zip`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        
+        this.isLoading.set(false);
+        console.log('✅ Documents exported as ZIP');
+      },
+      error: (err) => {
+        console.error('❌ Export ZIP error:', err);
+        this.isLoading.set(false);
+        alert('Erreur lors de l\'export des documents');
+      }
+    });
   }
 }

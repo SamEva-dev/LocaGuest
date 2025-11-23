@@ -22,6 +22,7 @@ export class Dashboard {
   // Mapper les stat cards à partir du summary
   stats = computed(() => {
     const s = this.dashboard.summary();
+    console.log('Dashboard summary:', s); 
     return [
       { key: 'properties', label: 'DASHBOARD.STATS.PROPERTIES', value: s?.propertiesCount ?? 0, icon: 'ph-house', delta: undefined, deltaPositive: true },
       { key: 'tenants', label: 'DASHBOARD.STATS.TENANTS', value: s?.activeTenants ?? 0, icon: 'ph-users-three', delta: undefined, deltaPositive: true },
