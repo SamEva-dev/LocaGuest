@@ -7,11 +7,20 @@ import { TenantDetail, TenantPayment, TenantPaymentStats } from '../../../../cor
 import { TenantsService } from '../../../../core/services/tenants.service';
 import { Contract } from '../../../../core/api/properties.api';
 import { DocumentsManagerComponent } from '../../components/documents-manager/documents-manager';
+import { ContractDocumentsStatusComponent } from '../../components/contract-documents-status/contract-documents-status.component';
+import { ContractWizardComponent } from '../../components/contract-wizard/contract-wizard.component';
 
 @Component({
   selector: 'tenant-detail-tab',
   standalone: true,
-  imports: [TranslatePipe, DatePipe, OccupancyChart, DocumentsManagerComponent],
+  imports: [
+    TranslatePipe, 
+    DatePipe, 
+    OccupancyChart, 
+    DocumentsManagerComponent,
+    ContractDocumentsStatusComponent,
+    ContractWizardComponent
+  ],
   templateUrl: './tenant-detail-tab.html'
 })
 export class TenantDetailTab {
@@ -26,6 +35,12 @@ export class TenantDetailTab {
   payments = signal<TenantPayment[]>([]);
   contracts = signal<Contract[]>([]);
   paymentStats = signal<TenantPaymentStats | null>(null);
+  
+  // Pour gérer l'expansion des documents de contrat
+  expandedContractId = signal<string | null>(null);
+  
+  // Pour gérer le wizard de création de contrat
+  showContractWizard = signal(false);
 
   subTabs = [
     { id: 'contracts', label: 'TENANT.SUB_TABS.CONTRACTS', icon: 'ph-file-text' },
@@ -115,6 +130,24 @@ export class TenantDetailTab {
     const t = this.tenant();
     if (!t) return null;
     
+    // Convertir Contract[] en ContractInfo[]
+    const contractInfos = this.contracts().map(c => ({
+      id: c.id,
+      tenantId: c.tenantId || t.id,
+      propertyId: t.propertyId || '', // propertyId vient du tenant, pas du contrat
+      propertyName: c.tenantName, // Utiliser tenantName comme fallback
+      propertyCode: c.code,
+      type: c.type,
+      startDate: c.startDate,
+      endDate: c.endDate,
+      rent: c.rent,
+      deposit: c.deposit,
+      charges: 0, // charges n'existe pas dans Contract, valeur par défaut
+      status: c.status as any, // Type casting pour compatibilité
+      signedDate: undefined, // signedDate n'existe pas dans Contract
+      createdAt: new Date() // createdAt n'existe pas dans Contract, valeur par défaut
+    }));
+    
     return {
       id: t.id,
       fullName: t.fullName,
@@ -122,7 +155,62 @@ export class TenantDetailTab {
       phone: t.phone,
       propertyId: t.propertyId,
       propertyCode: t.propertyCode,
-      contracts: this.contracts() || []
+      contracts: contractInfos
     };
+  }
+
+  /**
+   * Toggle l'affichage des documents d'un contrat
+   */
+  toggleContractDocuments(contractId: string, event: Event) {
+    event.stopPropagation(); // Empêcher l'ouverture de la propriété
+    const currentId = this.expandedContractId();
+    this.expandedContractId.set(currentId === contractId ? null : contractId);
+  }
+
+  /**
+   * Vérifie si un contrat doit afficher le panneau de documents
+   * Afficher pour: Draft, PartialSigned, FullySigned
+   */
+  shouldShowDocumentsPanel(contract: Contract): boolean {
+    if (!contract.status || typeof contract.status !== 'string') return false;
+    const status = contract.status.toLowerCase();
+    return status === 'draft' || 
+           status === 'partialsigned' || 
+           status === 'fullysigned';
+  }
+
+  /**
+   * Vérifie si un contrat est expanded
+   */
+  isContractExpanded(contractId: string): boolean {
+    return this.expandedContractId() === contractId;
+  }
+
+  /**
+   * Ouvre le wizard de création de contrat
+   */
+  openContractWizard() {
+    this.showContractWizard.set(true);
+  }
+
+  /**
+   * Ferme le wizard de création de contrat
+   */
+  onWizardClosed() {
+    this.showContractWizard.set(false);
+  }
+
+  /**
+   * Callback quand un contrat est créé via le wizard
+   */
+  onContractCreated(contractId: string) {
+    console.log('✅ Contract created:', contractId);
+    this.showContractWizard.set(false);
+    // Refresh contracts list
+    const t = this.tenant();
+    if (t?.id) {
+      this.loadContracts(t.id);
+    }
   }
 }

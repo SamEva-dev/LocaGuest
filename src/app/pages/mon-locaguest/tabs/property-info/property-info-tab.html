@@ -1,0 +1,470 @@
+<div class="space-y-6">
+  <!-- Header with actions -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
+        {{ property().name }}
+      </h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <i class="ph ph-hash mr-1"></i>{{ property().code }}
+      </p>
+    </div>
+    
+    @if (!isEditing()) {
+      <button 
+        (click)="startEditing()"
+        class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition flex items-center gap-2">
+        <i class="ph ph-pencil-simple"></i>
+        Modifier
+      </button>
+    } @else {
+      <div class="flex items-center gap-2">
+        <button 
+          (click)="cancelEditing()"
+          [disabled]="isSaving()"
+          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition">
+          Annuler
+        </button>
+        <button 
+          (click)="saveChanges()"
+          [disabled]="isSaving()"
+          class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition flex items-center gap-2">
+          <i class="ph ph-check" [class.ph-spinner]="isSaving()" [class.animate-spin]="isSaving()"></i>
+          {{ isSaving() ? 'Enregistrement...' : 'Enregistrer' }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+    <!-- Left Column - Photos -->
+    <div class="lg:col-span-1">
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+        <!-- Photo Carousel -->
+        <div class="relative aspect-[4/3] bg-slate-100 dark:bg-slate-900">
+          @if (hasImages()) {
+            <img 
+              [src]="currentImage()" 
+              [alt]="property().name"
+              class="w-full h-full object-cover" />
+            
+            <!-- Carousel Controls -->
+            @if (totalImages() > 1) {
+              <button 
+                (click)="previousImage()"
+                class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition">
+                <i class="ph ph-caret-left text-xl"></i>
+              </button>
+              <button 
+                (click)="nextImage()"
+                class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition">
+                <i class="ph ph-caret-right text-xl"></i>
+              </button>
+
+              <!-- Indicators -->
+              <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                @for (img of property().imageUrls; track img; let i = $index) {
+                  <button 
+                    (click)="goToImage(i)"
+                    [class.bg-white]="i === currentImageIndex()"
+                    [class.bg-white/50]="i !== currentImageIndex()"
+                    class="w-2 h-2 rounded-full transition"></button>
+                }
+              </div>
+            }
+
+            <!-- Image Counter -->
+            <div class="absolute top-3 right-3 px-3 py-1 bg-black/70 text-white text-sm rounded-full">
+              {{ currentImageIndex() + 1 }} / {{ totalImages() }}
+            </div>
+          } @else {
+            <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+              <i class="ph ph-image text-6xl mb-2"></i>
+              <p class="text-sm">Aucune photo</p>
+            </div>
+          }
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="p-4 space-y-3">
+          <!-- Status -->
+          <div class="relative">
+            <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+              Statut
+            </label>
+            <button 
+              (click)="showStatusDropdown.set(!showStatusDropdown())"
+              [disabled]="isEditing()"
+              class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-between transition"
+              [class.opacity-50]="isEditing()"
+              [class.cursor-not-allowed]="isEditing()">
+              <span class="flex items-center gap-2">
+                <span 
+                  [class]="'w-2 h-2 rounded-full bg-' + currentStatus().color + '-500'"></span>
+                <span class="font-medium">{{ currentStatus().label }}</span>
+              </span>
+              <i class="ph ph-caret-down"></i>
+            </button>
+
+            <!-- Status Dropdown -->
+            @if (showStatusDropdown() && !isEditing()) {
+              <div class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-10 overflow-hidden">
+                @for (status of availableStatuses; track status.value) {
+                  <button 
+                    (click)="changeStatus(status.value)"
+                    class="w-full px-3 py-2 flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition text-left"
+                    [class.bg-slate-50]="status.value === property().status"
+                    [class.dark:bg-slate-700]="status.value === property().status">
+                    <span [class]="'w-2 h-2 rounded-full bg-' + status.color + '-500'"></span>
+                    <span>{{ status.label }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Occupation (for Colocation) -->
+          @if (occupationInfo()) {
+            <div>
+              <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                Occupation
+              </label>
+              <div class="px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium text-blue-900 dark:text-blue-100">
+                    {{ occupationInfo()!.occupied }} / {{ occupationInfo()!.total }} chambres
+                  </span>
+                  <span class="text-xs text-blue-600 dark:text-blue-400">
+                    {{ occupationInfo()!.percentage | number:'1.0-0' }}%
+                  </span>
+                </div>
+                <div class="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2 overflow-hidden">
+                  <div 
+                    class="bg-blue-500 h-full transition-all duration-300"
+                    [style.width.%]="occupationInfo()!.percentage"></div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Information -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- General Information Card -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <i class="ph ph-info text-amber-500"></i>
+          Informations générales
+        </h3>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Nom / Libellé
+            </label>
+            @if (isEditing()) {
+              <input 
+                type="text"
+                [(ngModel)]="editForm()!.name"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+            } @else {
+              <p class="text-slate-900 dark:text-white font-medium">{{ property().name }}</p>
+            }
+          </div>
+
+          <!-- Type -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Type de bien
+            </label>
+            @if (isEditing()) {
+              <select 
+                [(ngModel)]="editForm()!.type"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none">
+                @for (type of propertyTypes; track type) {
+                  <option [value]="type">{{ type }}</option>
+                }
+              </select>
+            } @else {
+              <p class="text-slate-900 dark:text-white">{{ property().type }}</p>
+            }
+          </div>
+
+          <!-- Address (Full width) -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Adresse complète
+            </label>
+            @if (isEditing()) {
+              <input 
+                type="text"
+                [(ngModel)]="editForm()!.address"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+            } @else {
+              <p class="text-slate-900 dark:text-white">
+                <i class="ph ph-map-pin mr-1 text-slate-400"></i>
+                {{ property().address }}
+                @if (property().city) {
+                  , {{ property().city }}
+                }
+                @if (property().zipCode) {
+                  {{ property().zipCode }}
+                }
+              </p>
+            }
+          </div>
+
+          <!-- City -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Ville
+            </label>
+            @if (isEditing()) {
+              <input 
+                type="text"
+                [(ngModel)]="editForm()!.city"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+            } @else {
+              <p class="text-slate-900 dark:text-white">{{ property().city || '—' }}</p>
+            }
+          </div>
+
+          <!-- Postal Code -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Code postal
+            </label>
+            @if (isEditing()) {
+              <input 
+                type="text"
+                [(ngModel)]="editForm()!.zipCode"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+            } @else {
+              <p class="text-slate-900 dark:text-white">{{ property().zipCode || '—' }}</p>
+            }
+          </div>
+
+          <!-- Surface -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Superficie
+            </label>
+            @if (isEditing()) {
+              <input 
+                type="number"
+                [(ngModel)]="editForm()!.surface"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+            } @else {
+              <p class="text-slate-900 dark:text-white font-medium">{{ property().surface || 0 }} m²</p>
+            }
+          </div>
+
+          <!-- Usage Type -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Type d'utilisation
+            </label>
+            <div 
+              [class]="'inline-flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium bg-' + getUsageTypeColor(property().propertyUsageType) + '-100 text-' + getUsageTypeColor(property().propertyUsageType) + '-700 dark:bg-' + getUsageTypeColor(property().propertyUsageType) + '-900/30 dark:text-' + getUsageTypeColor(property().propertyUsageType) + '-400'">
+              <i [class]="getUsageTypeIcon(property().propertyUsageType)"></i>
+              {{ getUsageTypeLabel(property().propertyUsageType) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Property Details Card -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <i class="ph ph-list-dashes text-amber-500"></i>
+          Détails du bien
+        </h3>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <!-- Bedrooms -->
+          <div class="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+            <i class="ph ph-bed text-3xl text-slate-400 mb-2"></i>
+            @if (isEditing()) {
+              <input 
+                type="number"
+                [(ngModel)]="editForm()!.bedrooms"
+                class="w-full text-center px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-lg font-bold" />
+            } @else {
+              <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ property().bedrooms || 0 }}</p>
+            }
+            <p class="text-sm text-slate-500">Chambres</p>
+          </div>
+
+          <!-- Bathrooms -->
+          <div class="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+            <i class="ph ph-bathtub text-3xl text-slate-400 mb-2"></i>
+            @if (isEditing()) {
+              <input 
+                type="number"
+                [(ngModel)]="editForm()!.bathrooms"
+                class="w-full text-center px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-lg font-bold" />
+            } @else {
+              <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ property().bathrooms || 0 }}</p>
+            }
+            <p class="text-sm text-slate-500">Salles de bain</p>
+          </div>
+
+          <!-- Floor -->
+          <div class="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+            <i class="ph ph-stairs text-3xl text-slate-400 mb-2"></i>
+            @if (isEditing()) {
+              <input 
+                type="number"
+                [(ngModel)]="editForm()!.floor"
+                class="w-full text-center px-2 py-1 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 text-lg font-bold" />
+            } @else {
+              <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ property().floor ?? '—' }}</p>
+            }
+            <p class="text-sm text-slate-500">Étage</p>
+          </div>
+
+          <!-- Elevator -->
+          <div class="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+            <i class="ph text-3xl text-slate-400 mb-2" [class.ph-elevator]="property().hasElevator" [class.ph-x-circle]="!property().hasElevator"></i>
+            @if (isEditing()) {
+              <label class="flex items-center justify-center gap-2 cursor-pointer">
+                <input 
+                  type="checkbox"
+                  [(ngModel)]="editForm()!.hasElevator"
+                  class="w-5 h-5 rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
+              </label>
+            } @else {
+              <p class="text-2xl font-bold" [class.text-emerald-500]="property().hasElevator" [class.text-slate-400]="!property().hasElevator">
+                {{ property().hasElevator ? 'Oui' : 'Non' }}
+              </p>
+            }
+            <p class="text-sm text-slate-500">Ascenseur</p>
+          </div>
+
+          <!-- Parking -->
+          <div class="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+            <i class="ph text-3xl text-slate-400 mb-2" [class.ph-car]="property().hasParking" [class.ph-x-circle]="!property().hasParking"></i>
+            @if (isEditing()) {
+              <label class="flex items-center justify-center gap-2 cursor-pointer">
+                <input 
+                  type="checkbox"
+                  [(ngModel)]="editForm()!.hasParking"
+                  class="w-5 h-5 rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
+              </label>
+            } @else {
+              <p class="text-2xl font-bold" [class.text-emerald-500]="property().hasParking" [class.text-slate-400]="!property().hasParking">
+                {{ property().hasParking ? 'Oui' : 'Non' }}
+              </p>
+            }
+            <p class="text-sm text-slate-500">Parking</p>
+          </div>
+
+          <!-- Furnished -->
+          <div class="text-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+            <i class="ph text-3xl text-slate-400 mb-2" [class.ph-couch]="property().isFurnished" [class.ph-x-circle]="!property().isFurnished"></i>
+            @if (isEditing()) {
+              <label class="flex items-center justify-center gap-2 cursor-pointer">
+                <input 
+                  type="checkbox"
+                  [(ngModel)]="editForm()!.isFurnished"
+                  class="w-5 h-5 rounded border-slate-300 text-amber-500 focus:ring-amber-500" />
+              </label>
+            } @else {
+              <p class="text-2xl font-bold" [class.text-emerald-500]="property().isFurnished" [class.text-slate-400]="!property().isFurnished">
+                {{ property().isFurnished ? 'Oui' : 'Non' }}
+              </p>
+            }
+            <p class="text-sm text-slate-500">Meublé</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Information Card -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <i class="ph ph-currency-eur text-amber-500"></i>
+          Informations financières
+        </h3>
+
+        <div class="grid md:grid-cols-3 gap-4">
+          <!-- Rent -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Loyer de référence
+            </label>
+            @if (isEditing()) {
+              <div class="relative">
+                <input 
+                  type="number"
+                  [(ngModel)]="editForm()!.rent"
+                  class="w-full pl-6 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">€</span>
+              </div>
+            } @else {
+              <p class="text-2xl font-bold text-emerald-600">{{ property().rent | number:'1.2-2' }} €</p>
+            }
+          </div>
+
+          <!-- Charges -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Charges
+            </label>
+            @if (isEditing()) {
+              <div class="relative">
+                <input 
+                  type="number"
+                  [(ngModel)]="editForm()!.charges"
+                  class="w-full pl-6 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">€</span>
+              </div>
+            } @else {
+              <p class="text-xl font-semibold text-slate-900 dark:text-white">{{ property().charges || 0 | number:'1.2-2' }} €</p>
+            }
+          </div>
+
+          <!-- Deposit -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Dépôt de garantie
+            </label>
+            @if (isEditing()) {
+              <div class="relative">
+                <input 
+                  type="number"
+                  [(ngModel)]="editForm()!.deposit"
+                  class="w-full pl-6 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">€</span>
+              </div>
+            } @else {
+              <p class="text-xl font-semibold text-slate-900 dark:text-white">{{ property().deposit || 0 | number:'1.2-2' }} €</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes Card (Optional) -->
+      @if (property().notes || isEditing()) {
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <i class="ph ph-note text-amber-500"></i>
+            Notes
+          </h3>
+
+          @if (isEditing()) {
+            <textarea 
+              [(ngModel)]="editForm()!.notes"
+              rows="4"
+              class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none resize-none"
+              placeholder="Ajouter des notes..."></textarea>
+          } @else {
+            <p class="text-slate-600 dark:text-slate-300 whitespace-pre-wrap">{{ property().notes }}</p>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

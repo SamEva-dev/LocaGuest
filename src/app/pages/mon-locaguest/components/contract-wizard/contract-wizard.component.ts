@@ -1,0 +1,623 @@
+import { Component, signal, computed, inject, output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { PropertiesApi } from '../../../../core/api/properties.api';
+import { TenantsApi } from '../../../../core/api/tenants.api';
+import { ContractsApi } from '../../../../core/api/contracts.api';
+import { DocumentsApi } from '../../../../core/api/documents.api';
+
+interface WizardStep {
+  id: number;
+  title: string;
+  subtitle: string;
+  icon: string;
+}
+
+interface ContractFormData {
+  tenantId: string;
+  propertyId: string;
+  type: 'Furnished' | 'Unfurnished';
+  startDate: string;
+  endDate: string;
+  rent: number;
+  deposit: number;
+  charges?: number;
+}
+
+@Component({
+  selector: 'app-contract-wizard',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold">Assistant Création de Contrat</h2>
+            <button 
+              (click)="close()"
+              class="p-2 hover:bg-white/20 rounded-lg transition"
+            >
+              <i class="ph ph-x text-2xl"></i>
+            </button>
+          </div>
+          
+          <!-- Progress Steps -->
+          <div class="flex items-center justify-between">
+            @for (step of steps; track step.id) {
+              <div class="flex items-center" [class.flex-1]="$index < steps.length - 1">
+                <div 
+                  class="flex flex-col items-center gap-2"
+                  [class.opacity-50]="currentStep() < step.id"
+                >
+                  <div 
+                    class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold transition"
+                    [class.bg-white]="currentStep() >= step.id"
+                    [class.text-blue-600]="currentStep() >= step.id"
+                    [class.bg-white/20]="currentStep() < step.id"
+                  >
+                    @if (currentStep() > step.id) {
+                      <i class="ph-fill ph-check"></i>
+                    } @else {
+                      {{ step.id }}
+                    }
+                  </div>
+                  <span class="text-xs font-medium">{{ step.title }}</span>
+                </div>
+                
+                @if ($index < steps.length - 1) {
+                  <div class="flex-1 h-0.5 bg-white/30 mx-2"></div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 overflow-y-auto max-h-[calc(90vh-280px)]">
+          @switch (currentStep()) {
+            @case (1) {
+              <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-4">Informations du contrat</h3>
+                
+                <!-- Tenant Selection -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Locataire <span class="text-red-500">*</span>
+                  </label>
+                  <select
+                    [ngModel]="formData().tenantId"
+                    (ngModelChange)="updateFormData('tenantId', $event)"
+                    class="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Sélectionner un locataire</option>
+                    @for (tenant of tenants(); track tenant.id) {
+                      <option [value]="tenant.id">{{ tenant.fullName }}</option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Property Selection -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Propriété <span class="text-red-500">*</span>
+                  </label>
+                  <select
+                    [ngModel]="formData().propertyId"
+                    (ngModelChange)="updateFormData('propertyId', $event)"
+                    class="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Sélectionner une propriété</option>
+                    @for (property of properties(); track property.id) {
+                      <option [value]="property.id">{{ property.name }} - {{ property.address }}</option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Type -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Type de contrat <span class="text-red-500">*</span>
+                  </label>
+                  <div class="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      (click)="updateFormData('type', 'Unfurnished')"
+                      class="px-4 py-3 border-2 rounded-lg transition"
+                      [class.border-blue-500]="formData().type === 'Unfurnished'"
+                      [class.bg-blue-50]="formData().type === 'Unfurnished'"
+                      [class.dark:bg-blue-900/20]="formData().type === 'Unfurnished'"
+                      [class.border-slate-300]="formData().type !== 'Unfurnished'"
+                    >
+                      <i class="ph ph-house text-2xl mb-1"></i>
+                      <div class="font-medium">Non meublé</div>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="updateFormData('type', 'Furnished')"
+                      class="px-4 py-3 border-2 rounded-lg transition"
+                      [class.border-blue-500]="formData().type === 'Furnished'"
+                      [class.bg-blue-50]="formData().type === 'Furnished'"
+                      [class.dark:bg-blue-900/20]="formData().type === 'Furnished'"
+                      [class.border-slate-300]="formData().type !== 'Furnished'"
+                    >
+                      <i class="ph ph-couch text-2xl mb-1"></i>
+                      <div class="font-medium">Meublé</div>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Dates -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Date de début <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      [ngModel]="formData().startDate"
+                      (ngModelChange)="updateFormData('startDate', $event)"
+                      class="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Date de fin <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      [ngModel]="formData().endDate"
+                      (ngModelChange)="updateFormData('endDate', $event)"
+                      class="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <!-- Rent & Deposit -->
+                <div class="grid grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Loyer (€) <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      [ngModel]="formData().rent"
+                      (ngModelChange)="updateFormData('rent', $event)"
+                      class="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Dépôt (€) <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      [ngModel]="formData().deposit"
+                      (ngModelChange)="updateFormData('deposit', $event)"
+                      class="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Charges (€)
+                    </label>
+                    <input
+                      type="number"
+                      [ngModel]="formData().charges"
+                      (ngModelChange)="updateFormData('charges', $event)"
+                      class="w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            }
+            
+            @case (2) {
+              <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-4">Génération des documents</h3>
+                
+                @if (isGenerating()) {
+                  <div class="text-center py-12">
+                    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500 mx-auto mb-4"></div>
+                    <p class="text-slate-600 dark:text-slate-400">Génération des documents en cours...</p>
+                  </div>
+                } @else if (generatedDocuments().length > 0) {
+                  <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-4">
+                    <div class="flex items-start gap-3">
+                      <i class="ph-fill ph-check-circle text-2xl text-green-500"></i>
+                      <div>
+                        <h4 class="font-semibold text-green-900 dark:text-green-100">Documents générés avec succès !</h4>
+                        <p class="text-sm text-green-700 dark:text-green-300 mt-1">
+                          {{ generatedDocuments().length }} document(s) créé(s)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-3">
+                    @for (doc of generatedDocuments(); track doc.type) {
+                      <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                        <div class="flex items-center gap-3">
+                          <i class="ph ph-file-pdf text-3xl text-red-500"></i>
+                          <div class="flex-1">
+                            <h5 class="font-medium">{{ doc.type }}</h5>
+                            <p class="text-sm text-slate-500">Créé en Draft</p>
+                          </div>
+                          <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-xs font-medium">
+                            Draft
+                          </span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="text-center py-12">
+                    <i class="ph ph-files text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4">Prêt à générer les documents requis</p>
+                    <button
+                      (click)="generateDocuments()"
+                      class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition"
+                    >
+                      <i class="ph ph-file-plus mr-2"></i>Générer les documents
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+            
+            @case (3) {
+              <div class="space-y-6">
+                <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-4">Signature des documents</h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-6">
+                  Marquez les documents comme signés une fois que le locataire a signé physiquement ou électroniquement.
+                </p>
+
+                <div class="space-y-3">
+                  @for (doc of generatedDocuments(); track doc.type) {
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                      <div class="flex items-center gap-3">
+                        @if (doc.signed) {
+                          <i class="ph-fill ph-seal-check text-3xl text-green-500"></i>
+                        } @else {
+                          <i class="ph ph-file-dashed text-3xl text-amber-500"></i>
+                        }
+                        <div class="flex-1">
+                          <h5 class="font-medium">{{ doc.type }}</h5>
+                          <p class="text-sm text-slate-500">
+                            @if (doc.signed) {
+                              Signé ✓
+                            } @else {
+                              En attente de signature
+                            }
+                          </p>
+                        </div>
+                        @if (!doc.signed) {
+                          <button
+                            (click)="markAsSigned(doc)"
+                            class="px-4 py-2 border border-blue-300 text-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+                          >
+                            Marquer comme signé
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                @if (allDocumentsSigned()) {
+                  <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mt-6">
+                    <div class="flex items-start gap-3">
+                      <i class="ph-fill ph-check-circle text-2xl text-green-500"></i>
+                      <div>
+                        <h4 class="font-semibold text-green-900 dark:text-green-100">Tous les documents sont signés !</h4>
+                        <p class="text-sm text-green-700 dark:text-green-300 mt-1">
+                          Le contrat va être automatiquement activé.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+            
+            @case (4) {
+              <div class="text-center py-12">
+                <div class="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <i class="ph-fill ph-check text-4xl text-green-500"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Contrat créé avec succès !</h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-6">
+                  Le contrat a été activé et la propriété est marquée comme occupée.
+                </p>
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 max-w-md mx-auto">
+                  <dl class="space-y-2 text-left">
+                    <div class="flex justify-between">
+                      <dt class="text-slate-600 dark:text-slate-400">Contrat:</dt>
+                      <dd class="font-medium">{{ createdContractCode() }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                      <dt class="text-slate-600 dark:text-slate-400">Statut:</dt>
+                      <dd class="font-medium text-green-600">Active</dd>
+                    </div>
+                    <div class="flex justify-between">
+                      <dt class="text-slate-600 dark:text-slate-400">Documents:</dt>
+                      <dd class="font-medium">{{ generatedDocuments().length }} signés</dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="border-t border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800/50">
+          <div class="flex justify-between">
+            <button
+              *ngIf="currentStep() > 1 && currentStep() < 4"
+              (click)="previousStep()"
+              class="px-6 py-2.5 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+            >
+              <i class="ph ph-caret-left mr-2"></i>Précédent
+            </button>
+            <div class="flex-1"></div>
+            <button
+              *ngIf="currentStep() < 4"
+              (click)="nextStep()"
+              [disabled]="!canProceed()"
+              class="px-6 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:bg-slate-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition"
+            >
+              @if (currentStep() === 3) {
+                Terminer
+              } @else {
+                Suivant<i class="ph ph-caret-right ml-2"></i>
+              }
+            </button>
+            <button
+              *ngIf="currentStep() === 4"
+              (click)="close()"
+              class="px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [`
+    :host {
+      display: contents;
+    }
+  `]
+})
+export class ContractWizardComponent {
+  private propertiesApi = inject(PropertiesApi);
+  private tenantsApi = inject(TenantsApi);
+  private contractsApi = inject(ContractsApi);
+  private documentsApi = inject(DocumentsApi);
+
+  closed = output<void>();
+  contractCreated = output<string>(); // contractId
+
+  currentStep = signal(1);
+  isGenerating = signal(false);
+  
+  tenants = signal<any[]>([]);
+  properties = signal<any[]>([]);
+  
+  // Convertir en signal pour la réactivité
+  formData = signal<ContractFormData>({
+    tenantId: '',
+    propertyId: '',
+    type: 'Unfurnished',
+    startDate: '',
+    endDate: '',
+    rent: 0,
+    deposit: 0
+  });
+
+  createdContractId = signal<string>('');
+  createdContractCode = signal<string>('');
+  generatedDocuments = signal<Array<{type: string, signed: boolean, id?: string}>>([]);
+
+  steps: WizardStep[] = [
+    { id: 1, title: 'Informations', subtitle: 'Détails du contrat', icon: 'ph-info' },
+    { id: 2, title: 'Documents', subtitle: 'Génération', icon: 'ph-files' },
+    { id: 3, title: 'Signature', subtitle: 'Validation', icon: 'ph-pen' },
+    { id: 4, title: 'Terminé', subtitle: 'Succès', icon: 'ph-check' }
+  ];
+
+  allDocumentsSigned = computed(() => {
+    const docs = this.generatedDocuments();
+    return docs.length > 0 && docs.every(d => d.signed);
+  });
+
+  // Computed signal pour la validation du formulaire
+  canProceed = computed(() => {
+    const data = this.formData();
+    const step = this.currentStep();
+    
+    switch (step) {
+      case 1:
+        return !!(data.tenantId && data.propertyId && 
+                  data.startDate && data.endDate && 
+                  data.rent > 0 && data.deposit >= 0);
+      case 2:
+        return this.generatedDocuments().length > 0;
+      case 3:
+        return this.allDocumentsSigned();
+      default:
+        return true;
+    }
+  });
+
+  constructor() {
+    this.loadData();
+  }
+
+  updateFormData(key: keyof ContractFormData, value: any) {
+    console.log(`📝 Updating ${key}:`, value);
+    this.formData.update(data => {
+      const newData = { ...data, [key]: value };
+      console.log('📋 New formData:', newData);
+      console.log('✅ canProceed:', this.canProceed());
+      return newData;
+    });
+  }
+
+  loadData() {
+    // Load tenants
+    this.tenantsApi.getTenants().subscribe({
+      next: (result) => {
+        this.tenants.set(result.items || []);
+      },
+      error: (err) => console.error('Error loading tenants:', err)
+    });
+
+    // Load properties (vacant only)
+    this.propertiesApi.getProperties().subscribe({
+      next: (result) => {
+        const vacantProperties = (result.items || []).filter((p: any) => p.status === 'Vacant');
+        this.properties.set(vacantProperties);
+      },
+      error: (err) => console.error('Error loading properties:', err)
+    });
+  }
+
+  nextStep() {
+    if (!this.canProceed()) return;
+
+    if (this.currentStep() === 1) {
+      // Create contract first
+      this.createContract();
+    } else if (this.currentStep() === 3) {
+      // Finalize
+      this.finalizeContract();
+    } else {
+      this.currentStep.update(v => v + 1);
+    }
+  }
+
+  previousStep() {
+    this.currentStep.update(v => Math.max(1, v - 1));
+  }
+
+  createContract() {
+    const data = this.formData();
+    console.log('🔍 Raw form data:', data);
+    console.log('🔍 Data types:', {
+      tenantId: typeof data.tenantId,
+      propertyId: typeof data.propertyId,
+      type: typeof data.type,
+      startDate: typeof data.startDate,
+      endDate: typeof data.endDate,
+      rent: typeof data.rent,
+      deposit: typeof data.deposit
+    });
+    
+    // Ensure proper types for backend
+    // Convert dates from YYYY-MM-DD to ISO 8601 format
+    const startDateISO = data.startDate ? new Date(data.startDate + 'T00:00:00Z').toISOString() : '';
+    const endDateISO = data.endDate ? new Date(data.endDate + 'T00:00:00Z').toISOString() : '';
+    
+    const payload = {
+      propertyId: data.propertyId,
+      tenantId: data.tenantId,
+      type: data.type,
+      startDate: startDateISO,
+      endDate: endDateISO,
+      rent: Number(data.rent) || 0,
+      deposit: Number(data.deposit) || 0
+    };
+    
+    console.log('📤 Sending payload:', JSON.stringify(payload, null, 2));
+    
+    this.contractsApi.createContract(payload).subscribe({
+      next: (response: any) => {
+        console.log('✅ Contract created:', response);
+        this.createdContractId.set(response.id);
+        this.createdContractCode.set(response.code || 'CTR-XXX');
+        this.currentStep.set(2);
+      },
+      error: (err) => {
+        console.error('❌ Error creating contract:', err);
+        alert('Erreur lors de la création du contrat');
+      }
+    });
+  }
+
+  generateDocuments() {
+    this.isGenerating.set(true);
+    const contractId = this.createdContractId();
+    const data = this.formData();
+
+    // Generate Bail
+    this.documentsApi.generateContract({
+      contractId,
+      tenantId: data.tenantId,
+      propertyId: data.propertyId,
+      contractType: 'Bail',
+      startDate: data.startDate,
+      endDate: data.endDate,
+      rent: data.rent,
+      deposit: data.deposit,
+      charges: data.charges
+    }).subscribe({
+      next: () => {
+        console.log('✅ Bail generated');
+        this.generatedDocuments.update(docs => [...docs, { type: 'Bail', signed: false }]);
+        
+        // Generate État des lieux
+        this.documentsApi.generateContract({
+          contractId,
+          tenantId: data.tenantId,
+          propertyId: data.propertyId,
+          contractType: 'EtatDesLieuxEntree',
+          startDate: data.startDate,
+          endDate: data.endDate,
+          rent: data.rent
+        }).subscribe({
+          next: () => {
+            console.log('✅ État des lieux generated');
+            this.generatedDocuments.update(docs => [...docs, { type: 'État des lieux d\'entrée', signed: false }]);
+            this.isGenerating.set(false);
+          },
+          error: (err) => {
+            console.error('❌ Error generating état des lieux:', err);
+            this.isGenerating.set(false);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('❌ Error generating bail:', err);
+        this.isGenerating.set(false);
+        alert('Erreur lors de la génération des documents');
+      }
+    });
+  }
+
+  markAsSigned(doc: any) {
+    // TODO: Call API to mark document as signed
+    const index = this.generatedDocuments().findIndex(d => d.type === doc.type);
+    if (index >= 0) {
+      this.generatedDocuments.update(docs => {
+        const newDocs = [...docs];
+        newDocs[index] = { ...newDocs[index], signed: true };
+        return newDocs;
+      });
+    }
+  }
+
+  finalizeContract() {
+    console.log('✅ Contract finalized');
+    this.currentStep.set(4);
+    this.contractCreated.emit(this.createdContractId());
+  }
+
+  close() {
+    this.closed.emit();
+  }
+}

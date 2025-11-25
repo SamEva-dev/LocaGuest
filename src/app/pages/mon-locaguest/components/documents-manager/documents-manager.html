@@ -1,0 +1,599 @@
+<div class="space-y-6">
+      <!-- Loading State -->
+      @if (isLoading()) {
+        <div class="flex items-center justify-center py-12">
+          <div class="flex flex-col items-center gap-3">
+            <div class="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-sm text-slate-600 dark:text-slate-400">Chargement des documents...</p>
+          </div>
+        </div>
+      }
+      
+      <!-- Header Actions -->
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold">{{ 'DOCUMENTS.TITLE' | translate }}</h3>
+        <div class="flex gap-2">
+          <button
+            (click)="exportAllDocuments()"
+            [disabled]="documents().length === 0"
+            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Exporter tous les documents en ZIP"
+          >
+            <i class="ph ph-download-simple"></i>
+            <span>Export ZIP</span>
+          </button>
+          <button
+            (click)="showUploadModal.set(true)"
+            class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition flex items-center gap-2"
+          >
+            <i class="ph ph-upload-simple"></i>
+            <span>{{ 'DOCUMENTS.UPLOAD' | translate }}</span>
+          </button>
+          <button
+            (click)="openContractModal()"
+            [disabled]="!hasActiveContract()"
+            [title]="!hasActiveContract() ? 'Le locataire doit avoir un contrat actif' : ''"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <i class="ph ph-file-text"></i>
+            <span>{{ 'DOCUMENTS.CREATE_CONTRACT' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search & Filter -->
+      @if (!isLoading()) {
+        <div class="flex items-center gap-3">
+          <div class="flex-1 relative">
+            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              (input)="onSearchChange()"
+              placeholder="Rechercher un document..."
+              class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+            />
+          </div>
+          <select
+            [(ngModel)]="selectedCategory"
+            (change)="onCategoryChange()"
+            class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+          >
+            <option value="">Toutes les catégories</option>
+            @for (cat of documentCategories; track cat.label) {
+              <option [value]="cat.label">{{ cat.label }}</option>
+            }
+          </select>
+        </div>
+      }
+      
+      <!-- Documents Grid by Category -->
+      @if (!isLoading()) {
+        <div class="space-y-6">
+          @for (category of documentCategories; track category.label) {
+            @if (getFilteredDocumentsByType(category.type).length > 0 || category.showEmpty) {
+              <div>
+                <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3 flex items-center gap-2">
+                  <i [class]="'ph ' + category.icon"></i>
+                  {{ category.label }}
+                </h4>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  @for (doc of getFilteredDocumentsByType(category.type); track doc.id || doc.fileName) {
+                  <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition group">
+                    <div class="flex items-start justify-between mb-2">
+                      <div class="flex items-center gap-3">
+                        <div [class]="'w-10 h-10 rounded-lg flex items-center justify-center ' + getDocumentColor(doc.type)">
+                          <i [class]="'ph ' + getDocumentIcon(doc.type) + ' text-xl'"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium truncate">{{ doc.fileName }}</p>
+                          <p class="text-xs text-slate-500">{{ formatFileSize(doc.fileSize) }}</p>
+                        </div>
+                      </div>
+                      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                        @if (doc.url) {
+                          <button
+                            (click)="downloadDocument(doc)"
+                            class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                            title="Télécharger"
+                          >
+                            <i class="ph ph-download text-slate-600 dark:text-slate-400"></i>
+                          </button>
+                        }
+                        <button
+                          (click)="deleteDocument(doc)"
+                          class="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                          title="Supprimer"
+                        >
+                          <i class="ph ph-trash text-red-600"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="text-slate-500">{{ doc.uploadDate | date:'dd/MM/yyyy' }}</span>
+                      @if (doc.expiryDate) {
+                        <span [class]="isExpiringSoon(doc.expiryDate) ? 'text-orange-600 font-medium' : 'text-slate-500'">
+                          <i class="ph ph-clock"></i> {{ doc.expiryDate | date:'dd/MM/yyyy' }}
+                        </span>
+                      }
+                    </div>
+                    @if (doc.description) {
+                      <p class="text-xs text-slate-500 mt-2">{{ doc.description }}</p>
+                    }
+                  </div>
+                } @empty {
+                  <div class="col-span-full text-center py-8 text-slate-400">
+                    <i [class]="'ph ' + category.icon + ' text-4xl mb-2'"></i>
+                    <p class="text-sm">Aucun document de type {{ category.label }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+            }
+          }
+        </div>
+      }
+
+      <!-- Upload Modal -->
+      @if (showUploadModal()) {
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full mx-4" (click)="$event.stopPropagation()">
+            <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+              <h3 class="text-xl font-bold">{{ 'DOCUMENTS.UPLOAD_NEW' | translate }}</h3>
+              <button (click)="showUploadModal.set(false)" class="text-slate-400 hover:text-slate-600">
+                <i class="ph ph-x text-2xl"></i>
+              </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+              <!-- Document Type -->
+              <div>
+                <label class="block text-sm font-medium mb-2">Type de document *</label>
+                <select
+                  [(ngModel)]="uploadForm.type"
+                  class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                  required
+                >
+                  <option value="">Sélectionner un type...</option>
+                  @for (template of documentTemplates; track template.type) {
+                    <option 
+                      [value]="template.type"
+                      [disabled]="!canUploadDocumentType(template.type)"
+                      [class.text-slate-400]="!canUploadDocumentType(template.type)"
+                    >
+                      {{ template.label }}
+                      @if (!canUploadDocumentType(template.type)) {
+                        (Déjà existant)
+                      }
+                    </option>
+                  }
+                </select>
+                @if (showUniqueDocumentWarning()) {
+                  <p class="text-sm text-amber-600 mt-1 flex items-start gap-2">
+                    <i class="ph ph-warning-circle"></i>
+                    <span>Ce type de document existe déjà pour ce locataire. Un seul document de ce type est autorisé.</span>
+                  </p>
+                }
+              </div>
+
+              <!-- File Upload with Drag & Drop -->
+              <div>
+                <label class="block text-sm font-medium mb-2">Fichier *</label>
+                <div 
+                  class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 transition"
+                  [class.border-emerald-500]="isDragging()"
+                  [class.bg-emerald-50]="isDragging()"
+                  (dragover)="onDragOver($event)"
+                  (dragleave)="onDragLeave($event)"
+                  (drop)="onDrop($event)"
+                >
+                  <input
+                    type="file"
+                    #fileInput
+                    (change)="onFileSelected($event)"
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    class="hidden"
+                  />
+                  @if (!uploadForm.file) {
+                    <button
+                      type="button"
+                      (click)="fileInput.click()"
+                      class="w-full flex flex-col items-center justify-center text-center py-4"
+                    >
+                      <i class="ph ph-upload-simple text-4xl text-slate-400 mb-2"></i>
+                      <p class="text-sm font-medium">{{ isDragging() ? 'Déposez le fichier ici' : 'Cliquez ou glissez un fichier' }}</p>
+                      <p class="text-xs text-slate-500 mt-1">PDF, Image, Word (Max 10MB)</p>
+                    </button>
+                  } @else {
+                    <div class="space-y-3">
+                      <!-- Preview for PDF/Images -->
+                      @if (filePreviewUrl()) {
+                        <div class="flex justify-center">
+                          @if (uploadForm.file.type.includes('pdf')) {
+                            <div class="w-32 h-40 border border-slate-300 rounded-lg flex items-center justify-center bg-slate-50">
+                              <i class="ph ph-file-pdf text-6xl text-red-600"></i>
+                            </div>
+                          } @else {
+                            <img [src]="filePreviewUrl()" class="max-h-40 rounded-lg" alt="Preview" />
+                          }
+                        </div>
+                      }
+                      
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                          <i class="ph ph-file text-2xl text-emerald-600"></i>
+                          <div>
+                            <p class="text-sm font-medium">{{ uploadForm.file.name }}</p>
+                            <p class="text-xs text-slate-500">{{ formatFileSize(uploadForm.file.size) }}</p>
+                          </div>
+                        </div>
+                        <button
+                          (click)="clearFile()"
+                          class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                        >
+                          <i class="ph ph-x text-slate-600"></i>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Expiry Date (if required) -->
+              @if (requiresExpiryDate(uploadForm.type)) {
+                <div>
+                  <label class="block text-sm font-medium mb-2">Date d'expiration</label>
+                  <input
+                    type="date"
+                    [(ngModel)]="uploadForm.expiryDate"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                  />
+                </div>
+              }
+
+              <!-- Description -->
+              <div>
+                <label class="block text-sm font-medium mb-2">Description (optionnel)</label>
+                <textarea
+                  [(ngModel)]="uploadForm.description"
+                  rows="3"
+                  class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                  placeholder="Notes ou informations complémentaires..."
+                ></textarea>
+              </div>
+
+              <!-- Upload Progress -->
+              @if (uploadProgress() > 0 && uploadProgress() < 100) {
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between text-sm">
+                    <span>Upload en cours...</span>
+                    <span>{{ uploadProgress() }}%</span>
+                  </div>
+                  <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                    <div
+                      class="bg-emerald-600 h-2 rounded-full transition-all"
+                      [style.width.%]="uploadProgress()"
+                    ></div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-700">
+              <button
+                (click)="showUploadModal.set(false)"
+                class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                Annuler
+              </button>
+              <button
+                (click)="uploadDocument()"
+                [disabled]="!canUpload() || uploading()"
+                class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                @if (uploading()) {
+                  <i class="ph ph-spinner animate-spin mr-2"></i>
+                }
+                Uploader
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Contract Creation Modal -->
+      @if (showContractModal()) {
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
+            <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700 sticky top-0 bg-white dark:bg-slate-800">
+              <h3 class="text-xl font-bold">Générer un contrat</h3>
+              <button (click)="showContractModal.set(false)" class="text-slate-400 hover:text-slate-600">
+                <i class="ph ph-x text-2xl"></i>
+              </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+              <!-- Tenant & Property Info -->
+              @if (tenantInfo() && getActiveContract()) {
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                  <h4 class="font-semibold mb-2 text-blue-900 dark:text-blue-100">Informations du contrat</h4>
+                  <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p class="text-blue-700 dark:text-blue-300">Locataire:</p>
+                      <p class="font-medium">{{ tenantInfo()!.fullName }}</p>
+                      <p class="text-xs text-blue-600">{{ tenantInfo()!.email }}</p>
+                    </div>
+                    <div>
+                      <p class="text-blue-700 dark:text-blue-300">Bien:</p>
+                      <p class="font-medium">{{ getActiveContract()!.propertyName || 'N/A' }}</p>
+                      <p class="text-xs text-blue-600">Loyer actuel: {{ getActiveContract()!.rent }}€</p>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Contract Type -->
+              <div>
+                <label class="block text-sm font-medium mb-2">Type de contrat *</label>
+                <div class="grid grid-cols-2 gap-3">
+                  @for (cType of contractTypes; track cType.value) {
+                    <button
+                      type="button"
+                      (click)="contractFormType.set(cType.value); 
+                      allowEditContractFields.set(false);"
+                      [class.ring-2]="contractFormType() === cType.value"
+                      [class.ring-blue-500]="contractFormType() === cType.value"
+                      [class.bg-blue-50]="contractFormType() === cType.value"
+                      class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition text-left"
+                    >
+                      <i [class]="'ph ' + cType.icon + ' text-2xl mb-2'"></i>
+                      <p class="font-medium">{{ cType.label }}</p>
+                      <p class="text-xs text-slate-500">{{ cType.description }}</p>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Checkbox to allow editing protected fields -->
+              @if (['BAIL', 'ETAT_LIEUX_ENTREE', 'ETAT_LIEUX_SORTIE'].includes(contractFormType())) {
+                <div class="border border-blue-200 dark:border-blue-800 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20">
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      [(ngModel)]="allowEditContractFields"
+                      [checked]="allowEditContractFields()"
+                      (change)="allowEditContractFields.set(!allowEditContractFields())"
+                      class="w-4 h-4 text-blue-600 rounded"
+                    />
+                    <div>
+                      <p class="font-medium text-blue-900 dark:text-blue-100">
+                        <i class="ph ph-pencil mr-2"></i>
+                        Autoriser la modification des champs du contrat
+                      </p>
+                      <p class="text-xs text-blue-700 dark:text-blue-300">
+                        Les champs pré-remplis depuis le contrat actif sont en lecture seule par défaut. Cochez pour les modifier.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              }
+
+              <!-- Landlord Selection -->
+              <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-800/50">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="contractForm.isThirdPartyLandlord"
+                    class="w-4 h-4 text-blue-600 rounded"
+                  />
+                  <div>
+                    <p class="font-medium">Le bailleur est une tierce personne ou société</p>
+                    <p class="text-xs text-slate-500">Cochez si le bailleur n'est pas l'utilisateur actuel (ex: société immobilière)</p>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Third Party Landlord Info -->
+              @if (contractForm.isThirdPartyLandlord) {
+                <div class="border border-orange-200 dark:border-orange-800 rounded-lg p-4 bg-orange-50 dark:bg-orange-900/20 space-y-3">
+                  <h4 class="font-semibold text-orange-900 dark:text-orange-100 flex items-center gap-2">
+                    <i class="ph ph-buildings"></i>
+                    Informations du bailleur
+                  </h4>
+                  
+                  <div>
+                    <label class="block text-sm font-medium mb-1">Raison sociale / Nom de la société</label>
+                    <input
+                      type="text"
+                      [(ngModel)]="contractForm.landlordCompanyName"
+                      placeholder="Ex: SCI Immobilière du Centre"
+                      class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    />
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-sm font-medium mb-1">Prénom du représentant</label>
+                      <input
+                        type="text"
+                        [(ngModel)]="contractForm.landlordFirstName"
+                        placeholder="Ex: Marie"
+                        class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium mb-1">Nom du représentant</label>
+                      <input
+                        type="text"
+                        [(ngModel)]="contractForm.landlordLastName"
+                        placeholder="Ex: Durand"
+                        class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium mb-1">Adresse du bailleur</label>
+                    <input
+                      type="text"
+                      [(ngModel)]="contractForm.landlordAddress"
+                      placeholder="Adresse complète"
+                      class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    />
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-sm font-medium mb-1">SIRET (optionnel)</label>
+                      <input
+                        type="text"
+                        [(ngModel)]="contractForm.landlordSiret"
+                        placeholder="XXX XXX XXX XXXXX"
+                        maxlength="14"
+                        class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium mb-1">Email</label>
+                      <input
+                        type="email"
+                        [(ngModel)]="contractForm.landlordEmail"
+                        placeholder="contact@sci.fr"
+                        class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium mb-1">Téléphone</label>
+                    <input
+                      type="tel"
+                      [(ngModel)]="contractForm.landlordPhone"
+                      placeholder="+33 X XX XX XX XX"
+                      class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    />
+                  </div>
+                </div>
+              }
+
+              <!-- Date Range -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    Date de début *
+                    @if (isContractFieldsReadonly()) {
+                      <span class="text-xs text-blue-600">(depuis contrat actif)</span>
+                    }
+                  </label>
+                  <input
+                    type="date"
+                    [(ngModel)]="contractForm.startDate"
+                    [readonly]="isContractFieldsReadonly()"
+                    [class.bg-slate-100]="isContractFieldsReadonly()"
+                    [class.cursor-not-allowed]="isContractFieldsReadonly()"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    Date de fin *
+                    @if (isContractFieldsReadonly()) {
+                      <span class="text-xs text-blue-600">(depuis contrat actif)</span>
+                    }
+                  </label>
+                  <input
+                    type="date"
+                    [(ngModel)]="contractForm.endDate"
+                    [readonly]="isContractFieldsReadonly()"
+                    [class.bg-slate-100]="isContractFieldsReadonly()"
+                    [class.cursor-not-allowed]="isContractFieldsReadonly()"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Rent, Deposit & Charges -->
+              <div class="grid grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    Loyer mensuel (€) *
+                    @if (isContractFieldsReadonly()) {
+                      <span class="text-xs text-blue-600">(depuis contrat actif)</span>
+                    }
+                  </label>
+                  <input
+                    type="number"
+                    [(ngModel)]="contractForm.rent"
+                    [readonly]="isContractFieldsReadonly()"
+                    [class.bg-slate-100]="isContractFieldsReadonly()"
+                    [class.cursor-not-allowed]="isContractFieldsReadonly()"
+                    min="0"
+                    step="0.01"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2">Charges (€)</label>
+                  <input
+                    type="number"
+                    [(ngModel)]="contractForm.charges"
+                    min="0"
+                    step="0.01"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    Dépôt de garantie (€)
+                    @if (isContractFieldsReadonly()) {
+                      <span class="text-xs text-blue-600">(depuis contrat actif)</span>
+                    }
+                  </label>
+                  <input
+                    type="number"
+                    [(ngModel)]="contractForm.deposit"
+                    [readonly]="isContractFieldsReadonly()"
+                    [class.bg-slate-100]="isContractFieldsReadonly()"
+                    [class.cursor-not-allowed]="isContractFieldsReadonly()"
+                    min="0"
+                    step="0.01"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                  />
+                </div>
+              </div>
+
+              <!-- Additional Clauses -->
+              <div>
+                <label class="block text-sm font-medium mb-2">Clauses particulières (optionnel)</label>
+                <textarea
+                  [(ngModel)]="contractForm.additionalClauses"
+                  rows="4"
+                  class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                  placeholder="Ajoutez des clauses spécifiques au contrat..."
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-700 sticky bottom-0 bg-white dark:bg-slate-800">
+              <button
+                (click)="showContractModal.set(false)"
+                class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                Annuler
+              </button>
+              <button
+                (click)="generateContract()"
+                [disabled]="!canGenerateContract()"
+                class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <i class="ph ph-file-text"></i>
+                Générer le contrat PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>

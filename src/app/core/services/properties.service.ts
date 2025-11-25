@@ -104,8 +104,27 @@ export class PropertiesService {
 
   updateProperty(id: string, dto: UpdatePropertyDto): Observable<PropertyDetail> {
     return this.propertiesApi.updateProperty(id, dto).pipe(
+      tap(updated => {
+        this.selectedProperty.set(updated);
+      }),
       catchError((err: unknown) => {
         console.error('Error updating property:', err);
+        throw err;
+      })
+    );
+  }
+
+  updatePropertyStatus(id: string, status: string): Observable<{ success: boolean }> {
+    return this.propertiesApi.updatePropertyStatus(id, status).pipe(
+      tap(() => {
+        // Update local state if property is selected
+        const current = this.selectedProperty();
+        if (current && current.id === id) {
+          this.selectedProperty.set({ ...current, status });
+        }
+      }),
+      catchError((err: unknown) => {
+        console.error('Error updating property status:', err);
         throw err;
       })
     );

@@ -124,6 +124,7 @@
       "STUDIO": "Studio"
     },
     "SUB_TABS": {
+      "INFORMATIONS": "Information",
       "OVERVIEW": "Overview",
       "TENANTS": "Tenants",
       "CONTRACTS": "Contracts",

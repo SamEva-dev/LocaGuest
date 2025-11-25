@@ -90,26 +90,65 @@
         @switch (activeSubTab()) {
           @case ('contracts') {
             <div>
-              <h3 class="text-lg font-semibold mb-4">{{ 'TENANT.CONTRACTS' | translate }}</h3>
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">{{ 'TENANT.CONTRACTS' | translate }}</h3>
+                <button
+                  (click)="openContractWizard()"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center gap-2"
+                >
+                  <i class="ph ph-plus-circle"></i>
+                  <span>Nouveau Contrat</span>
+                </button>
+              </div>
               @if (contracts().length > 0) {
                 <div class="space-y-4">
                   @for (contract of contracts(); track contract.id) {
-                    <div 
-                      (click)="openPropertyTab(contract)"
-                      class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition cursor-pointer"
-                    >
-                      <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg"></div>
-                        <div class="flex-1">
-                          <div class="flex items-center gap-2 mb-1">
-                            <h4 class="font-semibold">{{ contract.type }}</h4>
-                            <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">{{ contract.code }}</span>
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                      <!-- Header du contrat (cliquable) -->
+                      <div 
+                        (click)="openPropertyTab(contract)"
+                        class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
+                      >
+                        <div class="flex items-center gap-4">
+                          <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
+                            <i class="ph ph-file-text text-2xl text-white"></i>
                           </div>
-                          <p class="text-sm text-slate-500">{{ contract.startDate | date:'dd/MM/yyyy' }} - {{ contract.endDate | date:'dd/MM/yyyy' }}</p>
-                          <p class="text-sm font-medium mt-1">€ {{ contract.rent }}/mois</p>
+                          <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                              <h4 class="font-semibold">{{ contract.type }}</h4>
+                              <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">{{ contract.code }}</span>
+                            </div>
+                            <p class="text-sm text-slate-500">{{ contract.startDate | date:'dd/MM/yyyy' }} - {{ contract.endDate | date:'dd/MM/yyyy' }}</p>
+                            <p class="text-sm font-medium mt-1">€ {{ contract.rent }}/mois</p>
+                          </div>
+                          
+                          <div class="flex items-center gap-2">
+                            <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                              {{ contract.status }}
+                            </span>
+                            
+                            <!-- Bouton pour afficher les documents (si Draft/PartialSigned/FullySigned) -->
+                            @if (shouldShowDocumentsPanel(contract)) {
+                              <button
+                                (click)="toggleContractDocuments(contract.id, $event)"
+                                class="px-3 py-1.5 text-sm rounded-lg border border-blue-300 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
+                                [class.bg-blue-50]="isContractExpanded(contract.id)"
+                                [class.dark:bg-blue-900/20]="isContractExpanded(contract.id)"
+                              >
+                                <i class="ph" [class.ph-caret-down]="!isContractExpanded(contract.id)" [class.ph-caret-up]="isContractExpanded(contract.id)"></i>
+                                Documents
+                              </button>
+                            }
+                          </div>
                         </div>
-                        <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">{{ contract.status }}</span>
                       </div>
+
+                      <!-- Panneau documents (expandable) -->
+                      @if (shouldShowDocumentsPanel(contract) && isContractExpanded(contract.id)) {
+                        <div class="border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4">
+                          <app-contract-documents-status [contractId]="contract.id" />
+                        </div>
+                      }
                     </div>
                   }
                 </div>
@@ -159,5 +198,13 @@
     <div class="text-center text-slate-500 py-12">
       <p>{{ 'TENANT.NOT_FOUND' | translate }}</p>
     </div>
+  }
+
+  <!-- Contract Creation Wizard -->
+  @if (showContractWizard()) {
+    <app-contract-wizard
+      (closed)="onWizardClosed()"
+      (contractCreated)="onContractCreated($event)"
+    />
   }
 </div>

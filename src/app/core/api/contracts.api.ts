@@ -21,7 +21,7 @@ export interface ContractDto {
   endDate: string;
   rent: number;
   deposit?: number;
-  status: 'Active' | 'Terminated' | 'Expiring';
+  status: 'Draft' | 'Signed' | 'Active' | 'Terminated' | 'Expiring';
   notes?: string;
   paymentsCount?: number;
   createdAt?: string;
@@ -50,6 +50,10 @@ export interface RecordPaymentRequest {
 export interface TerminateContractRequest {
   terminationDate: string;
   markPropertyVacant?: boolean;
+}
+
+export interface MarkAsSignedRequest {
+  signedDate?: string;
 }
 
 export interface PaginatedResponse<T> {
@@ -109,5 +113,9 @@ export class ContractsApi {
 
   terminateContract(contractId: string, request: TerminateContractRequest): Observable<{ message: string; id: string }> {
     return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/terminate`, request);
+  }
+
+  markAsSigned(contractId: string, request?: MarkAsSignedRequest): Observable<{ message: string; id: string }> {
+    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/mark-signed`, request || {});
   }
 }

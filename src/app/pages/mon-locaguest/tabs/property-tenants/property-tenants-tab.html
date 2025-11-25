@@ -1,0 +1,282 @@
+<div class="space-y-6">
+  <!-- Header with Actions -->
+  <div class="flex items-center justify-between flex-wrap gap-3">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">Occupation du bien</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        @if (hasActiveTenants()) {
+          <span class="text-emerald-600 dark:text-emerald-400 font-medium">{{ currentTenants().length }} locataire(s) actuel(s)</span>
+        } @else {
+          <span class="text-slate-500">Bien vacant</span>
+        }
+      </p>
+    </div>
+    
+    <div class="relative">
+      <button
+        (click)="showActions.set(!showActions())"
+        class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2"
+      >
+        <i class="ph ph-plus-circle text-lg"></i>
+        <span>Actions</span>
+        <i [class]="showActions() ? 'ph ph-caret-up' : 'ph ph-caret-down'"></i>
+      </button>
+      
+      @if (showActions()) {
+        <div class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-10">
+          <div class="p-2">
+            <button
+              (click)="createContract(); showActions.set(false)"
+              class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-3"
+            >
+              <i class="ph ph-file-text text-emerald-500 text-xl"></i>
+              <div>
+                <div class="font-medium text-sm">Créer un contrat</div>
+                <div class="text-xs text-slate-500">Attribuer un locataire</div>
+              </div>
+            </button>
+            
+            <button
+              (click)="addPaperContract(); showActions.set(false)"
+              class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-3"
+            >
+              <i class="ph ph-note text-blue-500 text-xl"></i>
+              <div>
+                <div class="font-medium text-sm">Ajouter contrat papier</div>
+                <div class="text-xs text-slate-500">Saisir manuellement</div>
+              </div>
+            </button>
+            
+            <button
+              (click)="generateContract(); showActions.set(false)"
+              class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-3"
+            >
+              <i class="ph ph-magic-wand text-purple-500 text-xl"></i>
+              <div>
+                <div class="font-medium text-sm">Générer contrat</div>
+                <div class="text-xs text-slate-500">Assistant automatique</div>
+              </div>
+            </button>
+            
+            <hr class="my-2 border-slate-200 dark:border-slate-700" />
+            
+            <button
+              (click)="viewInventory(); showActions.set(false)"
+              class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-3"
+            >
+              <i class="ph ph-clipboard-text text-orange-500 text-xl"></i>
+              <div>
+                <div class="font-medium text-sm">États des lieux</div>
+                <div class="text-xs text-slate-500">Voir et gérer</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Current Tenants -->
+  @if (hasActiveTenants()) {
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+            <i class="ph ph-user text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">
+              @if (isColocation()) {
+                Colocataires actuels
+              } @else {
+                Locataire actuel
+              }
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Occupation en cours</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="divide-y divide-slate-200 dark:divide-slate-700">
+        @for (item of currentTenants(); track item.tenant.id) {
+          <div class="p-5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+            <div class="flex items-start gap-4">
+              <!-- Avatar -->
+              <div 
+                (click)="openTenantDetail(item.tenant)"
+                class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg cursor-pointer hover:shadow-lg transition flex-shrink-0"
+              >
+                {{ getInitials(item.tenant.fullName || 'T') }}
+              </div>
+              
+              <!-- Tenant Info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <h4 
+                    (click)="openTenantDetail(item.tenant)"
+                    class="font-semibold text-slate-900 dark:text-white cursor-pointer hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                  >
+                    {{ item.tenant.fullName }}
+                  </h4>
+                  <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">
+                    {{ item.tenant.code }}
+                  </span>
+                </div>
+                
+                @if (item.tenant.email) {
+                  <p class="text-sm text-slate-500 dark:text-slate-400 mb-2">
+                    <i class="ph ph-envelope text-xs mr-1"></i>
+                    {{ item.tenant.email }}
+                  </p>
+                }
+                
+                <!-- Contract Info -->
+                <div class="flex items-center gap-4 flex-wrap mt-3">
+                  <div class="text-sm">
+                    <span class="text-slate-500 dark:text-slate-400">Bail :</span>
+                    <span class="font-medium ml-1">
+                      {{ formatDate(item.contract.startDate) }} - {{ formatDate(item.contract.endDate) }}
+                    </span>
+                  </div>
+                  
+                  <div class="text-sm">
+                    <span class="text-slate-500 dark:text-slate-400">Loyer :</span>
+                    <span class="font-semibold text-emerald-600 dark:text-emerald-400 ml-1">
+                      {{ item.contract.rent }}€/mois
+                    </span>
+                  </div>
+                  
+                  @if (isColocation() && item.room) {
+                    <div class="text-sm">
+                      <span class="text-slate-500 dark:text-slate-400">Chambre :</span>
+                      <span class="font-medium ml-1">{{ item.room }}</span>
+                    </div>
+                  }
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex items-center gap-2 mt-3">
+                  <button
+                    (click)="openContractDetail(item.contract)"
+                    class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition inline-flex items-center gap-1.5"
+                  >
+                    <i class="ph ph-file-text"></i>
+                    <span>Voir le contrat</span>
+                  </button>
+                  
+                  <button
+                    (click)="openTenantDetail(item.tenant)"
+                    class="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-900/30 transition inline-flex items-center gap-1.5"
+                  >
+                    <i class="ph ph-user"></i>
+                    <span>Fiche locataire</span>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Status Badge -->
+              <div>
+                @switch (getTenantStatus(item.contract).color) {
+                  @case ('emerald') {
+                    <span class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium inline-flex items-center gap-1.5">
+                      <i class="ph ph-check-circle text-lg"></i>
+                      {{ getTenantStatus(item.contract).label }}
+                    </span>
+                  }
+                  @case ('orange') {
+                    <span class="px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm font-medium inline-flex items-center gap-1.5">
+                      <i class="ph ph-warning text-lg"></i>
+                      {{ getTenantStatus(item.contract).label }}
+                    </span>
+                  }
+                  @default {
+                    <span class="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300 text-sm font-medium inline-flex items-center gap-1.5">
+                      <i class="ph ph-circle text-lg"></i>
+                      {{ getTenantStatus(item.contract).label }}
+                    </span>
+                  }
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <!-- No Current Tenants -->
+    <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 p-8">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="ph ph-users text-3xl text-slate-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Bien vacant</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Aucun locataire actuellement</p>
+        <button
+          (click)="createContract()"
+          class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2"
+        >
+          <i class="ph ph-plus-circle"></i>
+          <span>Créer un contrat</span>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Historical Tenants -->
+  @if (historicalTenants().length > 0) {
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-400 to-slate-500 flex items-center justify-center">
+            <i class="ph ph-clock-counter-clockwise text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">Historique des locataires</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              {{ historicalTenants().length }} ancien(s) locataire(s)
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="divide-y divide-slate-200 dark:divide-slate-700">
+        @for (item of historicalTenants(); track item.tenant.id + '-' + item.contract.id) {
+          <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+            <div class="flex items-center gap-4">
+              <!-- Small Avatar -->
+              <div 
+                (click)="openTenantDetail(item.tenant)"
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center text-white font-bold text-sm cursor-pointer flex-shrink-0"
+              >
+                {{ getInitials(item.tenant.fullName || 'T') }}
+              </div>
+              
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <h4 
+                  (click)="openTenantDetail(item.tenant)"
+                  class="font-medium text-sm cursor-pointer hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                >
+                  {{ item.tenant.fullName }}
+                </h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  {{ formatDate(item.contract.startDate) }} - {{ formatDate(item.contract.endDate) }}
+                  <span class="mx-1.5">•</span>
+                  {{ item.contract.rent }}€/mois
+                </p>
+              </div>
+              
+              <!-- View Contract -->
+              <button
+                (click)="openContractDetail(item.contract)"
+                class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-600 transition"
+              >
+                <i class="ph ph-file-text"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

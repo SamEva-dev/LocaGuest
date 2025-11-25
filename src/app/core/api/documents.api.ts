@@ -2,24 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environnements/environment';
+import { 
+  DocumentDto, 
+  MarkDocumentAsSignedRequest, 
+  ContractDocumentsStatusDto 
+} from '../models/documents.models';
 
-export interface DocumentDto {
-  id: string;
-  code: string;
-  fileName: string;
-  filePath?: string;
-  type: string;
-  category: string;
-  fileSizeBytes: number;
-  description?: string;
-  expiryDate?: Date;
-  tenantId?: string;
-  tenantName?: string;
-  propertyId?: string;
-  propertyName?: string;
-  isArchived?: boolean;
-  createdAt: Date;
-}
+// Re-export pour compatibilité avec le code existant
+export type { DocumentDto, MarkDocumentAsSignedRequest, ContractDocumentsStatusDto };
 
 export interface DocumentCategory {
   category: string;
@@ -68,5 +58,34 @@ export class DocumentsApi {
     return this.http.get(`${this.baseUrl}/tenant/${tenantId}/export-zip`, {
       responseType: 'blob'
     });
+  }
+
+  /**
+   * Récupérer un document par son ID
+   */
+  getDocument(documentId: string): Observable<DocumentDto> {
+    return this.http.get<DocumentDto>(`${this.baseUrl}/${documentId}`);
+  }
+
+  /**
+   * Marquer un document comme signé
+   */
+  markDocumentAsSigned(
+    documentId: string, 
+    request?: MarkDocumentAsSignedRequest
+  ): Observable<{ message: string; id: string; status: string; signedDate?: string }> {
+    return this.http.put<{ message: string; id: string; status: string; signedDate?: string }>(
+      `${this.baseUrl}/${documentId}/mark-signed`,
+      request || {}
+    );
+  }
+
+  /**
+   * Récupérer le statut des documents d'un contrat
+   */
+  getContractDocumentsStatus(contractId: string): Observable<ContractDocumentsStatusDto> {
+    return this.http.get<ContractDocumentsStatusDto>(
+      `${this.baseUrl}/contract/${contractId}/status`
+    );
   }
 }

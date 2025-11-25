@@ -77,6 +77,7 @@
     "INVOICES": "Factures",
     "PROJECTION": "Projection",
     "SUB_TABS": {
+      "INFORMATIONS": "Informations",
       "OVERVIEW": "Aperçu",
       "TENANTS": "Locataires",
       "CONTRACTS": "Contrats",

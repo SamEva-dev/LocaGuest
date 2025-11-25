@@ -9,11 +9,13 @@ import { TenantListItem } from '../../../../core/api/tenants.api';
 import { DocumentsApi, DocumentCategory, DocumentDto } from '../../../../core/api/documents.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { TenantSelectionModal, TenantSelectionResult } from '../../components/tenant-selection-modal/tenant-selection-modal';
+import { PropertyInfoTab } from '../property-info/property-info-tab';
+import { PropertyTenantsTab } from '../property-tenants/property-tenants-tab';
 
 @Component({
   selector: 'property-detail-tab',
   standalone: true,
-  imports: [NgClass, TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal],
+  imports: [NgClass, TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal, PropertyInfoTab, PropertyTenantsTab],
   templateUrl: './property-detail-tab.html'
 })
 export class PropertyDetailTab {
@@ -24,7 +26,7 @@ export class PropertyDetailTab {
   
   tenantModal = viewChild<TenantSelectionModal>('tenantModal');
 
-  activeSubTab = signal('overview');
+  activeSubTab = signal('informations');
   isLoading = signal(false);
   
   property = signal<PropertyDetail | null>(null);
@@ -56,7 +58,7 @@ export class PropertyDetailTab {
   ];
 
   subTabs = [
-    { id: 'overview', label: 'PROPERTY.SUB_TABS.OVERVIEW', icon: 'ph-house' },
+    { id: 'informations', label: 'PROPERTY.SUB_TABS.INFORMATIONS', icon: 'ph-info' },
     { id: 'tenants', label: 'PROPERTY.SUB_TABS.TENANTS', icon: 'ph-users-three' },
     { id: 'contracts', label: 'PROPERTY.SUB_TABS.CONTRACTS', icon: 'ph-file-text' },
     { id: 'documents', label: 'PROPERTY.SUB_TABS.DOCUMENTS', icon: 'ph-folder' },
@@ -75,6 +77,14 @@ export class PropertyDetailTab {
         console.warn('⚠️ No propertyId found in data');
       }
     });
+  }
+
+  reloadProperty() {
+    const tabData = this.data();
+    if (tabData?.propertyId) {
+      console.log('🔄 Reloading property from DB:', tabData.propertyId);
+      this.loadProperty(tabData.propertyId);
+    }
   }
 
   private loadProperty(id: string) {

@@ -181,7 +181,11 @@ export class PropertiesApi {
   }
 
   updateProperty(id: string, dto: UpdatePropertyDto): Observable<PropertyDetail> {
-    return this.http.put<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/properties/${id}`, dto);
+    return this.http.put<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/properties/${id}`, { ...dto, id });
+  }
+
+  updatePropertyStatus(id: string, status: string): Observable<{ success: boolean }> {
+    return this.http.patch<{ success: boolean }>(`${this.baseUrl}/${id}/status`, { propertyId: id, status });
   }
 
   deleteProperty(id: string): Observable<void> {
