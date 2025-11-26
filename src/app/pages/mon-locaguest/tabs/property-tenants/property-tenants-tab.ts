@@ -1,15 +1,21 @@
-import { Component, input, signal, computed, inject, output } from '@angular/core';
+import { Component, input, signal, computed, inject } from '@angular/core';
 import { DatePipe, NgClass } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PropertyDetail, Contract } from '../../../../core/api/properties.api';
 import { TenantListItem } from '../../../../core/api/tenants.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
+import { TenantsService } from '../../../../core/services/tenants.service';
 
 interface TenantWithContract {
   tenant: TenantListItem;
   contract: Contract;
   room?: string;
+  isFutureOccupant: boolean;
+  statusLabel: string;
+  statusColor: string;
+  arrivalDate?: string;
+  daysUntilArrival?: number;
 }
 
 @Component({
@@ -24,23 +30,45 @@ export class PropertyTenantsTab {
   associatedTenants = input<TenantListItem[]>([]);
   
   private propertiesService = inject(PropertiesService);
+  private tenantsService = inject(TenantsService);
   private tabManager = inject(InternalTabManagerService);
   
   isLoading = signal(false);
   showActions = signal(false);
+  viewMode = signal<'cards' | 'list'>('cards'); // Par défaut: cards
   
   // Computed properties
+  // ✅ CORRECTION: Filtrer uniquement Signed + Active (pas Draft, Expired, Cancelled)
   currentTenants = computed(() => {
-    const activeContracts = this.contracts().filter(c => 
-      c.status === 'Active' && new Date(c.endDate) > new Date()
+    const validContracts = this.contracts().filter(c => 
+      c.status === 'Signed' || c.status === 'Active'
     );
     
-    return activeContracts.map(contract => {
+    return validContracts.map(contract => {
       const tenant = this.associatedTenants().find(t => t.id === contract.tenantId);
+      const isFutureOccupant = contract.status === 'Signed';
+      const startDate = new Date(contract.startDate);
+      const today = new Date();
+      const daysUntilArrival = isFutureOccupant 
+        ? Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+        : 0;
+      
       return {
-        tenant: tenant || { id: contract.tenantId, fullName: contract.tenantName || 'Inconnu', code: '', status: 'Active' },
+        tenant: tenant || { 
+          id: contract.tenantId, 
+          fullName: contract.tenantName || 'Inconnu', 
+          code: '', 
+          email: '',
+          phone: '',
+          status: contract.status === 'Signed' ? 'Reserved' : 'Active' 
+        },
         contract,
-        room: this.getRoomForTenant(contract.tenantId)
+        room: this.getRoomFromContract(contract),
+        isFutureOccupant,
+        statusLabel: isFutureOccupant ? 'Futur occupant' : 'Occupant actuel',
+        statusColor: isFutureOccupant ? 'blue' : 'emerald',
+        arrivalDate: isFutureOccupant ? this.formatDate(contract.startDate) : undefined,
+        daysUntilArrival: isFutureOccupant ? daysUntilArrival : undefined
       } as TenantWithContract;
     });
   });
@@ -98,7 +126,37 @@ export class PropertyTenantsTab {
     console.log('View inventory');
   }
   
+  toggleViewMode() {
+    this.viewMode.set(this.viewMode() === 'cards' ? 'list' : 'cards');
+  }
+  
+  async dissociateTenant(tenant: TenantListItem, propertyId: string) {
+    const confirmed = confirm(
+      `Êtes-vous sûr de vouloir dissocier ${tenant.fullName} de ce bien ?\n\n` +
+      `⚠️ Attention : Cette action ne supprime pas le contrat, elle retire seulement l'association directe.\n` +
+      `Le locataire restera lié via son contrat.`
+    );
+    
+    if (!confirmed) return;
+    
+    this.isLoading.set(true);
+    try {
+      await this.propertiesService.dissociateTenant(propertyId, tenant.id);
+      // Recharger les données
+      window.location.reload(); // TODO: Améliorer avec un refresh propre
+    } catch (error) {
+      console.error('Error dissociating tenant:', error);
+      alert('Erreur lors de la dissociation du locataire');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+  
   getTenantStatus(contract: Contract): { label: string; color: string } {
+    if (contract.status === 'Signed') {
+      return { label: 'Futur occupant', color: 'blue' };
+    }
+    
     const endDate = new Date(contract.endDate);
     const today = new Date();
     const daysUntilEnd = Math.floor((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
@@ -135,9 +193,28 @@ export class PropertyTenantsTab {
     });
   }
   
-  private getRoomForTenant(tenantId: string): string | undefined {
-    // TODO: Implement room assignment logic for colocation
-    // This would typically come from contract metadata
+  private getRoomFromContract(contract: Contract): string | undefined {
+    // Récupérer la chambre depuis le contrat (colocation individuelle)
+    if (contract.roomId) {
+      return `Chambre ${contract.roomId}`;
+    }
     return undefined;
+  }
+  
+  getDaysUntilExpiration(contract: Contract): number {
+    const endDate = new Date(contract.endDate);
+    const today = new Date();
+    return Math.floor((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  }
+  
+  needsInventoryEntry(contract: Contract): boolean {
+    // TODO: Vérifier si EDL entrée existe via API
+    return contract.status === 'Signed' || contract.status === 'Active';
+  }
+  
+  needsInventoryExit(contract: Contract): boolean {
+    // TODO: Vérifier si EDL sortie nécessaire
+    const daysUntilEnd = this.getDaysUntilExpiration(contract);
+    return contract.status === 'Active' && daysUntilEnd <= 30;
   }
 }

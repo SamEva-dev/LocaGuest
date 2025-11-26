@@ -103,26 +103,14 @@
             }
           }
           @case ('contracts') {
-            <div>
-              <h3 class="text-lg font-semibold mb-4">{{ 'PROPERTY.CONTRACTS' | translate }}</h3>
-              @if (contracts().length > 0) {
-                <div class="space-y-2">
-                  @for (contract of contracts(); track contract.id) {
-                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-                      <div class="flex items-center justify-between">
-                        <div>
-                          <p class="font-medium">{{ contract.tenantName }}</p>
-                          <p class="text-xs text-slate-500">{{ contract.type }} - € {{ contract.rent }}/mois</p>
-                        </div>
-                        <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">{{ contract.status }}</span>
-                      </div>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="text-slate-500">{{ 'PROPERTY.NO_CONTRACTS' | translate }}</p>
-              }
-            </div>
+            @if (property()) {
+              <property-contracts-tab 
+                [property]="property()!" 
+                [contracts]="contracts()"
+                [associatedTenants]="associatedTenants()"
+                (contractCreated)="reloadProperty()" 
+              />
+            }
           }
           @case ('documents') {
             <div class="space-y-6">

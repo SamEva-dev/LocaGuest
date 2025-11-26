@@ -11,11 +11,12 @@ import { PropertiesService } from '../../../../core/services/properties.service'
 import { TenantSelectionModal, TenantSelectionResult } from '../../components/tenant-selection-modal/tenant-selection-modal';
 import { PropertyInfoTab } from '../property-info/property-info-tab';
 import { PropertyTenantsTab } from '../property-tenants/property-tenants-tab';
+import { PropertyContractsTab } from '../property-contracts/property-contracts-tab';
 
 @Component({
   selector: 'property-detail-tab',
   standalone: true,
-  imports: [NgClass, TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal, PropertyInfoTab, PropertyTenantsTab],
+  imports: [NgClass, TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal, PropertyInfoTab, PropertyTenantsTab, PropertyContractsTab],
   templateUrl: './property-detail-tab.html'
 })
 export class PropertyDetailTab {

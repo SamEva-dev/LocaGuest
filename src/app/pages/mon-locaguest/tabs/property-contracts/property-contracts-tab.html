@@ -1,0 +1,431 @@
+<div class="space-y-6">
+  <!-- Header with Actions -->
+  <div class="flex items-center justify-between flex-wrap gap-3">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">Contrats du bien</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        @if (activeContract()) {
+          <span class="text-emerald-600 dark:text-emerald-400 font-medium">Contrat actif en cours</span>
+        } @else if (draftContracts().length > 0) {
+          <span class="text-amber-600 dark:text-amber-400 font-medium">{{ draftContracts().length }} brouillon(s)</span>
+        } @else {
+          <span class="text-slate-500">Aucun contrat actif</span>
+        }
+      </p>
+    </div>
+    
+    <div class="flex gap-2">
+      <button
+        (click)="openPaperContractWizard()"
+        class="px-4 py-2 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition inline-flex items-center gap-2"
+      >
+        <i class="ph ph-note text-lg"></i>
+        <span>Contrat papier</span>
+      </button>
+      
+      <button
+        [disabled]="!canCreateContract()"
+        (click)="openCreateContractWizard()"
+        class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        [title]="!canCreateContract() ? 'Bien déjà occupé (ou toutes les chambres sont louées)' : ''"
+      >
+        <i class="ph ph-plus-circle text-lg"></i>
+        <span>Nouveau contrat</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Draft Contracts -->
+  @if (draftContracts().length > 0) {
+    <div class="bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-200 dark:border-amber-800">
+      <div class="p-5 border-b border-amber-200 dark:border-amber-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+            <i class="ph ph-pencil-simple text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">Brouillons</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Contrats en cours de préparation</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="divide-y divide-amber-200 dark:divide-amber-800">
+        @for (contract of draftContracts(); track contract.id) {
+          <div class="p-5 hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition">
+            <div class="flex items-start gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                  <h4 class="font-semibold">{{ getTenantName(contract.tenantId) }}</h4>
+                  <span 
+                    class="text-xs px-2 py-1 rounded font-medium inline-flex items-center gap-1"
+                    [ngClass]="{
+                      'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300': getContractStatusColor(contract.status) === 'slate',
+                      'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300': getContractStatusColor(contract.status) === 'amber',
+                      'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300': getContractStatusColor(contract.status) === 'blue',
+                      'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300': getContractStatusColor(contract.status) === 'rose'
+                    }"
+                  >
+                    <i [class]="getContractStatusIcon(contract.status)"></i>
+                    {{ getContractStatusLabel(contract.status) }}
+                  </span>
+                  @if (isContractInConflict(contract)) {
+                    <span 
+                      class="text-xs px-2 py-1 rounded bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium inline-flex items-center gap-1"
+                      [title]="getConflictTooltip()"
+                    >
+                      <i class="ph ph-warning-circle"></i>
+                      Conflit
+                    </span>
+                  }
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                  <div>
+                    <span class="text-slate-500 dark:text-slate-400">Type :</span>
+                    <span class="font-medium ml-1">{{ contract.type }}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 dark:text-slate-400">Loyer :</span>
+                    <span class="font-semibold text-emerald-600 dark:text-emerald-400 ml-1">{{ contract.rent }}€</span>
+                  </div>
+                  @if (contract.charges > 0) {
+                    <div>
+                      <span class="text-slate-500 dark:text-slate-400">Charges :</span>
+                      <span class="font-medium ml-1">{{ contract.charges }}€</span>
+                    </div>
+                  }
+                  <div>
+                    <span class="text-slate-500 dark:text-slate-400">Début :</span>
+                    <span class="font-medium ml-1">{{ formatDate(contract.startDate) }}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 dark:text-slate-400">Fin :</span>
+                    <span class="font-medium ml-1">{{ formatDate(contract.endDate) }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="flex flex-wrap gap-2">
+                <!-- Boutons selon statut -->
+                @if (isContractInConflict(contract)) {
+                  <!-- Conflit: Aucune action disponible -->
+                  <span class="text-xs text-red-600 dark:text-red-400 italic">
+                    Ce contrat a été annulé (conflit). Aucune action disponible.
+                  </span>
+                } @else if (contract.status === 'Draft') {
+                  <!-- Draft: Signaler comme signé + Générer PDF + Signature électronique -->
+                  <button
+                    (click)="markAsSigned(contract)"
+                    [disabled]="isMarkingAsSigned()"
+                    class="px-3 py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium hover:bg-emerald-200 dark:hover:bg-emerald-900/40 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    @if (isMarkingAsSigned()) {
+                      <i class="ph ph-circle-notch animate-spin"></i>
+                    } @else {
+                      <i class="ph ph-check-circle"></i>
+                    }
+                    Signaler comme signé
+                  </button>
+                  <button
+                    (click)="generateContractPDF(contract)"
+                    [disabled]="isGeneratingPdf()"
+                    class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/40 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    @if (isGeneratingPdf()) {
+                      <i class="ph ph-circle-notch animate-spin"></i>
+                    } @else {
+                      <i class="ph ph-file-pdf"></i>
+                    }
+                    Générer PDF
+                  </button>
+                  <button
+                    (click)="sendForElectronicSignature(contract)"
+                    [disabled]="isSendingForSignature()"
+                    class="px-3 py-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium hover:bg-purple-200 dark:hover:bg-purple-900/40 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    @if (isSendingForSignature()) {
+                      <i class="ph ph-circle-notch animate-spin"></i>
+                    } @else {
+                      <i class="ph ph-signature"></i>
+                    }
+                    Signature électronique
+                  </button>
+                  <button
+                    (click)="editContract(contract)"
+                    class="px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-sm font-medium hover:bg-amber-200 dark:hover:bg-amber-900/40 transition inline-flex items-center gap-1.5"
+                  >
+                    <i class="ph ph-pencil"></i>
+                    Modifier
+                  </button>
+                } @else if (contract.status === 'Pending') {
+                  <!-- Pending: En attente signature - Upload PDF signé possible -->
+                  <button
+                    (click)="uploadSignedVersion(contract)"
+                    class="px-3 py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium hover:bg-emerald-200 dark:hover:bg-emerald-900/40 transition inline-flex items-center gap-1.5"
+                  >
+                    <i class="ph ph-upload"></i>
+                    Uploader PDF signé
+                  </button>
+                  <button
+                    (click)="generateContractPDF(contract)"
+                    [disabled]="isGeneratingPdf()"
+                    class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/40 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <i class="ph ph-file-pdf"></i>
+                    Télécharger PDF
+                  </button>
+                } @else if (contract.status === 'Signed') {
+                  <!-- Signed: Réservé, en attente date début - Créer EDL entrée -->
+                  <div class="flex flex-col gap-1">
+                    <span class="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                      ✅ Contrat signé - Le bail deviendra actif le {{ formatDate(contract.startDate) }}
+                    </span>
+                    <button
+                      (click)="createInventoryEntry(contract)"
+                      class="px-3 py-1.5 rounded-lg bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-medium hover:bg-teal-200 dark:hover:bg-teal-900/40 transition inline-flex items-center gap-1.5"
+                    >
+                      <i class="ph ph-clipboard-text"></i>
+                      Créer état des lieux d'entrée
+                    </button>
+                  </div>
+                } @else if (contract.status === 'Active') {
+                  <!-- Active: Créer EDL + Téléverser version signée -->
+                  <button
+                    (click)="createInventoryEntry(contract)"
+                    class="px-3 py-1.5 rounded-lg bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 text-sm font-medium hover:bg-teal-200 dark:hover:bg-teal-900/40 transition inline-flex items-center gap-1.5"
+                  >
+                    <i class="ph ph-clipboard-text"></i>
+                    Créer état des lieux d'entrée
+                  </button>
+                  <button
+                    (click)="uploadSignedVersion(contract)"
+                    class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/40 transition inline-flex items-center gap-1.5"
+                  >
+                    <i class="ph ph-upload-simple"></i>
+                    Téléverser version signée
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Active Contract -->
+  @if (activeContract()) {
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+            <i class="ph ph-file-text text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">Contrat actuel</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Bail en cours</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-6">
+        <div class="flex items-start justify-between mb-6">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-3">
+              <h4 class="text-xl font-bold">{{ getTenantName(activeContract()!.tenantId) }}</h4>
+              <span class="px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium inline-flex items-center gap-1.5">
+                <i class="ph ph-check-circle"></i>
+                {{ getContractStatusLabel(activeContract()!.status) }}
+              </span>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
+                <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Type de bail</div>
+                <div class="font-semibold">{{ activeContract()!.type }}</div>
+              </div>
+              
+              <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
+                <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Loyer mensuel</div>
+                <div class="font-bold text-emerald-600 dark:text-emerald-400">{{ activeContract()!.rent }}€</div>
+              </div>
+              
+              @if (activeContract()!.deposit) {
+                <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
+                  <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Dépôt de garantie</div>
+                  <div class="font-semibold">{{ activeContract()!.deposit }}€</div>
+                </div>
+              }
+            </div>
+            
+            <div class="mt-4 flex items-center gap-6 text-sm">
+              <div>
+                <span class="text-slate-500 dark:text-slate-400">Début :</span>
+                <span class="font-semibold ml-2">{{ formatDate(activeContract()!.startDate) }}</span>
+              </div>
+              <div>
+                <span class="text-slate-500 dark:text-slate-400">Fin :</span>
+                <span class="font-semibold ml-2">{{ formatDate(activeContract()!.endDate) }}</span>
+              </div>
+              <div>
+                <span class="text-slate-500 dark:text-slate-400">Durée :</span>
+                <span class="font-semibold ml-2">{{ getContractDuration(activeContract()!.startDate, activeContract()!.endDate) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="flex flex-wrap gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <button
+            (click)="viewContractDetail(activeContract()!)"
+            class="px-4 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition inline-flex items-center gap-2"
+          >
+            <i class="ph ph-file-text"></i>
+            Voir le contrat
+          </button>
+          
+          <button
+            (click)="generateContractPDF(activeContract()!)"
+            class="px-4 py-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 font-medium hover:bg-purple-100 dark:hover:bg-purple-900/30 transition inline-flex items-center gap-2"
+          >
+            <i class="ph ph-file-pdf"></i>
+            Générer PDF
+          </button>
+          
+          <div class="flex-1"></div>
+          
+          <!-- États des lieux -->
+          <div class="flex gap-2">
+            <button
+              (click)="createInventoryEntry(activeContract()!)"
+              class="px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-900/30 transition inline-flex items-center gap-1.5"
+            >
+              <i class="ph ph-clipboard-text"></i>
+              EDL Entrée
+            </button>
+            
+            <button
+              (click)="createInventoryExit(activeContract()!)"
+              class="px-3 py-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm font-medium hover:bg-orange-100 dark:hover:bg-orange-900/30 transition inline-flex items-center gap-1.5"
+            >
+              <i class="ph ph-clipboard-text"></i>
+              EDL Sortie
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <!-- No Active Contract -->
+    <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 p-8">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="ph ph-file-text text-3xl text-slate-400"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Aucun contrat actif</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Créez un nouveau bail pour ce bien</p>
+        @if (canCreateContract()) {
+          <button
+            (click)="openCreateContractWizard()"
+            class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2"
+          >
+            <i class="ph ph-plus-circle"></i>
+            <span>Créer un contrat</span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Historical Contracts -->
+  @if (historicalContracts().length > 0) {
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-slate-400 to-slate-500 flex items-center justify-center">
+            <i class="ph ph-clock-counter-clockwise text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">Historique des contrats</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              {{ historicalContracts().length }} ancien(s) contrat(s)
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="divide-y divide-slate-200 dark:divide-slate-700">
+        @for (contract of historicalContracts(); track contract.id) {
+          <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+            <div class="flex items-center gap-4">
+              <!-- Info -->
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <h4 class="font-medium">{{ getTenantName(contract.tenantId) }}</h4>
+                  <span 
+                    class="text-xs px-2 py-1 rounded"
+                    [ngClass]="{
+                      'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300': getContractStatusColor(contract.status) === 'slate',
+                      'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300': getContractStatusColor(contract.status) === 'red',
+                      'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300': getContractStatusColor(contract.status) === 'orange'
+                    }"
+                  >
+                    {{ getContractStatusLabel(contract.status) }}
+                  </span>
+                </div>
+                
+                <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                  <span>{{ formatDate(contract.startDate) }} - {{ formatDate(contract.endDate) }}</span>
+                  <span>•</span>
+                  <span>{{ contract.type }}</span>
+                  <span>•</span>
+                  <span class="font-semibold">{{ contract.rent }}€/mois</span>
+                </div>
+              </div>
+              
+              <!-- Actions -->
+              <div class="flex gap-2">
+                <button
+                  (click)="viewContractDetail(contract)"
+                  class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-600 transition"
+                  title="Voir le contrat"
+                >
+                  <i class="ph ph-file-text"></i>
+                </button>
+                
+                <button
+                  (click)="viewInventoryEntry(contract)"
+                  class="px-2.5 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 text-xs hover:bg-blue-100 dark:hover:bg-blue-900/30 transition"
+                  title="EDL Entrée"
+                >
+                  <i class="ph ph-sign-in"></i>
+                </button>
+                
+                <button
+                  (click)="viewInventoryExit(contract)"
+                  class="px-2.5 py-1.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-300 text-xs hover:bg-orange-100 dark:hover:bg-orange-900/30 transition"
+                  title="EDL Sortie"
+                >
+                  <i class="ph ph-sign-out"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Contract Wizard Modal -->
+@if (showWizard()) {
+  <contract-wizard-modal
+    [property]="property()"
+    [mode]="wizardMode()"
+    [existingContract]="selectedContract()"
+    (close)="onWizardClose()"
+    (success)="onWizardSuccess()"
+  />
+}

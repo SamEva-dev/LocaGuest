@@ -1,0 +1,446 @@
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold">
+          @if (mode() === 'paper') {
+            Ajouter un contrat papier
+          } @else {
+            Créer un nouveau contrat
+          }
+        </h2>
+        <button
+          (click)="closeModal()"
+          class="w-8 h-8 rounded-lg hover:bg-white/20 transition flex items-center justify-center"
+        >
+          <i class="ph ph-x text-2xl"></i>
+        </button>
+      </div>
+      
+      <!-- Progress Steps -->
+      <div class="flex items-center gap-2">
+        @for (step of [1, 2, 3, 4]; track step) {
+          @if (step <= totalSteps()) {
+            <div class="flex items-center flex-1">
+              <div 
+                class="flex items-center justify-center w-8 h-8 rounded-full font-semibold transition"
+                [class]="currentStep() >= step ? 'bg-white text-emerald-600' : 'bg-white/30 text-white'"
+              >
+                @if (currentStep() > step) {
+                  <i class="ph ph-check text-lg"></i>
+                } @else {
+                  {{ step }}
+                }
+              </div>
+              @if (step < totalSteps()) {
+                <div 
+                  class="flex-1 h-1 mx-2 rounded transition"
+                  [class]="currentStep() > step ? 'bg-white' : 'bg-white/30'"
+                ></div>
+              }
+            </div>
+          }
+        }
+      </div>
+      
+      <p class="text-white/90 text-sm mt-3">{{ getStepTitle(currentStep()) }}</p>
+    </div>
+    
+    <!-- DEBUG Panel - Erreurs de validation -->
+    @if (validateCurrentStep().length > 0) {
+      <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 mx-6 mt-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="ph ph-warning text-red-400 text-xl"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800 dark:text-red-300">
+              Erreurs de validation ({{ validateCurrentStep().length }})
+            </h3>
+            <div class="mt-2 text-sm text-red-700 dark:text-red-400">
+              <ul class="list-disc list-inside space-y-1">
+                @for (error of validateCurrentStep(); track error) {
+                  <li>{{ error }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    
+    <!-- Content -->
+    <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 280px);">
+      
+      <!-- Step 1: Tenant Selection -->
+      @if (currentStep() === 1) {
+        <div class="space-y-4">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Sélectionnez un locataire</h3>
+            <button
+              (click)="toggleCreateTenant()"
+              class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition"
+            >
+              <i class="ph ph-plus mr-1"></i>
+              Nouveau locataire
+            </button>
+          </div>
+          
+          @if (showCreateTenant()) {
+            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+              <h4 class="font-semibold mb-3">Créer un nouveau locataire</h4>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Prénom *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="newTenantForm().firstName"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    placeholder="Jean"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Nom *</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="newTenantForm().lastName"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    placeholder="Dupont"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Email</label>
+                  <input
+                    type="email"
+                    [(ngModel)]="newTenantForm().email"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    placeholder="jean.dupont@email.com"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Téléphone</label>
+                  <input
+                    type="tel"
+                    [(ngModel)]="newTenantForm().phone"
+                    class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                    placeholder="06 12 34 56 78"
+                  />
+                </div>
+              </div>
+              <div class="flex gap-2 mt-3">
+                <button
+                  (click)="createNewTenant()"
+                  class="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600 transition"
+                >
+                  Créer
+                </button>
+                <button
+                  (click)="toggleCreateTenant()"
+                  class="px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-300 dark:hover:bg-slate-600 transition"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          }
+          
+          @if (isLoading()) {
+            <div class="text-center py-8">
+              <i class="ph ph-spinner text-4xl animate-spin text-slate-400"></i>
+            </div>
+          } @else {
+            <div class="grid gap-2 max-h-96 overflow-y-auto">
+              @for (tenant of availableTenants(); track tenant.id) {
+                <div
+                  (click)="selectTenant(tenant)"
+                  class="border rounded-lg p-3 cursor-pointer transition"
+                  [class]="form().tenantId === tenant.id 
+                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' 
+                    : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700'"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">
+                      {{ tenant.fullName?.charAt(0) || 'T' }}
+                    </div>
+                    <div class="flex-1">
+                      <div class="font-semibold">{{ tenant.fullName }}</div>
+                      <div class="text-xs text-slate-500 dark:text-slate-400">
+                        {{ tenant.email || 'Pas d\'email' }}
+                      </div>
+                    </div>
+                    @if (form().tenantId === tenant.id) {
+                      <i class="ph ph-check-circle text-emerald-600 text-xl"></i>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+      
+      <!-- Step 2: Contract Details -->
+      @if (currentStep() === 2) {
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Date de début *</label>
+              <input
+                type="date"
+                [ngModel]="form().startDate"
+                (ngModelChange)="updateStartDate($event)"
+                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+              />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">Date de fin *</label>
+              <input
+                type="date"
+                [ngModel]="form().endDate"
+                (ngModelChange)="updateEndDate($event)"
+                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-1">Type de contrat *</label>
+            <select
+              [ngModel]="form().type"
+              (ngModelChange)="updateType($event)"
+              class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+            >
+              @for (type of contractTypes; track type) {
+                <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-1">Loyer mensuel (€) *</label>
+            <input
+              type="number"
+              [ngModel]="form().rent"
+              (ngModelChange)="updateRent($event)"
+              class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+              placeholder="850"
+              min="0"
+              step="10"
+            />
+          </div>
+        </div>
+      }
+      
+      <!-- Step 3: Financial Details OR Upload (for paper) -->
+      @if (currentStep() === 3) {
+        @if (mode() === 'paper') {
+          <!-- Upload PDF for paper contract -->
+          <div class="space-y-4">
+            <div class="text-center">
+              <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-8 hover:border-emerald-500 transition">
+                <input
+                  type="file"
+                  (change)="onFileSelect($event)"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="hidden"
+                  id="fileUpload"
+                />
+                <label for="fileUpload" class="cursor-pointer">
+                  <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="ph ph-upload text-3xl text-blue-600"></i>
+                  </div>
+                  <p class="font-semibold mb-1">Cliquez pour uploader</p>
+                  <p class="text-sm text-slate-500">PDF, JPG ou PNG (Max 10MB)</p>
+                  @if (uploadedFileName()) {
+                    <p class="text-sm text-emerald-600 mt-2">
+                      <i class="ph ph-check-circle"></i> {{ uploadedFileName() }}
+                    </p>
+                  }
+                </label>
+              </div>
+            </div>
+            
+            <div class="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4">
+              <div class="flex gap-3">
+                <i class="ph ph-info text-amber-600 text-xl flex-shrink-0"></i>
+                <div class="text-sm text-amber-800 dark:text-amber-200">
+                  <p class="font-semibold mb-1">Contrat papier</p>
+                  <p>Le contrat sera enregistré comme "Signé - Papier" avec le document scanné rattaché.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <!-- Financial details for new contract -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Charges mensuelles (€)</label>
+              <input
+                type="number"
+                [(ngModel)]="form().charges"
+                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                placeholder="50"
+                min="0"
+                step="5"
+              />
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium mb-1">Dépôt de garantie (€)</label>
+              <div class="flex gap-2">
+                <input
+                  type="number"
+                  [(ngModel)]="form().deposit"
+                  class="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                  placeholder="850"
+                  min="0"
+                  step="10"
+                />
+                <button
+                  (click)="calculateDeposit()"
+                  class="px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-900/30 transition whitespace-nowrap"
+                >
+                  = 1 mois
+                </button>
+              </div>
+            </div>
+            
+            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+              <div class="text-sm">
+                <p class="font-semibold mb-2">Total mensuel</p>
+                <div class="flex items-baseline gap-2">
+                  <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                    {{ (form().rent || 0) + (form().charges || 0) }}€
+                  </span>
+                  <span class="text-slate-500">/mois</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      }
+      
+      <!-- Step 4: Summary (only for new contracts) -->
+      @if (currentStep() === 4 && mode() === 'new') {
+        <div class="space-y-4">
+          <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+            <h4 class="font-semibold mb-3">Récapitulatif du contrat</h4>
+            
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Bien :</span>
+                <span class="font-medium">{{ property().name }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Locataire :</span>
+                <span class="font-medium">{{ selectedTenantName() }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Type :</span>
+                <span class="font-medium">{{ form().type }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Période :</span>
+                <span class="font-medium">
+                  {{ form().startDate ? formatDate(form().startDate!) : '—' }} 
+                  au 
+                  {{ form().endDate ? formatDate(form().endDate!) : '—' }}
+                </span>
+              </div>
+              
+              <hr class="my-3 border-slate-200 dark:border-slate-600" />
+              
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Loyer :</span>
+                <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ form().rent }}€</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Charges :</span>
+                <span class="font-medium">{{ form().charges }}€</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Dépôt :</span>
+                <span class="font-medium">{{ form().deposit }}€</span>
+              </div>
+              
+              <hr class="my-3 border-slate-200 dark:border-slate-600" />
+              
+              <div class="flex justify-between text-base">
+                <span class="font-semibold">Total mensuel :</span>
+                <span class="font-bold text-emerald-600 dark:text-emerald-400">
+                  {{ (form().rent || 0) + (form().charges || 0) }}€
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+            <div class="flex gap-3">
+              <i class="ph ph-info text-blue-600 text-xl flex-shrink-0"></i>
+              <div class="text-sm text-blue-800 dark:text-blue-200">
+                <p>Le contrat sera créé en statut <strong>"Brouillon"</strong>. Vous pourrez le modifier et le faire signer ensuite.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      
+    </div>
+    
+    <!-- Footer -->
+    <div class="bg-slate-50 dark:bg-slate-900 p-6 border-t border-slate-200 dark:border-slate-700">
+      <div class="flex items-center justify-between">
+        @if (currentStep() > 1) {
+          <button
+            (click)="previousStep()"
+            class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-300 dark:hover:bg-slate-600 transition"
+          >
+            <i class="ph ph-arrow-left mr-2"></i>
+            Précédent
+          </button>
+        } @else {
+          <div></div>
+        }
+        
+        <div class="flex gap-2">
+          <button
+            (click)="closeModal()"
+            class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+          >
+            Annuler
+          </button>
+          
+          @if (currentStep() < totalSteps()) {
+            <button
+              (click)="nextStep()"
+              [disabled]="!canGoNext()"
+              class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Suivant
+              <i class="ph ph-arrow-right ml-2"></i>
+            </button>
+          } @else {
+            <button
+              (click)="submitContract()"
+              [disabled]="isSaving() || !canGoNext()"
+              class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+            >
+              @if (isSaving()) {
+                <i class="ph ph-spinner animate-spin"></i>
+                Création...
+              } @else {
+                <i class="ph ph-check"></i>
+                Créer le contrat
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>

@@ -20,8 +20,11 @@ export interface ContractDto {
   startDate: string;
   endDate: string;
   rent: number;
+  charges: number;              // ✅ NOUVEAU - Charges mensuelles
   deposit?: number;
-  status: 'Draft' | 'Signed' | 'Active' | 'Terminated' | 'Expiring';
+  status: 'Draft' | 'Pending' | 'Signed' | 'Active' | 'Expiring' | 'Terminated' | 'Expired' | 'Cancelled';  // ✅ NOUVEAUX STATUTS
+  roomId?: string;              // ✅ NOUVEAU - Pour colocation individuelle
+  isConflict: boolean;          // ✅ NOUVEAU - Marqueur conflit
   notes?: string;
   paymentsCount?: number;
   createdAt?: string;
@@ -38,7 +41,10 @@ export interface CreateContractRequest {
   startDate: string;
   endDate: string;
   rent: number;
+  charges?: number;             // ✅ NOUVEAU - Charges mensuelles
   deposit?: number;
+  roomId?: string;              // ✅ NOUVEAU - Pour colocation individuelle
+  notes?: string;
 }
 
 export interface RecordPaymentRequest {

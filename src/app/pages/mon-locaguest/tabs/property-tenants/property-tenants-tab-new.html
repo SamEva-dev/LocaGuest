@@ -1,0 +1,345 @@
+<div class="h-full flex flex-col">
+  <!-- Header compact -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white">
+        Occupation du bien
+        @if (hasActiveTenants()) {
+          <span class="text-emerald-600 dark:text-emerald-400">· {{ currentTenants().length }} locataire(s)</span>
+        }
+      </h2>
+    </div>
+    
+    <!-- Toggle Cards/Liste à droite -->
+    <button
+      (click)="toggleViewMode()"
+      class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition inline-flex items-center gap-2"
+      [title]="viewMode() === 'cards' ? 'Afficher en liste' : 'Afficher en cards'"
+    >
+      <i [class]="viewMode() === 'cards' ? 'ph ph-list' : 'ph ph-grid-four'" class="text-lg"></i>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-1 overflow-auto">
+    @if (hasActiveTenants()) {
+      <!-- Mode Cards -->
+      @if (viewMode() === 'cards') {
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          @for (item of currentTenants(); track item.tenant.id) {
+            <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all duration-200">
+              <!-- Card Header -->
+              <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-start gap-4">
+                  <!-- Avatar cliquable -->
+                  <div 
+                    (click)="openTenantDetail(item.tenant)"
+                    class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-xl cursor-pointer hover:shadow-xl hover:scale-105 transition-all flex-shrink-0"
+                  >
+                    {{ getInitials(item.tenant.fullName || 'T') }}
+                  </div>
+                  
+                  <div class="flex-1 min-w-0">
+                    <!-- Nom + Code -->
+                    <div class="flex items-center gap-2 mb-2">
+                      <h3 
+                        (click)="openTenantDetail(item.tenant)"
+                        class="text-lg font-bold text-slate-900 dark:text-white cursor-pointer hover:text-emerald-600 dark:hover:text-emerald-400 transition truncate"
+                      >
+                        {{ item.tenant.fullName }}
+                      </h3>
+                      <span class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">
+                        {{ item.tenant.code }}
+                      </span>
+                    </div>
+                    
+                    <!-- Status Badge -->
+                    @if (item.isFutureOccupant) {
+                      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium">
+                        <i class="ph ph-calendar-check text-lg"></i>
+                        <span>Futur occupant · Arrive le {{ item.arrivalDate }}</span>
+                      </div>
+                    } @else {
+                      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium">
+                        <i class="ph ph-check-circle text-lg"></i>
+                        <span>Occupant actuel</span>
+                      </div>
+                    }
+                  </div>
+                  
+                  <!-- Actions Rapides -->
+                  <div class="flex flex-col gap-2">
+                    <button
+                      (click)="dissociateTenant(item.tenant, property().id)"
+                      class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition"
+                      title="Dissocier du bien"
+                    >
+                      <i class="ph ph-link-break text-lg"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Card Body -->
+              <div class="p-5 space-y-4">
+                <!-- Contact -->
+                <div class="space-y-2">
+                  @if (item.tenant.phone) {
+                    <div class="flex items-center gap-2 text-sm">
+                      <i class="ph ph-phone text-slate-400"></i>
+                      <span class="text-slate-700 dark:text-slate-300">{{ item.tenant.phone }}</span>
+                    </div>
+                  }
+                  @if (item.tenant.email) {
+                    <div class="flex items-center gap-2 text-sm">
+                      <i class="ph ph-envelope text-slate-400"></i>
+                      <span class="text-slate-700 dark:text-slate-300 truncate">{{ item.tenant.email }}</span>
+                    </div>
+                  }
+                </div>
+                
+                <!-- Informations Bien / Partie Occupée -->
+                <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
+                  <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">🏠 OCCUPATION</div>
+                  <div class="space-y-2">
+                    @if (isColocation() && item.room) {
+                      <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 text-sm font-medium">
+                        <i class="ph ph-door"></i>
+                        <span>{{ item.room }}</span>
+                      </div>
+                    }
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">Début</div>
+                        <div class="font-medium">{{ formatDate(item.contract.startDate) }}</div>
+                      </div>
+                      <div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">Fin</div>
+                        <div class="font-medium">{{ formatDate(item.contract.endDate) }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Résumé Financier -->
+                <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3">
+                  <div class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-2">💰 FINANCIER</div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <div class="text-xs text-slate-600 dark:text-slate-400">Loyer mensuel</div>
+                      <div class="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                        {{ item.contract.rent }}€
+                      </div>
+                    </div>
+                    @if (item.contract.charges > 0) {
+                      <div>
+                        <div class="text-xs text-slate-600 dark:text-slate-400">Charges</div>
+                        <div class="text-lg font-semibold text-slate-700 dark:text-slate-300">
+                          {{ item.contract.charges }}€
+                        </div>
+                      </div>
+                    }
+                  </div>
+                  @if (item.contract.deposit) {
+                    <div class="mt-2 pt-2 border-t border-emerald-100 dark:border-emerald-800">
+                      <div class="text-xs text-slate-600 dark:text-slate-400">Dépôt de garantie</div>
+                      <div class="font-medium text-slate-700 dark:text-slate-300">{{ item.contract.deposit }}€</div>
+                    </div>
+                  }
+                </div>
+                
+                <!-- Alertes & Badges -->
+                <div class="space-y-2">
+                  <!-- Alerte EDL Entrée -->
+                  @if (item.isFutureOccupant && needsInventoryEntry(item.contract)) {
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm">
+                      <i class="ph ph-warning-circle text-lg"></i>
+                      <span class="font-medium">EDL d'entrée à réaliser</span>
+                    </div>
+                  }
+                  
+                  <!-- Alerte Expiration Proche -->
+                  @if (!item.isFutureOccupant && getDaysUntilExpiration(item.contract) <= 60 && getDaysUntilExpiration(item.contract) > 0) {
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 text-sm">
+                      <i class="ph ph-clock text-lg"></i>
+                      <span class="font-medium">Contrat expire dans {{ getDaysUntilExpiration(item.contract) }} jours</span>
+                    </div>
+                  }
+                  
+                  <!-- Badge Colocation Solidaire -->
+                  @if (isColocation() && property().propertyUsageType?.toLowerCase().includes('solidaire')) {
+                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 text-xs font-medium">
+                      <i class="ph ph-users-three"></i>
+                      <span>Bail solidaire</span>
+                    </div>
+                  }
+                </div>
+              </div>
+              
+              <!-- Card Footer - Actions -->
+              <div class="p-4 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-700 flex items-center gap-2 flex-wrap">
+                <button
+                  (click)="openTenantDetail(item.tenant)"
+                  class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
+                >
+                  <i class="ph ph-user"></i>
+                  <span>Profil</span>
+                </button>
+                
+                <button
+                  (click)="openContractDetail(item.contract)"
+                  class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-200 text-sm font-medium transition inline-flex items-center gap-2"
+                >
+                  <i class="ph ph-file-text"></i>
+                  <span>Contrat</span>
+                </button>
+                
+                @if (item.isFutureOccupant && needsInventoryEntry(item.contract)) {
+                  <button
+                    (click)="viewInventory()"
+                    class="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
+                  >
+                    <i class="ph ph-clipboard-text"></i>
+                    <span>EDL Entrée</span>
+                  </button>
+                }
+                
+                @if (!item.isFutureOccupant && needsInventoryExit(item.contract)) {
+                  <button
+                    (click)="viewInventory()"
+                    class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
+                  >
+                    <i class="ph ph-clipboard-text"></i>
+                    <span>EDL Sortie</span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+      
+      <!-- Mode Liste -->
+      @if (viewMode() === 'list') {
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Locataire</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Contact</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Chambre</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Loyer</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Statut</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+              @for (item of currentTenants(); track item.tenant.id) {
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-3">
+                      <div 
+                        (click)="openTenantDetail(item.tenant)"
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:shadow-lg transition flex-shrink-0"
+                      >
+                        {{ getInitials(item.tenant.fullName || 'T') }}
+                      </div>
+                      <div class="min-w-0">
+                        <div 
+                          (click)="openTenantDetail(item.tenant)"
+                          class="font-semibold text-slate-900 dark:text-white cursor-pointer hover:text-emerald-600 transition truncate"
+                        >
+                          {{ item.tenant.fullName }}
+                        </div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ item.tenant.code }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="text-sm space-y-1">
+                      @if (item.tenant.phone) {
+                        <div class="text-slate-700 dark:text-slate-300">{{ item.tenant.phone }}</div>
+                      }
+                      @if (item.tenant.email) {
+                        <div class="text-slate-500 dark:text-slate-400 truncate max-w-[200px]">{{ item.tenant.email }}</div>
+                      }
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    @if (isColocation() && item.room) {
+                      <span class="px-2 py-1 rounded bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 text-xs font-medium">
+                        {{ item.room }}
+                      </span>
+                    } @else {
+                      <span class="text-slate-400 text-sm">-</span>
+                    }
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="font-semibold text-emerald-600 dark:text-emerald-400">{{ item.contract.rent }}€</div>
+                    @if (item.contract.charges > 0) {
+                      <div class="text-xs text-slate-500">+ {{ item.contract.charges }}€ charges</div>
+                    }
+                  </td>
+                  <td class="px-4 py-3">
+                    @if (item.isFutureOccupant) {
+                      <span class="px-2 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium whitespace-nowrap">
+                        Futur · {{ item.arrivalDate }}
+                      </span>
+                    } @else {
+                      <span class="px-2 py-1 rounded bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
+                        Actif
+                      </span>
+                    }
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-1">
+                      <button
+                        (click)="openTenantDetail(item.tenant)"
+                        class="p-2 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 transition"
+                        title="Profil"
+                      >
+                        <i class="ph ph-user"></i>
+                      </button>
+                      <button
+                        (click)="openContractDetail(item.contract)"
+                        class="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition"
+                        title="Contrat"
+                      >
+                        <i class="ph ph-file-text"></i>
+                      </button>
+                      <button
+                        (click)="dissociateTenant(item.tenant, property().id)"
+                        class="p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition"
+                        title="Dissocier"
+                      >
+                        <i class="ph ph-link-break"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    } @else {
+      <!-- No Current Tenants -->
+      <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 p-12">
+        <div class="text-center">
+          <div class="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="ph ph-users text-4xl text-slate-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">Bien vacant</h3>
+          <p class="text-slate-500 dark:text-slate-400 mb-6">Aucun locataire avec contrat signé ou actif</p>
+          <button
+            (click)="createContract()"
+            class="px-6 py-3 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2"
+          >
+            <i class="ph ph-plus-circle text-lg"></i>
+            <span>Créer un contrat</span>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -5,14 +5,25 @@
       <h2 class="text-xl font-bold text-slate-900 dark:text-white">Occupation du bien</h2>
       <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
         @if (hasActiveTenants()) {
-          <span class="text-emerald-600 dark:text-emerald-400 font-medium">{{ currentTenants().length }} locataire(s) actuel(s)</span>
+          <span class="text-emerald-600 dark:text-emerald-400 font-medium">{{ currentTenants().length }} locataire(s)</span>
         } @else {
           <span class="text-slate-500">Bien vacant</span>
         }
       </p>
     </div>
     
-    <div class="relative">
+    <div class="flex items-center gap-3">
+      <!-- Toggle Cards/Liste -->
+      <button
+        (click)="toggleViewMode()"
+        class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition inline-flex items-center gap-2"
+        [title]="viewMode() === 'cards' ? 'Afficher en liste' : 'Afficher en cards'"
+      >
+        <i [class]="viewMode() === 'cards' ? 'ph ph-list' : 'ph ph-grid-four'"></i>
+        <span class="text-sm">{{ viewMode() === 'cards' ? 'Liste' : 'Cards' }}</span>
+      </button>
+      
+      <div class="relative">
       <button
         (click)="showActions.set(!showActions())"
         class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2"
@@ -76,7 +87,7 @@
     </div>
   </div>
 
-  <!-- Current Tenants -->
+  <!-- Current & Future Tenants (Signed + Active) -->
   @if (hasActiveTenants()) {
     <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
       <div class="p-5 border-b border-slate-200 dark:border-slate-700">
@@ -87,12 +98,12 @@
           <div>
             <h3 class="text-lg font-semibold">
               @if (isColocation()) {
-                Colocataires actuels
+                Colocataires
               } @else {
-                Locataire actuel
+                Locataire(s)
               }
             </h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400">Occupation en cours</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Contrats signés et actifs</p>
           </div>
         </div>
       </div>

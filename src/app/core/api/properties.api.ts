@@ -64,8 +64,11 @@ export interface Contract {
   startDate: Date;
   endDate: Date;
   rent: number;
+  charges: number;          // ✅ NOUVEAU - Charges mensuelles
   deposit?: number;
-  status: string;
+  status: string;           // Draft | Pending | Signed | Active | Expiring | Terminated | Expired | Cancelled
+  roomId?: string;          // ✅ NOUVEAU - Pour colocation individuelle
+  isConflict: boolean;      // ✅ NOUVEAU - Marqueur conflit
   paymentsCount?: number;
 }
 
