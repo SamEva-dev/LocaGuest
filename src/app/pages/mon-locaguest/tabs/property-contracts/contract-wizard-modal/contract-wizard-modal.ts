@@ -1,5 +1,4 @@
 import { Component, input, output, signal, computed, inject, effect } from '@angular/core';
-import { NgClass, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PropertyDetail } from '../../../../../core/api/properties.api';
 import { TenantListItem, TenantsApi } from '../../../../../core/api/tenants.api';
@@ -68,7 +67,7 @@ interface ContractForm {
 @Component({
   selector: 'contract-wizard-modal',
   standalone: true,
-  imports: [NgClass, FormsModule, DatePipe],
+  imports: [FormsModule],
   templateUrl: './contract-wizard-modal.html'
 })
 export class ContractWizardModal {
@@ -231,7 +230,15 @@ export class ContractWizardModal {
     this.isLoading.set(true);
     this.tenantsApi.getTenants().subscribe({
       next: (result) => {
-        this.availableTenants.set(result.items || []);
+        // ✅ FILTRAGE: Exclure les locataires avec contrat actif ou signé
+        const allTenants = result.items || [];
+        const availableTenants = allTenants.filter(tenant => {
+          // Un locataire est disponible si son statut n'est pas "Occupant" ou "Reserved"
+          return tenant.status !== 'Occupant' && tenant.status !== 'Reserved';
+        });
+        
+        console.log(`📋 ${allTenants.length} locataires total, ${availableTenants.length} disponibles`);
+        this.availableTenants.set(availableTenants);
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -304,6 +311,7 @@ export class ContractWizardModal {
     this.showCreateTenant.update(v => !v);
   }
   
+  // ✅ CORRECTION 5: Créer le locataire et l'ajouter immédiatement à la liste
   createNewTenant() {
     const newTenant = this.newTenantForm();
     if (!newTenant.firstName || !newTenant.lastName) {
@@ -311,15 +319,71 @@ export class ContractWizardModal {
       return;
     }
     
-    // TODO: Call API to create tenant
-    console.log('Creating tenant:', newTenant);
+    if (!newTenant.email) {
+      alert('Email requis');
+      return;
+    }
     
-    // For now, just add to form
-    this.form.update(f => ({ 
-      ...f, 
-      tenantName: `${newTenant.firstName} ${newTenant.lastName}`
-    }));
-    this.showCreateTenant.set(false);
+    this.isLoading.set(true);
+    
+    // Préparer la requête API
+    const createRequest = {
+      firstName: newTenant.firstName,
+      lastName: newTenant.lastName,
+      email: newTenant.email,
+      phone: newTenant.phone || '',
+      birthDate: newTenant.birthDate || null,
+      address: newTenant.address || '',
+      guarantorName: newTenant.guarantorName,
+      guarantorPhone: newTenant.guarantorPhone,
+      guarantorEmail: newTenant.guarantorEmail
+    };
+    
+    // Appel API pour créer le locataire
+    this.tenantsApi.createTenant(createRequest).subscribe({
+      next: (createdTenant) => {
+        console.log('✅ Locataire créé avec succès:', createdTenant);
+        
+        // 1️⃣ Ajouter immédiatement le nouveau locataire à la liste disponible
+        this.availableTenants.update(tenants => [...tenants, createdTenant]);
+        this.filteredTenants.update(tenants => [...tenants, createdTenant]);
+        
+        // 2️⃣ Sélectionner automatiquement ce locataire dans le formulaire
+        this.form.update(f => ({
+          ...f,
+          tenantId: createdTenant.id,
+          tenantName: createdTenant.fullName
+        }));
+        
+        // 3️⃣ Réinitialiser le formulaire de création et fermer le panneau
+        this.newTenantForm.set({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          birthDate: '',
+          address: ''
+        });
+        this.showCreateTenant.set(false);
+        this.isLoading.set(false);
+        
+        console.log('✅ Locataire ajouté à la liste et automatiquement sélectionné');
+      },
+      error: (err) => {
+        console.error('❌ Erreur création locataire:', err);
+        this.isLoading.set(false);
+        
+        let errorMessage = 'Erreur lors de la création du locataire';
+        if (err.error?.message) {
+          errorMessage += ' : ' + err.error.message;
+        } else if (err.error?.errors) {
+          const errors = Object.values(err.error.errors).flat();
+          errorMessage += ' :\n' + errors.join('\n');
+        }
+        
+        alert(errorMessage);
+      }
+    });
   }
   
   onFileSelect(event: Event) {

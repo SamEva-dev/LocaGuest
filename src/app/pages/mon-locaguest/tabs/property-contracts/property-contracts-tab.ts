@@ -2,9 +2,10 @@ import { Component, input, output, signal, computed, inject } from '@angular/cor
 import { DatePipe, NgClass } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PropertyDetail, Contract } from '../../../../core/api/properties.api';
-import { TenantListItem } from '../../../../core/api/tenants.api';
+import { TenantListItem, TenantsApi } from '../../../../core/api/tenants.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { ContractWizardModal } from './contract-wizard-modal/contract-wizard-modal';
+import { MarkSignedModal } from './mark-signed-modal/mark-signed-modal';
 import { ContractsApi } from '../../../../core/api/contracts.api';
 import { DocumentsService } from '../../../../core/services/documents.service';
 import { firstValueFrom } from 'rxjs';
@@ -12,7 +13,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'property-contracts-tab',
   standalone: true,
-  imports: [NgClass, DatePipe, TranslatePipe, ContractWizardModal],
+  imports: [NgClass, DatePipe, TranslatePipe, ContractWizardModal, MarkSignedModal],
   templateUrl: './property-contracts-tab.html'
 })
 export class PropertyContractsTab {
@@ -26,16 +27,23 @@ export class PropertyContractsTab {
   private propertiesService = inject(PropertiesService);
   private contractsApi = inject(ContractsApi);
   private documentsService = inject(DocumentsService);
+  private tenantsApi = inject(TenantsApi);
   
   // Loading states
   isMarkingAsSigned = signal(false);
   isGeneratingPdf = signal(false);
   isSendingForSignature = signal(false);
+  isDeletingContract = signal(false);
   
   showWizard = signal(false);
   showPaperContractForm = signal(false);
   wizardMode = signal<'new' | 'paper'>('new');
   selectedContract = signal<Contract | null>(null);
+  
+  // ✅ NOUVEAU: Modal moderne pour signature
+  showMarkSignedModal = signal(false);
+  contractToSign = signal<Contract | null>(null);
+  tenantForSigning = signal<TenantListItem | null>(null);
   
   // Computed properties
   activeContract = computed(() => {
@@ -54,19 +62,45 @@ export class PropertyContractsTab {
     return this.contracts().filter(c => c.status === 'Draft');
   });
   
+  // ✅ AMÉLIORATION: Logique de grisage des boutons
   canCreateContract = computed(() => {
     const prop = this.property();
     const isColocation = prop?.propertyUsageType?.toLowerCase() === 'colocation';
     
-    // Pour colocation, on peut toujours créer (chambres multiples)
+    // Vérifier s'il y a un contrat Signé ou Active
+    const hasSignedOrActiveContract = this.contracts().some(c => 
+      c.status === 'Signed' || c.status === 'Active'
+    );
+    
+    // Pour colocation, on peut créer si toutes les chambres ne sont pas occupées
     if (isColocation) {
       const totalRooms = prop.totalRooms || 0;
       const occupiedRooms = prop.occupiedRooms || 0;
       return occupiedRooms < totalRooms;
     }
     
-    // Pour location complète, pas de contrat actif requis
-    return !this.activeContract();
+    // Pour location complète, on ne peut pas créer si un contrat Signé/Active existe
+    return !hasSignedOrActiveContract;
+  });
+  
+  // ✅ NOUVEAU: Afficher le bouton "Ajouter un état des lieux"
+  shouldShowInventoryButton = computed(() => {
+    // Afficher si au moins un contrat Signé existe
+    return this.contracts().some(c => c.status === 'Signed');
+  });
+  
+  // ✅ NOUVEAU: Raison du grisage
+  disabledReason = computed(() => {
+    if (this.canCreateContract()) return '';
+    
+    const prop = this.property();
+    const isColocation = prop?.propertyUsageType?.toLowerCase() === 'colocation';
+    
+    if (isColocation) {
+      return 'Toutes les chambres sont déjà louées';
+    }
+    
+    return 'Bien déjà réservé ou occupé';
   });
   
   // Status helpers - Cycle métier: Draft → Pending → Signed → Active → Terminated/Expired/Cancelled
@@ -150,12 +184,20 @@ export class PropertyContractsTab {
       this.isGeneratingPdf.set(true);
       console.log('🔄 Génération PDF pour contrat:', contract.id);
       
+      // ✅ CORRECTION: Envoyer tous les champs obligatoires
       const request = {
         contractId: contract.id,
         tenantId: contract.tenantId,
         propertyId: this.property().id,
-        contractType: 'Bail' as const
+        contractType: 'Bail' as const,
+        startDate: contract.startDate,
+        endDate: contract.endDate,
+        rent: contract.rent,
+        deposit: contract.deposit || null,
+        charges: contract.charges || null
       };
+      
+      console.log('📤 Requête PDF:', request);
       
       const pdfBlob = await firstValueFrom(
         this.documentsService.generateContractPdf(request)
@@ -183,44 +225,43 @@ export class PropertyContractsTab {
   }
   
   // Phase 2: Actions selon statut
+  // ✅ NOUVEAU: Ouvrir la modal moderne pour signature
   async markAsSigned(contract: Contract) {
-    if (this.isMarkingAsSigned()) return;
+    console.log('🔄 Mark as signed:', contract.id);
     
-    const confirmed = confirm(
-      `Confirmer la signature du contrat ?\n\n` +
-      `Cette action va :\n` +
-      `- Marquer le contrat comme SIGNÉ\n` +
-      `- Réserver le bien et le locataire (statut Reserved)\n` +
-      `- Annuler les autres contrats Draft/Pending de ce locataire (conflit)\n` +
-      `- Le contrat deviendra ACTIF automatiquement à la date de début\n\n` +
-      `Continuer ?`
-    );
+    // Charger le tenant (depuis associatedTenants ou API)
+    let tenant = this.getTenant(contract.tenantId);
     
-    if (!confirmed) return;
-    
-    try {
-      this.isMarkingAsSigned.set(true);
-      console.log('🔄 Signature du contrat:', contract.id);
-      
-      const response = await firstValueFrom(
-        this.contractsApi.markAsSigned(contract.id, {
-          signedDate: new Date().toISOString()
-        })
-      );
-      
-      console.log('✅ Contrat signé avec succès:', response);
-      alert(`Contrat signé avec succès !\n${response.message}`);
-      
-      // Recharger les données
-      this.contractCreated.emit();
-      
-    } catch (error: any) {
-      console.error('❌ Erreur signature contrat:', error);
-      const errorMsg = error?.error?.message || 'Erreur lors de la signature du contrat';
-      alert(`Erreur : ${errorMsg}`);
-    } finally {
-      this.isMarkingAsSigned.set(false);
+    if (!tenant) {
+      console.log('⚠️ Tenant non trouvé dans associatedTenants, chargement depuis API...');
+      try {
+        tenant = await firstValueFrom(this.tenantsApi.getTenant(contract.tenantId));
+        console.log('✅ Tenant chargé:', tenant);
+      } catch (error) {
+        console.error('❌ Erreur chargement tenant:', error);
+        alert('Impossible de charger les informations du locataire.');
+        return;
+      }
     }
+    
+    this.contractToSign.set(contract);
+    this.tenantForSigning.set(tenant);
+    this.showMarkSignedModal.set(true);
+  }
+  
+  onMarkSignedSuccess() {
+    this.showMarkSignedModal.set(false);
+    this.contractToSign.set(null);
+    
+    // Recharger les données
+    console.log('✅ Contrat signé avec succès - rechargement données');
+    this.contractCreated.emit();
+  }
+  
+  onMarkSignedClose() {
+    this.showMarkSignedModal.set(false);
+    this.contractToSign.set(null);
+    this.tenantForSigning.set(null);
   }
   
   async sendForElectronicSignature(contract: Contract) {
@@ -250,7 +291,12 @@ export class PropertyContractsTab {
         contractId: contract.id,
         tenantId: contract.tenantId,
         propertyId: this.property().id,
-        contractType: 'Bail' as const
+        contractType: 'Bail' as const,
+        startDate: contract.startDate,
+        endDate: contract.endDate,
+        rent: contract.rent,
+        deposit: contract.deposit || null,
+        charges: contract.charges || null
       };
       
       const pdfBlob = await firstValueFrom(
@@ -369,9 +415,57 @@ export class PropertyContractsTab {
     // TODO: Open inventory creation
   }
   
+  async deleteContract(contract: Contract) {
+    if (this.isDeletingContract()) return;
+    
+    // Vérifier que le contrat est Draft ou Cancelled
+    if (contract.status !== 'Draft' && contract.status !== 'Cancelled') {
+      alert(`Impossible de supprimer un contrat avec le statut "${contract.status}". Seuls les contrats Draft ou Cancelled peuvent être supprimés.`);
+      return;
+    }
+    
+    const confirmed = confirm(
+      `Êtes-vous sûr de vouloir supprimer ce contrat ?\n\n` +
+      `Locataire : ${this.getTenantName(contract.tenantId)}\n` +
+      `Période : ${this.formatDate(contract.startDate)} - ${this.formatDate(contract.endDate)}\n\n` +
+      `Cette action est irréversible et supprimera également tous les paiements et documents associés.`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      this.isDeletingContract.set(true);
+      console.log('🗑️ Suppression contrat:', contract.id);
+      
+      const response = await firstValueFrom(
+        this.contractsApi.deleteContract(contract.id)
+      );
+      
+      console.log('✅ Contrat supprimé:', response);
+      alert(
+        `Contrat supprimé avec succès !\n\n` +
+        `Documents supprimés : ${response.deletedDocuments}\n` +
+        `Paiements supprimés : ${response.deletedPayments}`
+      );
+      
+      // Recharger les données
+      this.contractCreated.emit();
+    } catch (error: any) {
+      console.error('❌ Erreur suppression contrat:', error);
+      const errorMessage = error?.error?.message || 'Erreur lors de la suppression du contrat';
+      alert(errorMessage);
+    } finally {
+      this.isDeletingContract.set(false);
+    }
+  }
+  
   getTenantName(tenantId: string): string {
     const tenant = this.associatedTenants().find(t => t.id === tenantId);
     return tenant?.fullName || 'Locataire inconnu';
+  }
+  
+  getTenant(tenantId: string): TenantListItem | undefined {
+    return this.associatedTenants().find(t => t.id === tenantId);
   }
   
   formatDate(date: string | Date): string {

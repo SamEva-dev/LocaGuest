@@ -8,7 +8,23 @@ export interface GenerateContractRequest {
   tenantId: string;
   propertyId: string;
   contractType: 'Bail' | 'Avenant' | 'Colocation' | 'EtatDesLieuxEntree' | 'EtatDesLieuxSortie';
-  // Ajoutez d'autres champs si nécessaire selon votre DTO backend
+  // ✅ Champs obligatoires pour la génération
+  startDate: string | Date;
+  endDate: string | Date;
+  rent: number;
+  deposit?: number | null;
+  charges?: number | null;
+  additionalClauses?: string;
+  isThirdPartyLandlord?: boolean;
+  landlordInfo?: {
+    companyName?: string;
+    firstName?: string;
+    lastName?: string;
+    address?: string;
+    siret?: string;
+    email?: string;
+    phone?: string;
+  };
 }
 
 export interface SendForSignatureRequest {

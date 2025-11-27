@@ -36,6 +36,9 @@ export class TenantDetailTab {
   contracts = signal<Contract[]>([]);
   paymentStats = signal<TenantPaymentStats | null>(null);
   
+  // ✅ NOUVEAU: Stocker les infos du bien d'origine (si ouvert depuis une fiche bien)
+  fromProperty = signal<{ id: string; code: string; name: string } | null>(null);
+  
   // Pour gérer l'expansion des documents de contrat
   expandedContractId = signal<string | null>(null);
   
@@ -55,6 +58,14 @@ export class TenantDetailTab {
       if (tabData?.tenantId) {
         console.log('✅ Loading tenant:', tabData.tenantId);
         this.loadTenant(tabData.tenantId);
+        
+        // ✅ NOUVEAU: Récupérer les infos du bien d'origine si présentes
+        if (tabData.fromProperty) {
+          this.fromProperty.set(tabData.fromProperty);
+          console.log('✅ Opened from property:', tabData.fromProperty.name);
+        } else {
+          this.fromProperty.set(null);
+        }
       } else {
         console.warn('⚠️ No tenantId found in data');
       }

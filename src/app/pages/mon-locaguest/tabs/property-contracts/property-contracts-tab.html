@@ -15,9 +15,23 @@
     </div>
     
     <div class="flex gap-2">
+      <!-- ✅ Bouton EDL (si contrat Signé) -->
+      @if (shouldShowInventoryButton()) {
+        <button
+          (click)="createInventoryEntry(contracts()[0])"
+          class="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium hover:bg-orange-600 transition inline-flex items-center gap-2"
+        >
+          <i class="ph ph-clipboard-text text-lg"></i>
+          <span>Ajouter un état des lieux</span>
+        </button>
+      }
+      
+      <!-- ✅ Boutons grisés si bien occupé -->
       <button
+        [disabled]="!canCreateContract()"
         (click)="openPaperContractWizard()"
-        class="px-4 py-2 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition inline-flex items-center gap-2"
+        class="px-4 py-2 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-500"
+        [title]="!canCreateContract() ? disabledReason() : ''"
       >
         <i class="ph ph-note text-lg"></i>
         <span>Contrat papier</span>
@@ -26,8 +40,8 @@
       <button
         [disabled]="!canCreateContract()"
         (click)="openCreateContractWizard()"
-        class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        [title]="!canCreateContract() ? 'Bien déjà occupé (ou toutes les chambres sont louées)' : ''"
+        class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-500"
+        [title]="!canCreateContract() ? disabledReason() : ''"
       >
         <i class="ph ph-plus-circle text-lg"></i>
         <span>Nouveau contrat</span>
@@ -157,6 +171,18 @@
                   >
                     <i class="ph ph-pencil"></i>
                     Modifier
+                  </button>
+                  <button
+                    (click)="deleteContract(contract)"
+                    [disabled]="isDeletingContract()"
+                    class="px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/40 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    @if (isDeletingContract()) {
+                      <i class="ph ph-circle-notch animate-spin"></i>
+                    } @else {
+                      <i class="ph ph-trash"></i>
+                    }
+                    Supprimer
                   </button>
                 } @else if (contract.status === 'Pending') {
                   <!-- Pending: En attente signature - Upload PDF signé possible -->
@@ -427,5 +453,16 @@
     [existingContract]="selectedContract()"
     (close)="onWizardClose()"
     (success)="onWizardSuccess()"
+  />
+}
+
+<!-- ✅ NOUVEAU: Mark Signed Modal -->
+@if (showMarkSignedModal() && contractToSign() && tenantForSigning()) {
+  <mark-signed-modal
+    [contract]="contractToSign()!"
+    [tenant]="tenantForSigning()!"
+    [propertyId]="property().id"
+    (closed)="onMarkSignedClose()"
+    (success)="onMarkSignedSuccess()"
   />
 }

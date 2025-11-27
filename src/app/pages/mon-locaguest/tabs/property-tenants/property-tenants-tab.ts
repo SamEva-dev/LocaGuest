@@ -98,7 +98,14 @@ export class PropertyTenantsTab {
   // Actions
   openTenantDetail(tenant: TenantListItem) {
     if (!tenant.id) return;
-    this.tabManager.openTenant(tenant.id, tenant.fullName || 'Locataire');
+    // ✅ Passer les infos du bien pour afficher le badge d'association
+    this.tabManager.openTenant(tenant.id, tenant.fullName || 'Locataire', {
+      fromProperty: {
+        id: this.property().id,
+        code: this.property().code,
+        name: this.property().name
+      }
+    });
   }
   
   openContractDetail(contract: Contract) {

@@ -124,4 +124,8 @@ export class ContractsApi {
   markAsSigned(contractId: string, request?: MarkAsSignedRequest): Observable<{ message: string; id: string }> {
     return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/mark-signed`, request || {});
   }
+  
+  deleteContract(contractId: string): Observable<{ message: string; id: string; deletedPayments: number; deletedDocuments: number }> {
+    return this.http.delete<{ message: string; id: string; deletedPayments: number; deletedDocuments: number }>(`${this.baseUrl}/${contractId}`);
+  }
 }

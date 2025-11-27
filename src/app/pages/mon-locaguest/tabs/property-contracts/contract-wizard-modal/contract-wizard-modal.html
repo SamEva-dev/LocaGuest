@@ -5,16 +5,40 @@
     <!-- Header -->
     <div class="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-bold">
-          @if (mode() === 'paper') {
-            Ajouter un contrat papier
-          } @else {
-            Créer un nouveau contrat
-          }
-        </h2>
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold">
+            @if (mode() === 'paper') {
+              Ajouter un contrat papier
+            } @else {
+              Créer un nouveau contrat
+            }
+          </h2>
+          <!-- ✅ NOUVEAU: Informations du bien -->
+          <div class="flex items-center gap-3 mt-2 text-sm text-white/90">
+            <div class="flex items-center gap-1.5">
+              <i class="ph ph-house text-base"></i>
+              <span class="font-medium">{{ property().name }}</span>
+            </div>
+            <span class="text-white/50">•</span>
+            <span>{{ property().type }}</span>
+            @if (property().propertyUsageType) {
+              <span class="text-white/50">•</span>
+              <span class="px-2 py-0.5 bg-white/20 rounded text-xs font-medium">
+                {{ property().propertyUsageType }}
+              </span>
+            }
+            @if (isColocation() && property().totalRooms) {
+              <span class="text-white/50">•</span>
+              <span class="flex items-center gap-1">
+                <i class="ph ph-door text-sm"></i>
+                {{ availableRooms().length }} / {{ property().totalRooms }} chambres disponibles
+              </span>
+            }
+          </div>
+        </div>
         <button
           (click)="closeModal()"
-          class="w-8 h-8 rounded-lg hover:bg-white/20 transition flex items-center justify-center"
+          class="w-8 h-8 rounded-lg hover:bg-white/20 transition flex items-center justify-center flex-shrink-0"
         >
           <i class="ph ph-x text-2xl"></i>
         </button>
