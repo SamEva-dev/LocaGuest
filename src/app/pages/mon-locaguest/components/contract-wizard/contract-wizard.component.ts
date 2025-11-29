@@ -534,7 +534,7 @@ export class ContractWizardComponent {
     };
     
     console.log('📤 Sending payload:', JSON.stringify(payload, null, 2));
-    
+     console.log('🔍 Raw form data:', data);
     this.contractsApi.createContract(payload).subscribe({
       next: (response: any) => {
         console.log('✅ Contract created:', response);

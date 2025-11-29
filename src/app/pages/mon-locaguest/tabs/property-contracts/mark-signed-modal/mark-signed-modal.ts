@@ -1,5 +1,4 @@
 import { Component, input, output, signal, inject } from '@angular/core';
-import { NgClass } from '@angular/common';
 import { Contract } from '../../../../../core/api/properties.api';
 import { TenantListItem } from '../../../../../core/api/tenants.api';
 import { ContractsApi } from '../../../../../core/api/contracts.api';
@@ -11,7 +10,7 @@ type SignatureMethod = 'paper' | 'electronic';
 @Component({
   selector: 'mark-signed-modal',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './mark-signed-modal.html'
 })
 export class MarkSignedModal {

@@ -125,8 +125,15 @@ export class ContractWizardModal {
   uploadedFileName = signal<string>('');
   validationErrors = signal<string[]>([]);
   
-  // Options
-  contractTypes = ['Non meublé', 'Meublé', 'Colocation individuelle', 'Colocation solidaire'];
+  // Options - Filtrées selon le type de bien
+  contractTypes = computed(() => {
+    const usageType = this.property().propertyUsageType;
+    if (usageType === 'colocation') {
+      return ['Non meublé', 'Meublé', 'Colocation individuelle', 'Colocation solidaire'];
+    } else {
+      return ['Non meublé', 'Meublé'];
+    }
+  });
   durations = [6, 12, 36];
   paymentMethods = ['Virement', 'Stripe', 'Prélèvement'];
   inventoryOptions = [
@@ -177,18 +184,47 @@ export class ContractWizardModal {
   
   showTemplates = signal(false);
   
+  // Selected room for colocation
+  selectedRoom = computed(() => {
+    const roomId = this.form().roomId;
+    if (!roomId) return null;
+    return this.property().rooms?.find(r => r.id === roomId);
+  });
+  
   constructor() {
     // PHASE 2: Auto-complétion intelligente
     effect(() => {
       const prop = this.property();
       if (prop) {
         // Pré-remplir avec données du bien
+        if (prop.propertyUsageType === 'colocation') {
+          // Pour colocation, ne pas pré-remplir - attendre sélection chambre
+          this.form.update(f => ({
+            ...f,
+            type: 'Colocation individuelle'
+          }));
+        } else {
+          this.form.update(f => ({
+            ...f,
+            rent: prop.rent || 0,
+            charges: prop.charges || 0,
+            deposit: prop.rent || 0,
+            type: prop.isFurnished ? 'Meublé' : 'Non meublé'
+          }));
+        }
+      }
+    });
+    
+    // Auto-update financial info when room selected (colocation)
+    effect(() => {
+      const room = this.selectedRoom();
+      if (room) {
         this.form.update(f => ({
           ...f,
-          rent: prop.rent || 0,
-          charges: prop.charges || 0,
-          deposit: prop.rent || 0, // Auto: dépôt = 1 mois
-          type: prop.isFurnished ? 'Meublé' : 'Non meublé'
+          rent: room.rent || 0,
+          charges: room.charges || 0,
+          deposit: room.rent || 0, // Dépôt = 1 mois de loyer par défaut
+          room: room.name
         }));
       }
     });
@@ -260,6 +296,7 @@ export class ContractWizardModal {
   // ✅ Computed: Chambres disponibles (utilise prop.rooms si disponible)
   availableRooms = computed(() => {
     const prop = this.property();
+    console.log('prop', prop);
     if (!prop) {
       console.log('🚪 No property');
       return [];
@@ -270,29 +307,17 @@ export class ContractWizardModal {
       return [];
     }
     
-    // ✅ NOUVEAU: Utiliser les vraies chambres si disponibles
+    // ✅ CORRECTION #1: Utiliser uniquement les vraies chambres avec GUID
     if (prop.rooms && Array.isArray(prop.rooms)) {
       const available = prop.rooms.filter(r => r.status === 'Available');
       console.log('🚪 Real rooms available:', available.length, 'out of', prop.rooms.length, available);
       return available;
     }
     
-    // Fallback: générer des chambres fictives basées sur totalRooms/occupiedRooms
-    console.log('⚠️ No rooms array, generating generic room names');
-    const total = prop.totalRooms || 0;
-    const occupied = prop.occupiedRooms || 0;
-    const availableCount = Math.max(0, total - occupied);
-    
-    const rooms: any[] = [];
-    for (let i = 0; i < availableCount; i++) {
-      rooms.push({
-        id: `room-${i}`,
-        name: `Chambre ${occupied + i + 1}`,
-        status: 'Available'
-      });
-    }
-    console.log('🚪 Generated', rooms.length, 'generic rooms');
-    return rooms;
+    // ⚠️ IMPORTANT: Pas de chambres réelles disponibles
+    console.error('❌ No rooms array for colocation property! PropertyId:', prop.id);
+    console.error('💡 Please ensure PropertyRooms are loaded with the property.');
+    return [];
   });
   
   canGoNext = computed(() => {
@@ -449,13 +474,15 @@ export class ContractWizardModal {
       type: this.mapContractType(f.type!),
       startDate: f.startDate!,
       endDate: f.endDate!,
-      rent: f.rent!,
+      rent: f.rent || 0,
+      charges: f.charges || 0,
       deposit: f.deposit,
-      roomId: f.roomId, // ✅ NOUVEAU: Inclure roomId pour colocation
+      roomId: f.roomId, // ✅ FIX #4: Include roomId for colocation
       notes: this.buildContractNotes(f)
     };
     
     console.log('📤 Sending contract request:', request);
+         console.log('🔍 Raw form f:', f);
     
     // Appel API
     this.contractsApi.createContract(request).subscribe({
