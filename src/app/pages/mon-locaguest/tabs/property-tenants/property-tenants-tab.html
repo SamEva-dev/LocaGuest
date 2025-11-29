@@ -242,7 +242,7 @@
                   }
                   
                   <!-- Badge Colocation Solidaire -->
-                  @if (isColocation() && property().propertyUsageType?.toLowerCase()?.includes('solidaire')) {
+                  @if (isColocation() && property().propertyUsageType.toLowerCase().includes('solidaire')) {
                     <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 text-xs font-medium">
                       <i class="ph ph-users-three"></i>
                       <span>Bail solidaire</span>

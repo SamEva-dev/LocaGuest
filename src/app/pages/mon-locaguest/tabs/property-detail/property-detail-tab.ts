@@ -1,5 +1,5 @@
 import { Component, input, signal, inject, effect, viewChild } from '@angular/core';
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
@@ -16,7 +16,7 @@ import { PropertyContractsTab } from '../property-contracts/property-contracts-t
 @Component({
   selector: 'property-detail-tab',
   standalone: true,
-  imports: [NgClass, TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal, PropertyInfoTab, PropertyTenantsTab, PropertyContractsTab],
+  imports: [TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal, PropertyInfoTab, PropertyTenantsTab, PropertyContractsTab],
   templateUrl: './property-detail-tab.html'
 })
 export class PropertyDetailTab {

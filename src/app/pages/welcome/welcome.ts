@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'welcome',
-  imports: [RouterOutlet,TranslatePipe],
+  imports: [RouterOutlet],
   templateUrl: './welcome.html',
   styleUrl: './welcome.scss'
 })

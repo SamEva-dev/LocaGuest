@@ -136,7 +136,7 @@ export class PropertyTenantsTab {
   });
   
   isColocation = computed(() => {
-    return this.property()?.propertyUsageType?.toLowerCase() === 'colocation';
+    return this.property()?.propertyUsageType.toLowerCase() === 'colocation';
   });
   
   hasActiveTenants = computed(() => {

@@ -1,6 +1,5 @@
 import { Component, input, output, signal, computed, inject } from '@angular/core';
-import { DatePipe, NgClass } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { NgClass } from '@angular/common';
 import { PropertyDetail, Contract } from '../../../../core/api/properties.api';
 import { TenantListItem, TenantsApi } from '../../../../core/api/tenants.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
@@ -13,7 +12,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'property-contracts-tab',
   standalone: true,
-  imports: [NgClass, DatePipe, TranslatePipe, ContractWizardModal, MarkSignedModal],
+  imports: [NgClass, ContractWizardModal, MarkSignedModal],
   templateUrl: './property-contracts-tab.html'
 })
 export class PropertyContractsTab {

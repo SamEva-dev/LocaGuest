@@ -1,6 +1,5 @@
 import { Component, inject, signal, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 import { AnalyticsService } from '../../../../core/services/analytics.service';
 import { ProfitabilityStats, RevenueEvolution, PropertyPerformance } from '../../../../core/api/analytics.api';
@@ -10,7 +9,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'profitability-tab',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule],
   templateUrl: './profitability-tab.html'
 })
 export class ProfitabilityTab implements OnInit, AfterViewInit {
