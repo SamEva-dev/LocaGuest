@@ -32,7 +32,8 @@ interface ContractForm {
   // Étape 1 - Locataire
   tenantId: string;
   tenantName?: string;
-  room?: string; // Pour colocation
+  room?: string; // Pour colocation (nom affiché)
+  roomId?: string; // ✅ NOUVEAU: ID de la chambre pour colocation
   
   // Étape 2 - Bail
   startDate: string;
@@ -248,23 +249,49 @@ export class ContractWizardModal {
     });
   }
   
-  // Computed
+  // ✅ Computed: Détection colocation
   isColocation = computed(() => {
-    return this.property()?.propertyUsageType?.toLowerCase() === 'colocation';
+    const prop = this.property();
+    const usageType = prop?.propertyUsageType?.toLowerCase();
+    console.log('🏠 isColocation check:', { usageType, propertyId: prop?.id, hasRooms: !!prop?.rooms });
+    return usageType === 'colocation';
   });
   
+  // ✅ Computed: Chambres disponibles (utilise prop.rooms si disponible)
   availableRooms = computed(() => {
     const prop = this.property();
-    if (!prop || !this.isColocation()) return [];
+    if (!prop) {
+      console.log('🚪 No property');
+      return [];
+    }
     
+    if (!this.isColocation()) {
+      console.log('🚪 Not a colocation');
+      return [];
+    }
+    
+    // ✅ NOUVEAU: Utiliser les vraies chambres si disponibles
+    if (prop.rooms && Array.isArray(prop.rooms)) {
+      const available = prop.rooms.filter(r => r.status === 'Available');
+      console.log('🚪 Real rooms available:', available.length, 'out of', prop.rooms.length, available);
+      return available;
+    }
+    
+    // Fallback: générer des chambres fictives basées sur totalRooms/occupiedRooms
+    console.log('⚠️ No rooms array, generating generic room names');
     const total = prop.totalRooms || 0;
     const occupied = prop.occupiedRooms || 0;
-    const available = Math.max(0, total - occupied);
+    const availableCount = Math.max(0, total - occupied);
     
-    const rooms: string[] = [];
-    for (let i = 0; i < available; i++) {
-      rooms.push(`Chambre ${occupied + i + 1}`);
+    const rooms: any[] = [];
+    for (let i = 0; i < availableCount; i++) {
+      rooms.push({
+        id: `room-${i}`,
+        name: `Chambre ${occupied + i + 1}`,
+        status: 'Available'
+      });
     }
+    console.log('🚪 Generated', rooms.length, 'generic rooms');
     return rooms;
   });
   
@@ -424,8 +451,11 @@ export class ContractWizardModal {
       endDate: f.endDate!,
       rent: f.rent!,
       deposit: f.deposit,
+      roomId: f.roomId, // ✅ NOUVEAU: Inclure roomId pour colocation
       notes: this.buildContractNotes(f)
     };
+    
+    console.log('📤 Sending contract request:', request);
     
     // Appel API
     this.contractsApi.createContract(request).subscribe({
@@ -519,9 +549,15 @@ export class ContractWizardModal {
         if (!f.tenantId) {
           errors.push('Veuillez sélectionner un locataire');
         }
-        // TODO: Vérifier que le locataire n'a pas de bail actif
-        if (this.isColocation() && !f.room) {
-          errors.push('Veuillez sélectionner une chambre');
+        // ✅ Validation chambre pour colocation
+        if (this.isColocation()) {
+          console.log('🚪 Colocation validation - roomId:', f.roomId, 'Available rooms:', this.availableRooms().length);
+          if (!f.roomId) {
+            errors.push('Veuillez sélectionner une chambre');
+          }
+          if (this.availableRooms().length === 0) {
+            errors.push('Aucune chambre disponible pour ce bien');
+          }
         }
         break;
         

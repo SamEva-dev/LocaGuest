@@ -77,12 +77,35 @@
             <div class="absolute top-3 right-3 px-3 py-1 bg-black/70 text-white text-sm rounded-full">
               {{ currentImageIndex() + 1 }} / {{ totalImages() }}
             </div>
+            
+            <!-- Delete Current Image Button -->
+            <button 
+              (click)="deleteImage(currentImageIndex())"
+              class="absolute top-3 left-3 w-10 h-10 bg-red-500/80 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition"
+              title="Supprimer cette photo">
+              <i class="ph ph-trash text-lg"></i>
+            </button>
           } @else {
             <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
               <i class="ph ph-image text-6xl mb-2"></i>
               <p class="text-sm">Aucune photo</p>
             </div>
           }
+          
+          <!-- ✅ Add Photos Button (Always visible) -->
+          <button 
+            (click)="triggerImageUpload()"
+            [disabled]="isUploadingImages()"
+            class="absolute bottom-3 left-3 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:shadow-lg text-white rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Ajouter des photos">
+            @if (isUploadingImages()) {
+              <i class="ph ph-circle-notch animate-spin"></i>
+              <span class="text-sm">Upload...</span>
+            } @else {
+              <i class="ph ph-camera-plus text-lg"></i>
+              <span class="text-sm">Ajouter photos</span>
+            }
+          </button>
         </div>
 
         <!-- Quick Stats -->
@@ -404,14 +427,20 @@
                 <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">€</span>
               </div>
             } @else {
-              <p class="text-2xl font-bold text-emerald-600">{{ property().rent | number:'1.2-2' }} €</p>
+              <p class="text-2xl font-bold text-emerald-600">
+                @if (property().rent > 0) {
+                  {{ property().rent | number:'1.2-2' }} €
+                } @else {
+                  <span class="text-orange-500 text-sm">Non renseigné</span>
+                }
+              </p>
             }
           </div>
 
           <!-- Charges -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Charges
+              Charges récupérables
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -441,6 +470,447 @@
               </div>
             } @else {
               <p class="text-xl font-semibold text-slate-900 dark:text-white">{{ property().deposit || 0 | number:'1.2-2' }} €</p>
+            }
+          </div>
+
+          <!-- Property Tax -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Taxe foncière (annuelle)
+            </label>
+            @if (isEditing()) {
+              <div class="relative">
+                <input 
+                  type="number"
+                  [(ngModel)]="editForm()!.propertyTax"
+                  class="w-full pl-6 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">€</span>
+              </div>
+            } @else {
+              <p class="text-lg font-semibold text-slate-900 dark:text-white">
+                @if (property().propertyTax) {
+                  {{ property().propertyTax | number:'1.2-2' }} €
+                } @else {
+                  <span class="text-sm text-slate-400">N/A</span>
+                }
+              </p>
+            }
+          </div>
+
+          <!-- Condominium Charges -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Charges copropriété (annuelles)
+            </label>
+            @if (isEditing()) {
+              <div class="relative">
+                <input 
+                  type="number"
+                  [(ngModel)]="editForm()!.condominiumCharges"
+                  class="w-full pl-6 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">€</span>
+              </div>
+            } @else {
+              <p class="text-lg font-semibold text-slate-900 dark:text-white">
+                @if (property().condominiumCharges) {
+                  {{ property().condominiumCharges | number:'1.2-2' }} €
+                } @else {
+                  <span class="text-sm text-slate-400">N/A</span>
+                }
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnostics Card -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <i class="ph ph-certificate text-amber-500"></i>
+          Diagnostics obligatoires
+        </h3>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- DPE -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              DPE (Diagnostic de Performance Énergétique)
+            </label>
+            @if (isEditing()) {
+              <div class="space-y-2">
+                <select 
+                  [(ngModel)]="editForm()!.dpeRating"
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm">
+                  <option value="">Non renseigné</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                </select>
+                <input 
+                  type="number"
+                  [(ngModel)]="editForm()!.dpeValue"
+                  placeholder="kWh/m²/an"
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
+              </div>
+            } @else {
+              @if (property().dpeRating) {
+                <div class="flex items-center gap-3">
+                  <span [class]="'inline-flex items-center justify-center w-12 h-12 rounded-lg font-bold text-white text-xl ' + getDpeColor(property().dpeRating)">
+                    {{ property().dpeRating }}
+                  </span>
+                  @if (property().dpeValue) {
+                    <div class="text-sm">
+                      <p class="font-semibold text-slate-900 dark:text-white">{{ property().dpeValue }} kWh/m²/an</p>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
+                  <i class="ph ph-warning-circle mr-1"></i>
+                  Non renseigné
+                </div>
+              }
+            }
+          </div>
+
+          <!-- GES -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              GES (Gaz à Effet de Serre)
+            </label>
+            @if (isEditing()) {
+              <select 
+                [(ngModel)]="editForm()!.gesRating"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm">
+                <option value="">Non renseigné</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+              </select>
+            } @else {
+              @if (property().gesRating) {
+                <span [class]="'inline-flex items-center justify-center w-12 h-12 rounded-lg font-bold text-white text-xl ' + getGesColor(property().gesRating)">
+                  {{ property().gesRating }}
+                </span>
+              } @else {
+                <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
+                  <i class="ph ph-warning-circle mr-1"></i>
+                  Non renseigné
+                </div>
+              }
+            }
+          </div>
+
+          <!-- Electric Diagnostic -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Diagnostic Électricité
+            </label>
+            @if (isEditing()) {
+              <div class="space-y-2">
+                <input 
+                  type="date"
+                  [(ngModel)]="editForm()!.electricDiagnosticDate"
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
+                <input 
+                  type="date"
+                  [(ngModel)]="editForm()!.electricDiagnosticExpiry"
+                  placeholder="Date d'expiration"
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
+              </div>
+            } @else {
+              @if (property().electricDiagnosticDate) {
+                <div class="text-sm space-y-1">
+                  <p class="text-slate-600 dark:text-slate-400">
+                    Réalisé le: <span class="font-medium text-slate-900 dark:text-white">{{ property().electricDiagnosticDate | date:'dd/MM/yyyy' }}</span>
+                  </p>
+                  @if (property().electricDiagnosticExpiry) {
+                    <p [class]="isDiagnosticExpired(property().electricDiagnosticExpiry) ? 'text-red-600' : 'text-slate-600 dark:text-slate-400'">
+                      Expire le: <span class="font-medium">{{ property().electricDiagnosticExpiry | date:'dd/MM/yyyy' }}</span>
+                    </p>
+                  }
+                </div>
+              } @else {
+                <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
+                  Non renseigné
+                </div>
+              }
+            }
+          </div>
+
+          <!-- Gas Diagnostic -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Diagnostic Gaz
+            </label>
+            @if (isEditing()) {
+              <div class="space-y-2">
+                <input 
+                  type="date"
+                  [(ngModel)]="editForm()!.gasDiagnosticDate"
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
+                <input 
+                  type="date"
+                  [(ngModel)]="editForm()!.gasDiagnosticExpiry"
+                  placeholder="Date d'expiration"
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
+              </div>
+            } @else {
+              @if (property().gasDiagnosticDate) {
+                <div class="text-sm space-y-1">
+                  <p class="text-slate-600 dark:text-slate-400">
+                    Réalisé le: <span class="font-medium text-slate-900 dark:text-white">{{ property().gasDiagnosticDate | date:'dd/MM/yyyy' }}</span>
+                  </p>
+                  @if (property().gasDiagnosticExpiry) {
+                    <p [class]="isDiagnosticExpired(property().gasDiagnosticExpiry) ? 'text-red-600' : 'text-slate-600 dark:text-slate-400'">
+                      Expire le: <span class="font-medium">{{ property().gasDiagnosticExpiry | date:'dd/MM/yyyy' }}</span>
+                    </p>
+                  }
+                </div>
+              } @else {
+                <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
+                  Non renseigné
+                </div>
+              }
+            }
+          </div>
+
+          <!-- Asbestos -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Amiante
+            </label>
+            @if (isEditing()) {
+              <div class="space-y-2">
+                <select 
+                  [(ngModel)]="editForm()!.hasAsbestos"
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm">
+                  <option [ngValue]="null">Non renseigné</option>
+                  <option [ngValue]="false">Absent</option>
+                  <option [ngValue]="true">Présent</option>
+                </select>
+                @if (editForm()!.hasAsbestos) {
+                  <input 
+                    type="date"
+                    [(ngModel)]="editForm()!.asbestosDiagnosticDate"
+                    placeholder="Date diagnostic"
+                    class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
+                }
+              </div>
+            } @else {
+              @if (property().hasAsbestos !== null && property().hasAsbestos !== undefined) {
+                <div class="flex items-center gap-2">
+                  @if (property().hasAsbestos) {
+                    <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                      <i class="ph ph-warning-circle mr-1"></i>
+                      Présent
+                    </span>
+                  } @else {
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
+                      <i class="ph ph-check-circle mr-1"></i>
+                      Absent
+                    </span>
+                  }
+                </div>
+                @if (property().hasAsbestos && property().asbestosDiagnosticDate) {
+                  <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                    Diagnostic: {{ property().asbestosDiagnosticDate | date:'dd/MM/yyyy' }}
+                  </p>
+                }
+              } @else {
+                <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
+                  Non renseigné
+                </div>
+              }
+            }
+          </div>
+
+          <!-- ERP -->
+          <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              ERP (État des Risques)
+            </label>
+            @if (isEditing()) {
+              <input 
+                type="text"
+                [(ngModel)]="editForm()!.erpZone"
+                placeholder="Zone de risques"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
+            } @else {
+              @if (property().erpZone) {
+                <p class="text-sm font-medium text-slate-900 dark:text-white">{{ property().erpZone }}</p>
+              } @else {
+                <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
+                  Non renseigné
+                </div>
+              }
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Colocation Info Card (Only if isColocation) -->
+      @if (isColocation()) {
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <i class="ph ph-users-three text-amber-500"></i>
+            Informations colocation
+          </h3>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <!-- Stats -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres totales</span>
+                <span class="text-2xl font-bold text-blue-600">{{ property().totalRooms || 0 }}</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres occupées</span>
+                <span class="text-2xl font-bold text-emerald-600">{{ property().occupiedRooms || 0 }}</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres disponibles</span>
+                <span class="text-2xl font-bold text-slate-600">{{ (property().totalRooms || 0) - (property().occupiedRooms || 0) }}</span>
+              </div>
+            </div>
+
+            <!-- Progress visualization -->
+            <div class="flex flex-col justify-center">
+              <div class="mb-2">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Taux d'occupation</span>
+              </div>
+              <div class="relative">
+                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-8 overflow-hidden">
+                  <div 
+                    class="bg-gradient-to-r from-blue-500 to-emerald-500 h-full flex items-center justify-center text-white font-bold text-sm transition-all duration-300"
+                    [style.width.%]="getOccupancyRate()">
+                    {{ getOccupancyRate() | number:'1.0-0' }}%
+                  </div>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">
+                @if (getOccupancyRate() === 100) {
+                  Colocation complètement occupée
+                } @else if (getOccupancyRate() === 0) {
+                  Aucune chambre occupée
+                } @else {
+                  {{ property().occupiedRooms }} sur {{ property().totalRooms }} chambres occupées
+                }
+              </p>
+            </div>
+          </div>
+
+          @if (!property().totalRooms || property().totalRooms === 0) {
+            <div class="mt-4 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+              <p class="text-sm text-orange-800 dark:text-orange-200">
+                <i class="ph ph-warning mr-1"></i>
+                <strong>Attention:</strong> Le nombre total de chambres n'est pas renseigné. Veuillez compléter cette information.
+              </p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Administrative Info Card -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <i class="ph ph-file-text text-amber-500"></i>
+          Informations administratives
+        </h3>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <!-- Cadastral Reference -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Référence cadastrale
+            </label>
+            @if (isEditing()) {
+              <input 
+                type="text"
+                [(ngModel)]="editForm()!.cadastralReference"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+            } @else {
+              <p class="text-slate-900 dark:text-white font-mono text-sm">
+                @if (property().cadastralReference) {
+                  {{ property().cadastralReference }}
+                } @else {
+                  <span class="text-slate-400">Non renseignée</span>
+                }
+              </p>
+            }
+          </div>
+
+          <!-- Lot Number -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Numéro de lot
+            </label>
+            @if (isEditing()) {
+              <input 
+                type="text"
+                [(ngModel)]="editForm()!.lotNumber"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+            } @else {
+              <p class="text-slate-900 dark:text-white">
+                @if (property().lotNumber) {
+                  {{ property().lotNumber }}
+                } @else {
+                  <span class="text-slate-400">Non renseigné</span>
+                }
+              </p>
+            }
+          </div>
+
+          <!-- Acquisition Date -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Date d'acquisition
+            </label>
+            @if (isEditing()) {
+              <input 
+                type="date"
+                [(ngModel)]="editForm()!.acquisitionDate"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+            } @else {
+              <p class="text-slate-900 dark:text-white">
+                @if (property().acquisitionDate) {
+                  {{ property().acquisitionDate | date:'dd/MM/yyyy' }}
+                } @else {
+                  <span class="text-slate-400">Non renseignée</span>
+                }
+              </p>
+            }
+          </div>
+
+          <!-- Total Works Amount -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              Montant total travaux réalisés
+            </label>
+            @if (isEditing()) {
+              <div class="relative">
+                <input 
+                  type="number"
+                  [(ngModel)]="editForm()!.totalWorksAmount"
+                  class="w-full pl-6 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
+                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400">€</span>
+              </div>
+            } @else {
+              <p class="text-slate-900 dark:text-white font-semibold">
+                @if (property().totalWorksAmount) {
+                  {{ property().totalWorksAmount | number:'1.2-2' }} €
+                } @else {
+                  <span class="text-slate-400 font-normal">Non renseigné</span>
+                }
+              </p>
             }
           </div>
         </div>

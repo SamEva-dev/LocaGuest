@@ -43,6 +43,53 @@ export interface PropertyDetail extends PropertyListItem {
   minimumStay?: number;  // Durée minimum de séjour en jours
   maximumStay?: number;  // Durée maximum de séjour en jours
   pricePerNight?: number;  // Prix par nuit pour Airbnb
+  
+  // Diagnostics obligatoires
+  dpeRating?: string;  // A, B, C, D, E, F, G
+  dpeValue?: number;  // kWh/m²/an
+  gesRating?: string;  // A, B, C, D, E, F, G
+  electricDiagnosticDate?: Date;
+  electricDiagnosticExpiry?: Date;
+  gasDiagnosticDate?: Date;
+  gasDiagnosticExpiry?: Date;
+  hasAsbestos?: boolean;
+  asbestosDiagnosticDate?: Date;
+  erpZone?: string;  // Zone de risques (ERP)
+  
+  // Informations financières complémentaires
+  propertyTax?: number;  // Taxe foncière annuelle
+  condominiumCharges?: number;  // Charges de copropriété annuelles
+  
+  // Informations administratives
+  cadastralReference?: string;  // Référence cadastrale
+  lotNumber?: string;  // Numéro de lot
+  acquisitionDate?: Date;  // Date d'acquisition
+  totalWorksAmount?: number;  // Montant total des travaux réalisés
+  
+  // ✅ NOUVEAU: Chambres pour les colocations
+  rooms?: PropertyRoom[];
+}
+
+// ✅ NOUVEAU: Interface pour une chambre de colocation
+export interface PropertyRoom {
+  id: string;
+  propertyId: string;
+  name: string;
+  surface?: number;
+  rent: number;
+  charges?: number;
+  description?: string;
+  status: 'Available' | 'Reserved' | 'Occupied';
+  currentContractId?: string;
+}
+
+// ✅ NOUVEAU: Interface pour créer une chambre
+export interface CreatePropertyRoom {
+  name: string;
+  surface?: number;
+  rent: number;
+  charges?: number;
+  description?: string;
 }
 
 export interface Payment {
@@ -70,6 +117,21 @@ export interface Contract {
   roomId?: string;          // ✅ NOUVEAU - Pour colocation individuelle
   isConflict: boolean;      // ✅ NOUVEAU - Marqueur conflit
   paymentsCount?: number;
+  
+  // Informations administratives
+  contractType?: string;    // Meublé, Vide, Étudiant, Mobilité, etc.
+  noticeEndDate?: Date;     // Date de fin du préavis si congé donné
+  
+  // Informations financières
+  lastPaymentDate?: Date;
+  lastPaymentAmount?: number;
+  totalArrears?: number;    // Montant total en retard
+  rentDueThisMonth?: number; // Loyer dû ce mois-ci
+  paymentMethod?: string;   // Virement, Prélèvement, Carte, Espèces
+  
+  // État des lieux
+  hasInventoryEntry?: boolean;  // EDL entrée réalisé
+  hasInventoryExit?: boolean;   // EDL sortie réalisé
 }
 
 export interface FinancialSummary {
@@ -119,6 +181,7 @@ export interface CreatePropertyDto {
   propertyUsageType: PropertyUsageType;
   // Pour les colocations
   totalRooms?: number;
+  rooms?: CreatePropertyRoom[];  // ✅ NOUVEAU: Liste des chambres pour colocation
   // Pour Airbnb
   minimumStay?: number;
   maximumStay?: number;

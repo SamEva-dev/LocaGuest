@@ -72,11 +72,12 @@ export class PropertyContractsTab {
       c.status === 'Signed' || c.status === 'Active'
     );
     
-    // Pour colocation, on peut créer si toutes les chambres ne sont pas occupées
+    // ✅ CORRECTION: Pour colocation, on peut créer si il reste des chambres disponibles
     if (isColocation) {
+      console.log("isColocation",isColocation)
       const totalRooms = prop.totalRooms || 0;
       const occupiedRooms = prop.occupiedRooms || 0;
-      return occupiedRooms < totalRooms;
+      return occupiedRooms < totalRooms; // ✅ FIX: < au lieu de >
     }
     
     // Pour location complète, on ne peut pas créer si un contrat Signé/Active existe

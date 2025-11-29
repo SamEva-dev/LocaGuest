@@ -1,14 +1,13 @@
 import { Component, input, signal, computed, inject, output } from '@angular/core';
-import { NgClass, DecimalPipe } from '@angular/common';
+import { DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
 import { PropertyDetail, UpdatePropertyDto } from '../../../../core/api/properties.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 
 @Component({
   selector: 'property-info-tab',
   standalone: true,
-  imports: [NgClass, TranslatePipe, FormsModule, DecimalPipe],
+  imports: [FormsModule, DecimalPipe, DatePipe],
   templateUrl: './property-info-tab.html'
 })
 export class PropertyInfoTab {
@@ -19,6 +18,7 @@ export class PropertyInfoTab {
   // UI States
   isEditing = signal(false);
   isSaving = signal(false);
+  isUploadingImages = signal(false);
   currentImageIndex = signal(0);
   showStatusDropdown = signal(false);
 
@@ -155,6 +155,98 @@ export class PropertyInfoTab {
     this.currentImageIndex.set(index);
   }
 
+  // ✅ Upload Images
+  triggerImageUpload() {
+    // Create invisible file input
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.multiple = true;
+    
+    input.onchange = (e: any) => {
+      const files: FileList = e.target?.files;
+      if (!files || files.length === 0) return;
+      
+      this.uploadImages(files);
+    };
+    
+    input.click();
+  }
+
+  uploadImages(files: FileList) {
+    const prop = this.property();
+    if (!prop) return;
+
+    this.isUploadingImages.set(true);
+
+    // TODO: Implement actual upload to backend
+    // For now, we'll simulate with local file URLs
+    const fileArray = Array.from(files);
+    const newImageUrls: string[] = [];
+
+    let processed = 0;
+    fileArray.forEach((file, index) => {
+      const reader = new FileReader();
+      
+      reader.onload = (e: any) => {
+        newImageUrls.push(e.target.result);
+        processed++;
+        
+        if (processed === fileArray.length) {
+          // All files processed
+          const currentImages = this.property().imageUrls || [];
+          const updatedImages = [...currentImages, ...newImageUrls];
+          
+          // Update property with new images (cast as any for now - imageUrls not in UpdatePropertyDto yet)
+          this.propertiesService.updateProperty(prop.id, { 
+            imageUrls: updatedImages 
+          } as any).subscribe({
+            next: () => {
+              console.log('✅ Images uploaded successfully');
+              this.isUploadingImages.set(false);
+              this.propertyUpdated.emit();
+              alert(`${fileArray.length} photo(s) ajoutée(s) avec succès!`);
+            },
+            error: (err) => {
+              console.error('❌ Error uploading images:', err);
+              alert('Erreur lors de l\'upload des photos');
+              this.isUploadingImages.set(false);
+            }
+          });
+        }
+      };
+      
+      reader.readAsDataURL(file);
+    });
+  }
+
+  deleteImage(index: number) {
+    const prop = this.property();
+    if (!prop) return;
+
+    if (!confirm('Voulez-vous vraiment supprimer cette photo ?')) return;
+
+    const currentImages = [...(prop.imageUrls || [])];
+    currentImages.splice(index, 1);
+
+    // Cast as any for now - imageUrls not in UpdatePropertyDto yet
+    this.propertiesService.updateProperty(prop.id, { 
+      imageUrls: currentImages 
+    } as any).subscribe({
+      next: () => {
+        console.log('✅ Image deleted successfully');
+        if (this.currentImageIndex() >= currentImages.length && currentImages.length > 0) {
+          this.currentImageIndex.set(currentImages.length - 1);
+        }
+        this.propertyUpdated.emit();
+      },
+      error: (err) => {
+        console.error('❌ Error deleting image:', err);
+        alert('Erreur lors de la suppression de la photo');
+      }
+    });
+  }
+
   // Helpers
   getUsageTypeLabel(type?: string): string {
     switch(type?.toLowerCase()) {
@@ -181,5 +273,82 @@ export class PropertyInfoTab {
       case 'airbnb': return 'purple';
       default: return 'slate';
     }
+  }
+
+  // Colocation helpers
+  isColocation = computed(() => {
+    const usageType = this.property()?.propertyUsageType?.toLowerCase();
+    return usageType === 'colocation' || usageType === 'colocationindividual' || usageType === 'colocationsolidaire';
+  });
+
+  getOccupancyRate(): number {
+    const prop = this.property();
+    if (!prop || !prop.totalRooms || prop.totalRooms === 0) return 0;
+    return ((prop.occupiedRooms || 0) / prop.totalRooms) * 100;
+  }
+
+  // Diagnostics helpers
+  getDpeColor(rating?: string): string {
+    if (!rating) return 'bg-slate-400';
+    switch(rating.toUpperCase()) {
+      case 'A': return 'bg-emerald-500';
+      case 'B': return 'bg-green-500';
+      case 'C': return 'bg-lime-500';
+      case 'D': return 'bg-yellow-500';
+      case 'E': return 'bg-orange-500';
+      case 'F': return 'bg-red-500';
+      case 'G': return 'bg-red-700';
+      default: return 'bg-slate-400';
+    }
+  }
+
+  getGesColor(rating?: string): string {
+    if (!rating) return 'bg-slate-400';
+    switch(rating.toUpperCase()) {
+      case 'A': return 'bg-purple-500';
+      case 'B': return 'bg-indigo-500';
+      case 'C': return 'bg-blue-500';
+      case 'D': return 'bg-cyan-500';
+      case 'E': return 'bg-orange-500';
+      case 'F': return 'bg-red-500';
+      case 'G': return 'bg-red-700';
+      default: return 'bg-slate-400';
+    }
+  }
+
+  isDiagnosticExpired(expiryDate: Date | undefined): boolean {
+    if (!expiryDate) return false;
+    const expiry = new Date(expiryDate);
+    const today = new Date();
+    return expiry < today;
+  }
+
+  // Validation helpers
+  isMissingCriticalInfo(): boolean {
+    const prop = this.property();
+    if (!prop) return true;
+    
+    return !prop.name || 
+           !prop.type || 
+           !prop.propertyUsageType || 
+           !prop.surface || prop.surface <= 0 ||
+           !prop.address ||
+           !prop.rent || prop.rent <= 0;
+  }
+
+  getMissingFields(): string[] {
+    const prop = this.property();
+    const missing: string[] = [];
+    
+    if (!prop) return ['Toutes les informations'];
+    if (!prop.name) missing.push('Nom du bien');
+    if (!prop.type) missing.push('Type de bien');
+    if (!prop.propertyUsageType) missing.push('Usage locatif');
+    if (!prop.surface || prop.surface <= 0) missing.push('Surface');
+    if (!prop.address) missing.push('Adresse');
+    if (!prop.rent || prop.rent <= 0) missing.push('Loyer de référence');
+    if (!prop.dpeRating) missing.push('DPE');
+    
+    return missing;
   }
 }

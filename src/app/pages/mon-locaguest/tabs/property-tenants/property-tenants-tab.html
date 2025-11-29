@@ -40,8 +40,8 @@
                   </div>
                   
                   <div class="flex-1 min-w-0">
-                    <!-- Nom + Code -->
-                    <div class="flex items-center gap-2 mb-2">
+                    <!-- Nom + Code + Badge Paiement -->
+                    <div class="flex items-center gap-2 mb-2 flex-wrap">
                       <h3 
                         (click)="openTenantDetail(item.tenant)"
                         class="text-lg font-bold text-slate-900 dark:text-white cursor-pointer hover:text-emerald-600 dark:hover:text-emerald-400 transition truncate"
@@ -51,28 +51,76 @@
                       <span class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">
                         {{ item.tenant.code }}
                       </span>
+                      
+                      <!-- ✅ NOUVEAU - Badge Paiement -->
+                      <span 
+                        [class]="'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-' + item.paymentStatus.color + '-50 dark:bg-' + item.paymentStatus.color + '-900/20 text-' + item.paymentStatus.color + '-700 dark:text-' + item.paymentStatus.color + '-300'"
+                      >
+                        <i [class]="item.paymentStatus.icon + ' text-sm'"></i>
+                        <span>{{ item.paymentStatus.label }}</span>
+                        @if (item.paymentStatus.daysInfo) {
+                          <span class="font-mono">{{ item.paymentStatus.daysInfo }}</span>
+                        }
+                      </span>
                     </div>
                     
-                    <!-- Status Badge -->
-                    @if (item.isFutureOccupant) {
-                      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium">
-                        <i class="ph ph-calendar-check text-lg"></i>
-                        <span>Futur occupant · Arrive le {{ item.arrivalDate }}</span>
-                      </div>
-                    } @else {
-                      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium">
-                        <i class="ph ph-check-circle text-lg"></i>
-                        <span>Occupant actuel</span>
-                      </div>
-                    }
+                    <!-- Status Badge + Type de contrat -->
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                      @if (item.isFutureOccupant) {
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium">
+                          <i class="ph ph-calendar-check text-lg"></i>
+                          <span>Futur occupant · Arrive le {{ item.arrivalDate }}</span>
+                        </div>
+                      } @else if (item.isInNotice) {
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm font-medium">
+                          <i class="ph ph-sign-out text-lg"></i>
+                          <span>En préavis · {{ item.noticeEndLabel }}</span>
+                        </div>
+                      } @else {
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium">
+                          <i class="ph ph-check-circle text-lg"></i>
+                          <span>Occupant actuel</span>
+                        </div>
+                      }
+                      
+                      @if (item.contractTypeLabel) {
+                        <span class="px-2.5 py-1 rounded-md bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 text-xs font-medium">
+                          {{ item.contractTypeLabel }}
+                        </span>
+                      }
+                    </div>
+                    
+                    <!-- Statut dossier avec détails -->
+                    <div class="flex flex-col gap-1 text-xs">
+                      @if (item.fileStatusColor === 'emerald') {
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 w-fit">
+                          <i class="ph ph-check-circle"></i>
+                          <span class="font-medium">Dossier {{ item.fileStatusLabel }}</span>
+                        </span>
+                      } @else if (item.fileStatusColor === 'red') {
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 w-fit">
+                          <i class="ph ph-x-circle"></i>
+                          <span class="font-medium">Dossier {{ item.fileStatusLabel }}</span>
+                        </span>
+                        <!-- ✅ Liste des éléments manquants -->
+                        @if (getFileStatus(item.tenant, item.contract).details.length > 0) {
+                          <div class="ml-5 text-xs text-red-600 dark:text-red-400">
+                            Manque: {{ getFileStatus(item.tenant, item.contract).details.join(', ') }}
+                          </div>
+                        }
+                      }
+                    </div>
                   </div>
                   
                   <!-- Actions Rapides -->
                   <div class="flex flex-col gap-2">
                     <button
-                      (click)="dissociateTenant(item.tenant, property().id)"
-                      class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition"
-                      title="Dissocier du bien"
+                      (click)="dissociateTenant(item, property().id)"
+                      [disabled]="!canDissociate(item.contract)"
+                      [class]="canDissociate(item.contract) 
+                        ? 'p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition cursor-pointer'
+                        : 'p-2 rounded-lg text-slate-300 dark:text-slate-600 cursor-not-allowed'"
+                      [title]="canDissociate(item.contract) ? 'Dissocier du bien' : 'Dissociation impossible (contrat actif/signé)'"
                     >
                       <i class="ph ph-link-break text-lg"></i>
                     </button>
@@ -123,7 +171,16 @@
                 
                 <!-- Résumé Financier -->
                 <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3">
-                  <div class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-2">💰 FINANCIER</div>
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">💰 FINANCIER</div>
+                    @if (item.contract.paymentMethod) {
+                      <div class="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                        <i [class]="getPaymentMethodIcon(item.contract.paymentMethod)"></i>
+                        <span class="capitalize">{{ item.contract.paymentMethod }}</span>
+                      </div>
+                    }
+                  </div>
+                  
                   <div class="grid grid-cols-2 gap-3">
                     <div>
                       <div class="text-xs text-slate-600 dark:text-slate-400">Loyer mensuel</div>
@@ -140,10 +197,28 @@
                       </div>
                     }
                   </div>
+                  
                   @if (item.contract.deposit) {
                     <div class="mt-2 pt-2 border-t border-emerald-100 dark:border-emerald-800">
                       <div class="text-xs text-slate-600 dark:text-slate-400">Dépôt de garantie</div>
                       <div class="font-medium text-slate-700 dark:text-slate-300">{{ item.contract.deposit }}€</div>
+                    </div>
+                  }
+                  
+                  <!-- Dernier paiement -->
+                  @if (item.lastPaymentLabel) {
+                    <div class="mt-2 pt-2 border-t border-emerald-100 dark:border-emerald-800">
+                      <div class="text-xs text-emerald-600 dark:text-emerald-400">{{ item.lastPaymentLabel }}</div>
+                    </div>
+                  }
+                  
+                  <!-- Alertes impayés -->
+                  @if (item.hasPaymentIssues && item.arrearsLabel) {
+                    <div class="mt-2 pt-2 border-t border-red-200 dark:border-red-800">
+                      <div class="flex items-center gap-2 text-xs text-red-600 dark:text-red-400 font-semibold">
+                        <i class="ph ph-warning-circle text-base"></i>
+                        <span>{{ item.arrearsLabel }}</span>
+                      </div>
                     </div>
                   }
                 </div>
@@ -213,6 +288,25 @@
                     <span>EDL Sortie</span>
                   </button>
                 }
+                
+                <!-- ✅ NOUVEAUX BOUTONS -->
+                <button
+                  (click)="createAmendment(item.contract)"
+                  class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
+                  title="Créer un avenant au contrat"
+                >
+                  <i class="ph ph-note-pencil"></i>
+                  <span>Avenant</span>
+                </button>
+                
+                <button
+                  (click)="renewContract(item.contract)"
+                  class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
+                  title="Renouveler le bail"
+                >
+                  <i class="ph ph-arrows-clockwise"></i>
+                  <span>Renouveler</span>
+                </button>
               </div>
             </div>
           }
@@ -229,6 +323,8 @@
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Contact</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Chambre</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Loyer</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Fin de bail</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Retard</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Statut</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Actions</th>
               </tr>
@@ -281,10 +377,34 @@
                     }
                   </td>
                   <td class="px-4 py-3">
+                    <div class="text-sm text-slate-700 dark:text-slate-300">{{ formatDate(item.contract.endDate) }}</div>
+                    @if (getDaysUntilExpiration(item.contract) <= 60 && getDaysUntilExpiration(item.contract) > 0) {
+                      <div class="text-xs text-orange-600 dark:text-orange-400">Dans {{ getDaysUntilExpiration(item.contract) }} j</div>
+                    }
+                  </td>
+                  <td class="px-4 py-3">
+                    @if (item.hasPaymentIssues && item.contract.totalArrears) {
+                      <span class="px-2 py-1 rounded bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 text-xs font-semibold whitespace-nowrap">
+                        {{ item.contract.totalArrears | number:'1.2-2' }} €
+                      </span>
+                    } @else {
+                      <span class="px-2 py-1 rounded bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
+                        OK
+                      </span>
+                    }
+                  </td>
+                  <td class="px-4 py-3">
                     @if (item.isFutureOccupant) {
                       <span class="px-2 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium whitespace-nowrap">
                         Futur · {{ item.arrivalDate }}
                       </span>
+                    } @else if (item.isInNotice) {
+                      <div class="space-y-1">
+                        <span class="px-2 py-1 rounded bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-xs font-medium whitespace-nowrap block">
+                          En préavis
+                        </span>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">{{ item.noticeEndLabel }}</div>
+                      </div>
                     } @else {
                       <span class="px-2 py-1 rounded bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
                         Actif
@@ -308,9 +428,12 @@
                         <i class="ph ph-file-text"></i>
                       </button>
                       <button
-                        (click)="dissociateTenant(item.tenant, property().id)"
-                        class="p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition"
-                        title="Dissocier"
+                        (click)="dissociateTenant(item, property().id)"
+                        [disabled]="!canDissociate(item.contract)"
+                        [class]="canDissociate(item.contract) 
+                          ? 'p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition cursor-pointer'
+                          : 'p-2 rounded text-slate-300 dark:text-slate-600 cursor-not-allowed'"
+                        [title]="canDissociate(item.contract) ? 'Dissocier' : 'Dissociation impossible (contrat actif/signé)'"
                       >
                         <i class="ph ph-link-break"></i>
                       </button>

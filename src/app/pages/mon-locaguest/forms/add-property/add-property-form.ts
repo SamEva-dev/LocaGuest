@@ -1,5 +1,5 @@
 import { Component, output, signal, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { CreatePropertyDto, PropertyDetail } from '../../../../core/api/properties.api';
@@ -40,8 +40,8 @@ export class AddPropertyForm {
       
       // Caractéristiques
       surface: [0, [Validators.required, Validators.min(0)]],
-      bedrooms: [0, Validators.min(0)],
-      bathrooms: [0, Validators.min(0)],
+      bedrooms: [0, [Validators.required, Validators.min(1)]],
+      bathrooms: [0, [Validators.required, Validators.min(1)]],
       floor: [null],
       hasElevator: [false],
       hasParking: [false],
@@ -58,18 +58,126 @@ export class AddPropertyForm {
       constructionYear: [null, [Validators.min(1800), Validators.max(this.currentYear)]],
       description: ['', Validators.maxLength(1000)],
       
-      // Pour colocation
-      totalRooms: [null, Validators.min(1)],
+      // Pour colocation (validation conditionnelle)
+      totalRooms: [null],
+      rooms: this.fb.array([]),  // ✅ NOUVEAU: FormArray pour les chambres
       
-      // Pour Airbnb
-      minimumStay: [null, Validators.min(1)],
+      // Pour Airbnb (validation conditionnelle)
+      minimumStay: [null],
       maximumStay: [null, Validators.min(1)],
-      pricePerNight: [null, Validators.min(0)]
+      pricePerNight: [null]
     });
+    
+    // ✅ Gestion des validations conditionnelles selon le type d'utilisation
+    this.form.get('propertyUsageType')?.valueChanges.subscribe(usageType => {
+      this.updateConditionalValidators(usageType);
+    });
+    
+    // ✅ NOUVEAU: Gestion dynamique des chambres quand totalRooms change
+    this.form.get('totalRooms')?.valueChanges.subscribe(totalRooms => {
+      this.onTotalRoomsChange(totalRooms);
+    });
+  }
+  
+  // ✅ NOUVEAU: Getter pour accéder au FormArray des chambres
+  get rooms(): FormArray {
+    console.log('rooms',this.form.get('rooms'));
+    return this.form.get('rooms') as FormArray;
+  }
+  
+  // ✅ NOUVEAU: Créer un FormGroup pour une chambre
+  private createRoomFormGroup(index: number): FormGroup {
+    return this.fb.group({
+      name: [`Chambre ${index + 1}`, [Validators.required, Validators.maxLength(100)]],
+      surface: [null, Validators.min(0)],
+      rent: [0, [Validators.required, Validators.min(0)]],
+      charges: [0, Validators.min(0)],
+      description: ['', Validators.maxLength(500)]
+    });
+  }
+  
+  // ✅ NOUVEAU: Ajouter une chambre au FormArray
+  addRoom() {
+    const currentCount = this.rooms.length;
+    this.rooms.push(this.createRoomFormGroup(currentCount));
+  }
+  
+  // ✅ NOUVEAU: Supprimer une chambre du FormArray
+  removeRoom(index: number) {
+    this.rooms.removeAt(index);
+    // Renommer les chambres restantes
+    this.rooms.controls.forEach((control, i) => {
+      const currentName = control.get('name')?.value;
+      if (currentName.startsWith('Chambre ')) {
+        control.get('name')?.setValue(`Chambre ${i + 1}`);
+      }
+    });
+  }
+  
+  // ✅ NOUVEAU: Gérer le changement du nombre total de chambres
+  private onTotalRoomsChange(totalRooms: number | null) {
+    if (!totalRooms || totalRooms <= 0) {
+      // Vider le FormArray si totalRooms est invalide
+      this.rooms.clear();
+      return;
+    }
+    
+    const currentCount = this.rooms.length;
+    
+    if (totalRooms > currentCount) {
+      // Ajouter des chambres
+      for (let i = currentCount; i < totalRooms; i++) {
+        this.addRoom();
+      }
+    } else if (totalRooms < currentCount) {
+      // Supprimer des chambres
+      for (let i = currentCount - 1; i >= totalRooms; i--) {
+        this.rooms.removeAt(i);
+      }
+    }
+  }
+  
+  private updateConditionalValidators(usageType: string) {
+    const totalRooms = this.form.get('totalRooms');
+    const bedrooms = this.form.get('bedrooms');
+    const minimumStay = this.form.get('minimumStay');
+    const pricePerNight = this.form.get('pricePerNight');
+    
+    // Reset all conditional validators
+    totalRooms?.clearValidators();
+    bedrooms?.clearValidators();
+    minimumStay?.clearValidators();
+    pricePerNight?.clearValidators();
+    
+    if (usageType === 'colocation') {
+      // Pour colocation: totalRooms required, bedrooms non-required
+      totalRooms?.setValidators([Validators.required, Validators.min(1)]);
+      bedrooms?.setValidators([Validators.min(0)]);
+    } else if (usageType === 'airbnb') {
+      // Pour Airbnb: minimumStay et pricePerNight required
+      minimumStay?.setValidators([Validators.required, Validators.min(1)]);
+      pricePerNight?.setValidators([Validators.required, Validators.min(0)]);
+      bedrooms?.setValidators([Validators.required, Validators.min(1)]);
+    } else {
+      // Pour location complète: bedrooms required
+      bedrooms?.setValidators([Validators.required, Validators.min(1)]);
+    }
+    
+    // Update validity
+    totalRooms?.updateValueAndValidity();
+    bedrooms?.updateValueAndValidity();
+    minimumStay?.updateValueAndValidity();
+    pricePerNight?.updateValueAndValidity();
   }
 
   onSubmit() {
+    console.log('📝 Form submission attempt');
+    console.log('Form value:', this.form.value);
+    console.log('Form valid:', this.form.valid);
+    console.log('Form errors:', this.getFormValidationErrors());
+    
     if (this.form.invalid) {
+      console.error('❌ Form is invalid, marking all as touched');
       this.form.markAllAsTouched();
       return;
     }
@@ -100,10 +208,13 @@ export class AddPropertyForm {
       energyClass: formValue.energyClass,
       constructionYear: formValue.constructionYear,
       totalRooms: formValue.totalRooms,
+      rooms: formValue.propertyUsageType === 'colocation' ? formValue.rooms : undefined,  // ✅ NOUVEAU: Inclure les chambres si colocation
       minimumStay: formValue.minimumStay,
       maximumStay: formValue.maximumStay,
       pricePerNight: formValue.pricePerNight
     };
+    
+    console.log('📦 Creating property with DTO:', createPropertyDto);
 
     this.propertiesService.createProperty(createPropertyDto).subscribe({
       next: (property: PropertyDetail) => {
@@ -124,5 +235,17 @@ export class AddPropertyForm {
 
   close() {
     this.closeForm.emit();
+  }
+  
+  // Helper pour debug validation errors
+  private getFormValidationErrors() {
+    const errors: any = {};
+    Object.keys(this.form.controls).forEach(key => {
+      const control = this.form.get(key);
+      if (control && control.errors) {
+        errors[key] = control.errors;
+      }
+    });
+    return errors;
   }
 }

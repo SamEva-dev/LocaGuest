@@ -15,6 +15,13 @@ export interface TenantListItem {
   activeContracts: number;
   propertyId?: string;  // Associated property ID
   propertyCode?: string;  // Associated property code (T0001-APP0001)
+  
+  // Statut administratif
+  hasCompleteFile?: boolean;        // Dossier complet
+  missingDocuments?: string[];      // Liste des pièces manquantes
+  hasInsurance?: boolean;           // Assurance habitation
+  insuranceExpiryDate?: Date;       // Date d'expiration assurance
+  idNumber?: string;                // Numéro CNI/Passeport
 }
 
 export interface TenantDetail extends TenantListItem {
