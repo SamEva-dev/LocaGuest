@@ -271,7 +271,7 @@
                 
                 @if (item.isFutureOccupant && needsInventoryEntry(item.contract)) {
                   <button
-                    (click)="viewInventory()"
+                    (click)="openInventoryEntry(item.contract)"
                     class="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
                   >
                     <i class="ph ph-clipboard-text"></i>
@@ -281,7 +281,7 @@
                 
                 @if (!item.isFutureOccupant && needsInventoryExit(item.contract)) {
                   <button
-                    (click)="viewInventory()"
+                    (click)="openInventoryExit(item.contract)"
                     class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
                   >
                     <i class="ph ph-clipboard-text"></i>
@@ -466,3 +466,54 @@
     }
   </div>
 </div>
+
+<!-- ✅ WIZARDS EDL EN MODAL -->
+@if (showInventoryEntryWizard() && inventoryEntryData()) {
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
+      <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+          <i class="ph ph-clipboard-text text-orange-600"></i>
+          <span>État des lieux d'entrée</span>
+        </h2>
+        <button
+          (click)="closeInventoryWizards()"
+          class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition"
+        >
+          <i class="ph ph-x text-xl"></i>
+        </button>
+      </div>
+      <div class="overflow-y-auto" style="max-height: calc(90vh - 100px);">
+        <app-inventory-entry-wizard
+          [wizardData]="inventoryEntryData()!"
+          (onClose)="closeInventoryWizards()"
+        />
+      </div>
+    </div>
+  </div>
+}
+
+@if (showInventoryExitWizard() && inventoryExitData()) {
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
+      <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+          <i class="ph ph-clipboard-text text-red-600"></i>
+          <span>État des lieux de sortie</span>
+        </h2>
+        <button
+          (click)="closeInventoryWizards()"
+          class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition"
+        >
+          <i class="ph ph-x text-xl"></i>
+        </button>
+      </div>
+      <div class="overflow-y-auto" style="max-height: calc(90vh - 100px);">
+        <app-inventory-exit-wizard
+          [wizardData]="inventoryExitData()!"
+          (onClose)="closeInventoryWizards()"
+        />
+      </div>
+    </div>
+  </div>
+}

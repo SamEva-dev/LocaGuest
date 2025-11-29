@@ -5,6 +5,14 @@ import { TenantListItem } from '../../../../core/api/tenants.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
 import { TenantsService } from '../../../../core/services/tenants.service';
+import { 
+  InventoryEntryWizardSimpleComponent, 
+  InventoryEntryWizardData 
+} from '../property-contracts/inventory-entry-wizard/inventory-entry-wizard-simple';
+import { 
+  InventoryExitWizardSimpleComponent, 
+  InventoryExitWizardData 
+} from '../property-contracts/inventory-exit-wizard/inventory-exit-wizard-simple';
 
 interface TenantWithContract {
   tenant: TenantListItem;
@@ -31,7 +39,11 @@ interface TenantWithContract {
 @Component({
   selector: 'property-tenants-tab',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [
+    DecimalPipe,
+    InventoryEntryWizardSimpleComponent,
+    InventoryExitWizardSimpleComponent
+  ],
   templateUrl: './property-tenants-tab.html'
 })
 export class PropertyTenantsTab {
@@ -46,6 +58,12 @@ export class PropertyTenantsTab {
   isLoading = signal(false);
   showActions = signal(false);
   viewMode = signal<'cards' | 'list'>('cards'); // Par défaut: cards
+  
+  // Wizards EDL
+  showInventoryEntryWizard = signal(false);
+  showInventoryExitWizard = signal(false);
+  inventoryEntryData = signal<InventoryEntryWizardData | null>(null);
+  inventoryExitData = signal<InventoryExitWizardData | null>(null);
   
   // Computed properties
   // ✅ CORRECTION: Filtrer uniquement Signed + Active (pas Draft, Expired, Cancelled)
@@ -158,9 +176,60 @@ export class PropertyTenantsTab {
     console.log('Generate contract');
   }
   
-  viewInventory() {
-    // TODO: Open inventory view
-    console.log('View inventory');
+  // ✅ Ouvrir wizard EDL d'entrée
+  openInventoryEntry(contract: Contract) {
+    const property = this.property();
+    const tenant = this.associatedTenants().find(t => t.id === contract.tenantId);
+    
+    this.inventoryEntryData.set({
+      contractId: contract.id,
+      propertyId: property.id,
+      propertyName: property.name,
+      roomId: contract.roomId,
+      roomName: contract.roomId ? `Chambre ${contract.roomId}` : undefined,
+      tenantName: tenant?.fullName || contract.tenantName || 'Inconnu'
+    });
+    
+    this.showInventoryEntryWizard.set(true);
+  }
+  
+  // ✅ Ouvrir wizard EDL de sortie
+  async openInventoryExit(contract: Contract) {
+    const property = this.property();
+    const tenant = this.associatedTenants().find(t => t.id === contract.tenantId);
+    
+    // Récupérer l'EDL d'entrée depuis le contrat
+    // Supposons que contract.inventoryEntryId existe
+    const inventoryEntryId = (contract as any).inventoryEntryId;
+    
+    if (!inventoryEntryId) {
+      alert('❌ Erreur: Aucun EDL d\'entrée trouvé pour ce contrat.\n\nVous devez d\'abord créer un EDL d\'entrée.');
+      return;
+    }
+    
+    this.inventoryExitData.set({
+      contractId: contract.id,
+      propertyId: property.id,
+      propertyName: property.name,
+      roomId: contract.roomId,
+      roomName: contract.roomId ? `Chambre ${contract.roomId}` : undefined,
+      tenantName: tenant?.fullName || contract.tenantName || 'Inconnu',
+      inventoryEntryId: inventoryEntryId
+    });
+    
+    this.showInventoryExitWizard.set(true);
+  }
+  
+  // ✅ Fermer les wizards
+  closeInventoryWizards() {
+    this.showInventoryEntryWizard.set(false);
+    this.showInventoryExitWizard.set(false);
+    this.inventoryEntryData.set(null);
+    this.inventoryExitData.set(null);
+    
+    // Recharger les données du bien pour actualiser les statuts EDL
+    // TODO: Implémenter un refresh plus élégant
+    window.location.reload();
   }
   
   createAmendment(contract: Contract) {

@@ -39,16 +39,40 @@
       <div class="flex-1 overflow-auto">
         @switch (tabManager.activeTab()?.type) {
           @case ('summary') {
-            <summary-tab />
+            @defer {
+              <summary-tab />
+            } @placeholder {
+              <div class="flex items-center justify-center h-full">
+                <div class="text-slate-500">Chargement...</div>
+              </div>
+            }
           }
           @case ('property') {
-            <property-detail-tab [data]="tabManager.activeTab()?.data" />
+            @defer {
+              <property-detail-tab [data]="tabManager.activeTab()?.data" />
+            } @placeholder {
+              <div class="flex items-center justify-center h-full">
+                <div class="text-slate-500">Chargement...</div>
+              </div>
+            }
           }
           @case ('tenant') {
-            <tenant-detail-tab [data]="tabManager.activeTab()?.data" />
+            @defer {
+              <tenant-detail-tab [data]="tabManager.activeTab()?.data" />
+            } @placeholder {
+              <div class="flex items-center justify-center h-full">
+                <div class="text-slate-500">Chargement...</div>
+              </div>
+            }
           }
           @case ('relation') {
-            <relation-tab [data]="tabManager.activeTab()?.data" />
+            @defer {
+              <relation-tab [data]="tabManager.activeTab()?.data" />
+            } @placeholder {
+              <div class="flex items-center justify-center h-full">
+                <div class="text-slate-500">Chargement...</div>
+              </div>
+            }
           }
         }
       </div>
