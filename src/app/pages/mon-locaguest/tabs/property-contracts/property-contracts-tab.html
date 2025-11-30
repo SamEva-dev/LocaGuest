@@ -466,3 +466,14 @@
     (success)="onMarkSignedSuccess()"
   />
 }
+
+<!-- ✅ NOUVEAU: Contract Edit Form -->
+@if (showEditForm() && contractToEdit()) {
+  <contract-edit-form
+    [contract]="contractToEdit()!"
+    [property]="property()"
+    [associatedTenants]="associatedTenants()"
+    (close)="onEditFormClose()"
+    (success)="onEditFormSuccess()"
+  />
+}

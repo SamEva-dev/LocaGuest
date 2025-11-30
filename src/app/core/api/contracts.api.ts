@@ -128,4 +128,8 @@ export class ContractsApi {
   deleteContract(contractId: string): Observable<{ message: string; id: string; deletedPayments: number; deletedDocuments: number }> {
     return this.http.delete<{ message: string; id: string; deletedPayments: number; deletedDocuments: number }>(`${this.baseUrl}/${contractId}`);
   }
+  
+  updateContract(contractId: string, request: Partial<CreateContractRequest>): Observable<{ message: string; id: string }> {
+    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}`, request);
+  }
 }

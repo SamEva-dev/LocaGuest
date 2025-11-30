@@ -1,4 +1,4 @@
-import { Component, input, signal, computed, inject } from '@angular/core';
+import { Component, input, output, signal, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { PropertyDetail, Contract } from '../../../../core/api/properties.api';
 import { TenantListItem } from '../../../../core/api/tenants.api';
@@ -50,6 +50,9 @@ export class PropertyTenantsTab {
   property = input.required<PropertyDetail>();
   contracts = input<Contract[]>([]);
   associatedTenants = input<TenantListItem[]>([]);
+  
+  // ✅ Event pour demander au parent de recharger les données
+  onRefreshNeeded = output<void>();
   
   private propertiesService = inject(PropertiesService);
   private tenantsService = inject(TenantsService);
@@ -227,9 +230,8 @@ export class PropertyTenantsTab {
     this.inventoryEntryData.set(null);
     this.inventoryExitData.set(null);
     
-    // Recharger les données du bien pour actualiser les statuts EDL
-    // TODO: Implémenter un refresh plus élégant
-    window.location.reload();
+    // ✅ Demander au parent de recharger les données (évite window.location.reload())
+    this.onRefreshNeeded.emit();
   }
   
   createAmendment(contract: Contract) {
@@ -272,8 +274,8 @@ export class PropertyTenantsTab {
     this.isLoading.set(true);
     try {
       await this.propertiesService.dissociateTenant(propertyId, item.tenant.id);
-      // Recharger les données
-      window.location.reload(); // TODO: Améliorer avec un refresh propre
+      // ✅ Recharger les données via événement au lieu de window.location.reload()
+      this.onRefreshNeeded.emit();
     } catch (error) {
       console.error('Error dissociating tenant:', error);
       alert('Erreur lors de la dissociation du locataire');

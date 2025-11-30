@@ -1,0 +1,227 @@
+<!-- Overlay -->
+<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  
+  <!-- Modal -->
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+       (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-6 text-white">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+            <i class="ph ph-pencil text-2xl"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold">Modifier le contrat</h2>
+            <p class="text-emerald-100 text-sm mt-1">Contrat #{{ contract().code }}</p>
+          </div>
+        </div>
+        <button 
+          (click)="cancel()" 
+          class="w-10 h-10 rounded-full hover:bg-white/20 transition flex items-center justify-center"
+          [disabled]="isSubmitting()">
+          <i class="ph ph-x text-2xl"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Body -->
+    <div class="p-8 overflow-y-auto max-h-[calc(90vh-180px)]">
+      
+      <!-- Info bien -->
+      <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 mb-6">
+        <div class="flex items-center gap-3">
+          <i class="ph ph-house text-2xl text-slate-500"></i>
+          <div>
+            <div class="font-semibold text-slate-900 dark:text-white">{{ property().name }}</div>
+            <div class="text-sm text-slate-500">{{ property().address }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Formulaire -->
+      <div class="space-y-6">
+        
+        <!-- Locataire -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Locataire *
+          </label>
+          <select 
+            [(ngModel)]="form().tenantId"
+            class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+            <option value="">-- Sélectionner un locataire --</option>
+            @for (tenant of availableTenants(); track tenant.id) {
+              <option [value]="tenant.id">{{ tenant.fullName }} ({{ tenant.email }})</option>
+            }
+          </select>
+        </div>
+        
+        <!-- Chambre (si colocation) -->
+        @if (isColocation() && availableRooms().length > 0) {
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Chambre (optionnel pour colocation)
+            </label>
+            <select 
+              [(ngModel)]="form().roomId"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+              <option [value]="undefined">-- Bail solidaire (tout le bien) --</option>
+              @for (room of availableRooms(); track room.id) {
+                <option [value]="room.id">{{ room.name }} - {{ room.rent }}€/mois</option>
+              }
+            </select>
+          </div>
+        }
+        
+        <!-- Type de bail -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Type de bail *
+          </label>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            @for (type of contractTypes; track type) {
+              <button
+                type="button"
+                (click)="form().type = type"
+                class="px-4 py-3 rounded-lg border-2 transition font-medium text-sm"
+                [class.border-emerald-500]="form().type === type"
+                [class.bg-emerald-50]="form().type === type"
+                [class.text-emerald-700]="form().type === type"
+                [class.border-slate-200]="form().type !== type"
+                [class.hover:border-slate-300]="form().type !== type">
+                {{ type }}
+              </button>
+            }
+          </div>
+        </div>
+        
+        <!-- Dates -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Date de début *
+            </label>
+            <input 
+              type="date"
+              [(ngModel)]="form().startDate"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Date de fin *
+            </label>
+            <input 
+              type="date"
+              [(ngModel)]="form().endDate"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+          </div>
+        </div>
+        
+        <!-- Montants -->
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Loyer mensuel (€) *
+            </label>
+            <input 
+              type="number"
+              [(ngModel)]="form().rent"
+              min="0"
+              step="0.01"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Charges (€)
+            </label>
+            <input 
+              type="number"
+              [(ngModel)]="form().charges"
+              min="0"
+              step="0.01"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Dépôt de garantie (€)
+            </label>
+            <input 
+              type="number"
+              [(ngModel)]="form().deposit"
+              min="0"
+              step="0.01"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+          </div>
+        </div>
+        
+        <!-- Options -->
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Durée (mois)
+            </label>
+            <input 
+              type="number"
+              [(ngModel)]="form().duration"
+              min="1"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Moyen de paiement
+            </label>
+            <select 
+              [(ngModel)]="form().paymentMethod"
+              class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+              @for (method of paymentMethods; track method) {
+                <option [value]="method">{{ method }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        
+        <!-- Renouvellement automatique -->
+        <div class="flex items-center gap-3">
+          <input 
+            type="checkbox"
+            id="autoRenewal"
+            [(ngModel)]="form().autoRenewal"
+            class="w-5 h-5 text-emerald-600 border-slate-300 dark:border-slate-600 rounded focus:ring-emerald-500">
+          <label for="autoRenewal" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Renouvellement automatique
+          </label>
+        </div>
+        
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="border-t border-slate-200 dark:border-slate-700 px-8 py-6 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-end gap-3">
+      <button
+        (click)="cancel()"
+        [disabled]="isSubmitting()"
+        class="px-6 py-3 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+        Annuler
+      </button>
+      
+      <button
+        (click)="saveContract()"
+        [disabled]="isSubmitting()"
+        class="px-8 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2">
+        @if (isSubmitting()) {
+          <i class="ph ph-circle-notch animate-spin"></i>
+          <span>Enregistrement...</span>
+        } @else {
+          <i class="ph ph-check"></i>
+          <span>Enregistrer les modifications</span>
+        }
+      </button>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import { TenantListItem, TenantsApi } from '../../../../core/api/tenants.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { ContractWizardModal } from './contract-wizard-modal/contract-wizard-modal';
 import { MarkSignedModal } from './mark-signed-modal/mark-signed-modal';
+import { ContractEditForm } from './contract-edit-form/contract-edit-form';
 import { ContractsApi } from '../../../../core/api/contracts.api';
 import { DocumentsService } from '../../../../core/services/documents.service';
 import { firstValueFrom } from 'rxjs';
@@ -12,7 +13,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'property-contracts-tab',
   standalone: true,
-  imports: [NgClass, ContractWizardModal, MarkSignedModal],
+  imports: [NgClass, ContractWizardModal, MarkSignedModal, ContractEditForm],
   templateUrl: './property-contracts-tab.html'
 })
 export class PropertyContractsTab {
@@ -43,6 +44,10 @@ export class PropertyContractsTab {
   showMarkSignedModal = signal(false);
   contractToSign = signal<Contract | null>(null);
   tenantForSigning = signal<TenantListItem | null>(null);
+  
+  // ✅ NOUVEAU: Formulaire d'édition
+  showEditForm = signal(false);
+  contractToEdit = signal<Contract | null>(null);
   
   // Computed properties
   activeContract = computed(() => {
@@ -172,9 +177,21 @@ export class PropertyContractsTab {
   }
   
   editContract(contract: Contract) {
-    this.selectedContract.set(contract);
-    this.wizardMode.set('new');
-    this.showWizard.set(true);
+    // ✅ NOUVEAU: Ouvrir le formulaire d'édition au lieu du wizard
+    this.contractToEdit.set(contract);
+    this.showEditForm.set(true);
+  }
+  
+  onEditFormClose() {
+    this.showEditForm.set(false);
+    this.contractToEdit.set(null);
+  }
+  
+  onEditFormSuccess() {
+    this.showEditForm.set(false);
+    this.contractToEdit.set(null);
+    // Recharger les données
+    this.contractCreated.emit();
   }
   
   async generateContractPDF(contract: Contract) {

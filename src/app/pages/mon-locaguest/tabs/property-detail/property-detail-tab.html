@@ -99,6 +99,7 @@
                 [property]="property()!" 
                 [contracts]="contracts()"
                 [associatedTenants]="associatedTenants()" 
+                (onRefreshNeeded)="reloadProperty()"
               />
             }
           }
