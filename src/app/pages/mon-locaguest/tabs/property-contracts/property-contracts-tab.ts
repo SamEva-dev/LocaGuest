@@ -1,4 +1,4 @@
-import { Component, input, output, signal, computed, inject } from '@angular/core';
+import { Component, input, output, signal, computed, inject, effect } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { PropertyDetail, Contract } from '../../../../core/api/properties.api';
 import { TenantListItem, TenantsApi } from '../../../../core/api/tenants.api';
@@ -8,12 +8,14 @@ import { MarkSignedModal } from './mark-signed-modal/mark-signed-modal';
 import { ContractEditForm } from './contract-edit-form/contract-edit-form';
 import { ContractsApi } from '../../../../core/api/contracts.api';
 import { DocumentsService } from '../../../../core/services/documents.service';
+import { InventoriesApiService, InventoryEntryDto, ContractInventoriesDto } from '../../../../core/api/inventories.api';
+import { FinalizeInventoryModal } from './finalize-inventory-modal/finalize-inventory-modal';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'property-contracts-tab',
   standalone: true,
-  imports: [NgClass, ContractWizardModal, MarkSignedModal, ContractEditForm],
+  imports: [NgClass, ContractWizardModal, MarkSignedModal, ContractEditForm, FinalizeInventoryModal],
   templateUrl: './property-contracts-tab.html'
 })
 export class PropertyContractsTab {
@@ -28,6 +30,7 @@ export class PropertyContractsTab {
   private contractsApi = inject(ContractsApi);
   private documentsService = inject(DocumentsService);
   private tenantsApi = inject(TenantsApi);
+  private inventoriesApi = inject(InventoriesApiService);
   
   // Loading states
   isMarkingAsSigned = signal(false);
@@ -49,6 +52,17 @@ export class PropertyContractsTab {
   showEditForm = signal(false);
   contractToEdit = signal<Contract | null>(null);
   
+  // ✅ EDL Management
+  contractInventories = signal<Map<string, ContractInventoriesDto>>(new Map());
+  isLoadingInventories = signal(false);
+  isFinalizingInventory = signal(false);
+  isDeletingInventory = signal(false);
+  hasLoadedInventories = signal(false);
+  
+  // ✅ Modal finalisation EDL
+  showFinalizeInventoryModal = signal(false);
+  inventoryToFinalize = signal<{ inventory: InventoryEntryDto; contract: Contract } | null>(null);
+  
   // Computed properties
   activeContract = computed(() => {
     return this.contracts().find(c => 
@@ -64,6 +78,21 @@ export class PropertyContractsTab {
   
   draftContracts = computed(() => {
     return this.contracts().filter(c => c.status === 'Draft');
+  });
+  
+  // ✅ EDL brouillons (non finalisés)
+  draftInventories = computed(() => {
+    const inventories: Array<{ inventory: InventoryEntryDto; contract: Contract }> = [];
+    const invMap = this.contractInventories();
+    
+    for (const contract of this.contracts()) {
+      const inv = invMap.get(contract.id);
+      if (inv?.hasEntry && inv.entry && !inv.entry.isFinalized) {
+        inventories.push({ inventory: inv.entry, contract });
+      }
+    }
+    
+    return inventories;
   });
   
   // ✅ AMÉLIORATION: Logique de grisage des boutons
@@ -425,6 +454,149 @@ export class PropertyContractsTab {
   createInventoryEntry(contract: Contract) {
     console.log('Create entry inventory for contract:', contract.id);
     // TODO: Open inventory creation
+  }
+  
+  // ✅ Charger tous les EDL des contrats (appelé manuellement)
+  async loadAllInventories(force = false) {
+    // Éviter les appels multiples sauf si force=true
+    if (this.isLoadingInventories() || (this.hasLoadedInventories() && !force)) return;
+    
+    try {
+      this.isLoadingInventories.set(true);
+      const contracts = this.contracts();
+      
+      // Si pas de contrats, ne rien faire
+      if (contracts.length === 0) {
+        this.hasLoadedInventories.set(true);
+        return;
+      }
+      
+      const invMap = new Map<string, ContractInventoriesDto>();
+      
+      for (const contract of contracts) {
+        try {
+          const inv = await firstValueFrom(this.inventoriesApi.getByContract(contract.id));
+          invMap.set(contract.id, inv);
+        } catch (error) {
+          // Pas d'EDL pour ce contrat - normal
+          console.log(`Pas d'EDL pour contrat ${contract.id}`);
+        }
+      }
+      
+      this.contractInventories.set(invMap);
+      this.hasLoadedInventories.set(true);
+    } catch (error) {
+      console.error('❌ Erreur chargement EDL:', error);
+    } finally {
+      this.isLoadingInventories.set(false);
+    }
+  }
+  
+  // ✅ Méthode publique pour initialiser les données (appelée par le parent)
+  initializeInventories() {
+    if (!this.hasLoadedInventories()) {
+      this.loadAllInventories();
+    }
+  }
+  
+  // ✅ Ouvrir modal de finalisation EDL
+  openFinalizeInventoryModal(inventory: InventoryEntryDto, contract: Contract) {
+    this.inventoryToFinalize.set({ inventory, contract });
+    this.showFinalizeInventoryModal.set(true);
+  }
+  
+  // ✅ Fermer modal de finalisation EDL
+  closeFinalizeInventoryModal() {
+    this.showFinalizeInventoryModal.set(false);
+    this.inventoryToFinalize.set(null);
+  }
+  
+  // ✅ Finaliser un EDL (action irréversible)
+  async handleFinalizeInventory(signatureMethod: 'paper' | 'electronic') {
+    const data = this.inventoryToFinalize();
+    if (!data || this.isFinalizingInventory()) return;
+    
+    try {
+      this.isFinalizingInventory.set(true);
+      console.log('🔒 Finalisation EDL:', data.inventory.id, 'Méthode:', signatureMethod);
+      
+      await firstValueFrom(this.inventoriesApi.finalizeEntry(data.inventory.id));
+      
+      console.log('✅ EDL finalisé avec succès');
+      
+      // Fermer le modal
+      this.closeFinalizeInventoryModal();
+      
+      // Recharger les données (force=true pour rafraîchir)
+      await this.loadAllInventories(true);
+      this.contractCreated.emit();
+      
+      // Message de succès
+      alert('✅ État des lieux finalisé avec succès !\n\nLe document est maintenant verrouillé et juridiquement opposable.');
+    } catch (error: any) {
+      console.error('❌ Erreur finalisation EDL:', error);
+      const errorMessage = error?.error?.message || 'Erreur lors de la finalisation';
+      alert(`❌ Erreur : ${errorMessage}`);
+    } finally {
+      this.isFinalizingInventory.set(false);
+    }
+  }
+  
+  // ✅ Supprimer un EDL (avec règles métier)
+  async deleteInventory(inventory: InventoryEntryDto, contract: Contract) {
+    if (this.isDeletingInventory()) return;
+    
+    // Vérifications côté client
+    if (inventory.isFinalized) {
+      alert('❌ Impossible de supprimer un EDL finalisé.\n\nC\'est un document légal permanent.');
+      return;
+    }
+    
+    if (contract.status === 'Active') {
+      alert('❌ Impossible de supprimer l\'EDL d\'un contrat actif.');
+      return;
+    }
+    
+    const confirmed = confirm(
+      `Supprimer cet état des lieux d'entrée ?\n\n` +
+      `Locataire : ${this.getTenantName(contract.tenantId)}\n` +
+      `Date inspection : ${this.formatDate(inventory.inspectionDate)}\n\n` +
+      `Cette action est irréversible.`
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      this.isDeletingInventory.set(true);
+      console.log('🗑️ Suppression EDL:', inventory.id);
+      
+      await firstValueFrom(this.inventoriesApi.deleteEntry(inventory.id));
+      
+      console.log('✅ EDL supprimé avec succès');
+      alert('✅ État des lieux supprimé avec succès !');
+      
+      // Recharger les données (force=true pour rafraîchir)
+      await this.loadAllInventories(true);
+      this.contractCreated.emit();
+    } catch (error: any) {
+      console.error('❌ Erreur suppression EDL:', error);
+      const errorMessage = error?.error?.message || 'Erreur lors de la suppression';
+      alert(`❌ ${errorMessage}`);
+    } finally {
+      this.isDeletingInventory.set(false);
+    }
+  }
+  
+  // ✅ Vérifier si un EDL peut être modifié
+  canEditInventory(inventory: InventoryEntryDto): boolean {
+    return !inventory.isFinalized;
+  }
+  
+  // ✅ Vérifier si un EDL peut être supprimé
+  canDeleteInventory(inventory: InventoryEntryDto, contract: Contract): boolean {
+    if (inventory.isFinalized) return false;
+    if (contract.status === 'Active') return false;
+    return inventory.status === 'Draft';
   }
   
   createInventoryExit(contract: Contract) {

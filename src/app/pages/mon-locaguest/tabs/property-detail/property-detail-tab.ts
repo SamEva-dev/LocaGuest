@@ -26,6 +26,7 @@ export class PropertyDetailTab {
   private documentsApi = inject(DocumentsApi);
   
   tenantModal = viewChild<TenantSelectionModal>('tenantModal');
+  contractsTab = viewChild<PropertyContractsTab>('contractsTab');
 
   activeSubTab = signal('informations');
   isLoading = signal(false);
@@ -76,6 +77,17 @@ export class PropertyDetailTab {
         this.loadProperty(tabData.propertyId);
       } else {
         console.warn('⚠️ No propertyId found in data');
+      }
+    });
+    
+    // ✅ Charger les EDL quand la tab "contracts" est activée
+    effect(() => {
+      const currentTab = this.activeSubTab();
+      const contractsTabRef = this.contractsTab();
+      
+      if (currentTab === 'contracts' && contractsTabRef) {
+        console.log('📋 Initializing inventories for contracts tab');
+        contractsTabRef.initializeInventories();
       }
     });
   }

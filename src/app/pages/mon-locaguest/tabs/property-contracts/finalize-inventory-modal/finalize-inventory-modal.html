@@ -1,0 +1,209 @@
+<!-- Overlay -->
+<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  
+  <!-- Modal -->
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+       (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-6 text-white">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+            <i class="ph ph-check-circle text-2xl"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold">Finaliser l'État des Lieux</h2>
+            <p class="text-emerald-100 text-sm mt-1">EDL d'entrée - Document légal</p>
+          </div>
+        </div>
+        <button 
+          (click)="close()" 
+          class="w-10 h-10 rounded-full hover:bg-white/20 transition flex items-center justify-center"
+          [disabled]="isSubmitting()">
+          <i class="ph ph-x text-2xl"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Body -->
+    <div class="p-8 overflow-y-auto max-h-[calc(90vh-200px)]">
+      
+      <!-- Résumé EDL -->
+      <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-6 mb-6">
+        <h3 class="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-4 uppercase tracking-wide">
+          📋 Résumé de l'état des lieux
+        </h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Locataire</div>
+            <div class="font-semibold text-slate-900 dark:text-white">{{ tenantName() }}</div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Bien</div>
+            <div class="font-semibold text-slate-900 dark:text-white">{{ propertyName() }}</div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Date inspection</div>
+            <div class="font-medium text-slate-700 dark:text-slate-300">{{ inventory().inspectionDate | date:'dd/MM/yyyy' }}</div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Agent</div>
+            <div class="font-medium text-slate-700 dark:text-slate-300">{{ inventory().agentName }}</div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Nombre d'items</div>
+            <div class="font-semibold text-blue-600 dark:text-blue-400">{{ inventory().items.length }}</div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Locataire présent</div>
+            <div class="font-medium text-slate-700 dark:text-slate-300">
+              {{ inventory().tenantPresent ? 'Oui' : 'Non' }}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Step 1: Méthode de signature -->
+      @if (step() === 'method') {
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold mb-4">Comment l'EDL a-t-il été signé ?</h3>
+          
+          <button
+            (click)="selectMethod('paper')"
+            class="w-full p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all group text-left">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-700 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/30 flex items-center justify-center transition-colors flex-shrink-0">
+                <i class="ph ph-pen text-2xl text-slate-600 dark:text-slate-300 group-hover:text-emerald-600"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-slate-900 dark:text-white text-lg mb-1">Signature papier</div>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                  L'EDL a été signé physiquement sur papier. Le document devient un état juridique opposable.
+                </p>
+              </div>
+            </div>
+          </button>
+          
+          <button
+            (click)="selectMethod('electronic')"
+            class="w-full p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 hover:border-teal-500 dark:hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-all group text-left">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-700 group-hover:bg-teal-100 dark:group-hover:bg-teal-900/30 flex items-center justify-center transition-colors flex-shrink-0">
+                <i class="ph ph-device-tablet text-2xl text-slate-600 dark:text-slate-300 group-hover:text-teal-600"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-slate-900 dark:text-white text-lg mb-1">Signature électronique</div>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                  L'EDL a été signé numériquement avec une signature électronique certifiée.
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+      }
+      
+      <!-- Step 2: Confirmation -->
+      @if (step() === 'confirm') {
+        <div class="space-y-6">
+          <h3 class="text-lg font-semibold">Confirmation de finalisation</h3>
+          
+          <!-- Récap méthode -->
+          <div class="flex items-center gap-3 p-4 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+            <i class="ph ph-info text-2xl text-emerald-600"></i>
+            <div class="text-sm">
+              <div class="font-medium text-emerald-900 dark:text-emerald-100">
+                Méthode de signature : 
+                <span class="font-bold">
+                  {{ signatureMethod() === 'paper' ? 'Papier' : 'Électronique' }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Impacts - AVERTISSEMENT MAJEUR -->
+          <div class="bg-red-50 dark:bg-red-900/20 border-2 border-red-300 dark:border-red-800 rounded-xl p-5">
+            <div class="flex items-start gap-3">
+              <i class="ph ph-warning-circle text-3xl text-red-600 flex-shrink-0 mt-0.5"></i>
+              <div class="text-sm text-red-900 dark:text-red-100">
+                <div class="font-bold text-lg mb-3">⚠️ ATTENTION - Action IRRÉVERSIBLE</div>
+                <div class="space-y-2">
+                  <p class="font-semibold">Cette action va :</p>
+                  <ul class="space-y-1.5 list-disc list-inside ml-2">
+                    <li><strong>Verrouiller définitivement</strong> cet EDL (aucune modification possible)</li>
+                    <li><strong>En faire un document LÉGAL</strong> opposable en justice</li>
+                    <li><strong>Supprimer tous les brouillons EDL</strong> pour ce locataire et ce contrat</li>
+                    <li><strong>Activer automatiquement le contrat</strong> si les conditions sont remplies</li>
+                  </ul>
+                  <p class="mt-4 font-bold text-base text-red-700 dark:text-red-300">
+                    ❌ Vous NE POURREZ PLUS modifier, supprimer ou annuler cet EDL après finalisation.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Checkbox confirmation -->
+          <div class="bg-slate-100 dark:bg-slate-700/50 rounded-lg p-4">
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input 
+                type="checkbox" 
+                id="confirm-irreversible"
+                class="mt-1 w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500">
+              <div class="text-sm">
+                <span class="font-semibold text-slate-900 dark:text-white">
+                  Je comprends que cette action est irréversible
+                </span>
+                <p class="text-slate-600 dark:text-slate-400 mt-1">
+                  L'EDL deviendra un document juridique permanent qui ne pourra plus être modifié ni supprimé.
+                </p>
+              </div>
+            </label>
+          </div>
+        </div>
+      }
+    </div>
+    
+    <!-- Footer -->
+    <div class="border-t border-slate-200 dark:border-slate-700 px-8 py-6 bg-slate-50 dark:bg-slate-800/50">
+      <div class="flex items-center justify-between">
+        @if (step() !== 'method') {
+          <button
+            (click)="goBack()"
+            [disabled]="isSubmitting()"
+            class="px-4 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="ph ph-arrow-left mr-2"></i>
+            Retour
+          </button>
+        } @else {
+          <div></div>
+        }
+        
+        <div class="flex items-center gap-3">
+          <button
+            (click)="close()"
+            [disabled]="isSubmitting()"
+            class="px-6 py-3 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+            Annuler
+          </button>
+          
+          @if (step() === 'confirm') {
+            <button
+              (click)="confirmFinalization()"
+              [disabled]="isSubmitting()"
+              id="confirm-finalize-btn"
+              class="px-8 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2">
+              @if (isSubmitting()) {
+                <i class="ph ph-spinner text-lg animate-spin"></i>
+                <span>Finalisation...</span>
+              } @else {
+                <i class="ph ph-lock text-lg"></i>
+                <span>Finaliser l'EDL</span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

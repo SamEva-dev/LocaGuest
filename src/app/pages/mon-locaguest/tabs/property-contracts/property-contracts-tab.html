@@ -6,8 +6,18 @@
       <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
         @if (activeContract()) {
           <span class="text-emerald-600 dark:text-emerald-400 font-medium">Contrat actif en cours</span>
-        } @else if (draftContracts().length > 0) {
-          <span class="text-amber-600 dark:text-amber-400 font-medium">{{ draftContracts().length }} brouillon(s)</span>
+        } @else if (draftContracts().length > 0 || draftInventories().length > 0) {
+          <span class="text-amber-600 dark:text-amber-400 font-medium">
+            @if (draftContracts().length > 0) {
+              {{ draftContracts().length }} contrat(s) brouillon
+            }
+            @if (draftContracts().length > 0 && draftInventories().length > 0) {
+              <span> • </span>
+            }
+            @if (draftInventories().length > 0) {
+              {{ draftInventories().length }} EDL brouillon(s)
+            }
+          </span>
         } @else {
           <span class="text-slate-500">Aucun contrat actif</span>
         }
@@ -231,6 +241,125 @@
                     <i class="ph ph-upload-simple"></i>
                     Téléverser version signée
                   </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ✅ EDL Brouillons (Draft Inventories) -->
+  @if (draftInventories().length > 0) {
+    <div class="bg-purple-50 dark:bg-purple-900/10 rounded-xl border border-purple-200 dark:border-purple-800">
+      <div class="p-5 border-b border-purple-200 dark:border-purple-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+            <i class="ph ph-clipboard-text text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">États des lieux brouillons</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">EDL en attente de finalisation</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="divide-y divide-purple-200 dark:divide-purple-800">
+        @for (item of draftInventories(); track item.inventory.id) {
+          <div class="p-5 hover:bg-purple-100/50 dark:hover:bg-purple-900/20 transition">
+            <div class="flex items-start gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                  <h4 class="font-semibold">{{ getTenantName(item.contract.tenantId) }}</h4>
+                  
+                  <!-- Badge Status -->
+                  <span class="text-xs px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 font-medium inline-flex items-center gap-1">
+                    <i class="ph ph-pencil-simple"></i>
+                    Brouillon
+                  </span>
+                  
+                  <!-- Badge Type -->
+                  <span class="text-xs px-2 py-1 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium">
+                    EDL Entrée
+                  </span>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm mb-3">
+                  <div>
+                    <span class="text-slate-500 dark:text-slate-400">Date inspection :</span>
+                    <span class="font-medium ml-1">{{ formatDate(item.inventory.inspectionDate) }}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 dark:text-slate-400">Agent :</span>
+                    <span class="font-medium ml-1">{{ item.inventory.agentName }}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 dark:text-slate-400">Items :</span>
+                    <span class="font-medium ml-1">{{ item.inventory.items.length }}</span>
+                  </div>
+                </div>
+                
+                <!-- Observations -->
+                @if (item.inventory.generalObservations) {
+                  <div class="text-xs text-slate-600 dark:text-slate-400 bg-white/50 dark:bg-slate-800/50 rounded p-2 mb-3">
+                    <i class="ph ph-note text-slate-400"></i>
+                    {{ item.inventory.generalObservations }}
+                  </div>
+                }
+                
+                <!-- Actions -->
+                <div class="flex items-center gap-2 flex-wrap">
+                  <!-- Finaliser (bouton principal) -->
+                  <button
+                    (click)="openFinalizeInventoryModal(item.inventory, item.contract)"
+                    [disabled]="isFinalizingInventory()"
+                    class="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Finaliser et verrouiller l'EDL"
+                  >
+                    <i class="ph ph-check-circle"></i>
+                    Finaliser l'EDL
+                  </button>
+                  
+                  <!-- Modifier -->
+                  @if (canEditInventory(item.inventory)) {
+                    <button
+                      (click)="viewInventoryEntry(item.contract)"
+                      class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/40 transition inline-flex items-center gap-1.5"
+                    >
+                      <i class="ph ph-pencil"></i>
+                      Modifier
+                    </button>
+                  }
+                  
+                  <!-- Supprimer -->
+                  @if (canDeleteInventory(item.inventory, item.contract)) {
+                    <button
+                      (click)="deleteInventory(item.inventory, item.contract)"
+                      [disabled]="isDeletingInventory()"
+                      class="px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/40 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <i class="ph ph-trash"></i>
+                      Supprimer
+                    </button>
+                  }
+                  
+                  <!-- PDF -->
+                  <button
+                    class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition inline-flex items-center gap-1.5"
+                    title="Télécharger le PDF"
+                  >
+                    <i class="ph ph-file-pdf"></i>
+                    PDF
+                  </button>
+                </div>
+                
+                <!-- Warning si finalisable -->
+                @if (item.inventory.items.length > 0) {
+                  <div class="mt-3 text-xs text-purple-600 dark:text-purple-400 italic flex items-start gap-1">
+                    <i class="ph ph-info text-sm flex-shrink-0"></i>
+                    <span>Une fois finalisé, l'EDL devient un document légal permanent qui ne peut plus être modifié ni supprimé.</span>
+                  </div>
                 }
               </div>
             </div>
@@ -475,5 +604,17 @@
     [associatedTenants]="associatedTenants()"
     (close)="onEditFormClose()"
     (success)="onEditFormSuccess()"
+  />
+}
+
+<!-- ✅ NOUVEAU: Finalize Inventory Modal -->
+@if (showFinalizeInventoryModal() && inventoryToFinalize()) {
+  <finalize-inventory-modal
+    [inventory]="inventoryToFinalize()!.inventory"
+    [contract]="inventoryToFinalize()!.contract"
+    [tenantName]="getTenantName(inventoryToFinalize()!.contract.tenantId)"
+    [propertyName]="property().name"
+    (onClose)="closeFinalizeInventoryModal()"
+    (onConfirm)="handleFinalizeInventory($event)"
   />
 }

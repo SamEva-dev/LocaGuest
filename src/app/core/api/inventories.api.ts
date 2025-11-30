@@ -53,7 +53,7 @@ export interface InventoryEntryDto {
   propertyId: string;
   roomId?: string;
   contractId: string;
-  tenantId: string;
+  renterTenantId: string;
   inspectionDate: string;
   agentName: string;
   tenantPresent: boolean;
@@ -62,6 +62,11 @@ export interface InventoryEntryDto {
   items: InventoryItemDto[];
   photoUrls: string[];
   status: string;
+  
+  // ✅ Champs pour document légal
+  isFinalized: boolean;
+  finalizedAt?: string;
+  
   createdAt: string;
 }
 
@@ -73,7 +78,7 @@ export interface InventoryExitDto {
   propertyId: string;
   roomId?: string;
   contractId: string;
-  tenantId: string;
+  renterTenantId: string;
   inventoryEntryId: string;
   inspectionDate: string;
   agentName: string;
@@ -180,6 +185,13 @@ export class InventoriesApiService {
    */
   getByContract(contractId: string): Observable<ContractInventoriesDto> {
     return this.http.get<ContractInventoriesDto>(`${this.apiUrl}/contract/${contractId}`);
+  }
+
+  /**
+   * Finaliser un EDL d'entrée (signer et verrouiller)
+   */
+  finalizeEntry(id: string): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${this.apiUrl}/entry/${id}/finalize`, {});
   }
 
   /**

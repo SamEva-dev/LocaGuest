@@ -106,7 +106,8 @@ export class MarkSignedModal {
       
       const response = await firstValueFrom(
         this.contractsApi.markAsSigned(this.contract().id, {
-          signedDate: this.signedDate()
+          signedDate: this.signedDate(),
+          contractId:this.contract().id
         })
       );
       

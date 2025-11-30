@@ -60,6 +60,7 @@ export interface TerminateContractRequest {
 
 export interface MarkAsSignedRequest {
   signedDate?: string;
+  contractId?: string;
 }
 
 export interface PaginatedResponse<T> {
