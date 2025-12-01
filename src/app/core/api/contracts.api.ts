@@ -63,6 +63,21 @@ export interface MarkAsSignedRequest {
   contractId?: string;
 }
 
+export interface RenewContractRequest {
+  newStartDate: string;
+  newEndDate: string;
+  contractType: string;
+  newRent: number;
+  newCharges: number;
+  previousIRL?: number | null;
+  currentIRL?: number | null;
+  deposit?: number | null;
+  customClauses?: string | null;
+  notes?: string | null;
+  tacitRenewal: boolean;
+  attachedDocumentIds?: string[];
+}
+
 export interface PaginatedResponse<T> {
   total: number;
   page: number;
@@ -132,5 +147,9 @@ export class ContractsApi {
   
   updateContract(contractId: string, request: Partial<CreateContractRequest>): Observable<{ message: string; id: string }> {
     return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}`, request);
+  }
+  
+  renewContract(contractId: string, request: RenewContractRequest): Promise<{ message: string; newContractId: string }> {
+    return this.http.post<{ message: string; newContractId: string }>(`${this.baseUrl}/${contractId}/renew`, request).toPromise() as Promise<{ message: string; newContractId: string }>;
   }
 }

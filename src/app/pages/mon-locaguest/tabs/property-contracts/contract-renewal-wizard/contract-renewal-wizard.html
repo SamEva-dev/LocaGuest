@@ -1,0 +1,549 @@
+<div class="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
+  <!-- Header -->
+  <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+          Renouvellement de Contrat
+        </h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          {{ data().propertyName }} • {{ data().tenantName }}
+          @if (data().roomName) {
+            <span>• {{ data().roomName }}</span>
+          }
+        </p>
+      </div>
+      <button
+        (click)="cancel()"
+        class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+        [disabled]="isSubmitting()"
+      >
+        <i class="ph ph-x text-2xl"></i>
+      </button>
+    </div>
+    
+    <!-- Progress Stepper -->
+    <div class="mt-6 flex items-center justify-between">
+      @for (step of [1, 2, 3, 4]; track step) {
+        <div class="flex items-center flex-1">
+          <!-- Circle -->
+          <div
+            class="relative flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all cursor-pointer"
+            [class.bg-blue-600]="currentStep() >= step"
+            [class.border-blue-600]="currentStep() >= step"
+            [class.border-gray-300]="currentStep() < step"
+            [class.text-white]="currentStep() >= step"
+            [class.text-gray-400]="currentStep() < step"
+            (click)="goToStep(step)"
+          >
+            @if (currentStep() > step) {
+              <i class="ph ph-check font-bold"></i>
+            } @else {
+              <span class="text-sm font-semibold">{{ step }}</span>
+            }
+          </div>
+          
+          <!-- Line -->
+          @if (step < 4) {
+            <div
+              class="h-0.5 flex-1 mx-2 transition-all"
+              [class.bg-blue-600]="currentStep() > step"
+              [class.bg-gray-300]="currentStep() <= step"
+            ></div>
+          }
+        </div>
+      }
+    </div>
+    
+    <!-- Step Labels -->
+    <div class="mt-2 flex items-center justify-between text-xs">
+      <div class="flex-1 text-center font-medium" [class.text-blue-600]="currentStep() === 1" [class.text-gray-500]="currentStep() !== 1">
+        Informations
+      </div>
+      <div class="flex-1 text-center font-medium" [class.text-blue-600]="currentStep() === 2" [class.text-gray-500]="currentStep() !== 2">
+        Révision Loyer
+      </div>
+      <div class="flex-1 text-center font-medium" [class.text-blue-600]="currentStep() === 3" [class.text-gray-500]="currentStep() !== 3">
+        Clauses
+      </div>
+      <div class="flex-1 text-center font-medium" [class.text-blue-600]="currentStep() === 4" [class.text-gray-500]="currentStep() !== 4">
+        Récapitulatif
+      </div>
+    </div>
+  </div>
+  
+  <!-- Content -->
+  <div class="flex-1 overflow-auto p-6">
+    <div class="max-w-4xl mx-auto">
+      
+      <!-- ========== ÉTAPE 1: Informations Générales ========== -->
+      @if (currentStep() === 1) {
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Informations Générales</h3>
+          
+          <!-- Info Bail Actuel (lecture seule) -->
+          <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">Bail Actuel</h4>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="text-blue-700 dark:text-blue-400 font-medium">Début:</span>
+                <span class="ml-2 text-blue-900 dark:text-blue-200">{{ data().contract.startDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div>
+                <span class="text-blue-700 dark:text-blue-400 font-medium">Fin:</span>
+                <span class="ml-2 text-blue-900 dark:text-blue-200">{{ data().contract.endDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div>
+                <span class="text-blue-700 dark:text-blue-400 font-medium">Type:</span>
+                <span class="ml-2 text-blue-900 dark:text-blue-200">{{ data().contract.type === 'Furnished' ? 'Meublé' : 'Non meublé' }}</span>
+              </div>
+              <div>
+                <span class="text-blue-700 dark:text-blue-400 font-medium">Expire dans:</span>
+                <span class="ml-2 text-blue-900 dark:text-blue-200 font-semibold">{{ getDaysUntilExpiration() }} jours</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Nouveau Bail -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Nouvelle Date de Début <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              [(ngModel)]="step1Form().newStartDate"
+              (ngModelChange)="onStartDateChange()"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              [disabled]="true"
+            />
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Le nouveau contrat doit commencer le lendemain de la fin de l'ancien
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Durée (mois) <span class="text-red-500">*</span>
+              </label>
+              <select
+                [(ngModel)]="step1Form().duration"
+                (ngModelChange)="onDurationChange()"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option [value]="12">1 an (Meublé)</option>
+                <option [value]="36">3 ans (Non meublé)</option>
+                <option [value]="9">9 mois (Étudiant)</option>
+                <option [value]="1">1 mois (Mobilité)</option>
+                <option [value]="6">6 mois</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Type de Bail <span class="text-red-500">*</span>
+              </label>
+              <select
+                [(ngModel)]="step1Form().contractType"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="Furnished">Meublé</option>
+                <option value="Unfurnished">Non meublé</option>
+              </select>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Date de Fin <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              [(ngModel)]="step1Form().newEndDate"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              [disabled]="true"
+            />
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Calculée automatiquement selon la durée choisie
+            </p>
+          </div>
+        </div>
+      }
+      
+      <!-- ========== ÉTAPE 2: Révision de Loyer ========== -->
+      @if (currentStep() === 2) {
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Révision de Loyer</h3>
+          
+          <!-- Loyer Actuel -->
+          <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+            <div class="grid grid-cols-3 gap-4 text-sm">
+              <div>
+                <span class="text-gray-600 dark:text-gray-400 block mb-1">Loyer actuel</span>
+                <span class="text-2xl font-bold text-gray-900 dark:text-white">{{ step2Form().currentRent }}€</span>
+              </div>
+              <div>
+                <span class="text-gray-600 dark:text-gray-400 block mb-1">Charges</span>
+                <span class="text-2xl font-bold text-gray-900 dark:text-white">{{ step2Form().newCharges }}€</span>
+              </div>
+              <div>
+                <span class="text-gray-600 dark:text-gray-400 block mb-1">Dépôt</span>
+                <span class="text-2xl font-bold text-gray-900 dark:text-white">{{ step2Form().deposit }}€</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- IRL (Indice de Référence des Loyers) -->
+          <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+              Révision IRL (Indice de Référence des Loyers)
+            </h4>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Ancien IRL
+                </label>
+                <input
+                  type="number"
+                  [(ngModel)]="step2Form().previousIRL"
+                  (ngModelChange)="calculateRevisedRent()"
+                  step="0.01"
+                  placeholder="Ex: 142.11"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nouvel IRL
+                </label>
+                <input
+                  type="number"
+                  [(ngModel)]="step2Form().currentIRL"
+                  (ngModelChange)="calculateRevisedRent()"
+                  step="0.01"
+                  placeholder="Ex: 145.93"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
+            
+            @if (step2Form().revisedRent > step2Form().currentRent && step2Form().previousIRL && step2Form().currentIRL) {
+              <div class="mt-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-green-800 dark:text-green-300">Loyer révisé (calculé)</span>
+                  <span class="text-lg font-bold text-green-900 dark:text-green-200">{{ step2Form().revisedRent }}€</span>
+                </div>
+                <div class="text-xs text-green-700 dark:text-green-400 mt-1">
+                  Augmentation: +{{ step2Form().rentIncreasePercent }}%
+                </div>
+              </div>
+            }
+          </div>
+          
+          <!-- Nouveau Loyer -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Nouveau Loyer <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <input
+                type="number"
+                [(ngModel)]="step2Form().newRent"
+                (ngModelChange)="onNewRentChange()"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              />
+              <span class="absolute right-4 top-2.5 text-gray-500 dark:text-gray-400">€</span>
+            </div>
+            @if (step2Form().rentIncreasePercent > 3.5) {
+              <div class="mt-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3">
+                <div class="flex items-start gap-2">
+                  <i class="ph ph-warning text-orange-600 dark:text-orange-400 mt-0.5"></i>
+                  <div class="text-sm text-orange-800 dark:text-orange-300">
+                    <strong>Attention:</strong> L'augmentation de {{ step2Form().rentIncreasePercent }}% dépasse les 3.5% recommandés (loi ALUR dans les zones tendues).
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+          
+          <!-- Charges & Dépôt -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Charges <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  type="number"
+                  [(ngModel)]="step2Form().newCharges"
+                  step="0.01"
+                  min="0"
+                  class="w-full px-4 py-2 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                />
+                <span class="absolute right-4 top-2.5 text-gray-500 dark:text-gray-400">€</span>
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Dépôt de Garantie
+              </label>
+              <div class="relative">
+                <input
+                  type="number"
+                  [(ngModel)]="step2Form().deposit"
+                  step="0.01"
+                  min="0"
+                  class="w-full px-4 py-2 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                />
+                <span class="absolute right-4 top-2.5 text-gray-500 dark:text-gray-400">€</span>
+              </div>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Généralement inchangé sauf cas spécifique
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+      
+      <!-- ========== ÉTAPE 3: Clauses & Documents ========== -->
+      @if (currentStep() === 3) {
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Clauses & Documents</h3>
+          
+          <!-- Reconduction Tacite -->
+          <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+            <div>
+              <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Reconduction Tacite</h4>
+              <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                Le contrat se renouvelle automatiquement à échéance
+              </p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                [(ngModel)]="step3Form().tacitRenewal"
+                class="sr-only peer"
+              />
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+          
+          <!-- Clauses Personnalisées -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Clauses Personnalisées
+            </label>
+            <textarea
+              [(ngModel)]="step3Form().customClauses"
+              rows="4"
+              placeholder="Ex: Interdiction d'animaux, Entretien jardin à la charge du locataire..."
+              maxlength="2000"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none"
+            ></textarea>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {{ step3Form().customClauses?.length || 0 }} / 2000 caractères
+            </p>
+          </div>
+          
+          <!-- Notes -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Notes Additionnelles
+            </label>
+            <textarea
+              [(ngModel)]="step3Form().notes"
+              rows="3"
+              placeholder="Notes internes sur ce renouvellement..."
+              maxlength="1000"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none"
+            ></textarea>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {{ step3Form().notes?.length || 0 }} / 1000 caractères
+            </p>
+          </div>
+          
+          <!-- Documents -->
+          <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+              Documents à Joindre
+            </h4>
+            <p class="text-xs text-gray-600 dark:text-gray-400 mb-4">
+              Si le DPE ou d'autres diagnostics ont été mis à jour, veuillez les joindre au renouvellement.
+            </p>
+            <button
+              type="button"
+              class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition inline-flex items-center gap-2"
+            >
+              <i class="ph ph-paperclip"></i>
+              <span>Joindre des Documents</span>
+            </button>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Formats acceptés: PDF, JPEG (max 10MB)
+            </p>
+          </div>
+        </div>
+      }
+      
+      <!-- ========== ÉTAPE 4: Récapitulatif ========== -->
+      @if (currentStep() === 4) {
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Récapitulatif du Renouvellement</h3>
+          
+          <!-- Section 1: Informations -->
+          <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+            <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">📋 Informations Générales</h4>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="text-gray-600 dark:text-gray-400">Bien:</span>
+                <span class="ml-2 font-medium text-gray-900 dark:text-white">{{ data().propertyName }}</span>
+              </div>
+              <div>
+                <span class="text-gray-600 dark:text-gray-400">Locataire:</span>
+                <span class="ml-2 font-medium text-gray-900 dark:text-white">{{ data().tenantName }}</span>
+              </div>
+              <div class="col-span-2 bg-red-50 dark:bg-red-900/20 p-3 rounded">
+                <div class="text-xs text-red-800 dark:text-red-300 font-medium mb-1">Ancien Contrat</div>
+                <div class="text-sm text-red-900 dark:text-red-200">
+                  {{ data().contract.startDate | date:'dd/MM/yyyy' }} → {{ data().contract.endDate | date:'dd/MM/yyyy' }}
+                  <span class="ml-2 text-xs">({{ data().contract.type === 'Furnished' ? 'Meublé' : 'Non meublé' }})</span>
+                </div>
+              </div>
+              <div class="col-span-2 bg-green-50 dark:bg-green-900/20 p-3 rounded">
+                <div class="text-xs text-green-800 dark:text-green-300 font-medium mb-1">Nouveau Contrat</div>
+                <div class="text-sm text-green-900 dark:text-green-200">
+                  {{ step1Form().newStartDate | date:'dd/MM/yyyy' }} → {{ step1Form().newEndDate | date:'dd/MM/yyyy' }}
+                  <span class="ml-2 text-xs">({{ step1Form().contractType === 'Furnished' ? 'Meublé' : 'Non meublé' }}, {{ step1Form().duration }} mois)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Section 2: Révision Financière -->
+          <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+            <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">💰 Révision Financière</h4>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Loyer</span>
+                <div class="flex items-center gap-3">
+                  <span class="text-sm text-gray-500 dark:text-gray-400 line-through">{{ step2Form().currentRent }}€</span>
+                  <span class="text-lg font-bold text-green-600 dark:text-green-400">{{ step2Form().newRent }}€</span>
+                  @if (step2Form().rentIncreasePercent > 0) {
+                    <span class="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded">
+                      +{{ step2Form().rentIncreasePercent }}%
+                    </span>
+                  }
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Charges</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">{{ step2Form().newCharges }}€</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Dépôt de Garantie</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">{{ step2Form().deposit }}€</span>
+              </div>
+              @if (step2Form().previousIRL && step2Form().currentIRL) {
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-2 p-2 bg-gray-50 dark:bg-gray-700/50 rounded">
+                  IRL: {{ step2Form().previousIRL }} → {{ step2Form().currentIRL }}
+                </div>
+              }
+            </div>
+          </div>
+          
+          <!-- Section 3: Clauses -->
+          <div>
+            <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">📝 Clauses & Options</h4>
+            <div class="space-y-2 text-sm">
+              <div class="flex items-center gap-2">
+                @if (step3Form().tacitRenewal) {
+                  <i class="ph ph-check-circle text-green-600 dark:text-green-400"></i>
+                  <span class="text-gray-900 dark:text-white">Reconduction tacite activée</span>
+                } @else {
+                  <i class="ph ph-x-circle text-red-600 dark:text-red-400"></i>
+                  <span class="text-gray-900 dark:text-white">Pas de reconduction tacite</span>
+                }
+              </div>
+              @if (step3Form().customClauses) {
+                <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded">
+                  <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">Clauses personnalisées:</div>
+                  <div class="text-sm text-gray-900 dark:text-white whitespace-pre-wrap">{{ step3Form().customClauses }}</div>
+                </div>
+              }
+              @if (step3Form().notes) {
+                <div class="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
+                  <div class="text-xs text-blue-600 dark:text-blue-400 mb-1">Notes:</div>
+                  <div class="text-sm text-blue-900 dark:text-blue-200 whitespace-pre-wrap">{{ step3Form().notes }}</div>
+                </div>
+              }
+            </div>
+          </div>
+          
+          <!-- Important Notice -->
+          <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+            <div class="flex items-start gap-3">
+              <i class="ph ph-warning text-yellow-600 dark:text-yellow-400 text-xl mt-0.5"></i>
+              <div class="text-sm">
+                <strong class="text-yellow-900 dark:text-yellow-300">Important:</strong>
+                <p class="text-yellow-800 dark:text-yellow-400 mt-1">
+                  En validant ce renouvellement, l'ancien contrat passera en statut "Renouvelé" et un nouveau contrat sera créé. Cette action est irréversible.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      
+    </div>
+  </div>
+  
+  <!-- Footer Actions -->
+  <div class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <button
+        (click)="previousStep()"
+        [disabled]="currentStep() === 1 || isSubmitting()"
+        class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+      >
+        <i class="ph ph-caret-left"></i>
+        <span>Précédent</span>
+      </button>
+      
+      <div class="flex items-center gap-3">
+        @if (currentStep() < 4) {
+          <button
+            (click)="nextStep()"
+            [disabled]="
+              (currentStep() === 1 && !step1Valid()) ||
+              (currentStep() === 2 && !step2Valid()) ||
+              (currentStep() === 3 && !step3Valid()) ||
+              isSubmitting()
+            "
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+          >
+            <span>Suivant</span>
+            <i class="ph ph-caret-right"></i>
+          </button>
+        }
+        
+        @if (currentStep() === 4) {
+          <button
+            (click)="submitRenewal()"
+            [disabled]="isSubmitting()"
+            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+          >
+            @if (isSubmitting()) {
+              <i class="ph ph-spinner animate-spin"></i>
+              <span>Traitement...</span>
+            } @else {
+              <i class="ph ph-check-circle"></i>
+              <span>Renouveler le Contrat</span>
+            }
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

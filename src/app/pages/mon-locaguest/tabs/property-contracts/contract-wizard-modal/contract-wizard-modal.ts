@@ -208,11 +208,13 @@ export class ContractWizardModal {
             type: 'Colocation individuelle'
           }));
         } else {
+          // ✅ CORRECTION: Ne mettre le dépôt = loyer que si deposit est à 0 (valeur par défaut)
+          const currentForm = this.form();
           this.form.update(f => ({
             ...f,
             rent: prop.rent || 0,
             charges: prop.charges || 0,
-            deposit: prop.rent || 0,
+            deposit: currentForm.deposit === 0 ? (prop.rent || 0) : currentForm.deposit,
             type: prop.isFurnished ? 'Meublé' : 'Non meublé'
           }));
         }
@@ -223,26 +225,14 @@ export class ContractWizardModal {
     effect(() => {
       const room = this.selectedRoom();
       if (room) {
+        // ✅ CORRECTION: Ne mettre le dépôt = loyer que si deposit est à 0 (valeur par défaut)
+        const currentForm = this.form();
         this.form.update(f => ({
           ...f,
           rent: room.rent || 0,
           charges: room.charges || 0,
-          deposit: room.rent || 0, // Dépôt = 1 mois de loyer par défaut
+          deposit: currentForm.deposit === 0 ? (room.rent || 0) : currentForm.deposit,
           room: room.name
-        }));
-      }
-    });
-    
-    // PHASE 2: Calcul auto dépôt quand loyer change
-    effect(() => {
-      const rent = this.form().rent;
-      const currentDeposit = this.form().deposit;
-      
-      // Si dépôt non modifié manuellement, mettre à jour auto
-      if (rent && (!currentDeposit || currentDeposit === 0)) {
-        this.form.update(f => ({
-          ...f,
-          deposit: rent
         }));
       }
     });

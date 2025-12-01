@@ -226,7 +226,7 @@
                 <!-- Alertes & Badges -->
                 <div class="space-y-2">
                   <!-- Alerte EDL Entrée -->
-                  @if (item.isFutureOccupant && needsInventoryEntry(item.contract)) {
+                  @if (item.isFutureOccupant && !item.contract.hasInventoryEntry) {
                     <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm">
                       <i class="ph ph-warning-circle text-lg"></i>
                       <span class="font-medium">EDL d'entrée à réaliser</span>
@@ -269,24 +269,46 @@
                   <span>Contrat</span>
                 </button>
                 
-                @if (item.isFutureOccupant && needsInventoryEntry(item.contract)) {
-                  <button
-                    (click)="openInventoryEntry(item.contract)"
-                    class="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
-                  >
-                    <i class="ph ph-clipboard-text"></i>
-                    <span>EDL Entrée</span>
-                  </button>
+                <!-- ✅ EDL Entrée: Créer ou Voir -->
+                @if (item.isFutureOccupant) {
+                  @if (!item.contract.hasInventoryEntry) {
+                    <button
+                      (click)="openInventoryEntry(item.contract)"
+                      class="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
+                    >
+                      <i class="ph ph-clipboard-text"></i>
+                      <span>Créer EDL Entrée</span>
+                    </button>
+                  } @else {
+                    <button
+                      (click)="viewInventoryEntry(item.tenant)"
+                      class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
+                    >
+                      <i class="ph ph-check-circle"></i>
+                      <span>Voir EDL Entrée</span>
+                    </button>
+                  }
                 }
                 
-                @if (!item.isFutureOccupant && needsInventoryExit(item.contract)) {
-                  <button
-                    (click)="openInventoryExit(item.contract)"
-                    class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
-                  >
-                    <i class="ph ph-clipboard-text"></i>
-                    <span>EDL Sortie</span>
-                  </button>
+                <!-- ✅ EDL Sortie: Créer ou Voir -->
+                @if (!item.isFutureOccupant) {
+                  @if (needsInventoryExit(item.contract)) {
+                    <button
+                      (click)="openInventoryExit(item.contract)"
+                      class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
+                    >
+                      <i class="ph ph-clipboard-text"></i>
+                      <span>Créer EDL Sortie</span>
+                    </button>
+                  } @else if (item.contract.hasInventoryExit) {
+                    <button
+                      (click)="viewInventoryExit(item.tenant)"
+                      class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
+                    >
+                      <i class="ph ph-check-circle"></i>
+                      <span>Voir EDL Sortie</span>
+                    </button>
+                  }
                 }
                 
                 <!-- ✅ NOUVEAUX BOUTONS -->
@@ -515,5 +537,16 @@
         />
       </div>
     </div>
+  </div>
+}
+
+<!-- ✅ Wizard de Renouvellement de Contrat -->
+@if (showRenewalWizard() && renewalWizardData()) {
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+    <contract-renewal-wizard
+      [data]="renewalWizardData()!"
+      (completed)="onRenewalCompleted($event)"
+      (cancelled)="onRenewalCancelled()"
+    />
   </div>
 }

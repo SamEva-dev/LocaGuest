@@ -132,6 +132,8 @@ export interface Contract {
   // État des lieux
   hasInventoryEntry?: boolean;  // EDL entrée réalisé
   hasInventoryExit?: boolean;   // EDL sortie réalisé
+  inventoryEntryId?: string;    // ID de l'EDL entrée
+  inventoryExitId?: string;     // ID de l'EDL sortie
 }
 
 export interface FinancialSummary {

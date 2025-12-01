@@ -15,6 +15,10 @@ import {
   InventoryExitWizardSimpleComponent, 
   InventoryExitWizardData 
 } from '../property-contracts/inventory-exit-wizard/inventory-exit-wizard-simple';
+import {
+  ContractRenewalWizard,
+  ContractRenewalData
+} from '../property-contracts/contract-renewal-wizard/contract-renewal-wizard';
 
 interface TenantWithContract {
   tenant: TenantListItem;
@@ -44,7 +48,8 @@ interface TenantWithContract {
   imports: [
     DecimalPipe,
     InventoryEntryWizardSimpleComponent,
-    InventoryExitWizardSimpleComponent
+    InventoryExitWizardSimpleComponent,
+    ContractRenewalWizard
   ],
   templateUrl: './property-tenants-tab.html'
 })
@@ -72,6 +77,10 @@ export class PropertyTenantsTab {
   showInventoryExitWizard = signal(false);
   inventoryEntryData = signal<InventoryEntryWizardData | null>(null);
   inventoryExitData = signal<InventoryExitWizardData | null>(null);
+  
+  // Wizard Renouvellement
+  showRenewalWizard = signal(false);
+  renewalWizardData = signal<any | null>(null);
   
   // Computed properties
   // ✅ CORRECTION: Filtrer uniquement Signed + Active (pas Draft, Expired, Cancelled)
@@ -164,6 +173,34 @@ export class PropertyTenantsTab {
     });
   }
   
+  // ✅ NOUVEAU: Voir l'EDL entrée (naviguer vers onglet documents)
+  viewInventoryEntry(tenant: TenantListItem) {
+    if (!tenant.id) return;
+    // Ouvrir l'onglet locataire avec focus sur l'onglet documents
+    this.tabManager.openTenant(tenant.id, tenant.fullName || 'Locataire', {
+      initialTab: 'documents',
+      fromProperty: {
+        id: this.property().id,
+        code: this.property().code,
+        name: this.property().name
+      }
+    });
+  }
+  
+  // ✅ NOUVEAU: Voir l'EDL sortie (naviguer vers onglet documents)
+  viewInventoryExit(tenant: TenantListItem) {
+    if (!tenant.id) return;
+    // Ouvrir l'onglet locataire avec focus sur l'onglet documents
+    this.tabManager.openTenant(tenant.id, tenant.fullName || 'Locataire', {
+      initialTab: 'documents',
+      fromProperty: {
+        id: this.property().id,
+        code: this.property().code,
+        name: this.property().name
+      }
+    });
+  }
+  
   openContractDetail(contract: Contract) {
     console.log('Open contract:', contract.id);
     // TODO: Implement contract detail view
@@ -240,15 +277,43 @@ export class PropertyTenantsTab {
   }
   
   createAmendment(contract: Contract) {
-    // TODO: Open amendment creation modal
-    console.log('Create amendment for contract:', contract.code);
-    this.toasts.infoDirect(`Création d'avenant pour le contrat ${contract.code}\n\nFonctionnalité en développement.`);
+    console.log('Create amendment for contract:', contract.id);
+    this.toasts.infoDirect('Fonction "Avenant" en cours de développement');
   }
   
   renewContract(contract: Contract) {
-    // TODO: Open contract renewal modal
-    console.log('Renew contract:', contract.code);
-    this.toasts.infoDirect(`Renouvellement du bail ${contract.code}\n\nFonctionnalité en développement.`);
+    // Trouver le locataire correspondant au contrat
+    const tenantItem = this.currentTenants().find(t => t.contract.id === contract.id);
+    
+    if (!tenantItem) {
+      this.toasts.errorDirect('Locataire introuvable');
+      return;
+    }
+    
+    // Préparer les données pour le wizard
+    const renewalData = {
+      contract: contract,
+      propertyName: this.property().name,
+      tenantName: tenantItem.tenant.fullName || 'Locataire',
+      roomName: tenantItem.room
+    };
+    
+    // Stocker les données dans un signal temporaire pour le wizard
+    this.renewalWizardData.set(renewalData);
+    this.showRenewalWizard.set(true);
+  }
+  
+  onRenewalCompleted(newContractId: string) {
+    this.showRenewalWizard.set(false);
+    this.renewalWizardData.set(null);
+    this.toasts.successDirect('Contrat renouvelé avec succès !');
+    // Recharger les données
+    this.onRefreshNeeded.emit();
+  }
+  
+  onRenewalCancelled() {
+    this.showRenewalWizard.set(false);
+    this.renewalWizardData.set(null);
   }
   
   toggleViewMode() {
