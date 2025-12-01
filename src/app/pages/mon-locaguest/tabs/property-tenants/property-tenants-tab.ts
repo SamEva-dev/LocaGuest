@@ -5,6 +5,8 @@ import { TenantListItem } from '../../../../core/api/tenants.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
 import { TenantsService } from '../../../../core/services/tenants.service';
+import { ToastService } from '../../../../core/ui/toast.service';
+import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { 
   InventoryEntryWizardSimpleComponent, 
   InventoryEntryWizardData 
@@ -57,6 +59,9 @@ export class PropertyTenantsTab {
   private propertiesService = inject(PropertiesService);
   private tenantsService = inject(TenantsService);
   private tabManager = inject(InternalTabManagerService);
+  
+  private toasts = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   
   isLoading = signal(false);
   showActions = signal(false);
@@ -206,7 +211,7 @@ export class PropertyTenantsTab {
     const inventoryEntryId = (contract as any).inventoryEntryId;
     
     if (!inventoryEntryId) {
-      alert('❌ Erreur: Aucun EDL d\'entrée trouvé pour ce contrat.\n\nVous devez d\'abord créer un EDL d\'entrée.');
+      this.toasts.errorDirect('Erreur: Aucun EDL d\'entrée trouvé pour ce contrat.\n\nVous devez d\'abord créer un EDL d\'entrée.');
       return;
     }
     
@@ -237,13 +242,13 @@ export class PropertyTenantsTab {
   createAmendment(contract: Contract) {
     // TODO: Open amendment creation modal
     console.log('Create amendment for contract:', contract.code);
-    alert(`Création d'avenant pour le contrat ${contract.code}\n\nFonctionnalité en développement.`);
+    this.toasts.infoDirect(`Création d'avenant pour le contrat ${contract.code}\n\nFonctionnalité en développement.`);
   }
   
   renewContract(contract: Contract) {
     // TODO: Open contract renewal modal
     console.log('Renew contract:', contract.code);
-    alert(`Renouvellement du bail ${contract.code}\n\nFonctionnalité en développement.`);
+    this.toasts.infoDirect(`Renouvellement du bail ${contract.code}\n\nFonctionnalité en développement.`);
   }
   
   toggleViewMode() {
@@ -253,22 +258,16 @@ export class PropertyTenantsTab {
   async dissociateTenant(item: TenantWithContract, propertyId: string) {
     // ✅ Vérification: bloquer si contrat encore actif/signé
     if (!this.canDissociate(item.contract)) {
-      alert(
-        `❌ Dissociation impossible\n\n` +
-        `Vous ne pouvez pas dissocier ${item.tenant.fullName} de ce bien tant que :\n` +
-        `• Le bail est encore Signé ou Actif\n` +
-        `• L'état des lieux de sortie n'est pas réalisé\n\n` +
-        `Statut actuel du contrat : ${item.contract.status}`
+      this.toasts.warningDirect(
+        `Dissociation impossible\n\nVous ne pouvez pas dissocier ${item.tenant.fullName} de ce bien tant que :\n• Le bail est encore Signé ou Actif\n• Des documents sont associés\n\nProcédure : Terminez/Annulez d'abord le contrat.`
       );
       return;
     }
     
-    const confirmed = confirm(
-      `Êtes-vous sûr de vouloir dissocier ${item.tenant.fullName} de ce bien ?\n\n` +
-      `⚠️ Attention : Cette action ne supprime pas le contrat, elle retire seulement l'association directe.\n` +
-      `Le locataire restera lié via son contrat.`
+    const confirmed = await this.confirmService.warning(
+      'Dissocier le locataire',
+      `Êtes-vous sûr de vouloir dissocier ${item.tenant.fullName} de ce bien ?\n\n⚠️ Attention : Cette action ne supprime pas le contrat, elle retire seulement l'association directe.\nLe locataire restera lié via son contrat.`
     );
-    
     if (!confirmed) return;
     
     this.isLoading.set(true);
@@ -278,7 +277,7 @@ export class PropertyTenantsTab {
       this.onRefreshNeeded.emit();
     } catch (error) {
       console.error('Error dissociating tenant:', error);
-      alert('Erreur lors de la dissociation du locataire');
+      this.toasts.errorDirect('Erreur lors de la dissociation du locataire');
     } finally {
       this.isLoading.set(false);
     }

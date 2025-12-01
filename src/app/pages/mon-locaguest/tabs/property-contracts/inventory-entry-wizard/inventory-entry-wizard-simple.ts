@@ -7,6 +7,8 @@ import {
   InventoryCondition,
   CreateInventoryEntryRequest 
 } from '../../../../../core/api/inventories.api';
+import { ToastService } from '../../../../../core/ui/toast.service';
+import { ConfirmService } from '../../../../../core/ui/confirm.service';
 
 /**
  * Données passées au wizard
@@ -357,6 +359,10 @@ export interface InventoryEntryWizardData {
 export class InventoryEntryWizardSimpleComponent {
   private inventoriesApi = inject(InventoriesApiService);
   
+  // ✅ Services UI
+  private toasts = inject(ToastService);
+  private confirmService = inject(ConfirmService);
+  
   // Props passées
   wizardData = input.required<InventoryEntryWizardData>();
   onClose = output<any>();
@@ -578,7 +584,7 @@ export class InventoryEntryWizardSimpleComponent {
       }
     } catch (error) {
       console.error('❌ Erreur PDF', error);
-      alert('Erreur lors de la génération du PDF');
+      this.toasts.errorDirect('Erreur lors de la génération du PDF');
     }
   }
 
@@ -596,10 +602,10 @@ export class InventoryEntryWizardSimpleComponent {
         recipientEmail: tenantEmail,
         recipientName: this.data().tenantName
       }).toPromise();
-      alert('✅ Email envoyé avec succès!');
+      this.toasts.successDirect('Email envoyé avec succès!');
     } catch (error) {
       console.error('❌ Erreur Email', error);
-      alert('Erreur lors de l\'envoi de l\'email');
+      this.toasts.errorDirect('Erreur lors de l\'envoi de l\'email');
     }
   }
 
@@ -610,7 +616,11 @@ export class InventoryEntryWizardSimpleComponent {
     const signerName = prompt('Nom du signataire:');
     if (!signerName) return;
     
-    const role = confirm('Cliquez OK pour Agent, Annuler pour Locataire') ? 'Agent' : 'Tenant';
+    const isAgent = await this.confirmService.info(
+      'Rôle du signataire',
+      'Qui signe ?\n\nCliquez Confirmer pour Agent, Annuler pour Locataire'
+    );
+    const role = isAgent ? 'Agent' : 'Tenant';
     
     try {
       await this.inventoriesApi.signInventory({
@@ -620,10 +630,10 @@ export class InventoryEntryWizardSimpleComponent {
         signerName: signerName,
         signatureData: 'signature-base64-placeholder'
       }).toPromise();
-      alert('✅ Signature enregistrée!');
+      this.toasts.successDirect('Signature enregistrée!');
     } catch (error) {
       console.error('❌ Erreur Signature', error);
-      alert('Erreur lors de la signature');
+      this.toasts.errorDirect('Erreur lors de la signature');
     }
   }
 }

@@ -5,6 +5,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ContractsApi, ContractDto, ContractStats, CreateContractRequest, TerminateContractRequest, RecordPaymentRequest } from '../../../../core/api/contracts.api';
 import { TenantsApi } from '../../../../core/api/tenants.api';
 import { PropertiesApi } from '../../../../core/api/properties.api';
+import { ToastService } from '../../../../core/ui/toast.service';
+import { ConfirmService } from '../../../../core/ui/confirm.service';
 
 
 @Component({
@@ -304,6 +306,10 @@ export class ContractsTab implements OnInit {
   private propertiesApi = inject(PropertiesApi);
   private fb = inject(FormBuilder);
   
+  // ✅ Services UI
+  private toasts = inject(ToastService);
+  private confirmService = inject(ConfirmService);
+  
   stats = signal<ContractStats | null>(null);
   contracts = signal<ContractDto[]>([]);
   isLoading = signal(false);
@@ -411,11 +417,11 @@ export class ContractsTab implements OnInit {
         this.showCreateModal.set(false);
         this.loadContracts();
         this.loadStats();
-        alert('✅ Contrat créé avec succès !');
+        this.toasts.successDirect('Contrat créé avec succès !');
       },
       error: (err) => {
         console.error('❌ Error creating contract:', err);
-        alert('❌ Erreur lors de la création du contrat');
+        this.toasts.errorDirect('Erreur lors de la création du contrat');
       }
     });
   }
@@ -448,11 +454,11 @@ export class ContractsTab implements OnInit {
       next: () => {
         this.showPaymentModal.set(false);
         this.loadContracts();
-        alert('✅ Paiement enregistré avec succès !');
+        this.toasts.successDirect('Paiement enregistré avec succès !');
       },
       error: (err) => {
         console.error('❌ Error recording payment:', err);
-        alert('❌ Erreur lors de l\'enregistrement du paiement');
+        this.toasts.errorDirect('Erreur lors de l\'enregistrement du paiement');
       }
     });
   }
@@ -467,9 +473,14 @@ export class ContractsTab implements OnInit {
     this.showTerminateModal.set(true);
   }
 
-  submitTerminate() {
+  async submitTerminate() {
     if (this.terminateForm.invalid) return;
-    if (!confirm('⚠️ Êtes-vous sûr de vouloir résilier ce contrat ?')) return;
+    const confirmed = await this.confirmService.danger(
+      'Résilier le contrat',
+      'Êtes-vous sûr de vouloir résilier ce contrat ?',
+      'Résilier'
+    );
+    if (!confirmed) return;
 
     const contract = this.selectedContract();
     if (!contract) return;
@@ -485,11 +496,11 @@ export class ContractsTab implements OnInit {
         this.showTerminateModal.set(false);
         this.loadContracts();
         this.loadStats();
-        alert('✅ Contrat résilié avec succès');
+        this.toasts.successDirect('Contrat résilié avec succès');
       },
       error: (err) => {
         console.error('❌ Error terminating contract:', err);
-        alert('❌ Erreur lors de la résiliation du contrat');
+        this.toasts.errorDirect('Erreur lors de la résiliation du contrat');
       }
     });
   }

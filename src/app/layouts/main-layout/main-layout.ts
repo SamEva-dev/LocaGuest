@@ -5,10 +5,13 @@ import { CommonModule } from '@angular/common';
 import { TabManagerService } from '../../core/services/tab-manager.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { AuthService } from '../../core/auth/services/auth.service';
+import { ToastService } from '../../core/ui/toast.service';
+import { ConfirmService } from '../../core/ui/confirm.service';
+import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'main-layout',
-  imports: [CommonModule, RouterOutlet, TranslatePipe],
+  imports: [CommonModule, RouterOutlet, TranslatePipe, ConfirmModal],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
@@ -17,11 +20,19 @@ export class MainLayout {
   private router = inject(Router);
   private tabManager = inject(TabManagerService);
   theme = inject(ThemeService);
+  
+  // ✅ Services UI
+  toasts = inject(ToastService);
+  confirmService = inject(ConfirmService);
 
   user = this.auth.user;
   tabs = this.tabManager.tabs;
   activeTabId = this.tabManager.activeTabId;
   showUserMenu = signal(false);
+  
+  // ✅ Getters pour template
+  toastItems = this.toasts.items;
+  confirmData = this.confirmService.confirm;
 
   ngOnInit() {
     // Open fixed tabs

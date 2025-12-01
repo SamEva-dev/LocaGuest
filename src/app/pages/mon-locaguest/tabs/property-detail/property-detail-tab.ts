@@ -9,6 +9,8 @@ import { TenantListItem } from '../../../../core/api/tenants.api';
 import { DocumentsApi, DocumentCategory, DocumentDto } from '../../../../core/api/documents.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { TenantSelectionModal, TenantSelectionResult } from '../../components/tenant-selection-modal/tenant-selection-modal';
+import { ToastService } from '../../../../core/ui/toast.service';
+import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { PropertyInfoTab } from '../property-info/property-info-tab';
 import { PropertyTenantsTab } from '../property-tenants/property-tenants-tab';
 import { PropertyContractsTab } from '../property-contracts/property-contracts-tab';
@@ -24,6 +26,10 @@ export class PropertyDetailTab {
   private tabManager = inject(InternalTabManagerService);
   private propertiesService = inject(PropertiesService);
   private documentsApi = inject(DocumentsApi);
+  
+  // ✅ Services UI
+  private toasts = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   
   tenantModal = viewChild<TenantSelectionModal>('tenantModal');
   contractsTab = viewChild<PropertyContractsTab>('contractsTab');
@@ -191,7 +197,7 @@ export class PropertyDetailTab {
       },
       error: (err: any) => {
         console.error('❌ Error loading available tenants:', err);
-        alert('Erreur lors du chargement des locataires disponibles');
+        this.toasts.errorDirect('Erreur lors du chargement des locataires disponibles');
       }
     });
   }
@@ -221,12 +227,12 @@ export class PropertyDetailTab {
         this.showTenantModal.set(false);
         // Recharger les contrats
         this.loadProperty(propertyId);
-        alert(`Locataire ${result.tenantName} associé avec succès !`);
+        this.toasts.successDirect(`Locataire ${result.tenantName} associé avec succès !`);
       },
       error: (err: any) => {
         console.error('❌ Error assigning tenant:', err);
         const errorMsg = err?.error?.message || err?.message || 'Erreur inconnue';
-        alert(`Erreur lors de l'association du locataire: ${errorMsg}`);
+        this.toasts.errorDirect(`Erreur lors de l'association du locataire: ${errorMsg}`);
       }
     });
   }
@@ -270,13 +276,13 @@ export class PropertyDetailTab {
 
     // Validation: raison obligatoire
     if (!form.reason) {
-      alert('Veuillez sélectionner un motif de dissociation');
+      this.toasts.warningDirect('Veuillez sélectionner un motif de dissociation');
       return;
     }
 
     // Si "Autre", le champ custom est obligatoire
     if (form.reason === 'Autre (préciser)' && !form.customReason.trim()) {
-      alert('Veuillez préciser le motif');
+      this.toasts.warningDirect('Veuillez préciser le motif');
       return;
     }
 
@@ -293,7 +299,7 @@ export class PropertyDetailTab {
     this.propertiesService.dissociateTenant(propertyId, form.tenantId).subscribe({
       next: () => {
         console.log('✅ Tenant dissociated successfully');
-        alert(`Locataire "${form.tenantName}" retiré avec succès !\nMotif: ${finalReason}`);
+        this.toasts.successDirect(`Locataire "${form.tenantName}" retiré avec succès !\nMotif: ${finalReason}`);
         this.closeDissociationModal();
         // Recharger la propriété
         this.loadProperty(propertyId);
@@ -301,7 +307,7 @@ export class PropertyDetailTab {
       error: (err: any) => {
         console.error('❌ Error dissociating tenant:', err);
         const errorMsg = err?.error?.message || err?.message || 'Erreur inconnue';
-        alert(`Erreur lors de la dissociation: ${errorMsg}`);
+        this.toasts.errorDirect(`Erreur lors de la dissociation: ${errorMsg}`);
       }
     });
   }
@@ -365,7 +371,7 @@ export class PropertyDetailTab {
       },
       error: (err: any) => {
         console.error('❌ Error downloading document:', err);
-        alert('Erreur lors du téléchargement du document');
+        this.toasts.errorDirect('Erreur lors du téléchargement du document');
       }
     });
   }
@@ -380,24 +386,26 @@ export class PropertyDetailTab {
       },
       error: (err: any) => {
         console.error('❌ Error viewing document:', err);
-        alert('Erreur lors de l\'ouverture du document');
+        this.toasts.errorDirect('Erreur lors de l\'ouverture du document');
       }
     });
   }
 
-  deleteDocument(doc: DocumentDto) {
+  async deleteDocument(doc: DocumentDto) {
     const propertyId = this.data()?.propertyId;
     if (!propertyId) return;
 
-    if (!confirm(`Êtes-vous sûr de vouloir dissocier le document "${doc.fileName}" ?`)) {
-      return;
-    }
+    const confirmed = await this.confirmService.warning(
+      'Dissocier le document',
+      `Êtes-vous sûr de vouloir dissocier le document "${doc.fileName}" ?`
+    );
+    if (!confirmed) return;
 
     console.log('🗑️ Dissociating document:', doc.fileName);
     this.documentsApi.dissociateDocument(doc.id).subscribe({
       next: () => {
         console.log('✅ Document dissociated');
-        alert('Document dissocié avec succès');
+        this.toasts.successDirect('Document dissocié avec succès');
         // Recharger les documents
         this.documentsApi.getPropertyDocuments(propertyId).subscribe({
           next: (categories) => {
@@ -408,7 +416,7 @@ export class PropertyDetailTab {
       },
       error: (err: any) => {
         console.error('❌ Error dissociating document:', err);
-        alert('Erreur lors de la dissociation du document');
+        this.toasts.errorDirect('Erreur lors de la dissociation du document');
       }
     });
   }

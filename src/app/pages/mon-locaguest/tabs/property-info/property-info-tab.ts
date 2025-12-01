@@ -3,6 +3,8 @@ import { DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PropertyDetail, UpdatePropertyDto } from '../../../../core/api/properties.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
+import { ToastService } from '../../../../core/ui/toast.service';
+import { ConfirmService } from '../../../../core/ui/confirm.service';
 
 @Component({
   selector: 'property-info-tab',
@@ -14,6 +16,10 @@ export class PropertyInfoTab {
   property = input.required<PropertyDetail>();
   propertyUpdated = output<void>();
   private propertiesService = inject(PropertiesService);
+  
+  // ✅ Services UI
+  private toasts = inject(ToastService);
+  private confirmService = inject(ConfirmService);
 
   // UI States
   isEditing = signal(false);
@@ -105,20 +111,25 @@ export class PropertyInfoTab {
       },
       error: (err) => {
         console.error('❌ Error updating property:', err);
-        alert('Erreur lors de la mise à jour du bien');
+        this.toasts.errorDirect('Erreur lors de la mise à jour du bien');
         this.isSaving.set(false);
       }
     });
   }
 
-  changeStatus(status: string) {
+  async changeStatus(status: string) {
     const prop = this.property();
     if (!prop || prop.status === status) {
       this.showStatusDropdown.set(false);
       return;
     }
 
-    if (!confirm(`Voulez-vous vraiment changer le statut en "${this.availableStatuses.find(s => s.value === status)?.label}" ?`)) {
+    const statusLabel = this.availableStatuses.find(s => s.value === status)?.label;
+    const confirmed = await this.confirmService.warning(
+      'Changer le statut',
+      `Voulez-vous vraiment changer le statut en "${statusLabel}" ?`
+    );
+    if (!confirmed) {
       this.showStatusDropdown.set(false);
       return;
     }
@@ -132,7 +143,7 @@ export class PropertyInfoTab {
       },
       error: (err) => {
         console.error('❌ Error updating status:', err);
-        alert('Erreur lors du changement de statut');
+        this.toasts.errorDirect('Erreur lors du changement de statut');
         this.showStatusDropdown.set(false);
       }
     });
@@ -205,11 +216,11 @@ export class PropertyInfoTab {
               console.log('✅ Images uploaded successfully');
               this.isUploadingImages.set(false);
               this.propertyUpdated.emit();
-              alert(`${fileArray.length} photo(s) ajoutée(s) avec succès!`);
+              this.toasts.successDirect(`${fileArray.length} photo(s) ajoutée(s) avec succès!`);
             },
             error: (err) => {
               console.error('❌ Error uploading images:', err);
-              alert('Erreur lors de l\'upload des photos');
+              this.toasts.errorDirect('Erreur lors de l\'upload des photos');
               this.isUploadingImages.set(false);
             }
           });
@@ -220,11 +231,16 @@ export class PropertyInfoTab {
     });
   }
 
-  deleteImage(index: number) {
+  async deleteImage(index: number) {
     const prop = this.property();
     if (!prop) return;
 
-    if (!confirm('Voulez-vous vraiment supprimer cette photo ?')) return;
+    const confirmed = await this.confirmService.danger(
+      'Supprimer la photo',
+      'Voulez-vous vraiment supprimer cette photo ?',
+      'Supprimer'
+    );
+    if (!confirmed) return;
 
     const currentImages = [...(prop.imageUrls || [])];
     currentImages.splice(index, 1);
@@ -242,7 +258,7 @@ export class PropertyInfoTab {
       },
       error: (err) => {
         console.error('❌ Error deleting image:', err);
-        alert('Erreur lors de la suppression de la photo');
+        this.toasts.errorDirect('Erreur lors de la suppression de la photo');
       }
     });
   }

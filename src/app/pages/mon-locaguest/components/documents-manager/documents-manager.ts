@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { DocumentsApi, DocumentDto } from '../../../../core/api/documents.api';
+import { ToastService } from '../../../../core/ui/toast.service';
+import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { TenantsApi } from '../../../../core/api/tenants.api';
 import { Contract } from '../../../../core/api/properties.api';
 import { DocumentTemplate, TenantDocument, TenantInfo, GenerateContractDto, DocumentType } from '../../../../core/models/documents.models';
@@ -20,6 +22,10 @@ export class DocumentsManagerComponent {
   private http = inject(HttpClient);
   private documentsApi = inject(DocumentsApi);
   private tenantsApi = inject(TenantsApi);
+  
+  // ✅ Services UI
+  private toasts = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   
   // Documents from API
   realDocuments = signal<DocumentDto[]>([]);
@@ -259,7 +265,7 @@ export class DocumentsManagerComponent {
   
   processFile(file: File) {
     if (file.size > 10 * 1024 * 1024) {
-      alert('Le fichier ne doit pas dépasser 10MB');
+      this.toasts.warningDirect('Le fichier ne doit pas dépasser 10MB');
       return;
     }
     
@@ -351,7 +357,7 @@ export class DocumentsManagerComponent {
         console.error('❌ Upload error:', err);
         this.uploading.set(false);
         this.uploadProgress.set(0);
-        alert('Erreur lors de l\'upload du document');
+        this.toasts.errorDirect('Erreur lors de l\'upload du document');
       }
     });
   }
@@ -454,7 +460,7 @@ export class DocumentsManagerComponent {
   openContractModal() {
     const tenantId = this.tenantId();
     if (!tenantId) {
-      alert('Aucun locataire sélectionné');
+      this.toasts.warningDirect('Aucun locataire sélectionné');
       return;
     }
 
@@ -518,13 +524,13 @@ export class DocumentsManagerComponent {
 
   generateContract() {
     if (!this.canGenerateContract()) {
-      alert('Veuillez remplir tous les champs requis');
+      this.toasts.warningDirect('Veuillez remplir tous les champs requis');
       return;
     }
 
     const activeContract = this.getActiveContract();
     if (!activeContract || !activeContract.propertyId) {
-      alert('Impossible de trouver le bien associé au locataire');
+      this.toasts.errorDirect('Impossible de trouver le bien associé au locataire');
       return;
     }
 
@@ -579,7 +585,7 @@ export class DocumentsManagerComponent {
           window.URL.revokeObjectURL(url);
           
           console.log('✅ Contract generated successfully');
-          alert('Contrat généré avec succès !');
+          this.toasts.successDirect('Contrat généré avec succès !');
           this.showContractModal.set(false);
           this.loadDocuments(); // Refresh documents list to show the new contract
         }
@@ -587,7 +593,7 @@ export class DocumentsManagerComponent {
       error: (err) => {
         console.error('❌ Error generating contract:', err);
         const errorMsg = err?.error?.message || 'Erreur lors de la génération du contrat';
-        alert(`Erreur: ${errorMsg}`);
+        this.toasts.errorDirect(errorMsg);
       }
     });
   }
@@ -611,13 +617,19 @@ export class DocumentsManagerComponent {
       },
       error: (err) => {
         console.error('❌ Download error:', err);
-        alert('Erreur lors du téléchargement du document');
+        this.toasts.errorDirect('Erreur lors du téléchargement du document');
       }
     });
   }
 
-  deleteDocument(doc: TenantDocument) {
-    if (!confirm(`Êtes-vous sûr de vouloir dissocier ${doc.fileName} ?\n\nLe document sera archivé mais pas supprimé définitivement.`)) return;
+  async deleteDocument(doc: TenantDocument) {
+    const confirmed = await this.confirmService.warning(
+      'Dissocier le document',
+      `Êtes-vous sûr de vouloir dissocier ${doc.fileName} ?
+
+Le document sera archivé mais pas supprimé définitivement.`
+    );
+    if (!confirmed) return;
     
     if (!doc.id) {
       console.error('❌ Document ID missing');
@@ -631,7 +643,7 @@ export class DocumentsManagerComponent {
       },
       error: (err) => {
         console.error('❌ Dissociate error:', err);
-        alert('Erreur lors de la dissociation du document');
+        this.toasts.errorDirect('Erreur lors de la dissociation du document');
       }
     });
   }
@@ -657,7 +669,7 @@ export class DocumentsManagerComponent {
       error: (err) => {
         console.error('❌ Export ZIP error:', err);
         this.isLoading.set(false);
-        alert('Erreur lors de l\'export des documents');
+        this.toasts.errorDirect('Erreur lors de l\'export des documents');
       }
     });
   }

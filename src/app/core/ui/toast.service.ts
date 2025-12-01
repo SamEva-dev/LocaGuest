@@ -18,6 +18,8 @@ export class ToastService {
     this._items.update(list => [...list, toast]);
     setTimeout(() => this.dismiss(toast.id), 4000);
   }
+  
+  // ✅ Affichage avec clé i18n
   show(key: string, type: ToastMessage['type'] = 'info') {
     const text = this.i18n.instant(key) || key;
     this.push(type, text);
@@ -26,6 +28,15 @@ export class ToastService {
   error(key: string) { this.show(key, 'error'); }
   info(key: string) { this.show(key, 'info'); }
   warning(key: string) { this.show(key, 'warning'); }
+  
+  // ✅ Affichage direct sans i18n (pour messages dynamiques)
+  showDirect(message: string, type: ToastMessage['type'] = 'info') {
+    this.push(type, message);
+  }
+  successDirect(message: string) { this.showDirect(message, 'success'); }
+  errorDirect(message: string) { this.showDirect(message, 'error'); }
+  infoDirect(message: string) { this.showDirect(message, 'info'); }
+  warningDirect(message: string) { this.showDirect(message, 'warning'); }
 
   dismiss(id: number) {
     this._items.update(list => list.filter(t => t.id !== id));

@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
   InventoriesApiService, 
-  InventoryItemDto,
-  InventoryComparisonDto,
-  DegradationDto,
+  InventoryItemDto, 
   InventoryCondition,
   CreateInventoryExitRequest,
-  InventoryEntryDto
+  InventoryEntryDto,
+  InventoryComparisonDto,
+  DegradationDto
 } from '../../../../../core/api/inventories.api';
+import { ToastService } from '../../../../../core/ui/toast.service';
+import { ConfirmService } from '../../../../../core/ui/confirm.service';
 
 /**
  * Données passées au wizard
@@ -390,6 +392,10 @@ export interface InventoryExitWizardData {
 export class InventoryExitWizardSimpleComponent implements OnInit {
   private inventoriesApi = inject(InventoriesApiService);
   
+  // ✅ Services UI
+  private toasts = inject(ToastService);
+  private confirmService = inject(ConfirmService);
+  
   // Props
   wizardData = input.required<InventoryExitWizardData>();
   onClose = output<any>();
@@ -638,7 +644,7 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
       }
     } catch (error) {
       console.error('❌ Erreur PDF', error);
-      alert('Erreur lors de la génération du PDF');
+      this.toasts.errorDirect('Erreur lors de la génération du PDF');
     }
   }
 
@@ -656,10 +662,10 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
         recipientEmail: tenantEmail,
         recipientName: this.data().tenantName
       }).toPromise();
-      alert('✅ Email envoyé avec succès!');
+      this.toasts.successDirect('Email envoyé avec succès!');
     } catch (error) {
       console.error('❌ Erreur Email', error);
-      alert('Erreur lors de l\'envoi de l\'email');
+      this.toasts.errorDirect('Erreur lors de l\'envoi de l\'email');
     }
   }
 
@@ -670,7 +676,11 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
     const signerName = prompt('Nom du signataire:');
     if (!signerName) return;
     
-    const role = confirm('Cliquez OK pour Agent, Annuler pour Locataire') ? 'Agent' : 'Tenant';
+    const isAgent = await this.confirmService.info(
+      'Rôle du signataire',
+      'Qui signe ?\n\nCliquez Confirmer pour Agent, Annuler pour Locataire'
+    );
+    const role = isAgent ? 'Agent' : 'Tenant';
     
     try {
       await this.inventoriesApi.signInventory({
@@ -680,10 +690,10 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
         signerName: signerName,
         signatureData: 'signature-base64-placeholder'
       }).toPromise();
-      alert('✅ Signature enregistrée!');
+      this.toasts.successDirect('Signature enregistrée!');
     } catch (error) {
       console.error('❌ Erreur Signature', error);
-      alert('Erreur lors de la signature');
+      this.toasts.errorDirect('Erreur lors de la signature');
     }
   }
 }

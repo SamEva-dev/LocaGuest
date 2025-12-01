@@ -4,6 +4,8 @@ import { PropertyDetail } from '../../../../../core/api/properties.api';
 import { TenantListItem, TenantsApi } from '../../../../../core/api/tenants.api';
 import { ContractsApi, CreateContractRequest } from '../../../../../core/api/contracts.api';
 import { PropertiesService } from '../../../../../core/services/properties.service';
+import { ToastService } from '../../../../../core/ui/toast.service';
+import { ConfirmService } from '../../../../../core/ui/confirm.service';
 
 interface NewTenantForm {
   firstName: string;
@@ -82,6 +84,8 @@ export class ContractWizardModal {
   private propertiesService = inject(PropertiesService);
   private tenantsApi = inject(TenantsApi);
   private contractsApi = inject(ContractsApi);
+  private toasts = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   
   currentStep = signal(1);
   
@@ -367,12 +371,12 @@ export class ContractWizardModal {
   createNewTenant() {
     const newTenant = this.newTenantForm();
     if (!newTenant.firstName || !newTenant.lastName) {
-      alert('Prénom et nom requis');
+      this.toasts.warningDirect('Prénom et nom requis');
       return;
     }
     
     if (!newTenant.email) {
-      alert('Email requis');
+      this.toasts.warningDirect('Email requis');
       return;
     }
     
@@ -433,7 +437,7 @@ export class ContractWizardModal {
           errorMessage += ' :\n' + errors.join('\n');
         }
         
-        alert(errorMessage);
+        this.toasts.errorDirect(errorMessage);
       }
     });
   }
@@ -460,7 +464,7 @@ export class ContractWizardModal {
     const allErrors = this.validateAllSteps();
     if (allErrors.length > 0) {
       this.validationErrors.set(allErrors);
-      alert('Des erreurs de validation existent :\n' + allErrors.join('\n'));
+      this.toasts.errorDirect('Des erreurs de validation existent :\n' + allErrors.join('\n'));
       return;
     }
     
@@ -505,7 +509,7 @@ export class ContractWizardModal {
           errorMessage += ' :\n' + errors.join('\n');
         }
         
-        alert(errorMessage);
+        this.toasts.errorDirect(errorMessage);
       }
     });
   }

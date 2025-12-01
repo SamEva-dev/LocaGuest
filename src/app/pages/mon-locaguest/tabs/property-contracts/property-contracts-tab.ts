@@ -10,6 +10,8 @@ import { ContractsApi } from '../../../../core/api/contracts.api';
 import { DocumentsService } from '../../../../core/services/documents.service';
 import { InventoriesApiService, InventoryEntryDto, ContractInventoriesDto } from '../../../../core/api/inventories.api';
 import { FinalizeInventoryModal } from './finalize-inventory-modal/finalize-inventory-modal';
+import { ToastService } from '../../../../core/ui/toast.service';
+import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -31,6 +33,10 @@ export class PropertyContractsTab {
   private documentsService = inject(DocumentsService);
   private tenantsApi = inject(TenantsApi);
   private inventoriesApi = inject(InventoriesApiService);
+  
+  // ✅ Services UI
+  private toasts = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   
   // Loading states
   isMarkingAsSigned = signal(false);
@@ -260,11 +266,11 @@ export class PropertyContractsTab {
       window.URL.revokeObjectURL(url);
       
       console.log('✅ PDF généré et téléchargé avec succès');
-      alert('PDF généré avec succès !');
+      this.toasts.successDirect('PDF généré avec succès !');
       
     } catch (error) {
       console.error('❌ Erreur génération PDF:', error);
-      alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
+      this.toasts.errorDirect('Erreur lors de la génération du PDF. Veuillez réessayer.');
     } finally {
       this.isGeneratingPdf.set(false);
     }
@@ -285,7 +291,7 @@ export class PropertyContractsTab {
         console.log('✅ Tenant chargé:', tenant);
       } catch (error) {
         console.error('❌ Erreur chargement tenant:', error);
-        alert('Impossible de charger les informations du locataire.');
+        this.toasts.errorDirect('Impossible de charger les informations du locataire.');
         return;
       }
     }
@@ -316,14 +322,17 @@ export class PropertyContractsTab {
     // Récupérer les infos du locataire
     const tenant = this.associatedTenants().find(t => t.id === contract.tenantId);
     if (!tenant || !tenant.email) {
-      alert('Email du locataire introuvable. Impossible d\'envoyer pour signature.');
+      this.toasts.errorDirect('Email du locataire introuvable. Impossible d\'envoyer pour signature.');
       return;
     }
     
-    const confirmed = confirm(
-      `Envoyer le contrat pour signature électronique ?\n\n` +
-      `Destinataire : ${tenant.fullName} (${tenant.email})\n\n` +
-      `Un email sera envoyé au locataire avec le lien de signature.`
+    const confirmed = await this.confirmService.info(
+      'Envoyer pour signature',
+      `Envoyer le contrat pour signature électronique ?
+
+Destinataire : ${tenant.fullName} (${tenant.email})
+
+Un email sera envoyé au locataire avec le lien de signature.`
     );
     
     if (!confirmed) return;
@@ -353,11 +362,8 @@ export class PropertyContractsTab {
       
       // 2. TODO: Upload et récupérer documentId
       // Pour l'instant, on simule avec un message
-      alert(
-        `Fonctionnalité en cours d'implémentation\n\n` +
-        `Le PDF a été généré (${Math.round(pdfBlob.size / 1024)} KB).\n` +
-        `L'intégration avec DocuSign/HelloSign/Yousign sera ajoutée prochainement.\n\n` +
-        `Email : ${tenant.email}`
+      this.toasts.infoDirect(
+        `Fonctionnalité en cours d'implémentation\n\nLe PDF a été généré (${Math.round(pdfBlob.size / 1024)} KB).\nL'intégration avec DocuSign/HelloSign/Yousign sera ajoutée prochainement.\n\nEmail : ${tenant.email}`
       );
       
       // TODO: Implémenter l'envoi réel
@@ -380,7 +386,7 @@ export class PropertyContractsTab {
     } catch (error: any) {
       console.error('❌ Erreur envoi signature électronique:', error);
       const errorMsg = error?.error?.message || 'Erreur lors de l\'envoi pour signature';
-      alert(`Erreur : ${errorMsg}`);
+      this.toasts.errorDirect(errorMsg);
     } finally {
       this.isSendingForSignature.set(false);
     }
@@ -399,7 +405,7 @@ export class PropertyContractsTab {
       if (!file) return;
       
       if (!file.name.toLowerCase().endsWith('.pdf')) {
-        alert('Veuillez sélectionner un fichier PDF.');
+        this.toasts.warningDirect('Veuillez sélectionner un fichier PDF.');
         return;
       }
       
@@ -419,12 +425,12 @@ export class PropertyContractsTab {
         );
         
         console.log('✅ Document uploadé:', response);
-        alert(`Document uploadé avec succès !\nCode: ${response.code}`);
+        this.toasts.successDirect(`Document uploadé avec succès !\nCode: ${response.code}`);
         
         // Demander si on veut marquer comme signé maintenant
-        const markSigned = confirm(
-          'Document uploadé avec succès.\n\n' +
-          'Voulez-vous maintenant marquer le contrat comme signé ?'
+        const markSigned = await this.confirmService.success(
+          'Document uploadé',
+          'Document uploadé avec succès.\n\nVoulez-vous maintenant marquer le contrat comme signé ?'
         );
         
         if (markSigned) {
@@ -434,7 +440,7 @@ export class PropertyContractsTab {
       } catch (error: any) {
         console.error('❌ Erreur upload:', error);
         const errorMsg = error?.error?.message || 'Erreur lors de l\'upload';
-        alert(`Erreur : ${errorMsg}`);
+        this.toasts.errorDirect(errorMsg);
       }
     };
     
@@ -532,11 +538,11 @@ export class PropertyContractsTab {
       this.contractCreated.emit();
       
       // Message de succès
-      alert('✅ État des lieux finalisé avec succès !\n\nLe document est maintenant verrouillé et juridiquement opposable.');
+      this.toasts.successDirect('État des lieux finalisé avec succès !\n\nLe document est maintenant verrouillé et juridiquement opposable.');
     } catch (error: any) {
       console.error('❌ Erreur finalisation EDL:', error);
       const errorMessage = error?.error?.message || 'Erreur lors de la finalisation';
-      alert(`❌ Erreur : ${errorMessage}`);
+      this.toasts.errorDirect(errorMessage);
     } finally {
       this.isFinalizingInventory.set(false);
     }
@@ -548,20 +554,24 @@ export class PropertyContractsTab {
     
     // Vérifications côté client
     if (inventory.isFinalized) {
-      alert('❌ Impossible de supprimer un EDL finalisé.\n\nC\'est un document légal permanent.');
+      this.toasts.errorDirect('Impossible de supprimer un EDL finalisé.\n\nC\'est un document légal permanent.');
       return;
     }
     
     if (contract.status === 'Active') {
-      alert('❌ Impossible de supprimer l\'EDL d\'un contrat actif.');
+      this.toasts.errorDirect('Impossible de supprimer l\'EDL d\'un contrat actif.');
       return;
     }
     
-    const confirmed = confirm(
-      `Supprimer cet état des lieux d'entrée ?\n\n` +
-      `Locataire : ${this.getTenantName(contract.tenantId)}\n` +
-      `Date inspection : ${this.formatDate(inventory.inspectionDate)}\n\n` +
-      `Cette action est irréversible.`
+    const confirmed = await this.confirmService.danger(
+      'Supprimer l\'EDL',
+      `Supprimer cet état des lieux d'entrée ?
+
+Locataire : ${this.getTenantName(contract.tenantId)}
+Date inspection : ${this.formatDate(inventory.inspectionDate)}
+
+Cette action est irréversible.`,
+      'Supprimer'
     );
     
     if (!confirmed) return;
@@ -573,7 +583,7 @@ export class PropertyContractsTab {
       await firstValueFrom(this.inventoriesApi.deleteEntry(inventory.id));
       
       console.log('✅ EDL supprimé avec succès');
-      alert('✅ État des lieux supprimé avec succès !');
+      this.toasts.successDirect('État des lieux supprimé avec succès !');
       
       // Recharger les données (force=true pour rafraîchir)
       await this.loadAllInventories(true);
@@ -581,7 +591,7 @@ export class PropertyContractsTab {
     } catch (error: any) {
       console.error('❌ Erreur suppression EDL:', error);
       const errorMessage = error?.error?.message || 'Erreur lors de la suppression';
-      alert(`❌ ${errorMessage}`);
+      this.toasts.errorDirect(errorMessage);
     } finally {
       this.isDeletingInventory.set(false);
     }
@@ -609,15 +619,19 @@ export class PropertyContractsTab {
     
     // Vérifier que le contrat est Draft ou Cancelled
     if (contract.status !== 'Draft' && contract.status !== 'Cancelled') {
-      alert(`Impossible de supprimer un contrat avec le statut "${contract.status}". Seuls les contrats Draft ou Cancelled peuvent être supprimés.`);
+      this.toasts.warningDirect(`Impossible de supprimer un contrat avec le statut "${contract.status}". Seuls les contrats Draft ou Cancelled peuvent être supprimés.`);
       return;
     }
     
-    const confirmed = confirm(
-      `Êtes-vous sûr de vouloir supprimer ce contrat ?\n\n` +
-      `Locataire : ${this.getTenantName(contract.tenantId)}\n` +
-      `Période : ${this.formatDate(contract.startDate)} - ${this.formatDate(contract.endDate)}\n\n` +
-      `Cette action est irréversible et supprimera également tous les paiements et documents associés.`
+    const confirmed = await this.confirmService.danger(
+      'Supprimer le contrat',
+      `Êtes-vous sûr de vouloir supprimer ce contrat ?
+
+Locataire : ${this.getTenantName(contract.tenantId)}
+Période : ${this.formatDate(contract.startDate)} - ${this.formatDate(contract.endDate)}
+
+Cette action est irréversible et supprimera également tous les paiements et documents associés.`,
+      'Supprimer'
     );
     
     if (!confirmed) return;
@@ -631,10 +645,8 @@ export class PropertyContractsTab {
       );
       
       console.log('✅ Contrat supprimé:', response);
-      alert(
-        `Contrat supprimé avec succès !\n\n` +
-        `Documents supprimés : ${response.deletedDocuments}\n` +
-        `Paiements supprimés : ${response.deletedPayments}`
+      this.toasts.successDirect(
+        `Contrat supprimé avec succès !\n\nDocuments supprimés : ${response.deletedDocuments}\nPaiements supprimés : ${response.deletedPayments}`
       );
       
       // Recharger les données
@@ -642,7 +654,7 @@ export class PropertyContractsTab {
     } catch (error: any) {
       console.error('❌ Erreur suppression contrat:', error);
       const errorMessage = error?.error?.message || 'Erreur lors de la suppression du contrat';
-      alert(errorMessage);
+      this.toasts.errorDirect(errorMessage);
     } finally {
       this.isDeletingContract.set(false);
     }
