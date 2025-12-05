@@ -30,33 +30,38 @@ export interface TenantDetail extends TenantListItem {
   createdBy: string;
   totalContracts: number;
   
-  // ✅ Informations personnelles enrichies
+  // ✅ Informations personnelles (BACKEND SYNC)
+  dateOfBirth?: Date;
   address?: string;
   city?: string;
   postalCode?: string;
-  birthDate?: Date;
-  age?: number;
+  country?: string;
+  nationality?: string;
+  idNumber?: string;
   
-  // ✅ Pièce d'identité
+  // ✅ Contact d'urgence (BACKEND SYNC)
+  emergencyContact?: string;
+  emergencyPhone?: string;
+  
+  // ✅ Situation professionnelle (BACKEND SYNC)
+  occupation?: string;
+  monthlyIncome?: number;
+  
+  // ❌ TODO Backend - Champs non encore implémentés
+  birthDate?: Date;  // Alias for dateOfBirth
+  age?: number;
   idCardType?: 'CNI' | 'Passport' | 'TitreSejour' | 'PermisConduire';
   idCardNumber?: string;
   idCardExpiryDate?: Date;
-  
-  // ✅ Situation professionnelle
   profession?: string;
   employer?: string;
   employmentType?: 'CDI' | 'CDD' | 'Independant' | 'Etudiant' | 'Retraite' | 'Autre';
-  monthlyIncome?: number;
-  
-  // ✅ Garant(s)
   hasGuarantor?: boolean;
   guarantorName?: string;
   guarantorPhone?: string;
   guarantorEmail?: string;
   guarantorAddress?: string;
   guarantorRelation?: string;
-  
-  // ✅ Dossier administratif
   fileStatus?: 'Incomplete' | 'Complete' | 'Pending' | 'Validated';
   documentsValidated?: number;
   totalDocumentsRequired?: number;

@@ -197,8 +197,10 @@ export class PropertyContractsTab {
   
   // Actions
   openCreateContractWizard() {
+    alert('ok')
     this.wizardMode.set('new');
     this.showWizard.set(true);
+    alert('ok1)')
   }
   
   openPaperContractWizard() {

@@ -32,157 +32,207 @@
             }
           </div>
         </div>
+        <!-- 📋 INFORMATIONS GÉNÉRALES -->
         <div class="space-y-4">
-          <!-- ✅ Informations de base -->
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-3 gap-4">
             <div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Contrats actifs</p>
-              <p class="font-medium">{{ tenant()!.activeContracts }}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                <i class="ph ph-files"></i> Contrats actifs
+              </p>
+              <p class="font-semibold text-slate-900 dark:text-white">{{ tenant()!.activeContracts }}</p>
             </div>
             @if (tenant()!.moveInDate) {
               <div>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Date d'entrée</p>
-                <p class="font-medium">{{ tenant()!.moveInDate | date:'dd MMM yyyy' }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                  <i class="ph ph-calendar-check"></i> Date d'entrée
+                </p>
+                <p class="font-semibold text-slate-900 dark:text-white">{{ tenant()!.moveInDate | date:'dd/MM/yyyy' }}</p>
               </div>
             }
             <div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Statut</p>
-              <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Statut</p>
+              <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 font-medium">
                 {{ tenant()!.status }}
               </span>
             </div>
           </div>
           
-          <!-- ✅ Adresse complète -->
-          @if (tenant()!.address) {
-            <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
-              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
-                <i class="ph ph-map-pin"></i> Adresse
-              </p>
-              <p class="text-sm font-medium text-slate-800 dark:text-white">
-                {{ tenant()!.address }}
-              </p>
-              @if (tenant()!.city || tenant()!.postalCode) {
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {{ tenant()!.postalCode }} {{ tenant()!.city }}
-                </p>
-              }
-            </div>
-          }
-          
-          <!-- ✅ Date de naissance + âge -->
-          @if (tenant()!.birthDate) {
-            <div class="grid grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-700">
-              <div>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
-                  <i class="ph ph-cake"></i> Date de naissance
-                </p>
-                <p class="font-medium text-slate-800 dark:text-white">
-                  {{ tenant()!.birthDate | date:'dd/MM/yyyy' }}
-                </p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {{ calculateAge(tenant()!.birthDate!) }} ans
-                </p>
+          <!-- 👤 IDENTITÉ & NATIONALITÉ -->
+          @if (tenant()!.dateOfBirth || tenant()!.nationality || tenant()!.idNumber) {
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <i class="ph ph-user-circle text-blue-600"></i>
+                Identité & Nationalité
+              </h4>
+              <div class="grid grid-cols-2 gap-4">
+                @if (tenant()!.dateOfBirth) {
+                  <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Date de naissance</p>
+                    <p class="font-medium text-slate-900 dark:text-white">{{ tenant()!.dateOfBirth | date:'dd/MM/yyyy' }}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ calculateAge(tenant()!.dateOfBirth!) }} ans</p>
+                  </div>
+                }
+                @if (tenant()!.nationality) {
+                  <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Nationalité</p>
+                    <p class="font-medium text-slate-900 dark:text-white">{{ tenant()!.nationality }}</p>
+                  </div>
+                }
+                @if (tenant()!.idNumber) {
+                  <div class="col-span-2">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Numéro de pièce d'identité</p>
+                    <p class="font-medium text-slate-900 dark:text-white font-mono">{{ tenant()!.idNumber }}</p>
+                  </div>
+                }
               </div>
-              
-              <!-- ✅ Pièce d'identité -->
-              @if (tenant()!.idCardType && tenant()!.idCardNumber) {
-                <div>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
-                    <i class="ph ph-identification-card"></i> Pièce d'identité
-                  </p>
-                  <p class="font-medium text-slate-800 dark:text-white">
-                    {{ getIdCardTypeLabel(tenant()!.idCardType!) }}
-                  </p>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">
-                    {{ tenant()!.idCardNumber }}
-                  </p>
-                </div>
-              }
             </div>
           }
           
-          <!-- ✅ Situation professionnelle -->
-          @if (tenant()!.profession || tenant()!.monthlyIncome) {
-            <div class="grid grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-700">
-              @if (tenant()!.profession) {
-                <div>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
-                    <i class="ph ph-briefcase"></i> Profession
+          <!-- 📍 ADRESSE -->
+          @if (tenant()!.address || tenant()!.city || tenant()!.postalCode || tenant()!.country) {
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <i class="ph ph-map-pin text-blue-600"></i>
+                Adresse
+              </h4>
+              <div class="space-y-2">
+                @if (tenant()!.address) {
+                  <p class="text-sm font-medium text-slate-900 dark:text-white">{{ tenant()!.address }}</p>
+                }
+                <div class="flex flex-wrap gap-2 text-sm text-slate-600 dark:text-slate-400">
+                  @if (tenant()!.postalCode) {
+                    <span>{{ tenant()!.postalCode }}</span>
+                  }
+                  @if (tenant()!.city) {
+                    <span>{{ tenant()!.city }}</span>
+                  }
+                  @if (tenant()!.country) {
+                    <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded">{{ tenant()!.country }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+          
+          <!-- 💼 SITUATION PROFESSIONNELLE -->
+          @if (tenant()!.occupation || tenant()!.monthlyIncome) {
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <i class="ph ph-briefcase text-blue-600"></i>
+                Situation Professionnelle
+              </h4>
+              <div class="grid grid-cols-2 gap-4">
+                @if (tenant()!.occupation) {
+                  <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Profession</p>
+                    <p class="font-medium text-slate-900 dark:text-white">{{ tenant()!.occupation }}</p>
+                  </div>
+                }
+                @if (tenant()!.monthlyIncome) {
+                  <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Revenus mensuels</p>
+                    <p class="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+                      {{ formatCurrency(tenant()!.monthlyIncome!) }}
+                    </p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          
+          <!-- 🚨 CONTACT D'URGENCE -->
+          @if (tenant()!.emergencyContact || tenant()!.emergencyPhone) {
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <i class="ph ph-warning-circle text-orange-600"></i>
+                Contact d'Urgence
+              </h4>
+              <div class="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                @if (tenant()!.emergencyContact) {
+                  <p class="font-semibold text-orange-900 dark:text-orange-100">{{ tenant()!.emergencyContact }}</p>
+                }
+                @if (tenant()!.emergencyPhone) {
+                  <p class="text-sm text-orange-700 dark:text-orange-300 mt-1 flex items-center gap-1.5">
+                    <i class="ph ph-phone"></i>
+                    <span>{{ tenant()!.emergencyPhone }}</span>
                   </p>
-                  <p class="font-medium text-slate-800 dark:text-white">
-                    {{ tenant()!.profession }}
-                  </p>
-                  @if (tenant()!.employmentType) {
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      {{ tenant()!.employmentType }}
+                }
+              </div>
+            </div>
+          }
+          
+          <!-- 🛡️ GARANT -->
+          @if (tenant()!.hasGuarantor && tenant()!.guarantorName) {
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <i class="ph ph-shield-check text-blue-600"></i>
+                Garant
+              </h4>
+              <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p class="font-semibold text-blue-900 dark:text-blue-100">{{ tenant()!.guarantorName }}</p>
+                @if (tenant()!.guarantorRelation) {
+                  <p class="text-xs text-blue-700 dark:text-blue-300 mt-0.5">{{ tenant()!.guarantorRelation }}</p>
+                }
+                <div class="mt-2 space-y-1">
+                  @if (tenant()!.guarantorPhone) {
+                    <p class="text-sm text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <i class="ph ph-phone"></i>
+                      <span>{{ tenant()!.guarantorPhone }}</span>
+                    </p>
+                  }
+                  @if (tenant()!.guarantorEmail) {
+                    <p class="text-sm text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <i class="ph ph-envelope"></i>
+                      <span>{{ tenant()!.guarantorEmail }}</span>
+                    </p>
+                  }
+                  @if (tenant()!.guarantorAddress) {
+                    <p class="text-sm text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <i class="ph ph-map-pin"></i>
+                      <span>{{ tenant()!.guarantorAddress }}</span>
                     </p>
                   }
                 </div>
-              }
-              
-              @if (tenant()!.monthlyIncome) {
-                <div>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
-                    <i class="ph ph-currency-eur"></i> Revenus mensuels
-                  </p>
-                  <p class="font-medium text-emerald-600 dark:text-emerald-400">
-                    {{ formatCurrency(tenant()!.monthlyIncome!) }}
-                  </p>
-                </div>
-              }
-            </div>
-          }
-          
-          <!-- ✅ Garant -->
-          @if (tenant()!.hasGuarantor && tenant()!.guarantorName) {
-            <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
-              <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
-                <i class="ph ph-shield-check"></i> Garant
-              </p>
-              <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <p class="font-semibold text-blue-900 dark:text-blue-100">
-                  {{ tenant()!.guarantorName }}
-                </p>
-                @if (tenant()!.guarantorRelation) {
-                  <p class="text-xs text-blue-700 dark:text-blue-300 mt-0.5">
-                    {{ tenant()!.guarantorRelation }}
-                  </p>
-                }
-                @if (tenant()!.guarantorPhone) {
-                  <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                    <i class="ph ph-phone text-xs"></i> {{ tenant()!.guarantorPhone }}
-                  </p>
-                }
-                @if (tenant()!.guarantorEmail) {
-                  <p class="text-xs text-slate-600 dark:text-slate-400">
-                    <i class="ph ph-envelope text-xs"></i> {{ tenant()!.guarantorEmail }}
-                  </p>
-                }
               </div>
             </div>
           }
           
-          <!-- ✅ Dossier administratif -->
+          <!-- 📁 DOSSIER ADMINISTRATIF -->
           @if (tenant()!.fileStatus) {
-            <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
-              <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Dossier administratif</p>
-              <div class="flex items-center justify-between">
-                <span [class]="'text-xs px-3 py-1.5 rounded-full font-medium flex items-center gap-1.5 ' + getFileStatusBadge(tenant()!.fileStatus!).color">
-                  <i [class]="'ph ' + getFileStatusBadge(tenant()!.fileStatus!).icon"></i>
-                  <span>{{ getFileStatusBadge(tenant()!.fileStatus!).label }}</span>
-                </span>
-                @if (tenant()!.documentsValidated !== undefined && tenant()!.totalDocumentsRequired) {
-                  <span class="text-xs text-slate-500 dark:text-slate-400">
-                    {{ tenant()!.documentsValidated }}/{{ tenant()!.totalDocumentsRequired }} documents
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                <i class="ph ph-folder-open text-blue-600"></i>
+                Dossier Administratif
+              </h4>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span [class]="'text-xs px-3 py-1.5 rounded-full font-medium flex items-center gap-1.5 ' + getFileStatusBadge(tenant()!.fileStatus!).color">
+                    <i [class]="'ph ' + getFileStatusBadge(tenant()!.fileStatus!).icon"></i>
+                    <span>{{ getFileStatusBadge(tenant()!.fileStatus!).label }}</span>
                   </span>
+                  @if (tenant()!.documentsValidated !== undefined && tenant()!.totalDocumentsRequired) {
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      {{ tenant()!.documentsValidated }}/{{ tenant()!.totalDocumentsRequired }} documents
+                    </span>
+                  }
+                </div>
+                @if (tenant()!.missingDocumentTypes && tenant()!.missingDocumentTypes!.length > 0) {
+                  <div class="p-2 bg-orange-50 dark:bg-orange-900/20 rounded text-xs text-orange-700 dark:text-orange-400">
+                    <i class="ph ph-warning"></i> Manquant: {{ tenant()!.missingDocumentTypes!.join(', ') }}
+                  </div>
                 }
               </div>
-              @if (tenant()!.missingDocumentTypes && tenant()!.missingDocumentTypes!.length > 0) {
-                <div class="mt-2 p-2 bg-orange-50 dark:bg-orange-900/20 rounded text-xs text-orange-700 dark:text-orange-400">
-                  <i class="ph ph-warning"></i> Manquant: {{ tenant()!.missingDocumentTypes!.join(', ') }}
-                </div>
-              }
+            </div>
+          }
+          
+          <!-- 📝 NOTES -->
+          @if (tenant()!.notes) {
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+              <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                <i class="ph ph-note text-blue-600"></i>
+                Notes
+              </h4>
+              <p class="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap">{{ tenant()!.notes }}</p>
             </div>
           }
         </div>
