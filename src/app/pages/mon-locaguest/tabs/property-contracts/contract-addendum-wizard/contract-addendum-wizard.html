@@ -1,0 +1,970 @@
+<div class="flex flex-col h-full">
+  <!-- Header -->
+  <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
+        <i class="ph ph-file-plus text-blue-600"></i>
+        <span>Créer un Avenant au Contrat</span>
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        {{ data.propertyName }} • {{ data.tenantName }}
+        @if (data.roomName) {
+          <span> • {{ data.roomName }}</span>
+        }
+      </p>
+    </div>
+    <button
+      (click)="cancel()"
+      class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition"
+    >
+      <i class="ph ph-x text-xl"></i>
+    </button>
+  </div>
+
+  <!-- Stepper -->
+  <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+    <div class="flex items-center justify-center gap-2">
+      <!-- Step 1 -->
+      <div class="flex items-center gap-2">
+        <div [class]="currentStep() >= 1 ? 'w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold' : 'w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400 flex items-center justify-center'">
+          1
+        </div>
+        <span [class]="currentStep() >= 1 ? 'text-sm font-medium text-gray-800 dark:text-white' : 'text-sm text-gray-500 dark:text-gray-400'">Type</span>
+      </div>
+      
+      <div class="w-12 h-0.5 bg-gray-300 dark:bg-gray-700"></div>
+      
+      <!-- Step 2 -->
+      <div class="flex items-center gap-2">
+        <div [class]="currentStep() >= 2 ? 'w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold' : 'w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400 flex items-center justify-center'">
+          2
+        </div>
+        <span [class]="currentStep() >= 2 ? 'text-sm font-medium text-gray-800 dark:text-white' : 'text-sm text-gray-500 dark:text-gray-400'">Modifications</span>
+      </div>
+      
+      <div class="w-12 h-0.5 bg-gray-300 dark:bg-gray-700"></div>
+      
+      <!-- Step 3 -->
+      <div class="flex items-center gap-2">
+        <div [class]="currentStep() >= 3 ? 'w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold' : 'w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400 flex items-center justify-center'">
+          3
+        </div>
+        <span [class]="currentStep() >= 3 ? 'text-sm font-medium text-gray-800 dark:text-white' : 'text-sm text-gray-500 dark:text-gray-400'">Documents</span>
+      </div>
+      
+      <div class="w-12 h-0.5 bg-gray-300 dark:bg-gray-700"></div>
+      
+      <!-- Step 4 -->
+      <div class="flex items-center gap-2">
+        <div [class]="currentStep() >= 4 ? 'w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold' : 'w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400 flex items-center justify-center'">
+          4
+        </div>
+        <span [class]="currentStep() >= 4 ? 'text-sm font-medium text-gray-800 dark:text-white' : 'text-sm text-gray-500 dark:text-gray-400'">Récapitulatif</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-gray-900">
+    
+    <!-- ========== ÉTAPE 1: TYPE D'AVENANT ========== -->
+    @if (currentStep() === 1) {
+      <div class="max-w-4xl mx-auto">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+          Sélectionnez le type d'avenant
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (type of addendumTypes; track type.type) {
+            <button
+              (click)="selectType(type.type)"
+              [class]="selectedType() === type.type ? 
+                'p-6 rounded-xl border-2 transition-all hover:shadow-lg bg-white dark:bg-gray-800 text-left ' + getBorderColorClass(type.color) : 
+                'p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 transition-all hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800 text-left'"
+            >
+              <div class="flex items-start gap-4">
+                <div [class]="'w-12 h-12 rounded-lg flex items-center justify-center ' + getColorClass(type.color)">
+                  <i [class]="'ph ' + type.icon + ' text-2xl text-white'"></i>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-semibold text-gray-800 dark:text-white mb-1">
+                    {{ type.label }}
+                  </h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ type.description }}
+                  </p>
+                </div>
+                @if (selectedType() === type.type) {
+                  <i class="ph ph-check-circle text-2xl" [class]="getIconColorClass(type.color)"></i>
+                }
+              </div>
+            </button>
+          }
+        </div>
+      </div>
+    }
+    
+    <!-- ========== ÉTAPE 2: FORMULAIRES PAR TYPE ========== -->
+    @if (currentStep() === 2) {
+      <div class="max-w-3xl mx-auto">
+        
+        <!-- Financial Form -->
+        @if (selectedType() === 'Financial') {
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+              <i class="ph ph-currency-euro text-emerald-600"></i>
+              Modification Financière
+            </h3>
+            
+            <div class="space-y-4">
+              <!-- Current Values -->
+              <div class="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div>
+                  <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Loyer actuel</label>
+                  <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ formatCurrency(financialForm().oldRent) }}</p>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Charges actuelles</label>
+                  <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ formatCurrency(financialForm().oldCharges) }}</p>
+                </div>
+              </div>
+              
+              <!-- New Rent -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nouveau loyer *
+                </label>
+                <input
+                  type="number"
+                  [(ngModel)]="financialForm().newRent"
+                  (ngModelChange)="updateFinancialField('newRent', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white"
+                  step="0.01"
+                  min="0"
+                />
+                @if (rentIncreasePercent() !== 0) {
+                  <p [class]="rentIncreasePercent() > 10 ? 'text-sm text-orange-600 dark:text-orange-400 mt-1' : 'text-sm text-gray-600 dark:text-gray-400 mt-1'">
+                    @if (rentIncreasePercent() > 0) {
+                      <i class="ph ph-arrow-up"></i> +{{ rentIncreasePercent() }}%
+                      @if (rentIncreasePercent() > 10) {
+                        <span class="font-medium">⚠️ Augmentation importante</span>
+                      }
+                    } @else {
+                      <i class="ph ph-arrow-down"></i> {{ rentIncreasePercent() }}%
+                      <span class="font-medium">⚠️ Diminution inhabituelle</span>
+                    }
+                  </p>
+                }
+              </div>
+              
+              <!-- New Charges -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nouvelles charges *
+                </label>
+                <input
+                  type="number"
+                  [(ngModel)]="financialForm().newCharges"
+                  (ngModelChange)="updateFinancialField('newCharges', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white"
+                  step="0.01"
+                  min="0"
+                />
+              </div>
+              
+              <!-- Reason -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Motif de la modification *
+                </label>
+                <input
+                  type="text"
+                  [(ngModel)]="financialForm().reason"
+                  (ngModelChange)="updateFinancialField('reason', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Ex: Révision annuelle, hausse charges..."
+                  maxlength="500"
+                />
+              </div>
+              
+              <!-- Effective Date -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Date d'entrée en vigueur *
+                </label>
+                <input
+                  type="date"
+                  [(ngModel)]="financialForm().effectiveDate"
+                  (ngModelChange)="updateFinancialField('effectiveDate', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
+          </div>
+        }
+        
+        <!-- Duration Form -->
+        @if (selectedType() === 'Duration') {
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+              <i class="ph ph-calendar-plus text-blue-600"></i>
+              Modification de la Durée
+            </h3>
+            
+            <div class="space-y-4">
+              <!-- Current End Date -->
+              <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Date de fin actuelle</label>
+                <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ formatDate(durationForm().currentEndDate) }}</p>
+              </div>
+              
+              <!-- New End Date -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nouvelle date de fin *
+                </label>
+                <input
+                  type="date"
+                  [(ngModel)]="durationForm().newEndDate"
+                  (ngModelChange)="updateDurationField('newEndDate', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  [min]="durationForm().currentEndDate"
+                />
+                @if (extensionMonths() > 0) {
+                  <p [class]="extensionMonths() > 12 ? 'text-sm text-orange-600 dark:text-orange-400 mt-1' : 'text-sm text-gray-600 dark:text-gray-400 mt-1'">
+                    <i class="ph ph-calendar"></i> Extension de {{ extensionMonths() }} mois
+                    @if (extensionMonths() > 12) {
+                      <span class="font-medium">⚠️ Prolongation importante</span>
+                    }
+                  </p>
+                }
+              </div>
+              
+              <!-- Reason -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Motif de la prolongation *
+                </label>
+                <input
+                  type="text"
+                  [(ngModel)]="durationForm().reason"
+                  (ngModelChange)="updateDurationField('reason', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Ex: Report départ, accord prolongation..."
+                  maxlength="500"
+                />
+              </div>
+              
+              <!-- Effective Date -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Date d'effet *
+                </label>
+                <input
+                  type="date"
+                  [(ngModel)]="durationForm().effectiveDate"
+                  (ngModelChange)="updateDurationField('effectiveDate', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
+          </div>
+        }
+        
+        <!-- Occupants Form -->
+        @if (selectedType() === 'Occupants') {
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+              <i class="ph ph-users text-purple-600"></i>
+              Modification des Occupants
+            </h3>
+            
+            <div class="space-y-4">
+              <!-- Action Selection -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Type de modification *
+                </label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button
+                    (click)="updateOccupantsField('action', 'add')"
+                    [class]="occupantsForm().action === 'add' ? 
+                      'px-4 py-2 border-2 border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg font-medium' : 
+                      'px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'"
+                  >
+                    <i class="ph ph-user-plus"></i> Ajouter
+                  </button>
+                  <button
+                    (click)="updateOccupantsField('action', 'remove')"
+                    [class]="occupantsForm().action === 'remove' ? 
+                      'px-4 py-2 border-2 border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg font-medium' : 
+                      'px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'"
+                  >
+                    <i class="ph ph-user-minus"></i> Retirer
+                  </button>
+                  <button
+                    (click)="updateOccupantsField('action', 'changeRoom')"
+                    [class]="occupantsForm().action === 'changeRoom' ? 
+                      'px-4 py-2 border-2 border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg font-medium' : 
+                      'px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'"
+                  >
+                    <i class="ph ph-door"></i> Changer chambre
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Add Occupant Fields -->
+              @if (occupantsForm().action === 'add') {
+                <div class="space-y-4 p-4 bg-purple-50 dark:bg-purple-900/10 rounded-lg">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Nom complet *
+                    </label>
+                    <input
+                      type="text"
+                      [(ngModel)]="occupantsForm().occupantName"
+                      (ngModelChange)="updateOccupantsField('occupantName', $event)"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                      placeholder="Jean Dupont"
+                    />
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Email *
+                      </label>
+                      <input
+                        type="email"
+                        [(ngModel)]="occupantsForm().occupantEmail"
+                        (ngModelChange)="updateOccupantsField('occupantEmail', $event)"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                        placeholder="email@exemple.fr"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Téléphone
+                      </label>
+                      <input
+                        type="tel"
+                        [(ngModel)]="occupantsForm().occupantPhone"
+                        (ngModelChange)="updateOccupantsField('occupantPhone', $event)"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                        placeholder="+33 6 12 34 56 78"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Part du loyer (optionnel)
+                    </label>
+                    <input
+                      type="number"
+                      [(ngModel)]="occupantsForm().rentShare"
+                      (ngModelChange)="updateOccupantsField('rentShare', $event)"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                      step="0.01"
+                      placeholder="450.00"
+                    />
+                  </div>
+                </div>
+              }
+              
+              <!-- Remove Occupant Fields -->
+              @if (occupantsForm().action === 'remove') {
+                <div class="space-y-4 p-4 bg-red-50 dark:bg-red-900/10 rounded-lg">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Colocataire sortant *
+                    </label>
+                    <input
+                      type="text"
+                      [(ngModel)]="occupantsForm().occupantToRemove"
+                      (ngModelChange)="updateOccupantsField('occupantToRemove', $event)"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
+                      placeholder="Nom du colocataire"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Date de départ *
+                    </label>
+                    <input
+                      type="date"
+                      [(ngModel)]="occupantsForm().departureDate"
+                      (ngModelChange)="updateOccupantsField('departureDate', $event)"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Ajustement dépôt de garantie (optionnel)
+                    </label>
+                    <input
+                      type="number"
+                      [(ngModel)]="occupantsForm().depositAdjustment"
+                      (ngModelChange)="updateOccupantsField('depositAdjustment', $event)"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
+                      step="0.01"
+                    />
+                  </div>
+                </div>
+              }
+              
+              <!-- Change Room Fields -->
+              @if (occupantsForm().action === 'changeRoom') {
+                <div class="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg">
+                  <div class="p-3 bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-blue-800">
+                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Chambre actuelle</label>
+                    <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ occupantsForm().currentRoom || 'Non spécifiée' }}</p>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Nouvelle chambre *
+                    </label>
+                    <select
+                      [(ngModel)]="occupantsForm().newRoom"
+                      (ngModelChange)="updateOccupantsField('newRoom', $event)"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    >
+                      <option value="">-- Sélectionner une chambre --</option>
+                      @for (room of data.availableRooms || []; track room.id) {
+                        <option [value]="room.id">{{ room.name }} - {{ formatCurrency(room.rent) }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+              }
+              
+              <!-- Common Fields -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Motif *
+                </label>
+                <input
+                  type="text"
+                  [(ngModel)]="occupantsForm().reason"
+                  (ngModelChange)="updateOccupantsField('reason', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Ex: Nouveau colocataire, déménagement..."
+                  maxlength="500"
+                />
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Date d'effet *
+                </label>
+                <input
+                  type="date"
+                  [(ngModel)]="occupantsForm().effectiveDate"
+                  (ngModelChange)="updateOccupantsField('effectiveDate', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
+          </div>
+        }
+        
+        <!-- Clauses Form -->
+        @if (selectedType() === 'Clauses') {
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+              <i class="ph ph-file-text text-orange-600"></i>
+              Modification des Clauses
+            </h3>
+            
+            <div class="space-y-4">
+              <!-- Current Clauses -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Clauses actuelles
+                </label>
+                <textarea
+                  [value]="clausesForm().currentClauses || 'Aucune clause personnalisée'"
+                  readonly
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400"
+                  rows="4"
+                ></textarea>
+              </div>
+              
+              <!-- New Clauses -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nouvelles clauses * (max 2000 caractères)
+                </label>
+                <textarea
+                  [(ngModel)]="clausesForm().newClauses"
+                  (ngModelChange)="updateClausesField('newClauses', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                  rows="6"
+                  maxlength="2000"
+                  placeholder="Saisissez les nouvelles clauses du contrat..."
+                ></textarea>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {{ clausesForm().newClauses.length }} / 2000 caractères
+                </p>
+              </div>
+              
+              <!-- Reason -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Motif de la modification *
+                </label>
+                <input
+                  type="text"
+                  [(ngModel)]="clausesForm().reason"
+                  (ngModelChange)="updateClausesField('reason', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Ex: Mise à jour conditions, nouvelles règles..."
+                  maxlength="500"
+                />
+              </div>
+              
+              <!-- Effective Date -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Date d'effet *
+                </label>
+                <input
+                  type="date"
+                  [(ngModel)]="clausesForm().effectiveDate"
+                  (ngModelChange)="updateClausesField('effectiveDate', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
+          </div>
+        }
+        
+        <!-- Free Form -->
+        @if (selectedType() === 'Free') {
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+              <i class="ph ph-pen text-gray-600"></i>
+              Avenant Libre
+            </h3>
+            
+            <div class="space-y-4">
+              <!-- Description -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Description de l'avenant * (max 2000 caractères)
+                </label>
+                <textarea
+                  [(ngModel)]="freeForm().description"
+                  (ngModelChange)="updateFreeField('description', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 dark:bg-gray-700 dark:text-white"
+                  rows="8"
+                  maxlength="2000"
+                  placeholder="Rédigez librement le contenu de l'avenant..."
+                ></textarea>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {{ freeForm().description.length }} / 2000 caractères
+                </p>
+              </div>
+              
+              <!-- Reason -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Motif *
+                </label>
+                <input
+                  type="text"
+                  [(ngModel)]="freeForm().reason"
+                  (ngModelChange)="updateFreeField('reason', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Ex: Accord particulier, situation spécifique..."
+                  maxlength="500"
+                />
+              </div>
+              
+              <!-- Effective Date -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Date d'effet *
+                </label>
+                <input
+                  type="date"
+                  [(ngModel)]="freeForm().effectiveDate"
+                  (ngModelChange)="updateFreeField('effectiveDate', $event)"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+    
+    <!-- ========== ÉTAPE 3: DOCUMENTS & SIGNATURE ========== -->
+    @if (currentStep() === 3) {
+      <div class="max-w-3xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm space-y-6">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            Documents et Options
+          </h3>
+          
+          <!-- File Upload -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Documents joints (optionnel)
+            </label>
+            <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+              <input
+                type="file"
+                id="fileInput"
+                (change)="onFileSelect($event)"
+                accept=".pdf,.jpg,.jpeg,.png"
+                multiple
+                class="hidden"
+              />
+              <label for="fileInput" class="cursor-pointer">
+                <i class="ph ph-upload text-4xl text-gray-400 mb-2 block"></i>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Cliquez pour ajouter des fichiers (PDF, Images)
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                  Max 10 MB par fichier
+                </p>
+              </label>
+            </div>
+            
+            <!-- File List -->
+            @if (documentsForm().attachedDocuments.length > 0) {
+              <div class="mt-3 space-y-2">
+                @for (file of documentsForm().attachedDocuments; track $index) {
+                  <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                    <div class="flex items-center gap-2">
+                      <i class="ph ph-file text-blue-600"></i>
+                      <span class="text-sm text-gray-700 dark:text-gray-300">{{ file.name }}</span>
+                      <span class="text-xs text-gray-500">({{ (file.size / 1024).toFixed(1) }} KB)</span>
+                    </div>
+                    <button
+                      (click)="removeFile($index)"
+                      class="text-red-600 hover:text-red-700"
+                    >
+                      <i class="ph ph-x"></i>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          
+          <!-- Notes -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Notes internes (optionnel)
+            </label>
+            <textarea
+              [(ngModel)]="documentsForm().notes"
+              (ngModelChange)="updateDocumentsNotes($event)"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              rows="3"
+              maxlength="1000"
+              placeholder="Notes privées non visibles par le locataire..."
+            ></textarea>
+          </div>
+          
+          <!-- Options -->
+          <div class="space-y-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                [(ngModel)]="documentsForm().sendEmail"
+                (ngModelChange)="updateSendEmail($event)"
+                class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <div>
+                <p class="font-medium text-gray-800 dark:text-white">Envoyer par email au locataire</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Une notification sera envoyée avec l'avenant en pièce jointe</p>
+              </div>
+            </label>
+            
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                [(ngModel)]="documentsForm().requireSignature"
+                (ngModelChange)="updateRequireSignature($event)"
+                class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <div>
+                <p class="font-medium text-gray-800 dark:text-white">Signature électronique requise</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">L'avenant devra être signé par le locataire avant application</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    }
+    
+    <!-- ========== ÉTAPE 4: RÉCAPITULATIF ========== -->
+    @if (currentStep() === 4) {
+      <div class="max-w-3xl mx-auto space-y-4">
+        <!-- Contract Info -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            Informations du Contrat
+          </h3>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-gray-600 dark:text-gray-400">Bien:</span>
+              <span class="ml-2 font-medium text-gray-800 dark:text-white">{{ data.propertyName }}</span>
+            </div>
+            <div>
+              <span class="text-gray-600 dark:text-gray-400">Locataire:</span>
+              <span class="ml-2 font-medium text-gray-800 dark:text-white">{{ data.tenantName }}</span>
+            </div>
+            @if (data.roomName) {
+              <div class="col-span-2">
+                <span class="text-gray-600 dark:text-gray-400">Chambre:</span>
+                <span class="ml-2 font-medium text-gray-800 dark:text-white">{{ data.roomName }}</span>
+              </div>
+            }
+          </div>
+        </div>
+        
+        <!-- Addendum Type -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            Type d'Avenant
+          </h3>
+          @for (type of addendumTypes; track type.type) {
+            @if (selectedType() === type.type) {
+              <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div [class]="'w-12 h-12 rounded-lg flex items-center justify-center ' + getColorClass(type.color)">
+                  <i [class]="'ph ' + type.icon + ' text-2xl text-white'"></i>
+                </div>
+                <div>
+                  <p class="font-semibold text-gray-800 dark:text-white">{{ type.label }}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">{{ type.description }}</p>
+                </div>
+              </div>
+            }
+          }
+        </div>
+        
+        <!-- Modifications Summary -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            Modifications
+          </h3>
+          
+          @if (selectedType() === 'Financial') {
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600 dark:text-gray-400">Loyer:</span>
+                <div class="text-right">
+                  <span class="text-gray-500 line-through">{{ formatCurrency(financialForm().oldRent) }}</span>
+                  <i class="ph ph-arrow-right mx-2 text-gray-400"></i>
+                  <span class="font-semibold text-emerald-600">{{ formatCurrency(financialForm().newRent) }}</span>
+                  @if (rentIncreasePercent() !== 0) {
+                    <span [class]="rentIncreasePercent() > 0 ? 'ml-2 text-sm text-emerald-600' : 'ml-2 text-sm text-red-600'">
+                      ({{ rentIncreasePercent() > 0 ? '+' : '' }}{{ rentIncreasePercent() }}%)
+                    </span>
+                  }
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600 dark:text-gray-400">Charges:</span>
+                <div class="text-right">
+                  <span class="text-gray-500 line-through">{{ formatCurrency(financialForm().oldCharges) }}</span>
+                  <i class="ph ph-arrow-right mx-2 text-gray-400"></i>
+                  <span class="font-semibold text-emerald-600">{{ formatCurrency(financialForm().newCharges) }}</span>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-gray-600 dark:text-gray-400">Motif:</span>
+                <p class="text-sm text-gray-800 dark:text-white mt-1">{{ financialForm().reason }}</p>
+              </div>
+              <div>
+                <span class="text-gray-600 dark:text-gray-400">Date d'effet:</span>
+                <span class="ml-2 font-medium text-gray-800 dark:text-white">{{ formatDate(financialForm().effectiveDate) }}</span>
+              </div>
+            </div>
+          }
+          
+          @if (selectedType() === 'Duration') {
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600 dark:text-gray-400">Date de fin:</span>
+                <div class="text-right">
+                  <span class="text-gray-500 line-through">{{ formatDate(durationForm().currentEndDate) }}</span>
+                  <i class="ph ph-arrow-right mx-2 text-gray-400"></i>
+                  <span class="font-semibold text-blue-600">{{ formatDate(durationForm().newEndDate) }}</span>
+                </div>
+              </div>
+              <div>
+                <span class="text-gray-600 dark:text-gray-400">Extension:</span>
+                <span class="ml-2 font-semibold text-blue-600">{{ extensionMonths() }} mois</span>
+              </div>
+              <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-gray-600 dark:text-gray-400">Motif:</span>
+                <p class="text-sm text-gray-800 dark:text-white mt-1">{{ durationForm().reason }}</p>
+              </div>
+              <div>
+                <span class="text-gray-600 dark:text-gray-400">Date d'effet:</span>
+                <span class="ml-2 font-medium text-gray-800 dark:text-white">{{ formatDate(durationForm().effectiveDate) }}</span>
+              </div>
+            </div>
+          }
+          
+          @if (selectedType() === 'Occupants') {
+            <div class="space-y-3">
+              <div>
+                <span class="text-gray-600 dark:text-gray-400">Action:</span>
+                <span class="ml-2 font-semibold text-purple-600">
+                  @if (occupantsForm().action === 'add') { Ajout d'un colocataire }
+                  @if (occupantsForm().action === 'remove') { Retrait d'un colocataire }
+                  @if (occupantsForm().action === 'changeRoom') { Changement de chambre }
+                </span>
+              </div>
+              @if (occupantsForm().action === 'add') {
+                <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
+                  <p class="font-medium text-gray-800 dark:text-white">{{ occupantsForm().occupantName }}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">{{ occupantsForm().occupantEmail }}</p>
+                  @if (occupantsForm().occupantPhone) {
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ occupantsForm().occupantPhone }}</p>
+                  }
+                </div>
+              }
+              <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-gray-600 dark:text-gray-400">Motif:</span>
+                <p class="text-sm text-gray-800 dark:text-white mt-1">{{ occupantsForm().reason }}</p>
+              </div>
+              <div>
+                <span class="text-gray-600 dark:text-gray-400">Date d'effet:</span>
+                <span class="ml-2 font-medium text-gray-800 dark:text-white">{{ formatDate(occupantsForm().effectiveDate) }}</span>
+              </div>
+            </div>
+          }
+          
+          @if (selectedType() === 'Clauses') {
+            <div class="space-y-3">
+              <div>
+                <span class="text-gray-600 dark:text-gray-400 block mb-2">Nouvelles clauses:</span>
+                <div class="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <p class="text-sm text-gray-800 dark:text-white whitespace-pre-wrap">{{ clausesForm().newClauses }}</p>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-gray-600 dark:text-gray-400">Motif:</span>
+                <p class="text-sm text-gray-800 dark:text-white mt-1">{{ clausesForm().reason }}</p>
+              </div>
+              <div>
+                <span class="text-gray-600 dark:text-gray-400">Date d'effet:</span>
+                <span class="ml-2 font-medium text-gray-800 dark:text-white">{{ formatDate(clausesForm().effectiveDate) }}</span>
+              </div>
+            </div>
+          }
+          
+          @if (selectedType() === 'Free') {
+            <div class="space-y-3">
+              <div>
+                <span class="text-gray-600 dark:text-gray-400 block mb-2">Description:</span>
+                <div class="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <p class="text-sm text-gray-800 dark:text-white whitespace-pre-wrap">{{ freeForm().description }}</p>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-gray-600 dark:text-gray-400">Motif:</span>
+                <p class="text-sm text-gray-800 dark:text-white mt-1">{{ freeForm().reason }}</p>
+              </div>
+              <div>
+                <span class="text-gray-600 dark:text-gray-400">Date d'effet:</span>
+                <span class="ml-2 font-medium text-gray-800 dark:text-white">{{ formatDate(freeForm().effectiveDate) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+        
+        <!-- Documents & Options -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            Documents et Options
+          </h3>
+          <div class="space-y-3 text-sm">
+            <div class="flex items-center gap-2">
+              <i [class]="documentsForm().attachedDocuments.length > 0 ? 'ph ph-check-circle text-emerald-600' : 'ph ph-x-circle text-gray-400'"></i>
+              <span class="text-gray-700 dark:text-gray-300">
+                {{ documentsForm().attachedDocuments.length }} document(s) joint(s)
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i [class]="documentsForm().sendEmail ? 'ph ph-check-circle text-emerald-600' : 'ph ph-x-circle text-gray-400'"></i>
+              <span class="text-gray-700 dark:text-gray-300">
+                {{ documentsForm().sendEmail ? 'Email au locataire' : 'Pas d\'email' }}
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i [class]="documentsForm().requireSignature ? 'ph ph-check-circle text-emerald-600' : 'ph ph-x-circle text-gray-400'"></i>
+              <span class="text-gray-700 dark:text-gray-300">
+                {{ documentsForm().requireSignature ? 'Signature requise' : 'Pas de signature requise' }}
+              </span>
+            </div>
+            @if (documentsForm().notes) {
+              <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-gray-600 dark:text-gray-400 block mb-1">Notes internes:</span>
+                <p class="text-gray-700 dark:text-gray-300">{{ documentsForm().notes }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center justify-between">
+    <button
+      (click)="cancel()"
+      class="px-6 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition font-medium"
+    >
+      Annuler
+    </button>
+    
+    <div class="flex gap-3">
+      @if (currentStep() > 1) {
+        <button
+          (click)="previousStep()"
+          class="px-6 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition font-medium"
+        >
+          <i class="ph ph-arrow-left mr-2"></i>
+          Précédent
+        </button>
+      }
+      
+      @if (currentStep() < 4) {
+        <button
+          (click)="nextStep()"
+          [disabled]="!canGoNext()"
+          [class]="canGoNext() ? 
+            'px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-medium' : 
+            'px-6 py-2 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 rounded-lg cursor-not-allowed font-medium'"
+        >
+          Suivant
+          <i class="ph ph-arrow-right ml-2"></i>
+        </button>
+      }
+      
+      @if (currentStep() === 4) {
+        <button
+          (click)="submitAddendum()"
+          [disabled]="isSubmitting()"
+          [class]="isSubmitting() ? 
+            'px-6 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed font-medium' : 
+            'px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition font-medium'"
+        >
+          @if (isSubmitting()) {
+            <i class="ph ph-spinner animate-spin mr-2"></i>
+            Création en cours...
+          } @else {
+            <i class="ph ph-check mr-2"></i>
+            Créer l'Avenant
+          }
+        </button>
+      }
+    </div>
+  </div>
+</div>

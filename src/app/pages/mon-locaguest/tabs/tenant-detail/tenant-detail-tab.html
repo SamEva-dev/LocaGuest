@@ -32,52 +32,294 @@
             }
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Contrats actifs</p>
-            <p class="font-medium">{{ tenant()!.activeContracts }}</p>
-          </div>
-          @if (tenant()!.moveInDate) {
+        <div class="space-y-4">
+          <!-- ✅ Informations de base -->
+          <div class="grid grid-cols-2 gap-4">
             <div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Date d'entrée</p>
-              <p class="font-medium">{{ tenant()!.moveInDate | date:'dd MMM yyyy' }}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Contrats actifs</p>
+              <p class="font-medium">{{ tenant()!.activeContracts }}</p>
+            </div>
+            @if (tenant()!.moveInDate) {
+              <div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Date d'entrée</p>
+                <p class="font-medium">{{ tenant()!.moveInDate | date:'dd MMM yyyy' }}</p>
+              </div>
+            }
+            <div>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Statut</p>
+              <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30">
+                {{ tenant()!.status }}
+              </span>
+            </div>
+          </div>
+          
+          <!-- ✅ Adresse complète -->
+          @if (tenant()!.address) {
+            <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                <i class="ph ph-map-pin"></i> Adresse
+              </p>
+              <p class="text-sm font-medium text-slate-800 dark:text-white">
+                {{ tenant()!.address }}
+              </p>
+              @if (tenant()!.city || tenant()!.postalCode) {
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {{ tenant()!.postalCode }} {{ tenant()!.city }}
+                </p>
+              }
             </div>
           }
-          <div>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Statut</p>
-            <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30">
-              {{ tenant()!.status }}
-            </span>
-          </div>
+          
+          <!-- ✅ Date de naissance + âge -->
+          @if (tenant()!.birthDate) {
+            <div class="grid grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-700">
+              <div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                  <i class="ph ph-cake"></i> Date de naissance
+                </p>
+                <p class="font-medium text-slate-800 dark:text-white">
+                  {{ tenant()!.birthDate | date:'dd/MM/yyyy' }}
+                </p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {{ calculateAge(tenant()!.birthDate!) }} ans
+                </p>
+              </div>
+              
+              <!-- ✅ Pièce d'identité -->
+              @if (tenant()!.idCardType && tenant()!.idCardNumber) {
+                <div>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                    <i class="ph ph-identification-card"></i> Pièce d'identité
+                  </p>
+                  <p class="font-medium text-slate-800 dark:text-white">
+                    {{ getIdCardTypeLabel(tenant()!.idCardType!) }}
+                  </p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">
+                    {{ tenant()!.idCardNumber }}
+                  </p>
+                </div>
+              }
+            </div>
+          }
+          
+          <!-- ✅ Situation professionnelle -->
+          @if (tenant()!.profession || tenant()!.monthlyIncome) {
+            <div class="grid grid-cols-2 gap-4 pt-3 border-t border-slate-200 dark:border-slate-700">
+              @if (tenant()!.profession) {
+                <div>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                    <i class="ph ph-briefcase"></i> Profession
+                  </p>
+                  <p class="font-medium text-slate-800 dark:text-white">
+                    {{ tenant()!.profession }}
+                  </p>
+                  @if (tenant()!.employmentType) {
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                      {{ tenant()!.employmentType }}
+                    </p>
+                  }
+                </div>
+              }
+              
+              @if (tenant()!.monthlyIncome) {
+                <div>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                    <i class="ph ph-currency-eur"></i> Revenus mensuels
+                  </p>
+                  <p class="font-medium text-emerald-600 dark:text-emerald-400">
+                    {{ formatCurrency(tenant()!.monthlyIncome!) }}
+                  </p>
+                </div>
+              }
+            </div>
+          }
+          
+          <!-- ✅ Garant -->
+          @if (tenant()!.hasGuarantor && tenant()!.guarantorName) {
+            <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                <i class="ph ph-shield-check"></i> Garant
+              </p>
+              <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p class="font-semibold text-blue-900 dark:text-blue-100">
+                  {{ tenant()!.guarantorName }}
+                </p>
+                @if (tenant()!.guarantorRelation) {
+                  <p class="text-xs text-blue-700 dark:text-blue-300 mt-0.5">
+                    {{ tenant()!.guarantorRelation }}
+                  </p>
+                }
+                @if (tenant()!.guarantorPhone) {
+                  <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                    <i class="ph ph-phone text-xs"></i> {{ tenant()!.guarantorPhone }}
+                  </p>
+                }
+                @if (tenant()!.guarantorEmail) {
+                  <p class="text-xs text-slate-600 dark:text-slate-400">
+                    <i class="ph ph-envelope text-xs"></i> {{ tenant()!.guarantorEmail }}
+                  </p>
+                }
+              </div>
+            </div>
+          }
+          
+          <!-- ✅ Dossier administratif -->
+          @if (tenant()!.fileStatus) {
+            <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Dossier administratif</p>
+              <div class="flex items-center justify-between">
+                <span [class]="'text-xs px-3 py-1.5 rounded-full font-medium flex items-center gap-1.5 ' + getFileStatusBadge(tenant()!.fileStatus!).color">
+                  <i [class]="'ph ' + getFileStatusBadge(tenant()!.fileStatus!).icon"></i>
+                  <span>{{ getFileStatusBadge(tenant()!.fileStatus!).label }}</span>
+                </span>
+                @if (tenant()!.documentsValidated !== undefined && tenant()!.totalDocumentsRequired) {
+                  <span class="text-xs text-slate-500 dark:text-slate-400">
+                    {{ tenant()!.documentsValidated }}/{{ tenant()!.totalDocumentsRequired }} documents
+                  </span>
+                }
+              </div>
+              @if (tenant()!.missingDocumentTypes && tenant()!.missingDocumentTypes!.length > 0) {
+                <div class="mt-2 p-2 bg-orange-50 dark:bg-orange-900/20 rounded text-xs text-orange-700 dark:text-orange-400">
+                  <i class="ph ph-warning"></i> Manquant: {{ tenant()!.missingDocumentTypes!.join(', ') }}
+                </div>
+              }
+            </div>
+          }
         </div>
       </div>
 
-      <!-- Right: Stats Card -->
+      <!-- Right: Statut Locatif -->
       <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
-        <h3 class="text-lg font-semibold mb-4">{{ 'TENANT.PAYMENT_STATS' | translate }}</h3>
-        @if (paymentStats()) {
-          <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Total payé</p>
-              <p class="text-2xl font-bold text-emerald-600">€ {{ paymentStats()!.totalPaid.toLocaleString() }}</p>
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+          <i class="ph ph-house-line text-blue-600"></i>
+          <span>Statut Locatif</span>
+        </h3>
+        
+        @if (currentOccupancy()) {
+          <div class="space-y-4">
+            <!-- Occupation actuelle -->
+            <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Occupation actuelle</p>
+              <div class="flex items-center gap-3">
+                <i class="ph ph-buildings text-blue-600 text-2xl"></i>
+                <div class="flex-1">
+                  <p class="font-semibold text-blue-900 dark:text-blue-100">
+                    {{ currentOccupancy()!.propertyName }}
+                  </p>
+                  @if (currentOccupancy()!.roomName) {
+                    <p class="text-sm text-blue-700 dark:text-blue-300">
+                      <i class="ph ph-door text-sm"></i> {{ currentOccupancy()!.roomName }}
+                    </p>
+                  }
+                </div>
+              </div>
             </div>
-            <div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Paiements</p>
-              <p class="text-2xl font-bold">{{ paymentStats()!.totalPayments }}</p>
+            
+            <!-- Dates du bail -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Entrée</p>
+                <p class="font-semibold text-slate-800 dark:text-white">
+                  {{ currentOccupancy()!.moveInDate | date:'dd/MM/yyyy' }}
+                </p>
+              </div>
+              <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Fin du bail</p>
+                <p class="font-semibold text-slate-800 dark:text-white">
+                  {{ currentOccupancy()!.leaseEndDate | date:'dd/MM/yyyy' }}
+                </p>
+                @if (getDaysUntilLeaseEnd(currentOccupancy()!.leaseEndDate) > 0) {
+                  <p class="text-xs text-slate-500 mt-1">
+                    <i class="ph ph-clock"></i> {{ getDaysUntilLeaseEnd(currentOccupancy()!.leaseEndDate) }} jours restants
+                  </p>
+                }
+              </div>
             </div>
-            <div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Retards</p>
-              <p class="text-lg font-semibold">{{ paymentStats()!.latePayments }}</p>
-            </div>
-            <div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Régularité</p>
-              <p class="text-lg font-semibold text-emerald-600">{{ paymentStats()!.onTimeRate }}%</p>
+            
+            <!-- Finances résumées -->
+            @if (financialStatus()) {
+              <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-3 font-medium">Situation financière</p>
+                
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Solde du mois</p>
+                    <p [class]="getPaymentStatusColor(financialStatus()!.currentMonthBalance) + ' text-xl font-bold'">
+                      {{ formatCurrency(financialStatus()!.currentMonthBalance) }}
+                    </p>
+                  </div>
+                  <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Retard total</p>
+                    <p [class]="getPaymentStatusColor(financialStatus()!.totalArrears) + ' text-xl font-bold'">
+                      {{ formatCurrency(financialStatus()!.totalArrears) }}
+                    </p>
+                  </div>
+                </div>
+                
+                @if (financialStatus()!.lastPaymentDate) {
+                  <div class="mt-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <p class="text-xs text-emerald-700 dark:text-emerald-400 mb-1">
+                      <i class="ph ph-check-circle"></i> Dernier paiement
+                    </p>
+                    <p class="text-sm font-semibold text-emerald-900 dark:text-emerald-100">
+                      {{ formatCurrency(financialStatus()!.lastPaymentAmount) }}
+                      <span class="text-xs text-emerald-600 dark:text-emerald-400 font-normal">
+                        le {{ financialStatus()!.lastPaymentDate | date:'dd/MM/yyyy' }}
+                      </span>
+                    </p>
+                  </div>
+                }
+              </div>
+            }
+            
+            <!-- Badge statut -->
+            <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-medium">
+                  <i class="ph ph-check-circle"></i>
+                  <span>Locataire en règle</span>
+                </span>
+                
+                @if (paymentStats()) {
+                  <div class="text-right">
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Régularité</p>
+                    <p class="text-lg font-bold text-emerald-600">{{ paymentStats()!.onTimeRate }}%</p>
+                  </div>
+                }
+              </div>
             </div>
           </div>
+        } @else {
+          <!-- Pas d'occupation active -->
+          <div class="text-center py-8">
+            <i class="ph ph-house-line text-4xl text-slate-300 dark:text-slate-600 mb-2"></i>
+            <p class="text-slate-500 dark:text-slate-400">Aucune occupation active</p>
+            @if (contracts().length > 0) {
+              <p class="text-sm text-slate-400 dark:text-slate-500 mt-1">
+                {{ contracts().length }} contrat(s) historique(s)
+              </p>
+            }
+          </div>
         }
-        <occupancy-chart />
       </div>
     </div>
+
+    <!-- ✅ NOUVEAU: Actions globales locataire -->
+    @if (fromProperty() && tenant()) {
+      <div class="flex justify-end gap-3">
+        <button
+          (click)="dissociateTenant()"
+          [disabled]="!canDissociateTenant()"
+          [class.opacity-50]="!canDissociateTenant()"
+          [class.cursor-not-allowed]="!canDissociateTenant()"
+          class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition flex items-center gap-2 disabled:hover:bg-red-600"
+          [title]="canDissociateTenant() ? 'Dissocier le locataire du bien' : 'Impossible: contrats actifs en cours'"
+        >
+          <i class="ph ph-link-break"></i>
+          <span>Dissocier du bien</span>
+        </button>
+      </div>
+    }
 
     <!-- Sub-tabs -->
     <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
@@ -126,16 +368,18 @@
                             <div class="flex items-center gap-2 mb-1">
                               <h4 class="font-semibold">{{ contract.type }}</h4>
                               <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">{{ contract.code }}</span>
+                              <!-- ✅ Badge statut amélioré -->
+                              @if (contract.status) {
+                                <span [class]="'text-xs px-2 py-1 rounded-full font-medium ' + getContractStatusBadge(contract.status).color">
+                                  {{ getContractStatusBadge(contract.status).label }}
+                                </span>
+                              }
                             </div>
                             <p class="text-sm text-slate-500">{{ contract.startDate | date:'dd/MM/yyyy' }} - {{ contract.endDate | date:'dd/MM/yyyy' }}</p>
-                            <p class="text-sm font-medium mt-1">€ {{ contract.rent }}/mois</p>
+                            <p class="text-sm font-medium mt-1">{{ formatCurrency(contract.rent) }}/mois</p>
                           </div>
                           
                           <div class="flex items-center gap-2">
-                            <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                              {{ contract.status }}
-                            </span>
-                            
                             <!-- Bouton pour afficher les documents (si Draft/PartialSigned/FullySigned) -->
                             @if (shouldShowDocumentsPanel(contract)) {
                               <button
@@ -149,6 +393,91 @@
                               </button>
                             }
                           </div>
+                        </div>
+                      </div>
+
+                      <!-- ✅ NOUVEAU: Actions contractuelles professionnelles -->
+                      <div class="border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-3">
+                        <div class="flex flex-wrap gap-2">
+                          <!-- Renouveler -->
+                          @if (canRenewContract(contract)) {
+                            <button
+                              (click)="renewContract(contract)"
+                              class="px-3 py-1.5 text-sm rounded-lg border border-blue-300 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition flex items-center gap-1.5"
+                              title="Renouveler le contrat (< 60 jours avant expiration)"
+                            >
+                              <i class="ph ph-arrows-clockwise"></i>
+                              <span>Renouveler</span>
+                            </button>
+                          }
+                          
+                          <!-- Avenant -->
+                          @if (canCreateAddendum(contract)) {
+                            <button
+                              (click)="createAddendum(contract)"
+                              class="px-3 py-1.5 text-sm rounded-lg border border-purple-300 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition flex items-center gap-1.5"
+                              title="Créer un avenant au contrat"
+                            >
+                              <i class="ph ph-file-plus"></i>
+                              <span>Avenant</span>
+                            </button>
+                          }
+                          
+                          <!-- Préavis -->
+                          @if (canGiveNotice(contract)) {
+                            <button
+                              (click)="giveNotice(contract)"
+                              class="px-3 py-1.5 text-sm rounded-lg border border-orange-300 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition flex items-center gap-1.5"
+                              title="Donner préavis / Rompre le contrat"
+                            >
+                              <i class="ph ph-warning-circle"></i>
+                              <span>Préavis</span>
+                            </button>
+                          }
+                          
+                          <!-- EDL Entrée -->
+                          @if (canCreateEntryInventory(contract)) {
+                            <button
+                              (click)="createEntryInventory(contract)"
+                              class="px-3 py-1.5 text-sm rounded-lg border border-emerald-300 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition flex items-center gap-1.5"
+                              title="Créer état des lieux d'entrée"
+                            >
+                              <i class="ph ph-clipboard-text"></i>
+                              <span>EDL Entrée</span>
+                            </button>
+                          }
+                          
+                          <!-- EDL Sortie -->
+                          @if (canCreateExitInventory(contract)) {
+                            <button
+                              (click)="createExitInventory(contract)"
+                              class="px-3 py-1.5 text-sm rounded-lg border border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition flex items-center gap-1.5"
+                              title="Créer état des lieux de sortie"
+                            >
+                              <i class="ph ph-clipboard-text"></i>
+                              <span>EDL Sortie</span>
+                            </button>
+                          }
+                          
+                          <!-- Télécharger PDF -->
+                          <button
+                            (click)="downloadContractPDF(contract)"
+                            class="px-3 py-1.5 text-sm rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1.5"
+                            title="Télécharger le PDF du contrat"
+                          >
+                            <i class="ph ph-download"></i>
+                            <span>PDF</span>
+                          </button>
+                          
+                          <!-- Historique -->
+                          <button
+                            (click)="showContractHistory(contract)"
+                            class="px-3 py-1.5 text-sm rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1.5"
+                            title="Afficher l'historique du contrat"
+                          >
+                            <i class="ph ph-clock-clockwise"></i>
+                            <span>Historique</span>
+                          </button>
                         </div>
                       </div>
 
@@ -168,20 +497,127 @@
           }
           @case ('payment-history') {
             <div>
-              <h3 class="text-lg font-semibold mb-4">{{ 'TENANT.PAYMENT_HISTORY' | translate }}</h3>
+              <!-- ✅ NOUVEAU: Résumé financier -->
+              @if (paymentStats()) {
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                  <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">Solde total</p>
+                    <p class="text-2xl font-bold text-blue-600">
+                      {{ formatCurrency(paymentStats()!.totalPaid || 0) }}
+                    </p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      {{ paymentStats()!.totalPayments }} paiement(s)
+                    </p>
+                  </div>
+                  
+                  @if (financialStatus()) {
+                    <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                      <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">Montant dû ce mois</p>
+                      <p class="text-2xl font-bold text-orange-600">
+                        {{ formatCurrency(financialStatus()!.nextDueAmount || 0) }}
+                      </p>
+                      @if (financialStatus()!.nextDueDate) {
+                        <p class="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                          <i class="ph ph-calendar"></i> Échéance: {{ financialStatus()!.nextDueDate | date:'dd/MM' }}
+                        </p>
+                      }
+                    </div>
+                    
+                    <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                      <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">Retard total</p>
+                      <p class="text-2xl font-bold text-red-600">
+                        {{ formatCurrency(financialStatus()!.totalArrears || 0) }}
+                      </p>
+                      @if (financialStatus()!.totalArrears > 0) {
+                        <p class="text-xs text-red-600 dark:text-red-400 mt-1">
+                          <i class="ph ph-warning"></i> Action requise
+                        </p>
+                      } @else {
+                        <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+                          <i class="ph ph-check"></i> À jour
+                        </p>
+                      }
+                    </div>
+                  }
+                  
+                  <div class="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">Régularité</p>
+                    <p class="text-2xl font-bold text-emerald-600">
+                      {{ paymentStats()!.onTimeRate || 0 }}%
+                    </p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      {{ paymentStats()!.latePayments || 0 }} retard(s)
+                    </p>
+                  </div>
+                </div>
+              }
+              
+              <!-- ✅ NOUVEAU: Prochaines échéances -->
+              @if (financialStatus()) {
+                <div class="mb-6 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800">
+                  <h4 class="font-semibold mb-3 flex items-center gap-2">
+                    <i class="ph ph-calendar-check text-blue-600"></i>
+                    <span>Prochaines échéances</span>
+                  </h4>
+                  <div class="space-y-2">
+                    @if (financialStatus()!.nextDueDate) {
+                      <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                        <div class="flex items-center gap-3">
+                          <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                            <i class="ph ph-calendar text-blue-600"></i>
+                          </div>
+                          <div>
+                            <p class="font-medium text-slate-800 dark:text-white">
+                              {{ financialStatus()!.nextDueDate | date:'MMMM yyyy' }}
+                            </p>
+                            <p class="text-xs text-slate-500">
+                              Échéance: {{ financialStatus()!.nextDueDate | date:'dd/MM/yyyy' }}
+                            </p>
+                          </div>
+                        </div>
+                        <div class="text-right">
+                          <p class="font-bold text-lg text-slate-800 dark:text-white">
+                            {{ formatCurrency(financialStatus()!.nextDueAmount) }}
+                          </p>
+                          <span class="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/30">
+                            À venir
+                          </span>
+                        </div>
+                      </div>
+                    } @else {
+                      <p class="text-sm text-slate-500 text-center py-4">
+                        Aucune échéance programmée
+                      </p>
+                    }
+                  </div>
+                </div>
+              }
+              
+              <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <i class="ph ph-clock-clockwise text-slate-600"></i>
+                <span>{{ 'TENANT.PAYMENT_HISTORY' | translate }}</span>
+              </h3>
+              
               @if (payments().length > 0) {
                 <div class="space-y-2">
                   @for (payment of payments(); track payment.id) {
-                    <div class="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-lg">
-                      <div>
-                        <p class="font-medium">{{ payment.paymentDate | date:'MMM yyyy' }}</p>
-                        <p class="text-xs text-slate-500">{{ payment.method }}</p>
-                        @if (payment.propertyName) {
-                          <p class="text-xs text-slate-400">{{ payment.propertyName }}</p>
-                        }
+                    <div class="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                      <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                          <i class="ph ph-currency-eur text-emerald-600"></i>
+                        </div>
+                        <div>
+                          <p class="font-medium text-slate-800 dark:text-white">{{ payment.paymentDate | date:'MMMM yyyy' }}</p>
+                          <p class="text-xs text-slate-500">{{ payment.method }}</p>
+                          @if (payment.propertyName) {
+                            <p class="text-xs text-slate-400">
+                              <i class="ph ph-house-line text-xs"></i> {{ payment.propertyName }}
+                            </p>
+                          }
+                        </div>
                       </div>
                       <div class="text-right">
-                        <p class="font-semibold">€ {{ payment.amount }}</p>
+                        <p class="font-semibold text-lg text-slate-800 dark:text-white">{{ formatCurrency(payment.amount) }}</p>
                         <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30">
                           {{ payment.status }}
                         </span>
@@ -190,7 +626,10 @@
                   }
                 </div>
               } @else {
-                <p class="text-slate-500">{{ 'TENANT.NO_PAYMENTS' | translate }}</p>
+                <div class="text-center py-12">
+                  <i class="ph ph-currency-eur text-4xl text-slate-300 dark:text-slate-600 mb-2"></i>
+                  <p class="text-slate-500">{{ 'TENANT.NO_PAYMENTS' | translate }}</p>
+                </div>
               }
             </div>
           }

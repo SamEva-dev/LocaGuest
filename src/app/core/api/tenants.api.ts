@@ -29,6 +29,38 @@ export interface TenantDetail extends TenantListItem {
   createdAt: Date;
   createdBy: string;
   totalContracts: number;
+  
+  // ✅ Informations personnelles enrichies
+  address?: string;
+  city?: string;
+  postalCode?: string;
+  birthDate?: Date;
+  age?: number;
+  
+  // ✅ Pièce d'identité
+  idCardType?: 'CNI' | 'Passport' | 'TitreSejour' | 'PermisConduire';
+  idCardNumber?: string;
+  idCardExpiryDate?: Date;
+  
+  // ✅ Situation professionnelle
+  profession?: string;
+  employer?: string;
+  employmentType?: 'CDI' | 'CDD' | 'Independant' | 'Etudiant' | 'Retraite' | 'Autre';
+  monthlyIncome?: number;
+  
+  // ✅ Garant(s)
+  hasGuarantor?: boolean;
+  guarantorName?: string;
+  guarantorPhone?: string;
+  guarantorEmail?: string;
+  guarantorAddress?: string;
+  guarantorRelation?: string;
+  
+  // ✅ Dossier administratif
+  fileStatus?: 'Incomplete' | 'Complete' | 'Pending' | 'Validated';
+  documentsValidated?: number;
+  totalDocumentsRequired?: number;
+  missingDocumentTypes?: string[];
 }
 
 export interface TenantPayment extends Payment {

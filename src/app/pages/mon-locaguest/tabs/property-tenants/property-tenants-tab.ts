@@ -19,6 +19,10 @@ import {
   ContractRenewalWizard,
   ContractRenewalData
 } from '../property-contracts/contract-renewal-wizard/contract-renewal-wizard';
+import {
+  ContractAddendumWizard,
+  ContractAddendumData
+} from '../property-contracts/contract-addendum-wizard/contract-addendum-wizard';
 
 interface TenantWithContract {
   tenant: TenantListItem;
@@ -49,7 +53,8 @@ interface TenantWithContract {
     DecimalPipe,
     InventoryEntryWizardSimpleComponent,
     InventoryExitWizardSimpleComponent,
-    ContractRenewalWizard
+    ContractRenewalWizard,
+    ContractAddendumWizard
   ],
   templateUrl: './property-tenants-tab.html'
 })
@@ -81,6 +86,10 @@ export class PropertyTenantsTab {
   // Wizard Renouvellement
   showRenewalWizard = signal(false);
   renewalWizardData = signal<any | null>(null);
+  
+  // Wizard Avenant
+  showAddendumWizard = signal(false);
+  addendumWizardData = signal<any | null>(null);
   
   // Computed properties
   // ✅ CORRECTION: Filtrer uniquement Signed + Active (pas Draft, Expired, Cancelled)
@@ -314,6 +323,49 @@ export class PropertyTenantsTab {
   onRenewalCancelled() {
     this.showRenewalWizard.set(false);
     this.renewalWizardData.set(null);
+  }
+  
+  // ========== GESTION AVENANT ==========
+  
+  createAddendum(contract: Contract) {
+    // Vérifier que le contrat peut avoir un avenant
+    if (contract.status !== 'Active' && contract.status !== 'Signed') {
+      this.toasts.warningDirect('Seuls les contrats actifs ou signés peuvent avoir un avenant');
+      return;
+    }
+    
+    // Trouver le locataire associé
+    const tenantItem = this.currentTenants().find(t => t.contract.id === contract.id);
+    
+    if (!tenantItem) {
+      this.toasts.errorDirect('Locataire introuvable');
+      return;
+    }
+    
+    // Préparer les données pour le wizard
+    const addendumData: ContractAddendumData = {
+      contract: contract,
+      propertyName: this.property().name,
+      tenantName: tenantItem.tenant.fullName || 'Locataire',
+      roomName: tenantItem.room,
+      availableRooms: [] // TODO: charger les chambres disponibles si colocation
+    };
+    
+    this.addendumWizardData.set(addendumData);
+    this.showAddendumWizard.set(true);
+  }
+  
+  onAddendumCompleted(addendumId: string) {
+    this.showAddendumWizard.set(false);
+    this.addendumWizardData.set(null);
+    this.toasts.successDirect('Avenant créé avec succès !');
+    // Recharger les données
+    this.onRefreshNeeded.emit();
+  }
+  
+  onAddendumCancelled() {
+    this.showAddendumWizard.set(false);
+    this.addendumWizardData.set(null);
   }
   
   toggleViewMode() {

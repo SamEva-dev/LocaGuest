@@ -550,3 +550,16 @@
     />
   </div>
 }
+
+<!-- ✅ Wizard Avenant au Contrat -->
+@if (showAddendumWizard() && addendumWizardData()) {
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div class="w-full max-w-6xl h-[95vh] overflow-hidden">
+      <contract-addendum-wizard
+        [data]="addendumWizardData()!"
+        (completed)="onAddendumCompleted($event)"
+        (cancelled)="onAddendumCancelled()"
+      />
+    </div>
+  </div>
+}

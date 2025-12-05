@@ -152,4 +152,25 @@ export class ContractsApi {
   renewContract(contractId: string, request: RenewContractRequest): Promise<{ message: string; newContractId: string }> {
     return this.http.post<{ message: string; newContractId: string }>(`${this.baseUrl}/${contractId}/renew`, request).toPromise() as Promise<{ message: string; newContractId: string }>;
   }
+  
+  createAddendum(contractId: string, request: CreateAddendumRequest): Promise<{ message: string; addendumId: string }> {
+    return this.http.post<{ message: string; addendumId: string }>(`${this.baseUrl}/${contractId}/addendum`, request).toPromise() as Promise<{ message: string; addendumId: string }>;
+  }
+}
+
+export interface CreateAddendumRequest {
+  type: string;
+  effectiveDate: string;
+  reason: string;
+  description: string;
+  newRent?: number | null;
+  newCharges?: number | null;
+  newEndDate?: string | null;
+  occupantChanges?: string | null;
+  newRoomId?: string | null;
+  newClauses?: string | null;
+  attachedDocumentIds?: string[];
+  notes?: string | null;
+  sendEmail: boolean;
+  requireSignature: boolean;
 }
