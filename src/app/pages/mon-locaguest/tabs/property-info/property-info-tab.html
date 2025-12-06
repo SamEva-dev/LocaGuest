@@ -233,8 +233,8 @@
                 @if (property().city) {
                   , {{ property().city }}
                 }
-                @if (property().zipCode) {
-                  {{ property().zipCode }}
+                @if (property().postalCode) {
+                  {{ property().postalCode }}
                 }
               </p>
             }
@@ -263,10 +263,10 @@
             @if (isEditing()) {
               <input 
                 type="text"
-                [(ngModel)]="editForm()!.zipCode"
+                [(ngModel)]="editForm()!.postalCode"
                 class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
             } @else {
-              <p class="text-slate-900 dark:text-white">{{ property().zipCode || '—' }}</p>
+              <p class="text-slate-900 dark:text-white">{{ property().postalCode || '—' }}</p>
             }
           </div>
 

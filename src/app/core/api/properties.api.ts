@@ -19,6 +19,7 @@ export interface PropertyListItem {
   bathrooms: number;
   surface?: number;
   imageUrl?: string;
+  postalCode?:string;
   // Nouveau: Type d'utilisation
   propertyUsageType: PropertyUsageType;
   // Pour les colocations
@@ -27,7 +28,6 @@ export interface PropertyListItem {
 }
 
 export interface PropertyDetail extends PropertyListItem {
-  zipCode?: string;
   country?: string;
   hasElevator: boolean;
   hasParking: boolean;
