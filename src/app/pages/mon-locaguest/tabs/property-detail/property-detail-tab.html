@@ -209,33 +209,12 @@
             </div>
           }
           @case ('payments') {
-            <div>
-              <h3 class="text-lg font-semibold mb-4">{{ 'PROPERTY.PAYMENTS' | translate }}</h3>
-              @if (payments().length > 0) {
-                <div class="space-y-2">
-                  @for (payment of payments(); track payment.id) {
-                    <div class="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-lg">
-                      <div>
-                        <p class="font-medium">{{ payment.paymentDate | date:'dd MMM yyyy' }}</p>
-                        <p class="text-xs text-slate-500">{{ payment.method }}</p>
-                      </div>
-                      <div class="text-right">
-                        <p class="font-semibold">€ {{ payment.amount }}</p>
-                        <span class="text-xs px-2 py-0.5 rounded-full" 
-                          [class.bg-emerald-100]="payment.status === 'Paid'"
-                          [class.text-emerald-700]="payment.status === 'Paid'"
-                          [class.bg-amber-100]="payment.status === 'Pending'"
-                          [class.text-amber-700]="payment.status === 'Pending'">
-                          {{ payment.status }}
-                        </span>
-                      </div>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <p class="text-slate-500">{{ 'PROPERTY.NO_PAYMENTS' | translate }}</p>
-              }
-            </div>
+            @if (property()) {
+              <property-payments-tab
+                [propertyId]="property()!.id"
+                [propertyName]="property()!.name"
+              />
+            }
           }
           @case ('projection') {
             <div>

@@ -9,6 +9,7 @@ import { Contract } from '../../../../core/api/properties.api';
 import { DocumentsManagerComponent } from '../../components/documents-manager/documents-manager';
 import { ContractDocumentsStatusComponent } from '../../components/contract-documents-status/contract-documents-status.component';
 import { ContractWizardComponent } from '../../components/contract-wizard/contract-wizard.component';
+import { TenantPaymentsTab } from '../tenant-payments/tenant-payments-tab';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 
@@ -21,7 +22,8 @@ import { ConfirmService } from '../../../../core/ui/confirm.service';
     OccupancyChart, 
     DocumentsManagerComponent,
     ContractDocumentsStatusComponent,
-    ContractWizardComponent
+    ContractWizardComponent,
+    TenantPaymentsTab
   ],
   templateUrl: './tenant-detail-tab.html'
 })
@@ -77,6 +79,7 @@ export class TenantDetailTab {
 
   subTabs = [
     { id: 'contracts', label: 'TENANT.SUB_TABS.CONTRACTS', icon: 'ph-file-text' },
+    { id: 'payments', label: 'Paiements', icon: 'ph-wallet' },
     { id: 'payment-history', label: 'TENANT.SUB_TABS.PAYMENT_HISTORY', icon: 'ph-currency-eur' },
     { id: 'documents', label: 'TENANT.SUB_TABS.DOCUMENTS', icon: 'ph-folder' },
   ];

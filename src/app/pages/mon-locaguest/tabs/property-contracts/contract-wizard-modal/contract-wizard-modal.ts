@@ -198,48 +198,45 @@ export class ContractWizardModal {
   constructor() {
     // PHASE 2: Auto-complétion intelligente
     effect(() => {
-      const prop = this.property();
-      if (prop) {
-        // Pré-remplir avec données du bien
-        if (prop.propertyUsageType === 'colocation') {
-          // Pour colocation, ne pas pré-remplir - attendre sélection chambre
-          this.form.update(f => ({
-            ...f,
-            type: 'Colocation individuelle'
-          }));
-        } else {
-          // ✅ CORRECTION: Ne mettre le dépôt = loyer que si deposit est à 0 (valeur par défaut)
-          const currentForm = this.form();
-          this.form.update(f => ({
-            ...f,
-            rent: prop.rent || 0,
-            charges: prop.charges || 0,
-            deposit: currentForm.deposit === 0 ? (prop.rent || 0) : currentForm.deposit,
-            type: prop.isFurnished ? 'Meublé' : 'Non meublé'
-          }));
-        }
-      }
-    });
+  const prop = this.property();
+  if (!prop) return;   // <-- PROTECTION OBLIGATOIRE
+
+  if (prop.propertyUsageType === 'colocation') {
+    this.form.update(f => ({
+      ...f,
+      type: 'Colocation individuelle'
+    }));
+  } else {
+    const currentForm = this.form();
+    this.form.update(f => ({
+      ...f,
+      rent: prop.rent || 0,
+      charges: prop.charges || 0,
+      deposit: currentForm.deposit === 0 ? (prop.rent || 0) : currentForm.deposit,
+      type: prop.isFurnished ? 'Meublé' : 'Non meublé'
+    }));
+  }
+});
     
     // Auto-update financial info when room selected (colocation)
     effect(() => {
-      const room = this.selectedRoom();
-      if (room) {
-        // ✅ CORRECTION: Ne mettre le dépôt = loyer que si deposit est à 0 (valeur par défaut)
-        const currentForm = this.form();
-        this.form.update(f => ({
-          ...f,
-          rent: room.rent || 0,
-          charges: room.charges || 0,
-          deposit: currentForm.deposit === 0 ? (room.rent || 0) : currentForm.deposit,
-          room: room.name
-        }));
-      }
-    });
+  const room = this.selectedRoom();
+  if (!room) return;  // <-- ajout obligatoire
+  const currentForm = this.form();
+
+  this.form.update(f => ({
+    ...f,
+    rent: room.rent || 0,
+    charges: room.charges || 0,
+    deposit: currentForm.deposit === 0 ? (room.rent || 0) : currentForm.deposit,
+    room: room.name
+  }));
+});
     
     effect(() => {
-      const search = this.searchTerm().toLowerCase();
-      const tenants = this.availableTenants();
+      const search = this.searchTerm();
+  const tenants = this.availableTenants();
+  if (!tenants) return;
       
       if (!search) {
         this.filteredTenants.set(tenants);

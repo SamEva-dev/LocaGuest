@@ -84,6 +84,7 @@ export class PropertyInfoTab {
   // Actions
   startEditing() {
     const prop = this.property();
+    console.log('prop',prop)
     this.editForm.set({ ...prop });
     this.isEditing.set(true);
   }

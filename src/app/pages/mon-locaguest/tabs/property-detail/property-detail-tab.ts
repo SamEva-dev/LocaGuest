@@ -14,11 +14,12 @@ import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { PropertyInfoTab } from '../property-info/property-info-tab';
 import { PropertyTenantsTab } from '../property-tenants/property-tenants-tab';
 import { PropertyContractsTab } from '../property-contracts/property-contracts-tab';
+import { PropertyPaymentsTab } from '../property-payments/property-payments-tab';
 
 @Component({
   selector: 'property-detail-tab',
   standalone: true,
-  imports: [TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal, PropertyInfoTab, PropertyTenantsTab, PropertyContractsTab],
+  imports: [TranslatePipe, DatePipe, FormsModule, RevenueChart, TenantSelectionModal, PropertyInfoTab, PropertyTenantsTab, PropertyContractsTab, PropertyPaymentsTab],
   templateUrl: './property-detail-tab.html'
 })
 export class PropertyDetailTab {

@@ -125,6 +125,10 @@ export class ContractsApi {
     return this.http.get<ContractDetailDto>(`${this.baseUrl}/${id}`);
   }
 
+  getContractsByTenant(tenantId: string): Observable<ContractDto[]> {
+    return this.http.get<ContractDto[]>(`${this.baseUrl}/tenant/${tenantId}`);
+  }
+
   createContract(request: CreateContractRequest): Observable<{ id: string; propertyId: string; tenantId: string }> {
     return this.http.post<{ id: string; propertyId: string; tenantId: string }>(this.baseUrl, request);
   }

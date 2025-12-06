@@ -545,6 +545,13 @@
               }
             </div>
           }
+          @case ('payments') {
+            <!-- 💰 NOUVEAU TAB PAIEMENTS -->
+            <tenant-payments-tab
+              [tenantId]="tenant()!.id"
+              [tenantName]="tenant()!.fullName"
+            />
+          }
           @case ('payment-history') {
             <div>
               <!-- ✅ NOUVEAU: Résumé financier -->

@@ -1,0 +1,198 @@
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+    <!-- Header -->
+    <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="ph ph-wallet text-blue-600"></i>
+          Ajouter un paiement
+        </h2>
+        @if (tenantName()) {
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Pour {{ tenantName() }}
+          </p>
+        }
+      </div>
+      <button 
+        (click)="handleClose()"
+        class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+        <i class="ph ph-x text-xl text-slate-500"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+      <form (ngSubmit)="handleSubmit()" class="space-y-6">
+        <!-- Contract Selection -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Contrat / Bien <span class="text-red-500">*</span>
+          </label>
+          @if (isLoadingContracts()) {
+            <div class="flex items-center gap-2 text-sm text-slate-500">
+              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              Chargement des contrats...
+            </div>
+          } @else if (contracts().length === 0) {
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <p class="text-sm text-yellow-800 dark:text-yellow-200">
+                <i class="ph ph-warning mr-2"></i>
+                Aucun contrat actif trouvé pour ce locataire
+              </p>
+            </div>
+          } @else {
+            <select
+              [value]="form().contractId"
+              (change)="onContractChange($event)"
+              required
+              class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="">Sélectionnez un contrat</option>
+              @for (contract of contracts(); track contract.id) {
+                <option [value]="contract.id">
+                  {{ contract.propertyName }} - {{ formatCurrency(contract.rent + contract.charges) }}/mois
+                </option>
+              }
+            </select>
+          }
+        </div>
+
+        @if (form().contractId) {
+          <!-- Amount Section -->
+          <div class="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Amount Due -->
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Montant Dû <span class="text-red-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  [(ngModel)]="form().amountDue"
+                  name="amountDue"
+                  step="0.01"
+                  min="0"
+                  required
+                  class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0.00">
+              </div>
+
+              <!-- Amount Paid -->
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
+                  <span>Montant Payé <span class="text-red-500">*</span></span>
+                  <button
+                    type="button"
+                    (click)="fillFullAmount()"
+                    class="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400">
+                    Montant total
+                  </button>
+                </label>
+                <input
+                  type="number"
+                  [(ngModel)]="form().amountPaid"
+                  name="amountPaid"
+                  step="0.01"
+                  min="0"
+                  required
+                  class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0.00">
+              </div>
+            </div>
+
+            <!-- Remaining Amount -->
+            @if (form().amountDue > 0) {
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-600 dark:text-slate-400">Restant dû:</span>
+                <span 
+                  [class]="(form().amountDue - form().amountPaid) > 0 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-emerald-600 dark:text-emerald-400 font-semibold'">
+                  {{ formatCurrency(Math.max(0, form().amountDue - form().amountPaid)) }}
+                </span>
+              </div>
+            }
+          </div>
+
+          <!-- Dates Section -->
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Expected Date -->
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                Date d'échéance <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                [(ngModel)]="form().expectedDate"
+                name="expectedDate"
+                required
+                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- Payment Date -->
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                Date de paiement
+              </label>
+              <input
+                type="date"
+                [(ngModel)]="form().paymentDate"
+                name="paymentDate"
+                class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Méthode de paiement <span class="text-red-500">*</span>
+            </label>
+            <select
+              [(ngModel)]="form().paymentMethod"
+              name="paymentMethod"
+              required
+              class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              @for (method of paymentMethods; track method.value) {
+                <option [value]="method.value">{{ method.label }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Note -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Note (optionnel)
+            </label>
+            <textarea
+              [(ngModel)]="form().note"
+              name="note"
+              rows="3"
+              class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              placeholder="Ajoutez une note..."></textarea>
+          </div>
+        }
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+      <button
+        type="button"
+        (click)="handleClose()"
+        [disabled]="isSaving()"
+        class="px-6 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        Annuler
+      </button>
+      <button
+        type="submit"
+        (click)="handleSubmit()"
+        [disabled]="!canSubmit()"
+        class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+        @if (isSaving()) {
+          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          Enregistrement...
+        } @else {
+          <i class="ph ph-check"></i>
+          Enregistrer le paiement
+        }
+      </button>
+    </div>
+  </div>
+</div>
