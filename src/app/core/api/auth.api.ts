@@ -19,12 +19,24 @@ export class AuthApi {
     return this.http.post<LoginResponse>(`${this.base}/Auth/mfa-login`, body);
   }
 
-  verify2FA(mfaToken: string, code: string) {
-    return this.http.post<LoginResponse>(`${this.base}/Auth/verify-2fa`, { mfaToken, code });
+  verify2FA(mfaToken: string, code: string, rememberDevice: boolean = false, deviceFingerprint?: string, userAgent?: string) {
+    return this.http.post<LoginResponse>(`${this.base}/Auth/verify-2fa`, { 
+      mfaToken, 
+      code, 
+      rememberDevice,
+      deviceFingerprint,
+      userAgent
+    });
   }
 
-  verifyRecoveryCode(mfaToken: string, recoveryCode: string) {
-    return this.http.post<LoginResponse>(`${this.base}/Auth/verify-recovery-code`, { mfaToken, recoveryCode });
+  verifyRecoveryCode(mfaToken: string, recoveryCode: string, rememberDevice: boolean = false, deviceFingerprint?: string, userAgent?: string) {
+    return this.http.post<LoginResponse>(`${this.base}/Auth/verify-recovery-code`, { 
+      mfaToken, 
+      recoveryCode, 
+      rememberDevice,
+      deviceFingerprint,
+      userAgent
+    });
   }
 
   disableMfa() {

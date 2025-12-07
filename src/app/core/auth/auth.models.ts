@@ -8,7 +8,12 @@ export interface UserDto {
   mfaEnabled: boolean;
 }
 
-export interface LoginRequest { email: string; password: string; code?: string; }
+export interface LoginRequest { 
+  email: string; 
+  password: string; 
+  code?: string;
+  deviceFingerprint?: string;
+}
 export interface RegisterRequest { 
   email: string; 
   password: string; 

@@ -37,6 +37,9 @@ export class Login {
   // Recovery code state
   useRecoveryCode = signal(false);
   recoveryCode = signal<string>('');
+  
+  // Remember device state
+  rememberDevice2FA = signal(false);
 
   constructor(private translate: TranslateService) {
       translate.setDefaultLang('fr');
@@ -48,6 +51,12 @@ export class Login {
     if (expired) this.toast.info('AUTH.SESSION_EXPIRED');
   }
 
+  private generateDeviceFingerprint(): string {
+    // Simple fingerprint based on User-Agent (can be improved with fingerprintjs library)
+    const userAgent = navigator.userAgent;
+    return btoa(userAgent); // Base64 encode
+  }
+
 
   async login(email: string, password: string) {
     this.isLoading.set(true);
@@ -57,8 +66,14 @@ export class Login {
       
       console.log('🔐 Login attempt:', email);
       
+      const deviceFingerprint = this.generateDeviceFingerprint();
+      
       // Call login API directly to handle 2FA response
-      const result = await firstValueFrom(this.authApi.login({ email, password }));
+      const result = await firstValueFrom(this.authApi.login({ 
+        email, 
+        password,
+        deviceFingerprint 
+      }));
       
       // Check if 2FA is required
       if (result.requiresMfa && result.mfaToken) {
@@ -96,7 +111,13 @@ export class Login {
     try {
       console.log('🔐 Verifying 2FA code...');
       const result = await firstValueFrom(
-        this.authApi.verify2FA(this.mfaToken(), code)
+        this.authApi.verify2FA(
+          this.mfaToken(), 
+          code,
+          this.rememberDevice2FA(),
+          this.generateDeviceFingerprint(),
+          navigator.userAgent
+        )
       );
       
       console.log('✅ 2FA verification successful');
@@ -127,7 +148,13 @@ export class Login {
     try {
       console.log('🔐 Verifying recovery code...');
       const result = await firstValueFrom(
-        this.authApi.verifyRecoveryCode(this.mfaToken(), code)
+        this.authApi.verifyRecoveryCode(
+          this.mfaToken(), 
+          code,
+          this.rememberDevice2FA(),
+          this.generateDeviceFingerprint(),
+          navigator.userAgent
+        )
       );
       
       console.log('✅ Recovery code verification successful');
@@ -160,6 +187,7 @@ export class Login {
     this.twoFactorCode.set('');
     this.recoveryCode.set('');
     this.useRecoveryCode.set(false);
+    this.rememberDevice2FA.set(false);
   }
 
   private completeLogin(result: any) {

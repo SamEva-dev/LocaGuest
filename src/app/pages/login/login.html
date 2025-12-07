@@ -172,6 +172,23 @@
             </button>
           }
 
+          <!-- Remember Device Checkbox -->
+          <div class="flex items-center gap-2 py-2 px-3 bg-blue-50 rounded-lg border border-blue-200">
+            <input 
+              type="checkbox"
+              id="rememberDevice"
+              [checked]="rememberDevice2FA()"
+              (change)="rememberDevice2FA.set($any($event.target).checked)"
+              class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label for="rememberDevice" class="text-sm text-gray-700 cursor-pointer">
+              Remember this device for 30 days
+            </label>
+          </div>
+          <p class="text-xs text-gray-500 text-center">
+            You won't need to enter a code on this device
+          </p>
+
           <!-- Toggle Recovery Code -->
           <button 
             type="button"
