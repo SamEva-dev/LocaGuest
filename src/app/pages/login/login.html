@@ -100,41 +100,85 @@
           <!-- Header -->
           <div class="text-center">
             <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
-              <i class="ph ph-lock-key text-3xl text-blue-600"></i>
+              <i [class]="useRecoveryCode() ? 'ph ph-shield-warning text-3xl text-orange-600' : 'ph ph-lock-key text-3xl text-blue-600'"></i>
             </div>
-            <h2 class="text-xl font-semibold">Two-Factor Authentication</h2>
+            <h2 class="text-xl font-semibold">
+              {{ useRecoveryCode() ? 'Recovery Code' : 'Two-Factor Authentication' }}
+            </h2>
             <p class="text-sm text-gray-500 mt-2">
-              Enter the 6-digit code from your authenticator app
+              {{ useRecoveryCode() 
+                ? 'Use one of your backup recovery codes' 
+                : 'Enter the 6-digit code from your authenticator app' }}
             </p>
             <p class="text-xs text-gray-400 mt-1">{{ userEmail() }}</p>
           </div>
 
-          <!-- Code Input -->
-          <div>
-            <label class="block mb-2 font-medium text-center">Verification Code</label>
-            <input 
-              type="text" 
-              inputmode="numeric"
-              maxlength="6"
-              [value]="twoFactorCode()"
-              (input)="twoFactorCode.set($any($event.target).value)"
-              (keyup.enter)="verify2FA()"
-              placeholder="000000"
-              class="w-full p-4 text-center text-2xl tracking-widest border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono"
-              autocomplete="off"
-              autofocus
-            />
-            <p class="text-xs text-gray-500 mt-2 text-center">
-              Code expires in 5 minutes
-            </p>
-          </div>
+          <!-- TOTP Code Input -->
+          @if (!useRecoveryCode()) {
+            <div>
+              <label class="block mb-2 font-medium text-center">Verification Code</label>
+              <input 
+                type="text" 
+                inputmode="numeric"
+                maxlength="6"
+                [value]="twoFactorCode()"
+                (input)="twoFactorCode.set($any($event.target).value)"
+                (keyup.enter)="verify2FA()"
+                placeholder="000000"
+                class="w-full p-4 text-center text-2xl tracking-widest border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono"
+                autocomplete="off"
+                autofocus
+              />
+              <p class="text-xs text-gray-500 mt-2 text-center">
+                Code expires in 5 minutes
+              </p>
+            </div>
 
-          <!-- Verify Button -->
+            <!-- Verify Button -->
+            <button 
+              (click)="verify2FA()"
+              [disabled]="twoFactorCode().length !== 6 || isLoading()"
+              class="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              {{ isLoading() ? 'Verifying...' : 'Verify & Login' }}
+            </button>
+          }
+
+          <!-- Recovery Code Input -->
+          @if (useRecoveryCode()) {
+            <div>
+              <label class="block mb-2 font-medium text-center">Recovery Code</label>
+              <input 
+                type="text" 
+                maxlength="12"
+                [value]="recoveryCode()"
+                (input)="recoveryCode.set($any($event.target).value)"
+                (keyup.enter)="verifyRecoveryCode()"
+                placeholder="XXXX-XXXX-XXXX"
+                class="w-full p-4 text-center text-xl tracking-wide border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono uppercase"
+                autocomplete="off"
+                autofocus
+              />
+              <p class="text-xs text-gray-500 mt-2 text-center">
+                Enter one of your backup recovery codes
+              </p>
+            </div>
+
+            <!-- Verify Recovery Code Button -->
+            <button 
+              (click)="verifyRecoveryCode()"
+              [disabled]="recoveryCode().length < 8 || isLoading()"
+              class="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              {{ isLoading() ? 'Verifying...' : 'Verify & Login' }}
+            </button>
+          }
+
+          <!-- Toggle Recovery Code -->
           <button 
-            (click)="verify2FA()"
-            [disabled]="twoFactorCode().length !== 6 || isLoading()"
-            class="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-            {{ isLoading() ? 'Verifying...' : 'Verify & Login' }}
+            type="button"
+            (click)="toggleRecoveryCode()"
+            [disabled]="isLoading()"
+            class="w-full py-2 text-sm text-blue-600 hover:text-blue-700 hover:underline transition disabled:opacity-50">
+            {{ useRecoveryCode() ? 'Use authenticator code instead' : 'Use recovery code instead' }}
           </button>
 
           <!-- Back Button -->

@@ -23,6 +23,10 @@ export class AuthApi {
     return this.http.post<LoginResponse>(`${this.base}/Auth/verify-2fa`, { mfaToken, code });
   }
 
+  verifyRecoveryCode(mfaToken: string, recoveryCode: string) {
+    return this.http.post<LoginResponse>(`${this.base}/Auth/verify-recovery-code`, { mfaToken, recoveryCode });
+  }
+
   disableMfa() {
     return this.http.post<void>(`${this.base}/Mfa/disable`, {});
   }

@@ -33,6 +33,10 @@ export class Login {
   mfaToken = signal<string>('');
   twoFactorCode = signal<string>('');
   userEmail = signal<string>('');
+  
+  // Recovery code state
+  useRecoveryCode = signal(false);
+  recoveryCode = signal<string>('');
 
   constructor(private translate: TranslateService) {
       translate.setDefaultLang('fr');
@@ -112,10 +116,50 @@ export class Login {
     }
   }
 
+  async verifyRecoveryCode() {
+    const code = this.recoveryCode().trim();
+    if (code.length < 8) {
+      this.toast.error('Please enter a valid recovery code');
+      return;
+    }
+
+    this.isLoading.set(true);
+    try {
+      console.log('🔐 Verifying recovery code...');
+      const result = await firstValueFrom(
+        this.authApi.verifyRecoveryCode(this.mfaToken(), code)
+      );
+      
+      console.log('✅ Recovery code verification successful');
+      this.completeLogin(result);
+      
+    } catch (error: any) {
+      console.error('❌ Recovery code verification error:', error);
+      if (error.status === 401) {
+        this.toast.error('Invalid recovery code. Please check and try again.');
+      } else {
+        this.toast.error('Verification error');
+      }
+      // Clear code on error
+      this.recoveryCode.set('');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  toggleRecoveryCode() {
+    this.useRecoveryCode.set(!this.useRecoveryCode());
+    // Clear both codes when switching
+    this.twoFactorCode.set('');
+    this.recoveryCode.set('');
+  }
+
   backToLogin() {
     this.show2FAInput.set(false);
     this.mfaToken.set('');
     this.twoFactorCode.set('');
+    this.recoveryCode.set('');
+    this.useRecoveryCode.set(false);
   }
 
   private completeLogin(result: any) {
