@@ -5,11 +5,12 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SettingsService } from '../../core/services/settings.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { UserProfile, NotificationSettings, Preferences, InterfaceSettings } from '../../core/api/settings.api';
+import { TeamSettingsComponent } from './tabs/team-settings/team-settings-updated.component';
 
 @Component({
   selector: 'settings-tab',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, TranslatePipe, TeamSettingsComponent],
   templateUrl: './settings-tab.html'
 })
 export class SettingsTab implements OnInit {
@@ -89,6 +90,7 @@ export class SettingsTab implements OnInit {
 
   subTabs = [
     { id: 'profile', label: 'SETTINGS.TABS.PROFILE', icon: 'ph-user' },
+    { id: 'team', label: 'SETTINGS.TABS.TEAM', icon: 'ph-users-three' },
     { id: 'notifications', label: 'SETTINGS.TABS.NOTIFICATIONS', icon: 'ph-bell' },
     { id: 'security', label: 'SETTINGS.TABS.SECURITY', icon: 'ph-lock' },
     { id: 'billing', label: 'SETTINGS.TABS.BILLING', icon: 'ph-credit-card' },
