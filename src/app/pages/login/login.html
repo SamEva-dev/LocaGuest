@@ -10,11 +10,13 @@
 
     <!-- Login Card -->
     <div class="bg-white shadow-xl rounded-xl p-6 space-y-6">
-      <h2 class="text-xl font-semibold text-center">{{ 'AUTH.WELCOME' | translate }}</h2>
-      <p class="text-sm text-gray-500 text-center">{{ 'AUTH.DEMO_HINT' | translate }}</p>
+      <!-- Normal Login Form -->
+      @if (!show2FAInput()) {
+        <h2 class="text-xl font-semibold text-center">{{ 'AUTH.WELCOME' | translate }}</h2>
+        <p class="text-sm text-gray-500 text-center">{{ 'AUTH.DEMO_HINT' | translate }}</p>
 
-      <!-- Formulaire -->
-      <form (ngSubmit)="login(email.value, password.value)" class="space-y-4">
+        <!-- Formulaire -->
+        <form (ngSubmit)="login(email.value, password.value)" class="space-y-4">
         <div>
           <label class="block mb-1 font-medium">{{ 'AUTH.EMAIL' | translate }}</label>
           <div class="relative">
@@ -82,14 +84,76 @@
         </button>
       </div>
 
-      <!-- Register redirect -->
-      <div class="text-center mt-4">
-        <p class="text-sm text-gray-500">{{ 'AUTH.NO_ACCOUNT' | translate }}</p>
-        <button (click)="goToRegister()"
-                class="mt-2 w-full py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition">
-          {{ 'AUTH.REGISTER' | translate }}
-        </button>
-      </div>
+        <!-- Register redirect -->
+        <div class="text-center mt-4">
+          <p class="text-sm text-gray-500">{{ 'AUTH.NO_ACCOUNT' | translate }}</p>
+          <button (click)="goToRegister()"
+                  class="mt-2 w-full py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition">
+            {{ 'AUTH.REGISTER' | translate }}
+          </button>
+        </div>
+      }
+
+      <!-- 2FA Verification Form -->
+      @if (show2FAInput()) {
+        <div class="space-y-4">
+          <!-- Header -->
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
+              <i class="ph ph-lock-key text-3xl text-blue-600"></i>
+            </div>
+            <h2 class="text-xl font-semibold">Two-Factor Authentication</h2>
+            <p class="text-sm text-gray-500 mt-2">
+              Enter the 6-digit code from your authenticator app
+            </p>
+            <p class="text-xs text-gray-400 mt-1">{{ userEmail() }}</p>
+          </div>
+
+          <!-- Code Input -->
+          <div>
+            <label class="block mb-2 font-medium text-center">Verification Code</label>
+            <input 
+              type="text" 
+              inputmode="numeric"
+              maxlength="6"
+              [value]="twoFactorCode()"
+              (input)="twoFactorCode.set($any($event.target).value)"
+              (keyup.enter)="verify2FA()"
+              placeholder="000000"
+              class="w-full p-4 text-center text-2xl tracking-widest border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono"
+              autocomplete="off"
+              autofocus
+            />
+            <p class="text-xs text-gray-500 mt-2 text-center">
+              Code expires in 5 minutes
+            </p>
+          </div>
+
+          <!-- Verify Button -->
+          <button 
+            (click)="verify2FA()"
+            [disabled]="twoFactorCode().length !== 6 || isLoading()"
+            class="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            {{ isLoading() ? 'Verifying...' : 'Verify & Login' }}
+          </button>
+
+          <!-- Back Button -->
+          <button 
+            type="button"
+            (click)="backToLogin()"
+            [disabled]="isLoading()"
+            class="w-full py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition disabled:opacity-50">
+            <i class="ph ph-arrow-left mr-2"></i>
+            Back to Login
+          </button>
+
+          <!-- Help Text -->
+          <div class="text-center text-xs text-gray-500 mt-4">
+            <p>Lost your device?</p>
+            <p class="mt-1">Contact your administrator for assistance</p>
+          </div>
+        </div>
+      }
     </div>
 
     <!-- Footer Info -->

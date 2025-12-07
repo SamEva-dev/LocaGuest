@@ -120,6 +120,11 @@
     <team-settings />
   }
 
+  <!-- Security Tab (2FA) -->
+  @if (activeSubTab() === 'security') {
+    <two-factor-settings />
+  }
+
   <!-- Notifications Tab -->
   @if (activeSubTab() === 'notifications') {
     <div class="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-sm">

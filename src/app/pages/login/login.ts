@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../core/ui/toast.service';
 import { AuthService } from '../../core/auth/services/auth.service';
+import { AuthApi } from '../../core/api/auth.api';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -15,13 +17,22 @@ import { AuthService } from '../../core/auth/services/auth.service';
 })
 export class Login {
    
-   private auth = inject(AuthService);
+  private auth = inject(AuthService);
+  private authApi = inject(AuthApi);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toast = inject(ToastService);
+  
+  // Login state
   showPassword = signal(false);
   isLoading = signal(false);
-  rememberMe= signal(false);
+  rememberMe = signal(false);
+  
+  // 2FA state
+  show2FAInput = signal(false);
+  mfaToken = signal<string>('');
+  twoFactorCode = signal<string>('');
+  userEmail = signal<string>('');
 
   constructor(private translate: TranslateService) {
       translate.setDefaultLang('fr');
@@ -38,22 +49,87 @@ export class Login {
     this.isLoading.set(true);
     try {
       this.auth.setRememberMe(this.rememberMe());
-      console.log('🔐 Login avec:', email);
-      console.log('📝 Remember me:', this.rememberMe());
+      this.userEmail.set(email);
       
-      await this.auth.login(email, password);
-      this.router.navigate(['/app']);
+      console.log('🔐 Login attempt:', email);
       
-      console.log('✅ Login réussi');
-      console.log('🎫 Token stocké:', this.auth.getAccessToken()?.substring(0, 50) + '...');
-      console.log('🔄 Refresh token:', sessionStorage.getItem('lg.refresh') ? 'Présent' : 'Absent');
-       console.log('👤 User:', this.auth.user());
-    } catch (error) {
-      console.error('❌ Erreur login:', error);
-      this.toast.error('Erreur de connexion');
+      // Call login API directly to handle 2FA response
+      const result = await firstValueFrom(this.authApi.login({ email, password }));
+      
+      // Check if 2FA is required
+      if (result.requiresMfa && result.mfaToken) {
+        console.log('🔐 2FA required');
+        this.mfaToken.set(result.mfaToken);
+        this.show2FAInput.set(true);
+        this.toast.info('Enter the 6-digit code from your authenticator app');
+        return; // Stop here, wait for 2FA code
+      }
+      
+      // No 2FA required, proceed with normal login
+      console.log('✅ Login successful (no 2FA)');
+      this.completeLogin(result);
+      
+    } catch (error: any) {
+      console.error('❌ Login error:', error);
+      if (error.status === 401) {
+        this.toast.error('Invalid email or password');
+      } else {
+        this.toast.error('Connection error');
+      }
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  async verify2FA() {
+    const code = this.twoFactorCode();
+    if (code.length !== 6) {
+      this.toast.error('Please enter a 6-digit code');
+      return;
+    }
+
+    this.isLoading.set(true);
+    try {
+      console.log('🔐 Verifying 2FA code...');
+      const result = await firstValueFrom(
+        this.authApi.verify2FA(this.mfaToken(), code)
+      );
+      
+      console.log('✅ 2FA verification successful');
+      this.completeLogin(result);
+      
+    } catch (error: any) {
+      console.error('❌ 2FA verification error:', error);
+      if (error.status === 401) {
+        this.toast.error('Invalid 2FA code. Please try again.');
+      } else {
+        this.toast.error('Verification error');
+      }
+      // Clear code on error
+      this.twoFactorCode.set('');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  backToLogin() {
+    this.show2FAInput.set(false);
+    this.mfaToken.set('');
+    this.twoFactorCode.set('');
+  }
+
+  private completeLogin(result: any) {
+    // Store tokens via AuthService
+    this.auth.setRememberMe(this.rememberMe());
+    // Apply login will store tokens and user
+    (this.auth as any).applyLogin(result);
+    
+    this.toast.success('Login successful!');
+    this.router.navigate(['/app']);
+    
+    console.log('✅ Login completed');
+    console.log('🎫 Token stored');
+    console.log('👤 User:', this.auth.user());
   }
 
   loginWithGoogle() {

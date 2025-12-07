@@ -19,6 +19,10 @@ export class AuthApi {
     return this.http.post<LoginResponse>(`${this.base}/Auth/mfa-login`, body);
   }
 
+  verify2FA(mfaToken: string, code: string) {
+    return this.http.post<LoginResponse>(`${this.base}/Auth/verify-2fa`, { mfaToken, code });
+  }
+
   disableMfa() {
     return this.http.post<void>(`${this.base}/Mfa/disable`, {});
   }
