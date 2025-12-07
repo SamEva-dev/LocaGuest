@@ -31,6 +31,18 @@ export interface UpdateTeamMemberRoleRequest {
   newRole: string;
 }
 
+export interface AcceptInvitationRequest {
+  token: string;
+}
+
+export interface AcceptInvitationResponse {
+  teamMemberId: string;
+  organizationId: string;
+  organizationName: string;
+  role: string;
+  email: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TeamApi {
   private readonly http = inject(HttpClient);
@@ -50,5 +62,9 @@ export class TeamApi {
 
   removeTeamMember(teamMemberId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${teamMemberId}`);
+  }
+
+  acceptInvitation(request: AcceptInvitationRequest): Observable<AcceptInvitationResponse> {
+    return this.http.post<AcceptInvitationResponse>(`${this.baseUrl}/accept-invitation`, request);
   }
 }
