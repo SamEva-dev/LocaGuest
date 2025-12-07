@@ -12,6 +12,7 @@ import {
 } from '../../../../../core/api/inventories.api';
 import { ToastService } from '../../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../../core/ui/confirm.service';
+import { InventoryPhotoUploaderComponent } from '../../../components/inventory-photo-uploader/inventory-photo-uploader';
 
 /**
  * Données passées au wizard
@@ -29,7 +30,7 @@ export interface InventoryExitWizardData {
 @Component({
   selector: 'app-inventory-exit-wizard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, InventoryPhotoUploaderComponent],
   template: `
     <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
@@ -215,6 +216,16 @@ export interface InventoryExitWizardData {
                                   </label>
                                 </div>
                               </div>
+                              
+                              <!-- Photos de la dégradation (optionnel) -->
+                              <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                  Photos de la dégradation (optionnel)
+                                </label>
+                                <app-inventory-photo-uploader 
+                                  [photos]="getDegradation($index).photoUrls || []"
+                                  (photosChange)="updateDegradationPhotos($index, $event)" />
+                              </div>
                             </div>
                           </div>
                         }
@@ -305,6 +316,11 @@ export interface InventoryExitWizardData {
                     placeholder="Remarques générales sur la restitution..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"></textarea>
                 </div>
+
+                <!-- Photos -->
+                <app-inventory-photo-uploader 
+                  [photos]="form().photoUrls"
+                  (photosChange)="updatePhotos($event)" />
 
                 @if (submitError()) {
                   <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
@@ -434,12 +450,14 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
     degradations: DegradationDto[];
     generalObservations?: string;
     financialNotes?: string;
+    photoUrls: string[];
   }>({
     inspectionDateStr: new Date().toISOString().split('T')[0],
     agentName: '',
     tenantPresent: true,
     comparisons: [],
-    degradations: []
+    degradations: [],
+    photoUrls: []
   });
 
   totalDegradations = computed(() => {
@@ -554,6 +572,25 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
     }
   }
 
+  updatePhotos(photos: string[]) {
+    this.form.update(f => ({
+      ...f,
+      photoUrls: photos
+    }));
+  }
+
+  updateDegradationPhotos(index: number, photos: string[]) {
+    const item = this.entryItems()[index];
+    this.form.update(f => ({
+      ...f,
+      degradations: f.degradations.map(d => 
+        d.roomName === item.roomName && d.elementName === item.elementName
+          ? { ...d, photoUrls: photos }
+          : d
+      )
+    }));
+  }
+
   canGoNext() {
     if (this.currentStep() === 0) {
       return this.form().agentName.trim().length > 0;
@@ -598,7 +635,7 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
         generalObservations: f.generalObservations,
         comparisons: f.comparisons,
         degradations: f.degradations,
-        photoUrls: [],
+        photoUrls: f.photoUrls,
         ownerCoveredAmount: this.ownerPart(),
         financialNotes: f.financialNotes
       };

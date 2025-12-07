@@ -46,7 +46,7 @@
             <img 
               [src]="currentImage()" 
               [alt]="property().name"
-              class="w-full h-full object-cover" />
+              class="w-full h-full object-contain" />
             
             <!-- Carousel Controls -->
             @if (totalImages() > 1) {
@@ -937,4 +937,99 @@
       }
     </div>
   </div>
+
+  <!-- 📸 Image Upload Modal -->
+  @if (showImageUploadModal()) {
+    <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" (click)="cancelImageUpload()">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden" (click)="$event.stopPropagation()">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-500 to-cyan-500 px-6 py-4 flex items-center justify-between">
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="ph ph-image-square text-2xl"></i>
+            Catégoriser les photos ({{ pendingImages().length }})
+          </h3>
+          <button 
+            (click)="cancelImageUpload()"
+            class="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition">
+            <i class="ph ph-x text-white text-xl"></i>
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (img of pendingImages(); track $index; let imgIndex = $index) {
+              <div class="bg-slate-50 dark:bg-slate-900 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                <!-- Image Preview -->
+                <div class="relative aspect-video bg-slate-200 dark:bg-slate-800">
+                  <img 
+                    [src]="img.preview" 
+                    alt="Preview"
+                    class="w-full h-full object-cover" />
+                  
+                  <!-- Remove Button -->
+                  <button 
+                    (click)="removePendingImage(imgIndex)"
+                    class="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg transition">
+                    <i class="ph ph-trash text-lg"></i>
+                  </button>
+                </div>
+
+                <!-- Category Selector -->
+                <div class="p-4">
+                  <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Catégorie de la photo
+                  </label>
+                  <div class="grid grid-cols-3 gap-2">
+                    @for (cat of imageCategories; track cat.value) {
+                      <button
+                        (click)="updateImageCategory(imgIndex, cat.value)"
+                        [class.bg-blue-500]="img.category === cat.value"
+                        [class.text-white]="img.category === cat.value"
+                        [class.bg-white]="img.category !== cat.value"
+                        [class.dark:bg-slate-800]="img.category !== cat.value"
+                        [class.text-slate-700]="img.category !== cat.value"
+                        [class.dark:text-slate-300]="img.category !== cat.value"
+                        class="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-xs font-medium transition hover:scale-105 flex items-center justify-center gap-1">
+                        <i [class]="cat.icon"></i>
+                        <span>{{ cat.label }}</span>
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (pendingImages().length === 0) {
+            <div class="text-center py-12">
+              <i class="ph ph-image text-6xl text-slate-300 dark:text-slate-600 mb-3"></i>
+              <p class="text-slate-500 dark:text-slate-400">Aucune photo sélectionnée</p>
+            </div>
+          }
+        </div>
+
+        <!-- Footer -->
+        <div class="border-t border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-end gap-3">
+          <button 
+            (click)="cancelImageUpload()"
+            class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg font-medium transition">
+            Annuler
+          </button>
+          <button 
+            (click)="confirmImageUpload()"
+            [disabled]="pendingImages().length === 0 || isUploadingImages()"
+            class="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:shadow-lg text-white rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            @if (isUploadingImages()) {
+              <i class="ph ph-circle-notch animate-spin"></i>
+              <span>Upload en cours...</span>
+            } @else {
+              <i class="ph ph-upload-simple"></i>
+              <span>Ajouter {{ pendingImages().length }} photo(s)</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

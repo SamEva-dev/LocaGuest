@@ -6,6 +6,21 @@ import { TenantListItem } from './tenants.api';
 
 export type PropertyUsageType = 'complete' | 'colocation' | 'airbnb';
 
+export type PropertyImageCategory = 
+  | 'exterior' 
+  | 'living_room' 
+  | 'kitchen' 
+  | 'bedroom' 
+  | 'bathroom' 
+  | 'other';
+
+export interface PropertyImage {
+  id?: string;
+  url: string;
+  category: PropertyImageCategory;
+  order: number;
+}
+
 export interface PropertyListItem {
   id: string;
   code: string;  // T0001-APP0001
@@ -37,6 +52,7 @@ export interface PropertyDetail extends PropertyListItem {
   deposit?: number;
   notes?: string;
   imageUrls: string[];
+  images?: PropertyImage[];
   createdAt: Date;
   createdBy: string;
   // Airbnb specifics
@@ -190,7 +206,10 @@ export interface CreatePropertyDto {
   pricePerNight?: number;
 }
 
-export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {}
+export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {
+  imageUrls?: string[];
+  images?: PropertyImage[];
+}
 
 export interface PaginatedResult<T> {
   totalCount: number;

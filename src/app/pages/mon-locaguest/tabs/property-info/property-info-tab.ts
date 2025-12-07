@@ -1,23 +1,25 @@
-import { Component, input, signal, computed, inject, output } from '@angular/core';
-import { DecimalPipe, DatePipe } from '@angular/common';
+import { Component, input, signal, inject, computed, output, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PropertyDetail, UpdatePropertyDto } from '../../../../core/api/properties.api';
+import { PropertyDetail, PropertyImage, PropertyImageCategory } from '../../../../core/api/properties.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
+import { ImagesService } from '../../../../core/services/images.service';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 
 @Component({
   selector: 'property-info-tab',
   standalone: true,
-  imports: [FormsModule, DecimalPipe, DatePipe],
+  imports: [FormsModule, CommonModule],
   templateUrl: './property-info-tab.html'
 })
-export class PropertyInfoTab {
+export class PropertyInfoTab implements OnDestroy {
   property = input.required<PropertyDetail>();
   propertyUpdated = output<void>();
   private propertiesService = inject(PropertiesService);
+  private imagesService = inject(ImagesService);
   
-  // ✅ Services UI
+  // Services UI
   private toasts = inject(ToastService);
   private confirmService = inject(ConfirmService);
 
@@ -27,6 +29,10 @@ export class PropertyInfoTab {
   isUploadingImages = signal(false);
   currentImageIndex = signal(0);
   showStatusDropdown = signal(false);
+  
+  // Image upload modal
+  showImageUploadModal = signal(false);
+  pendingImages = signal<{file: File, preview: string, category: PropertyImageCategory}[]>([]);
 
   // Form data
   editForm = signal<Partial<PropertyDetail> | null>(null);
@@ -41,7 +47,16 @@ export class PropertyInfoTab {
   ];
 
   // Property types
-  propertyTypes = ['Apartment', 'House', 'Studio', 'Room', 'Parking', 'Commercial', 'Other'];
+  propertyTypes = ['Appartement', 'Maison', 'Studio', 'Villa', 'Duplex', 'Loft'];
+  
+  imageCategories: {value: PropertyImageCategory, label: string, icon: string}[] = [
+    { value: 'exterior', label: 'Extérieur', icon: 'ph-house' },
+    { value: 'living_room', label: 'Salon', icon: 'ph-couch' },
+    { value: 'kitchen', label: 'Cuisine', icon: 'ph-cooking-pot' },
+    { value: 'bedroom', label: 'Chambre', icon: 'ph-bed' },
+    { value: 'bathroom', label: 'Salle de bain', icon: 'ph-bathtub' },
+    { value: 'other', label: 'Autre', icon: 'ph-image' }
+  ];
 
   // Computed
   currentStatus = computed(() => {
@@ -57,10 +72,59 @@ export class PropertyInfoTab {
     return this.property()?.imageUrls?.length || 0;
   });
 
+  // Cache des URLs blob pour les images (signal pour réactivité)
+  private imageBlobCache = signal<Map<string, string>>(new Map());
+  
   currentImage = computed(() => {
     const images = this.property()?.imageUrls || [];
-    return images[this.currentImageIndex()] || '/placeholder-property.jpg';
+    const imageId = images[this.currentImageIndex()];
+    if (!imageId) return '/placeholder-property.jpg';
+    
+    // Vérifier si l'image est déjà en cache
+    const cache = this.imageBlobCache();
+    if (cache.has(imageId)) {
+      return cache.get(imageId)!;
+    }
+    
+    // Charger l'image via HttpClient avec authentification
+    this.loadImageBlob(imageId);
+    return '/placeholder-property.jpg'; // Placeholder temporaire pendant le chargement
   });
+  
+  private loadImageBlob(imageId: string): void {
+    this.imagesService.getImageBlob(imageId).subscribe({
+      next: (blob: Blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+        console.log('✅ Image blob créée:', blobUrl);
+        // Mettre à jour le signal avec une nouvelle Map
+        this.imageBlobCache.update(cache => {
+          const newCache = new Map(cache);
+          newCache.set(imageId, blobUrl);
+          return newCache;
+        });
+      },
+      error: (err: any) => {
+        console.error('Erreur chargement image:', err);
+        // Mettre à jour le signal avec une nouvelle Map
+        this.imageBlobCache.update(cache => {
+          const newCache = new Map(cache);
+          newCache.set(imageId, '/placeholder-property.jpg');
+          return newCache;
+        });
+      }
+    });
+  }
+
+  private clearImageCache(): void {
+    // Révoquer toutes les URLs blob
+    const cache = this.imageBlobCache();
+    cache.forEach((blobUrl: string) => {
+      if (blobUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(blobUrl);
+      }
+    });
+    this.imageBlobCache.set(new Map());
+  }
 
   // Occupation info
   occupationInfo = computed(() => {
@@ -186,50 +250,92 @@ export class PropertyInfoTab {
   }
 
   uploadImages(files: FileList) {
-    const prop = this.property();
-    if (!prop) return;
-
-    this.isUploadingImages.set(true);
-
-    // TODO: Implement actual upload to backend
-    // For now, we'll simulate with local file URLs
     const fileArray = Array.from(files);
-    const newImageUrls: string[] = [];
+    const pending: {file: File, preview: string, category: PropertyImageCategory}[] = [];
 
     let processed = 0;
-    fileArray.forEach((file, index) => {
+    fileArray.forEach((file) => {
       const reader = new FileReader();
       
       reader.onload = (e: any) => {
-        newImageUrls.push(e.target.result);
+        pending.push({
+          file,
+          preview: e.target.result,
+          category: 'other' // Default category
+        });
         processed++;
         
         if (processed === fileArray.length) {
-          // All files processed
-          const currentImages = this.property().imageUrls || [];
-          const updatedImages = [...currentImages, ...newImageUrls];
-          
-          // Update property with new images (cast as any for now - imageUrls not in UpdatePropertyDto yet)
-          this.propertiesService.updateProperty(prop.id, { 
-            imageUrls: updatedImages 
-          } as any).subscribe({
-            next: () => {
-              console.log('✅ Images uploaded successfully');
-              this.isUploadingImages.set(false);
-              this.propertyUpdated.emit();
-              this.toasts.successDirect(`${fileArray.length} photo(s) ajoutée(s) avec succès!`);
-            },
-            error: (err) => {
-              console.error('❌ Error uploading images:', err);
-              this.toasts.errorDirect('Erreur lors de l\'upload des photos');
-              this.isUploadingImages.set(false);
-            }
-          });
+          this.pendingImages.set(pending);
+          this.showImageUploadModal.set(true);
         }
       };
       
       reader.readAsDataURL(file);
     });
+  }
+
+  updateImageCategory(index: number, category: PropertyImageCategory) {
+    const images = [...this.pendingImages()];
+    if (!images[index]) return; // Guard contre index invalide
+    
+    images[index].category = category;
+    this.pendingImages.set(images);
+  }
+
+  removePendingImage(index: number) {
+    const images = [...this.pendingImages()];
+    images.splice(index, 1);
+    this.pendingImages.set(images);
+  }
+
+  cancelImageUpload() {
+    this.pendingImages.set([]);
+    this.showImageUploadModal.set(false);
+  }
+
+  async confirmImageUpload() {
+    const prop = this.property();
+    if (!prop) return;
+
+    const pending = this.pendingImages();
+    if (pending.length === 0) return;
+
+    this.isUploadingImages.set(true);
+
+    try {
+      // 1. Upload des fichiers via le service (met à jour la propriété automatiquement en backend)
+      const files = pending.map(img => img.file);
+      const uploadResult = await this.imagesService.uploadImages(prop.id, files, 'other').toPromise();
+      
+      if (!uploadResult || uploadResult.images.length === 0) {
+        throw new Error('Aucune image uploadée');
+      }
+
+      // 2. Succès - le backend a déjà mis à jour property.imageUrls
+      console.log('✅ Images uploaded successfully');
+      
+      // Vider le cache pour forcer le rechargement des nouvelles images
+      this.clearImageCache();
+      
+      const currentImages = this.property().imageUrls || [];
+      if (currentImages.length === 0) {
+        this.currentImageIndex.set(0);
+      }
+      this.isUploadingImages.set(false);
+      this.showImageUploadModal.set(false);
+      this.pendingImages.set([]);
+      this.propertyUpdated.emit(); // Recharger la propriété depuis le backend
+      this.toasts.successDirect(`${uploadResult.images.length} photo(s) ajoutée(s) avec succès!`);
+    } catch (err) {
+      console.error('❌ Error uploading images:', err);
+      this.toasts.errorDirect('Erreur lors de l\'upload des photos');
+      this.isUploadingImages.set(false);
+    }
+  }
+
+  getCategoryLabel(category: PropertyImageCategory): string {
+    return this.imageCategories.find(c => c.value === category)?.label || 'Autre';
   }
 
   async deleteImage(index: number) {
@@ -244,24 +350,53 @@ export class PropertyInfoTab {
     if (!confirmed) return;
 
     const currentImages = [...(prop.imageUrls || [])];
-    currentImages.splice(index, 1);
+    const imageIdToDelete = currentImages[index];
+    
+    try {
+      // 1. Supprimer le fichier via le service (met à jour la propriété automatiquement en backend)
+      await this.imagesService.deleteImage(imageIdToDelete).toPromise();
 
-    // Cast as any for now - imageUrls not in UpdatePropertyDto yet
-    this.propertiesService.updateProperty(prop.id, { 
-      imageUrls: currentImages 
-    } as any).subscribe({
-      next: () => {
-        console.log('✅ Image deleted successfully');
-        if (this.currentImageIndex() >= currentImages.length && currentImages.length > 0) {
-          this.currentImageIndex.set(currentImages.length - 1);
+      // 2. Succès - le backend a déjà mis à jour property.imageUrls
+      console.log('✅ Image deleted successfully');
+      
+      // Supprimer l'URL blob du cache si elle existe
+      const cache = this.imageBlobCache();
+      if (cache.has(imageIdToDelete)) {
+        const blobUrl = cache.get(imageIdToDelete)!;
+        if (blobUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(blobUrl);
         }
-        this.propertyUpdated.emit();
-      },
-      error: (err) => {
-        console.error('❌ Error deleting image:', err);
-        this.toasts.errorDirect('Erreur lors de la suppression de la photo');
+        this.imageBlobCache.update(c => {
+          const newCache = new Map(c);
+          newCache.delete(imageIdToDelete);
+          return newCache;
+        });
+      }
+      
+      currentImages.splice(index, 1); // Pour mise à jour locale immédiate
+      if (this.currentImageIndex() >= currentImages.length && currentImages.length > 0) {
+        this.currentImageIndex.set(currentImages.length - 1);
+      } else if (currentImages.length === 0) {
+        this.currentImageIndex.set(0);
+      }
+      this.propertyUpdated.emit(); // Recharger la propriété depuis le backend
+      this.toasts.successDirect('Photo supprimée avec succès');
+    } catch (err) {
+      console.error('❌ Error deleting image:', err);
+      this.toasts.errorDirect('Erreur lors de la suppression de la photo');
+    }
+  }
+
+  // Lifecycle
+  ngOnDestroy(): void {
+    // Nettoyer toutes les URLs blob pour éviter les fuites mémoire
+    const cache = this.imageBlobCache();
+    cache.forEach((blobUrl: string) => {
+      if (blobUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(blobUrl);
       }
     });
+    this.imageBlobCache.set(new Map());
   }
 
   // Helpers

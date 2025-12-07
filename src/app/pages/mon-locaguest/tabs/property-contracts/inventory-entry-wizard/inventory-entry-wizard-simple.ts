@@ -9,6 +9,7 @@ import {
 } from '../../../../../core/api/inventories.api';
 import { ToastService } from '../../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../../core/ui/confirm.service';
+import { InventoryPhotoUploaderComponent } from '../../../components/inventory-photo-uploader/inventory-photo-uploader';
 
 /**
  * Données passées au wizard
@@ -29,7 +30,7 @@ export interface InventoryEntryWizardData {
 @Component({
   selector: 'app-inventory-entry-wizard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, InventoryPhotoUploaderComponent],
   template: `
     <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
@@ -197,6 +198,17 @@ export interface InventoryEntryWizardData {
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
                 </div>
 
+                <!-- Photos pour la pièce (optionnel) -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Photos de la pièce (optionnel)
+                    <span class="text-xs text-gray-500 font-normal ml-1">- Documenter l'état actuel</span>
+                  </label>
+                  <app-inventory-photo-uploader 
+                    [photos]="newItem().photoUrls || []"
+                    (photosChange)="updateNewItemPhotos($event)" />
+                </div>
+
                 <button 
                   (click)="addItem()"
                   [disabled]="!canAddItem()"
@@ -263,6 +275,11 @@ export interface InventoryEntryWizardData {
                   placeholder="Remarques générales sur l'état du logement, points importants à noter..."
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
               </div>
+
+              <!-- Photos -->
+              <app-inventory-photo-uploader 
+                [photos]="form().photoUrls"
+                (photosChange)="updatePhotos($event)" />
 
               <!-- Récapitulatif -->
               <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -412,11 +429,13 @@ export class InventoryEntryWizardSimpleComponent {
     representativeName?: string;
     items: InventoryItemDto[];
     generalObservations?: string;
+    photoUrls: string[];
   }>({
     inspectionDateStr: new Date().toISOString().split('T')[0],
     agentName: '',
     tenantPresent: true,
     items: [],
+    photoUrls: []
   });
 
   // Nouvel item
@@ -482,7 +501,7 @@ export class InventoryEntryWizardSimpleComponent {
       category: item.category || 'Autres',
       condition: item.condition!,
       comment: item.comment,
-      photoUrls: []
+      photoUrls: item.photoUrls || []
     };
 
     this.form.update(f => ({
@@ -494,7 +513,8 @@ export class InventoryEntryWizardSimpleComponent {
       ...n,
       elementName: '',
       condition: 'Good',
-      comment: ''
+      comment: '',
+      photoUrls: []
     }));
   }
 
@@ -506,6 +526,20 @@ export class InventoryEntryWizardSimpleComponent {
     this.form.update(f => ({
       ...f,
       items: f.items.filter(i => i !== itemToRemove)
+    }));
+  }
+
+  updatePhotos(photos: string[]) {
+    this.form.update(f => ({
+      ...f,
+      photoUrls: photos
+    }));
+  }
+
+  updateNewItemPhotos(photos: string[]) {
+    this.newItem.update(item => ({
+      ...item,
+      photoUrls: photos
     }));
   }
 
@@ -540,7 +574,7 @@ export class InventoryEntryWizardSimpleComponent {
         representativeName: f.representativeName,
         generalObservations: f.generalObservations,
         items: f.items,
-        photoUrls: []
+        photoUrls: f.photoUrls
       };
 
       console.log('📤 Création EDL entrée', request);

@@ -1,4 +1,4 @@
-import { Component, input, output, signal, computed, inject, effect } from '@angular/core';
+import { Component, computed, inject, signal, input, output, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PropertyDetail } from '../../../../../core/api/properties.api';
 import { TenantListItem, TenantsApi } from '../../../../../core/api/tenants.api';
@@ -198,40 +198,64 @@ export class ContractWizardModal {
   constructor() {
     // PHASE 2: Auto-complétion intelligente
     effect(() => {
-  const prop = this.property();
-  if (!prop) return;   // <-- PROTECTION OBLIGATOIRE
+      const prop = this.property();
+      if (!prop) return;
 
-  if (prop.propertyUsageType === 'colocation') {
-    this.form.update(f => ({
-      ...f,
-      type: 'Colocation individuelle'
-    }));
-  } else {
-    const currentForm = this.form();
-    this.form.update(f => ({
-      ...f,
-      rent: prop.rent || 0,
-      charges: prop.charges || 0,
-      deposit: currentForm.deposit === 0 ? (prop.rent || 0) : currentForm.deposit,
-      type: prop.isFurnished ? 'Meublé' : 'Non meublé'
-    }));
-  }
-});
+      const current = untracked(() => this.form());
+
+      if (prop.propertyUsageType === 'colocation') {
+        if (current.type !== 'Colocation individuelle') {
+          untracked(() => {
+            this.form.update(f => ({
+              ...f,
+              type: 'Colocation individuelle'
+            }));
+          });
+        }
+      } else {
+        const shouldUpdate =
+          current.rent !== (prop.rent || 0) ||
+          current.charges !== (prop.charges || 0) ||
+          current.type !== (prop.isFurnished ? 'Meublé' : 'Non meublé');
+
+        if (shouldUpdate) {
+          untracked(() => {
+            this.form.update(f => ({
+              ...f,
+              rent: prop.rent || 0,
+              charges: prop.charges || 0,
+              deposit: current.deposit === 0 ? (prop.rent || 0) : current.deposit,
+              type: prop.isFurnished ? 'Meublé' : 'Non meublé'
+            }));
+          });
+        }
+      }
+    }, { allowSignalWrites: true });
     
     // Auto-update financial info when room selected (colocation)
     effect(() => {
-  const room = this.selectedRoom();
-  if (!room) return;  // <-- ajout obligatoire
-  const currentForm = this.form();
+      const room = this.selectedRoom();
+      if (!room) return;
+      
+      const current = untracked(() => this.form());
 
-  this.form.update(f => ({
-    ...f,
-    rent: room.rent || 0,
-    charges: room.charges || 0,
-    deposit: currentForm.deposit === 0 ? (room.rent || 0) : currentForm.deposit,
-    room: room.name
-  }));
-});
+      const shouldUpdate =
+        current.rent !== (room.rent || 0) ||
+        current.charges !== (room.charges || 0) ||
+        current.room !== room.name;
+
+      if (shouldUpdate) {
+        untracked(() => {
+          this.form.update(f => ({
+            ...f,
+            rent: room.rent || 0,
+            charges: room.charges || 0,
+            deposit: current.deposit === 0 ? (room.rent || 0) : current.deposit,
+            room: room.name
+          }));
+        });
+      }
+    }, { allowSignalWrites: true });
     
     effect(() => {
       const search = this.searchTerm();
