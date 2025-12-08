@@ -7,11 +7,12 @@ import { ThemeService } from '../../core/services/theme.service';
 import { UserProfile, NotificationSettings, Preferences, InterfaceSettings } from '../../core/api/settings.api';
 import { TeamSettingsComponent } from './tabs/team-settings/team-settings-updated.component';
 import { TwoFactorSettingsComponent } from './tabs/two-factor-settings/two-factor-settings.component';
+import { OrganizationSettingsComponent } from './tabs/organization-settings/organization-settings.component';
 
 @Component({
   selector: 'settings-tab',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, TeamSettingsComponent, TwoFactorSettingsComponent],
+  imports: [CommonModule, FormsModule, TranslatePipe, TeamSettingsComponent, TwoFactorSettingsComponent, OrganizationSettingsComponent],
   templateUrl: './settings-tab.html'
 })
 export class SettingsTab implements OnInit {
@@ -91,6 +92,7 @@ export class SettingsTab implements OnInit {
 
   subTabs = [
     { id: 'profile', label: 'SETTINGS.TABS.PROFILE', icon: 'ph-user' },
+    { id: 'organization', label: 'Organization', icon: 'ph-building' },
     { id: 'team', label: 'SETTINGS.TABS.TEAM', icon: 'ph-users-three' },
     { id: 'security', label: 'SETTINGS.TABS.SECURITY', icon: 'ph-shield-check' },
     { id: 'notifications', label: 'SETTINGS.TABS.NOTIFICATIONS', icon: 'ph-bell' },

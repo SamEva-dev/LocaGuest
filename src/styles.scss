@@ -1,2 +1,78 @@
 @use "styles/themes";
 @import "tailwindcss";
+
+/* ========================================
+   BRANDING THEME VARIABLES
+   ======================================== */
+:root {
+  /* Primary Brand Color (set dynamically by BrandingThemeService) */
+  --color-primary: #3B82F6;
+  --color-primary-rgb: 59, 130, 246;
+  --color-primary-hover: color-mix(in srgb, var(--color-primary) 80%, black);
+  --color-primary-light: color-mix(in srgb, var(--color-primary) 20%, white);
+  
+  /* Secondary Brand Color */
+  --color-secondary: #10B981;
+  --color-secondary-rgb: 16, 185, 129;
+  --color-secondary-hover: color-mix(in srgb, var(--color-secondary) 80%, black);
+  --color-secondary-light: color-mix(in srgb, var(--color-secondary) 20%, white);
+  
+  /* Accent Brand Color */
+  --color-accent: #F59E0B;
+  --color-accent-rgb: 245, 158, 11;
+  --color-accent-hover: color-mix(in srgb, var(--color-accent) 80%, black);
+  --color-accent-light: color-mix(in srgb, var(--color-accent) 20%, white);
+}
+
+/* ========================================
+   BRANDING UTILITY CLASSES
+   ======================================== */
+.bg-brand-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-brand-primary-light {
+  background-color: var(--color-primary-light);
+}
+
+.text-brand-primary {
+  color: var(--color-primary);
+}
+
+.border-brand-primary {
+  border-color: var(--color-primary);
+}
+
+.hover\:bg-brand-primary:hover {
+  background-color: var(--color-primary);
+}
+
+.hover\:bg-brand-primary-hover:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Secondary */
+.bg-brand-secondary {
+  background-color: var(--color-secondary);
+}
+
+.text-brand-secondary {
+  color: var(--color-secondary);
+}
+
+.border-brand-secondary {
+  border-color: var(--color-secondary);
+}
+
+/* Accent */
+.bg-brand-accent {
+  background-color: var(--color-accent);
+}
+
+.text-brand-accent {
+  color: var(--color-accent);
+}
+
+.border-brand-accent {
+  border-color: var(--color-accent);
+}

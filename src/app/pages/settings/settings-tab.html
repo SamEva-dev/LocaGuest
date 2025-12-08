@@ -115,6 +115,11 @@
     </div>
   }
 
+  <!-- Organization Tab -->
+  @if (activeSubTab() === 'organization') {
+    <app-organization-settings />
+  }
+
   <!-- Team Tab -->
   @if (activeSubTab() === 'team') {
     <team-settings />

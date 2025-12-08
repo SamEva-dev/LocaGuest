@@ -1,0 +1,287 @@
+<div class="space-y-6">
+  @if (isLoading()) {
+    <div class="flex items-center justify-center py-12">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    </div>
+  } @else {
+    <!-- Organization Info -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold mb-4">Organization Information</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Name -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Organization Name *</label>
+          <input 
+            type="text"
+            [(ngModel)]="organization().name"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="My Company"
+          />
+        </div>
+
+        <!-- Code (Read-only) -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Organization Code</label>
+          <input 
+            type="text"
+            [value]="organization().code"
+            disabled
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+          />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+          <input 
+            type="email"
+            [(ngModel)]="organization().email"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="contact@company.com"
+          />
+        </div>
+
+        <!-- Phone -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+          <input 
+            type="tel"
+            [(ngModel)]="organization().phone"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="+1 234 567 8900"
+          />
+        </div>
+
+        <!-- Website -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Website</label>
+          <input 
+            type="url"
+            [(ngModel)]="organization().website"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="https://www.company.com"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo Upload -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold mb-4">Logo</h3>
+      
+      <div class="flex items-center space-x-6">
+        <!-- Logo Preview -->
+        <div class="shrink-0">
+          @if (isUploadingLogo()) {
+            <div class="w-24 h-24 rounded-lg bg-gray-100 flex items-center justify-center border-2 border-blue-500">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          } @else if (organization().logoUrl) {
+            <img 
+              [src]="organization().logoUrl?.startsWith('http') ? organization().logoUrl : 'http://localhost:5001' + organization().logoUrl" 
+              alt="Organization logo"
+              class="w-24 h-24 rounded-lg object-cover border-2 border-gray-200"
+            />
+          } @else {
+            <div class="w-24 h-24 rounded-lg bg-gray-100 flex items-center justify-center border-2 border-gray-200">
+              <i class="ph ph-building text-4xl text-gray-400"></i>
+            </div>
+          }
+        </div>
+
+        <!-- Upload Button -->
+        <div class="flex-1">
+          <label 
+            class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition"
+            [class.opacity-50]="isUploadingLogo()"
+            [class.cursor-not-allowed]="isUploadingLogo()"
+          >
+            @if (isUploadingLogo()) {
+              <i class="ph ph-spinner animate-spin mr-2"></i>
+              Uploading...
+            } @else {
+              <i class="ph ph-upload-simple mr-2"></i>
+              Upload Logo
+            }
+            <input 
+              type="file"
+              accept="image/jpeg,image/png,image/svg+xml,image/webp"
+              (change)="onLogoChange($event)"
+              [disabled]="isUploadingLogo()"
+              class="hidden"
+            />
+          </label>
+          <p class="text-xs text-gray-500 mt-2">PNG, JPG or SVG. Max 2MB.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brand Colors -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Brand Colors</h3>
+        <button 
+          (click)="resetColors()"
+          class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+        >
+          Reset to defaults
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Primary Color -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Primary Color</label>
+          <div class="flex items-center space-x-3">
+            <input 
+              type="color"
+              [value]="organization().primaryColor"
+              (change)="updateColor('primary', $event)"
+              class="h-10 w-16 rounded border border-gray-300 cursor-pointer"
+            />
+            <input 
+              type="text"
+              [value]="organization().primaryColor"
+              (change)="updateColor('primary', $event)"
+              class="flex-1 px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm"
+              placeholder="#3B82F6"
+            />
+          </div>
+          <div 
+            class="mt-2 h-8 rounded"
+            [style.background-color]="organization().primaryColor"
+          ></div>
+        </div>
+
+        <!-- Secondary Color -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Secondary Color</label>
+          <div class="flex items-center space-x-3">
+            <input 
+              type="color"
+              [value]="organization().secondaryColor"
+              (change)="updateColor('secondary', $event)"
+              class="h-10 w-16 rounded border border-gray-300 cursor-pointer"
+            />
+            <input 
+              type="text"
+              [value]="organization().secondaryColor"
+              (change)="updateColor('secondary', $event)"
+              class="flex-1 px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm"
+              placeholder="#10B981"
+            />
+          </div>
+          <div 
+            class="mt-2 h-8 rounded"
+            [style.background-color]="organization().secondaryColor"
+          ></div>
+        </div>
+
+        <!-- Accent Color -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Accent Color</label>
+          <div class="flex items-center space-x-3">
+            <input 
+              type="color"
+              [value]="organization().accentColor"
+              (change)="updateColor('accent', $event)"
+              class="h-10 w-16 rounded border border-gray-300 cursor-pointer"
+            />
+            <input 
+              type="text"
+              [value]="organization().accentColor"
+              (change)="updateColor('accent', $event)"
+              class="flex-1 px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm"
+              placeholder="#F59E0B"
+            />
+          </div>
+          <div 
+            class="mt-2 h-8 rounded"
+            [style.background-color]="organization().accentColor"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+        <h4 class="text-sm font-medium text-gray-700 mb-3">Preview</h4>
+        <div class="flex space-x-2">
+          <button 
+            class="px-4 py-2 rounded-lg text-white font-medium"
+            [style.background-color]="organization().primaryColor"
+          >
+            Primary Button
+          </button>
+          <button 
+            class="px-4 py-2 rounded-lg text-white font-medium"
+            [style.background-color]="organization().secondaryColor"
+          >
+            Secondary Button
+          </button>
+          <button 
+            class="px-4 py-2 rounded-lg text-white font-medium"
+            [style.background-color]="organization().accentColor"
+          >
+            Accent Button
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subscription Info (Read-only) -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold mb-4">Subscription</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Current Plan</label>
+          <div class="px-3 py-2 bg-gray-100 rounded-lg">
+            {{ organization().subscriptionPlan || 'N/A' }}
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <div class="px-3 py-2 bg-gray-100 rounded-lg">
+            <span 
+              class="inline-flex items-center px-2 py-1 rounded text-xs font-medium"
+              [class.bg-green-100]="organization().status === 'Active'"
+              [class.text-green-800]="organization().status === 'Active'"
+              [class.bg-yellow-100]="organization().status === 'Suspended'"
+              [class.text-yellow-800]="organization().status === 'Suspended'"
+              [class.bg-gray-100]="organization().status === 'Inactive'"
+              [class.text-gray-800]="organization().status === 'Inactive'"
+            >
+              {{ organization().status }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="flex justify-end space-x-3">
+      <button 
+        (click)="loadOrganization()"
+        class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition"
+      >
+        Cancel
+      </button>
+      <button 
+        (click)="saveSettings()"
+        [disabled]="isSaving()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        @if (isSaving()) {
+          <span class="flex items-center">
+            <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+            Saving...
+          </span>
+        } @else {
+          Save Changes
+        }
+      </button>
+    </div>
+  }
+</div>

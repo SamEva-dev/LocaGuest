@@ -8,6 +8,7 @@ import { AuthService } from '../../core/auth/services/auth.service';
 import { ToastService } from '../../core/ui/toast.service';
 import { ConfirmService } from '../../core/ui/confirm.service';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
+import { BrandingThemeService } from '../../core/services/branding-theme.service';
 
 @Component({
   selector: 'main-layout',
@@ -20,6 +21,7 @@ export class MainLayout {
   private router = inject(Router);
   private tabManager = inject(TabManagerService);
   theme = inject(ThemeService);
+  branding = inject(BrandingThemeService);
   
   // ✅ Services UI
   toasts = inject(ToastService);
