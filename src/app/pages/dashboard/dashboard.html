@@ -1,102 +1,164 @@
-    <div class="p-6 md:p-8 space-y-8">
-      <!-- Header -->
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <h1 class="text-3xl font-bold">{{ 'DASHBOARD.TITLE' | translate }}</h1>
-          <p class="text-slate-600 dark:text-slate-400 mt-1">{{ 'DASHBOARD.SUBTITLE' | translate }}</p>
-        </div>
-        <div class="flex items-center gap-3">
-          <button class="px-4 py-2 rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition">
-            {{ 'DASHBOARD.ACTIONS.NEW_PROPERTY' | translate }}
-          </button>
-          <button class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
-            {{ 'DASHBOARD.ACTIONS.NEW_TENANT' | translate }}
-          </button>
-        </div>
-      </div>
+<div class="p-6 md:p-8 space-y-8">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold">{{ 'DASHBOARD.TITLE' | translate }}</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">{{ 'DASHBOARD.SUBTITLE' | translate }}</p>
+    </div>
+    
+    <!-- Filtres Période -->
+    <div class="flex items-center gap-3">
+      <select 
+        [(ngModel)]="selectedMonth"
+        (change)="onPeriodChange()"
+        class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm">
+        <option [value]="1">Janvier</option>
+        <option [value]="2">Février</option>
+        <option [value]="3">Mars</option>
+        <option [value]="4">Avril</option>
+        <option [value]="5">Mai</option>
+        <option [value]="6">Juin</option>
+        <option [value]="7">Juillet</option>
+        <option [value]="8">Août</option>
+        <option [value]="9">Septembre</option>
+        <option [value]="10">Octobre</option>
+        <option [value]="11">Novembre</option>
+        <option [value]="12">Décembre</option>
+      </select>
+      
+      <select 
+        [(ngModel)]="selectedYear"
+        (change)="onPeriodChange()"
+        class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm">
+        @for (year of availableYears(); track year) {
+          <option [value]="year">{{ year }}</option>
+        }
+      </select>
+      
+      <button 
+        (click)="refreshDashboard()"
+        class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-sm flex items-center gap-2">
+        <i class="ph ph-arrow-clockwise"></i>
+        Actualiser
+      </button>
+    </div>
+  </div>
 
-      <!-- Stat cards -->
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        @for (s of stats(); track s.key) {
-          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-slate-500 dark:text-slate-400">{{ s.label | translate }}</p>
-                <p class="text-2xl font-semibold text-slate-800 dark:text-white mt-1">{{ s.value }}</p>
-              </div>
-              <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
-                <i [class]="'ph ' + s.icon + ' text-lg text-slate-600 dark:text-slate-300'"></i>
-              </div>
-            </div>
-            @if (s.delta) {
-              <p class="text-xs mt-3" [class]="s.deltaPositive ? 'text-emerald-600' : 'text-rose-600'">
-                {{ s.deltaPositive ? ('DASHBOARD.TREND.UP' | translate) : ('DASHBOARD.TREND.DOWN' | translate) }}
-                {{ s.delta }}%
+  <!-- Enhanced Stat cards with colors -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    @for (s of stats(); track s.key) {
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-slate-500 dark:text-slate-400">{{ s.label | translate }}</p>
+            <p class="text-2xl font-semibold text-slate-800 dark:text-white mt-1">{{ s.value }}</p>
+            @if (s.key === 'collection' && paymentsDashboard()) {
+              <p class="text-xs text-slate-500 mt-1">
+                {{ paymentsDashboard()!.paidCount }} / {{ paymentsDashboard()!.totalPayments }} payés
+              </p>
+            }
+            @if (s.key === 'overdue' && paymentsDashboard()) {
+              <p class="text-xs text-rose-600 mt-1">
+                {{ formatCurrency(paymentsDashboard()!.totalOverdue) }} en retard
               </p>
             }
           </div>
-        }
+          <div 
+            class="w-12 h-12 rounded-lg flex items-center justify-center"
+            [ngClass]="{
+              'bg-blue-100 dark:bg-blue-900/30': s.color === 'blue',
+              'bg-green-100 dark:bg-green-900/30': s.color === 'green',
+              'bg-purple-100 dark:bg-purple-900/30': s.color === 'purple',
+              'bg-amber-100 dark:bg-amber-900/30': s.color === 'amber',
+              'bg-emerald-100 dark:bg-emerald-900/30': s.color === 'emerald',
+              'bg-red-100 dark:bg-red-900/30': s.color === 'red'
+            }">
+            <i 
+              [class]="'ph ' + s.icon + ' text-xl'"
+              [ngClass]="{
+                'text-blue-600 dark:text-blue-400': s.color === 'blue',
+                'text-green-600 dark:text-green-400': s.color === 'green',
+                'text-purple-600 dark:text-purple-400': s.color === 'purple',
+                'text-amber-600 dark:text-amber-400': s.color === 'amber',
+                'text-emerald-600 dark:text-emerald-400': s.color === 'emerald',
+                'text-red-600 dark:text-red-400': s.color === 'red'
+              }"></i>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+
+  <!-- Two columns layout -->
+  <div class="grid lg:grid-cols-3 gap-6">
+    <!-- Charts - 2 columns -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Occupancy Chart -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold">{{ 'DASHBOARD.OCCUPANCY.TITLE' | translate }}</h3>
+          <span class="text-xs text-slate-500">{{ 'DASHBOARD.OCCUPANCY.LAST30' | translate }}</span>
+        </div>
+        <occupancy-chart />
       </div>
 
-      <!-- Two columns -->
-      <div class="grid lg:grid-cols-3 gap-6">
-        <!-- Occupancy & Revenue placeholders -->
-        <div class="lg:col-span-2 space-y-6">
-          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold">{{ 'DASHBOARD.OCCUPANCY.TITLE' | translate }}</h3>
-              <span class="text-xs text-slate-500">{{ 'DASHBOARD.OCCUPANCY.LAST30' | translate }}</span>
-            </div>
-            <occupancy-chart />
-          </div>
-
-          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-semibold">{{ 'DASHBOARD.REVENUE.TITLE' | translate }}</h3>
-              <span class="text-xs text-slate-500">{{ 'DASHBOARD.REVENUE.LAST12' | translate }}</span>
-            </div>
-            <revenue-chart />
-          </div>
+      <!-- Revenue Chart -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold">{{ 'DASHBOARD.REVENUE.TITLE' | translate }}</h3>
+          <span class="text-xs text-slate-500">{{ 'DASHBOARD.REVENUE.LAST12' | translate }}</span>
         </div>
-
-        <!-- Recent activities -->
-        <div class="space-y-6">
-          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
-            <h3 class="text-lg font-semibold mb-4">{{ 'DASHBOARD.ACTIVITIES.TITLE' | translate }}</h3>
-            <div class="space-y-4">
-              @for (a of dashboard.activities(); track $index) {
-                <div class="flex items-start gap-3">
-                  <div class="mt-1 w-2 h-2 rounded-full" [class]="a.type === 'info' ? 'bg-blue-500' : a.type === 'success' ? 'bg-emerald-500' : 'bg-amber-500'"></div>
-                  <div>
-                    <p class="text-sm text-slate-800 dark:text-slate-200">{{ a.title }}</p>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">{{ a.date }}</p>
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-
-          <!-- <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
-            <h3 class="text-lg font-semibold mb-4">{{ 'DASHBOARD.SHORTCUTS.TITLE' | translate }}</h3>
-            <div class="grid grid-cols-2 gap-3">
-              <button 
-                (click)="openPropertyDemo()"
-                class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm">
-                <i class="ph ph-house-line mr-2"></i>{{ 'DASHBOARD.SHORTCUTS.MY_PROPERTIES' | translate }}
-              </button>
-              <button 
-                (click)="openTenantDemo()"
-                class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm">
-                <i class="ph ph-users-three mr-2"></i>{{ 'DASHBOARD.SHORTCUTS.MY_TENANTS' | translate }}
-              </button>
-              <button class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm">
-                <i class="ph ph-file-text mr-2"></i>{{ 'DASHBOARD.SHORTCUTS.DOCUMENTS' | translate }}
-              </button>
-              <button class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm">
-                <i class="ph ph-chart-line-up mr-2"></i>{{ 'DASHBOARD.SHORTCUTS.REPORTS' | translate }}
-              </button>
-            </div>
-          </div> -->
-        </div>
+        <revenue-chart />
       </div>
     </div>
+
+    <!-- Sidebar - 1 column -->
+    <div class="space-y-6">
+      <!-- Recent Activities -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+        <h3 class="text-lg font-semibold mb-4">{{ 'DASHBOARD.ACTIVITIES.TITLE' | translate }}</h3>
+        <div class="space-y-4">
+          @for (a of dashboard.activities(); track $index) {
+            <div class="flex items-start gap-3">
+              <div class="mt-1 w-2 h-2 rounded-full" 
+                   [class]="a.type === 'info' ? 'bg-blue-500' : a.type === 'success' ? 'bg-emerald-500' : 'bg-amber-500'">
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm text-slate-800 dark:text-slate-200 truncate">{{ a.title }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ a.date }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Quick Shortcuts -->
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
+        <h3 class="text-lg font-semibold mb-4">Actions Rapides</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <button 
+            (click)="openPropertyDemo()"
+            class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm transition">
+            <i class="ph ph-house-line mr-2"></i>Biens
+          </button>
+          <button 
+            (click)="openTenantDemo()"
+            class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm transition">
+            <i class="ph ph-users-three mr-2"></i>Locataires
+          </button>
+          <a 
+            [routerLink]="['/app/contracts']"
+            class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm transition block">
+            <i class="ph ph-file-text mr-2"></i>Contrats
+          </a>
+          <button 
+            class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-left text-sm transition">
+            <i class="ph ph-chart-bar mr-2"></i>Rentabilité
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

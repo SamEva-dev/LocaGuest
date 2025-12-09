@@ -17,19 +17,30 @@ export interface Activity {
 }
 
 export interface Deadline {
-  lateRent: Array<{ propertyName: string; amount: number; daysLate: number }>;
-  nextDue: Array<{ propertyName: string; amount: number; daysUntil: number }>;
-  renewals: Array<{ propertyName: string; daysUntil: number }>;
+  upcomingDeadlines: Array<{
+    type: string;
+    title: string;
+    description: string;
+    date: string;
+    propertyCode: string;
+    tenantName: string;
+  }>;
 }
 
 export interface OccupancyChartData {
   month: number;
-  rate: number;
+  monthName: string;
+  occupiedUnits: number;
+  totalUnits: number;
+  occupancyRate: number;
 }
 
 export interface RevenueChartData {
   month: number;
-  revenue: number;
+  monthName: string;
+  expectedRevenue: number;
+  actualRevenue: number;
+  collectionRate: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -51,13 +62,17 @@ export class DashboardApi {
     return this.http.get<Deadline>(`${this.baseUrl}/deadlines`);
   }
 
-  getOccupancyChart(year: number = 2025): Observable<OccupancyChartData[]> {
+  getOccupancyChart(year: number = 2025): Observable<{ monthlyData: OccupancyChartData[] }> {
     const params = new HttpParams().set('year', year.toString());
-    return this.http.get<OccupancyChartData[]>(`${this.baseUrl}/charts/occupancy`, { params });
+    return this.http.get<{ monthlyData: OccupancyChartData[] }>(`${this.baseUrl}/charts/occupancy`, { params });
   }
 
-  getRevenueChart(year: number = 2025): Observable<RevenueChartData[]> {
+  getRevenueChart(year: number = 2025): Observable<{ monthlyData: RevenueChartData[] }> {
     const params = new HttpParams().set('year', year.toString());
-    return this.http.get<RevenueChartData[]>(`${this.baseUrl}/charts/revenue`, { params });
+    return this.http.get<{ monthlyData: RevenueChartData[] }>(`${this.baseUrl}/charts/revenue`, { params });
+  }
+
+  getAvailableYears(): Observable<{ years: number[] }> {
+    return this.http.get<{ years: number[] }>(`${this.baseUrl}/available-years`);
   }
 }

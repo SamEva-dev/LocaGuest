@@ -378,6 +378,25 @@
               </div>
             </div>
             
+            <div>
+              <label class="block text-sm font-medium mb-1">Date limite de paiement *</label>
+              <select
+                [(ngModel)]="form().paymentDueDay"
+                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+              >
+                <option [value]="1">1er du mois</option>
+                <option [value]="5">5 du mois</option>
+                <option [value]="10">10 du mois</option>
+                <option [value]="15">15 du mois</option>
+                <option [value]="20">20 du mois</option>
+                <option [value]="25">25 du mois</option>
+                <option [value]="31">Dernier jour du mois</option>
+              </select>
+              <p class="text-xs text-slate-500 mt-1">
+                Le paiement sera considéré en retard après cette date
+              </p>
+            </div>
+            
             <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
               <div class="text-sm">
                 <p class="font-semibold mb-2">Total mensuel</p>
@@ -434,6 +453,12 @@
               <div class="flex justify-between">
                 <span class="text-slate-600 dark:text-slate-400">Dépôt :</span>
                 <span class="font-medium">{{ form().deposit }}€</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Date limite paiement :</span>
+                <span class="font-medium">
+                  {{ form().paymentDueDay === 1 ? '1er' : form().paymentDueDay }} du mois
+                </span>
               </div>
               
               <hr class="my-3 border-slate-200 dark:border-slate-600" />

@@ -47,6 +47,7 @@ interface ContractForm {
   rent: number;
   charges: number;
   deposit: number;
+  paymentDueDay: number; // Jour limite de paiement (1-31)
   
   // Type et options
   type: 'Meublé' | 'Non meublé' | 'Colocation individuelle' | 'Colocation solidaire';
@@ -101,6 +102,7 @@ export class ContractWizardModal {
     rent: 0,
     charges: 0,
     deposit: 0,
+    paymentDueDay: 5, // Par défaut: 5 du mois
     duration: 12,
     autoRenewal: true,
     indexationIRL: true,
@@ -492,6 +494,7 @@ export class ContractWizardModal {
       rent: f.rent || 0,
       charges: f.charges || 0,
       deposit: f.deposit,
+      paymentDueDay: f.paymentDueDay || 5, // Date limite de paiement
       roomId: f.roomId, // ✅ FIX #4: Include roomId for colocation
       notes: this.buildContractNotes(f)
     };

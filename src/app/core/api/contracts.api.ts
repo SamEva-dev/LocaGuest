@@ -43,6 +43,7 @@ export interface CreateContractRequest {
   rent: number;
   charges?: number;             // ✅ NOUVEAU - Charges mensuelles
   deposit?: number;
+  paymentDueDay?: number;       // ✅ NOUVEAU - Jour limite de paiement (1-31)
   roomId?: string;              // ✅ NOUVEAU - Pour colocation individuelle
   notes?: string;
 }
