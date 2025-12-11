@@ -24,6 +24,9 @@ export interface Payment {
   updatedAt?: Date;
   tenantName?: string;
   propertyName?: string;
+  paymentDueDay?: number; // Jour limite (1-31)
+  daysLate?: number; // Positif = retard, Négatif = à venir
+  dueDate?: Date; // Date limite calculée
 }
 
 export type PaymentStatus = 

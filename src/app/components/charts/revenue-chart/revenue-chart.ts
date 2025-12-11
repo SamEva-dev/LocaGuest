@@ -1,6 +1,6 @@
-import { Component, ViewChild, OnInit, inject } from '@angular/core';
+import { Component, ViewChild, OnInit, OnChanges, Input, inject, SimpleChanges } from '@angular/core';
 import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
-import { AnalyticsApi } from '../../../core/api/analytics.api';
+import { DashboardService } from '../../../core/services/dashboard.service';
 
 @Component({
   selector: 'revenue-chart',
@@ -21,9 +21,12 @@ import { AnalyticsApi } from '../../../core/api/analytics.api';
     ></apx-chart>
   `
 })
-export class RevenueChart implements OnInit {
-  private analyticsApi = inject(AnalyticsApi);
+export class RevenueChart implements OnInit, OnChanges {
+  private dashboardService = inject(DashboardService);
   @ViewChild('chart') chart?: ChartComponent;
+  
+  @Input() month: number = new Date().getMonth() + 1;
+  @Input() year: number = new Date().getFullYear();
 
   chartOptions: any = {
     series: [
@@ -72,11 +75,17 @@ export class RevenueChart implements OnInit {
     this.loadRevenueData();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if ((changes['month'] || changes['year']) && !changes['month']?.firstChange && !changes['year']?.firstChange) {
+      this.loadRevenueData();
+    }
+  }
+
   loadRevenueData() {
-    this.analyticsApi.getRevenueEvolution(12).subscribe({
+    this.dashboardService.getRevenueChart(this.year).subscribe({
       next: (data) => {
-        const revenues = data.map(d => d.revenue);
-        const months = data.map(d => d.month);
+        const revenues = data.map(d => d.actualRevenue);
+        const months = data.map(d => d.monthName);
         
         this.chartOptions.series = [{
           name: 'Revenus',
@@ -89,7 +98,7 @@ export class RevenueChart implements OnInit {
           this.chart.updateOptions(this.chartOptions);
         }
       },
-      error: (err) => console.error('Error loading revenue data:', err)
+      error: (err: any) => console.error('Error loading revenue data:', err)
     });
   }
 }

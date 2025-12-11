@@ -1,10 +1,12 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { SettingsService } from '../../core/services/settings.service';
 import { ThemeService } from '../../core/services/theme.service';
-import { UserProfile, NotificationSettings, Preferences, InterfaceSettings } from '../../core/api/settings.api';
+import { UsersApi, UserProfile, NotificationSettings, UserPreferences } from '../../core/api/users.api';
+import { BillingApi, BillingInvoice } from '../../core/api/billing.api';
+import { SubscriptionService } from '../../core/services/subscription.service';
 import { TeamSettingsComponent } from './tabs/team-settings/team-settings-updated.component';
 import { TwoFactorSettingsComponent } from './tabs/two-factor-settings/two-factor-settings.component';
 import { OrganizationSettingsComponent } from './tabs/organization-settings/organization-settings.component';
@@ -16,14 +18,18 @@ import { OrganizationSettingsComponent } from './tabs/organization-settings/orga
   templateUrl: './settings-tab.html'
 })
 export class SettingsTab implements OnInit {
-  private settingsService = inject(SettingsService);
+  private usersApi = inject(UsersApi);
+  private billingApi = inject(BillingApi);
+  private subscriptionService = inject(SubscriptionService);
   private themeService = inject(ThemeService);
   private translate = inject(TranslateService);
+  private router = inject(Router);
   
   activeSubTab = signal('profile');
 
   // Profile settings
-  profileData = signal<UserProfile>({
+  profileData = signal<Partial<UserProfile>>({
+    userId: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -35,42 +41,38 @@ export class SettingsTab implements OnInit {
 
   // Notification settings
   notifications = signal<NotificationSettings>({
-    emailAlerts: false,
-    smsAlerts: false,
-    newReservations: false,
-    paymentReminders: false,
-    monthlyReports: false
+    paymentReceived: true,
+    paymentOverdue: true,
+    paymentReminder: true,
+    contractSigned: true,
+    contractExpiring: true,
+    contractRenewal: true,
+    newTenantRequest: true,
+    tenantCheckout: true,
+    maintenanceRequest: true,
+    maintenanceCompleted: false,
+    systemUpdates: true,
+    marketingEmails: false
   });
 
   // Preferences
-  preferences = signal<Preferences>({
+  preferences = signal<UserPreferences>({
     darkMode: false,
     language: 'fr',
     timezone: 'Europe/Paris',
     dateFormat: 'DD/MM/YYYY',
-    currency: 'EUR'
-  });
-
-  // Interface settings
-  interface = signal<InterfaceSettings>({
+    currency: 'EUR',
     sidebarNavigation: true,
     headerNavigation: false
   });
 
   // Billing
-  billingInfo = signal({
-    plan: 'Professionnel',
-    price: 49,
-    renewalDate: '15/04/2024',
-    paymentMethod: '**** **** **** 4242',
-    cardExpiry: '12/26'
-  });
-
-  invoices = signal([
-    { date: '15 Mar 2024', type: 'Abonnement mensuel', amount: 49, status: 'Payé' },
-    { date: '15 Fev 2024', type: 'Abonnement mensuel', amount: 49, status: 'Payé' },
-    { date: '15 Jan 2024', type: 'Abonnement mensuel', amount: 49, status: 'Payé' }
-  ]);
+  currentSubscription = this.subscriptionService.subscription;
+  currentPlan = this.subscriptionService.currentPlan;
+  isInTrial = this.subscriptionService.isInTrial;
+  daysUntilRenewal = this.subscriptionService.daysUntilRenewal;
+  
+  invoices = signal<BillingInvoice[]>([]);
 
   // Security
   showCurrentPassword = false;
@@ -83,11 +85,14 @@ export class SettingsTab implements OnInit {
   ];
 
   notificationsList = [
-    { key: 'emailAlerts', label: 'SETTINGS.NOTIFICATIONS.EMAIL_ALERTS', desc: 'SETTINGS.NOTIFICATIONS.EMAIL_ALERTS_DESC' },
-    { key: 'smsAlerts', label: 'SETTINGS.NOTIFICATIONS.SMS_ALERTS', desc: 'SETTINGS.NOTIFICATIONS.SMS_ALERTS_DESC' },
-    { key: 'newReservations', label: 'SETTINGS.NOTIFICATIONS.NEW_RESERVATIONS', desc: 'SETTINGS.NOTIFICATIONS.NEW_RESERVATIONS_DESC' },
-    { key: 'paymentReminders', label: 'SETTINGS.NOTIFICATIONS.PAYMENT_REMINDERS', desc: 'SETTINGS.NOTIFICATIONS.PAYMENT_REMINDERS_DESC' },
-    { key: 'monthlyReports', label: 'SETTINGS.NOTIFICATIONS.MONTHLY_REPORTS', desc: 'SETTINGS.NOTIFICATIONS.MONTHLY_REPORTS_DESC' }
+    { key: 'paymentReceived', label: 'Paiement reçu', desc: 'Recevoir une notification lors de la réception d\'un paiement' },
+    { key: 'paymentOverdue', label: 'Paiement en retard', desc: 'Alertes pour les paiements en retard' },
+    { key: 'paymentReminder', label: 'Rappel de paiement', desc: 'Rappels avant échéance' },
+    { key: 'contractSigned', label: 'Contrat signé', desc: 'Notification lors de la signature d\'un contrat' },
+    { key: 'contractExpiring', label: 'Contrat expirant', desc: 'Alerte avant expiration du bail' },
+    { key: 'newTenantRequest', label: 'Nouvelle demande locataire', desc: 'Notification pour les nouvelles demandes' },
+    { key: 'systemUpdates', label: 'Mises à jour système', desc: 'Nouvelles fonctionnalités et améliorations' },
+    { key: 'marketingEmails', label: 'Emails marketing', desc: 'Conseils et offres spéciales' }
   ];
 
   subTabs = [
@@ -106,14 +111,39 @@ export class SettingsTab implements OnInit {
   }
 
   loadSettings() {
-    this.settingsService.getUserSettings().subscribe({
-      next: (settings) => {
-        this.profileData.set(settings.profile);
-        this.notifications.set(settings.notifications);
-        this.preferences.set(settings.preferences);
-        this.interface.set(settings.interface);
+    // Load profile
+    this.usersApi.getUserProfile().subscribe({
+      next: (profile) => this.profileData.set(profile),
+      error: (err) => console.error('Error loading profile:', err)
+    });
+
+    // Load preferences
+    this.usersApi.getUserPreferences().subscribe({
+      next: (prefs) => {
+        this.preferences.set(prefs);
+        this.themeService.setDarkMode(prefs.darkMode);
       },
-      error: (err) => console.error('Error loading settings:', err)
+      error: (err) => console.error('Error loading preferences:', err)
+    });
+
+    // Load notifications
+    this.usersApi.getNotificationSettings().subscribe({
+      next: (notifs) => this.notifications.set(notifs),
+      error: (err) => console.error('Error loading notifications:', err)
+    });
+
+    // Load billing data
+    this.loadBillingData();
+  }
+
+  loadBillingData() {
+    // Load subscription
+    this.subscriptionService.loadCurrentSubscription().subscribe();
+
+    // Load invoices
+    this.billingApi.getInvoices().subscribe({
+      next: (invoices) => this.invoices.set(invoices),
+      error: (err) => console.error('Error loading invoices:', err)
     });
   }
 
@@ -134,55 +164,122 @@ export class SettingsTab implements OnInit {
     });
   }
 
+  uploadingPhoto = false;
+
   onPhotoChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      console.log('Photo selected:', input.files[0]);
+      const file = input.files[0];
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('La taille du fichier ne doit pas dépasser 5 MB');
+        return;
+      }
+
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Format de fichier non autorisé. Utilisez JPG, PNG ou GIF.');
+        return;
+      }
+
+      this.uploadingPhoto = true;
+      this.usersApi.uploadProfilePhoto(file).subscribe({
+        next: (profile) => {
+          this.profileData.set(profile);
+          this.uploadingPhoto = false;
+          console.log('Photo uploaded successfully');
+        },
+        error: (err) => {
+          console.error('Error uploading photo:', err);
+          this.uploadingPhoto = false;
+          alert('Erreur lors de l\'upload de la photo');
+        }
+      });
     }
   }
 
   saveProfile() {
-    this.settingsService.updateUserSettings({ profile: this.profileData() }).subscribe({
-      next: () => console.log('Profile saved successfully'),
+    const profile = this.profileData();
+    this.usersApi.updateUserProfile({
+      firstName: profile.firstName || '',
+      lastName: profile.lastName || '',
+      phone: profile.phone,
+      company: profile.company,
+      role: profile.role,
+      bio: profile.bio
+    }).subscribe({
+      next: (updatedProfile) => {
+        this.profileData.set(updatedProfile);
+        console.log('Profile saved successfully');
+      },
       error: (err) => console.error('Error saving profile:', err)
     });
   }
 
   saveNotifications() {
-    this.settingsService.updateUserSettings({ notifications: this.notifications() }).subscribe({
-      next: () => console.log('Notifications saved successfully'),
+    this.usersApi.updateNotificationSettings(this.notifications()).subscribe({
+      next: (updatedNotifications) => {
+        this.notifications.set(updatedNotifications);
+        console.log('Notifications saved successfully');
+      },
       error: (err) => console.error('Error saving notifications:', err)
     });
   }
 
   savePreferences() {
-    this.settingsService.updateUserSettings({ preferences: this.preferences() }).subscribe({
-      next: () => console.log('Preferences saved successfully'),
+    this.usersApi.updateUserPreferences(this.preferences()).subscribe({
+      next: (updatedPreferences) => {
+        this.preferences.set(updatedPreferences);
+        this.themeService.setDarkMode(updatedPreferences.darkMode);
+        console.log('Preferences saved successfully');
+      },
       error: (err) => console.error('Error saving preferences:', err)
     });
   }
 
-  saveInterface() {
-    this.settingsService.updateUserSettings({ interface: this.interface() }).subscribe({
-      next: () => console.log('Interface saved successfully'),
-      error: (err) => console.error('Error saving interface:', err)
-    });
-  }
-
   changePlan() {
-    console.log('Change plan');
+    // Navigate to pricing page
+    this.router.navigate(['/app/pricing']);
   }
 
   cancelSubscription() {
-    console.log('Cancel subscription');
+    if (!confirm('Êtes-vous sûr de vouloir annuler votre abonnement ? Vous aurez accès jusqu\'à la fin de la période de facturation.')) {
+      return;
+    }
+
+    this.billingApi.cancelSubscription(false).subscribe({
+      next: () => {
+        alert('Votre abonnement a été annulé. Il restera actif jusqu\'à la fin de la période de facturation.');
+        this.loadBillingData();
+      },
+      error: (err) => {
+        console.error('Error canceling subscription:', err);
+        alert('Erreur lors de l\'annulation de l\'abonnement. Veuillez réessayer.');
+      }
+    });
   }
 
   addPaymentMethod() {
-    console.log('Add payment method');
+    // Open Stripe customer portal for payment method management
+    this.billingApi.getCustomerPortalUrl('/settings/billing').subscribe({
+      next: (response) => {
+        window.location.href = response.url;
+      },
+      error: (err) => {
+        console.error('Error opening customer portal:', err);
+        alert('Erreur lors de l\'ouverture du portail de paiement.');
+      }
+    });
   }
 
-  downloadInvoice(invoice: any) {
-    console.log('Download invoice:', invoice);
+  downloadInvoice(invoice: BillingInvoice) {
+    if (invoice.invoicePdf) {
+      window.open(invoice.invoicePdf, '_blank');
+    } else {
+      alert('PDF de facture non disponible');
+    }
   }
 
   deleteAccount() {

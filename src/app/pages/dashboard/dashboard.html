@@ -98,18 +98,18 @@
       <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold">{{ 'DASHBOARD.OCCUPANCY.TITLE' | translate }}</h3>
-          <span class="text-xs text-slate-500">{{ 'DASHBOARD.OCCUPANCY.LAST30' | translate }}</span>
+          <span class="text-xs text-slate-500">{{ selectedYear }}</span>
         </div>
-        <occupancy-chart />
+        <occupancy-chart [month]="selectedMonth" [year]="selectedYear" />
       </div>
 
       <!-- Revenue Chart -->
       <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 shadow-sm">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold">{{ 'DASHBOARD.REVENUE.TITLE' | translate }}</h3>
-          <span class="text-xs text-slate-500">{{ 'DASHBOARD.REVENUE.LAST12' | translate }}</span>
+          <span class="text-xs text-slate-500">{{ selectedYear }}</span>
         </div>
-        <revenue-chart />
+        <revenue-chart [month]="selectedMonth" [year]="selectedYear" />
       </div>
     </div>
 

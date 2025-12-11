@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SubscriptionService, Plan } from '../../core/services/subscription.service';
+import { BillingApi } from '../../core/api/billing.api';
 
 @Component({
   selector: 'app-pricing-page',
@@ -221,11 +222,13 @@ import { SubscriptionService, Plan } from '../../core/services/subscription.serv
 })
 export class PricingPageComponent implements OnInit {
   private subscriptionService = inject(SubscriptionService);
+  private billingApi = inject(BillingApi);
   private router = inject(Router);
 
   plans = signal<Plan[]>([]);
   currentPlan = this.subscriptionService.currentPlan;
   isAnnual = signal(false);
+  loading = signal(false);
 
   ngOnInit() {
     this.subscriptionService.loadPlans().subscribe(
@@ -236,11 +239,26 @@ export class PricingPageComponent implements OnInit {
   selectPlan(plan: Plan) {
     if (plan.monthlyPrice === 0) {
       // Free plan - just redirect to app
-      this.router.navigate(['/']);
+      this.router.navigate(['/dashboard']);
     } else {
-      // Paid plan - TODO: Redirect to Stripe Checkout
-      console.log('Selected plan:', plan);
-      alert(`Checkout pour le plan ${plan.name} - À implémenter avec Stripe`);
+      this.loading.set(true);
+      
+      this.billingApi.createCheckoutSession(
+        plan.id,
+        this.isAnnual(),
+        `${window.location.origin}/settings/billing?success=true`,
+        `${window.location.origin}/pricing?canceled=true`
+      ).subscribe({
+        next: (response) => {
+          // Redirect to Stripe Checkout
+          window.location.href = response.checkoutUrl;
+        },
+        error: (err) => {
+          console.error('Error creating checkout session:', err);
+          alert('Erreur lors de la création de la session de paiement. Veuillez réessayer.');
+          this.loading.set(false);
+        }
+      });
     }
   }
 

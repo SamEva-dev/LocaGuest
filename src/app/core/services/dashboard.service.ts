@@ -12,9 +12,9 @@ export class DashboardService {
   deadlines = signal<Deadline | null>(null);
   loading = signal(false);
 
-  getSummary(): Observable<DashboardSummary> {
+  getSummary(month?: number, year?: number): Observable<DashboardSummary> {
     this.loading.set(true);
-    return this.dashboardApi.getSummary().pipe(
+    return this.dashboardApi.getSummary(month, year).pipe(
       tap(data => {
         this.summary.set(data);
         this.loading.set(false);

@@ -48,9 +48,12 @@ export class DashboardApi {
   private http = inject(HttpClient);
   private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/dashboard`;
 
-  getSummary(): Observable<DashboardSummary> {
-    console.log("call summary here");
-    return this.http.get<DashboardSummary>(`${this.baseUrl}/summary`);
+  getSummary(month?: number, year?: number): Observable<DashboardSummary> {
+    let params = new HttpParams();
+    if (month) params = params.set('month', month.toString());
+    if (year) params = params.set('year', year.toString());
+    
+    return this.http.get<DashboardSummary>(`${this.baseUrl}/summary`, { params });
   }
 
   getActivities(limit: number = 20): Observable<Activity[]> {

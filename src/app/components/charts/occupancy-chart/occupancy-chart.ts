@@ -1,6 +1,6 @@
-import { Component, ViewChild, OnInit, inject } from '@angular/core';
+import { Component, ViewChild, OnInit, OnChanges, Input, inject, SimpleChanges } from '@angular/core';
 import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
-import { AnalyticsApi } from '../../../core/api/analytics.api';
+import { DashboardService } from '../../../core/services/dashboard.service';
 
 @Component({
   selector: 'occupancy-chart',
@@ -22,9 +22,12 @@ import { AnalyticsApi } from '../../../core/api/analytics.api';
     ></apx-chart>
   `
 })
-export class OccupancyChart implements OnInit {
-  private analyticsApi = inject(AnalyticsApi);
+export class OccupancyChart implements OnInit, OnChanges {
+  private dashboardService = inject(DashboardService);
   @ViewChild('chart') chart?: ChartComponent;
+  
+  @Input() month: number = new Date().getMonth() + 1;
+  @Input() year: number = new Date().getFullYear();
 
   chartOptions: any = {
     series: [
@@ -68,20 +71,31 @@ export class OccupancyChart implements OnInit {
     this.loadOccupancyData();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if ((changes['month'] || changes['year']) && !changes['month']?.firstChange && !changes['year']?.firstChange) {
+      this.loadOccupancyData();
+    }
+  }
+
   loadOccupancyData() {
-    this.analyticsApi.getOccupancyTrend(30).subscribe({
+    this.dashboardService.getOccupancyChart(this.year).subscribe({
       next: (data) => {
         const occupancyRates = data.map(d => d.occupancyRate);
+        const labels = data.map(d => d.monthName);
+        
         this.chartOptions.series = [{
           name: 'Taux d\'occupation',
           data: occupancyRates
         }];
+        this.chartOptions.xaxis.categories = labels;
+        
         // Update chart if needed
         if (this.chart) {
           this.chart.updateSeries(this.chartOptions.series);
+          this.chart.updateOptions({ xaxis: { categories: labels } });
         }
       },
-      error: (err) => console.error('Error loading occupancy data:', err)
+      error: (err: any) => console.error('Error loading occupancy data:', err)
     });
   }
 }

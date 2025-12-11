@@ -20,18 +20,18 @@ export class Dashboard {
   dashboard = inject(DashboardService);
   private paymentsService = inject(PaymentsService);
 
+  // Filtres période
+  selectedMonth = new Date().getMonth() + 1;
+  selectedYear = new Date().getFullYear();
+  availableYears = signal<number[]>([new Date().getFullYear()]);
+
   // Charger données
-  summary$ = this.dashboard.getSummary();
+  summary$ = this.dashboard.getSummary(this.selectedMonth, this.selectedYear);
   activities$ = this.dashboard.getActivities(20);
   
   // Payments dashboard data
   paymentsDashboard = signal<PaymentsDashboard | null>(null);
   loadingPayments = signal(false);
-  
-  // Filtres période
-  selectedMonth = new Date().getMonth() + 1;
-  selectedYear = new Date().getFullYear();
-  availableYears = signal<number[]>([new Date().getFullYear()]);
 
   // Mapper les stat cards à partir du summary + payments
   stats = computed(() => {
@@ -94,11 +94,16 @@ export class Dashboard {
   }
   
   onPeriodChange() {
+    // Recharger summary avec nouveaux filtres
+    this.summary$ = this.dashboard.getSummary(this.selectedMonth, this.selectedYear);
+    this.summary$.subscribe();
+    
+    // Recharger payments dashboard
     this.loadPaymentsDashboard();
   }
   
   refreshDashboard() {
-    this.summary$ = this.dashboard.getSummary();
+    this.summary$ = this.dashboard.getSummary(this.selectedMonth, this.selectedYear);
     this.activities$ = this.dashboard.getActivities(20);
     this.loadPaymentsDashboard();
     this.loadAvailableYears();

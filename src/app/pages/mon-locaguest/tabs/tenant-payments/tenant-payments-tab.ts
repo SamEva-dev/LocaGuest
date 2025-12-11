@@ -18,6 +18,9 @@ export class TenantPaymentsTab implements OnInit {
   // Services
   private paymentsApi = inject(PaymentsApi);
   
+  // Expose Math for template
+  Math = Math;
+  
   // State
   payments = signal<Payment[]>([]);
   stats = signal<PaymentStats | null>(null);

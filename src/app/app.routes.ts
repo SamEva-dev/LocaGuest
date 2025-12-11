@@ -66,6 +66,10 @@ export const routes: Routes = [
       {
         path: 'settings',
         loadComponent: () => import('./pages/settings/settings-tab').then(m => m.SettingsTab)
+      },
+      {
+        path: 'pricing',
+        loadComponent: () => import('./pages/pricing/pricing-page.component').then(m => m.PricingPageComponent)
       }
     ]
   },
