@@ -49,7 +49,7 @@ export class AuthApi {
   }
 
   register(body: RegisterRequest) {
-    return this.http.post<RegisterResponse>(`${this.base}/auth/register`, body);
+    return this.http.post<RegisterResponse>(`${this.base}/auth/register-with-tenant`, body);
   }
 
   forgotPassword(email: string) {
