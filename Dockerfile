@@ -22,7 +22,7 @@ WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 
 # Copy built Angular app
-COPY --from=build /app/dist/loca-guest/browser .
+COPY --from=build /app/dist/locaGuest/browser .
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
