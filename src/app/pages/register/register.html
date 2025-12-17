@@ -15,25 +15,54 @@
       <h2 class="text-xl font-semibold text-center">{{ 'AUTH.WELCOME' | translate }}</h2>
       <p class="text-sm text-gray-500 text-center">{{ 'AUTH.DEMO_HINT' | translate }}</p>
 
-      <form (ngSubmit)="register(firstName.value, lastName.value, emailRegister.value, passwordRegister.value, confirmPassword.value)" class="space-y-4">
+      <form #f="ngForm" (ngSubmit)="submit()" class="space-y-4" novalidate>
+        <div>
+          <label class="block mb-1 font-medium">{{ 'AUTH.ORGANIZATION' | translate }}</label>
+          <div class="relative">
+            <i class="ph ph-buildings absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input name="organizationName" [(ngModel)]="form.organizationName" #organizationName="ngModel" type="text" required
+                   class="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                   [placeholder]="'AUTH.ORGANIZATION_PLACEHOLDER' | translate">
+          </div>
+          @if ((f.submitted || organizationName.touched) && organizationName.invalid) {
+            <p class="mt-1 text-xs text-red-600">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+          }
+        </div>
+
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block mb-1 font-medium">{{ 'AUTH.FIRSTNAME' | translate }}</label>
             <div class="relative">
               <i class="ph ph-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-              <input #firstName type="text" required
+              <input name="firstName" [(ngModel)]="form.firstName" #firstName="ngModel" type="text" required
                      class="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                     placeholder="Prénom">
+                     [placeholder]="'AUTH.FIRSTNAME_PLACEHOLDER' | translate">
             </div>
+            @if ((f.submitted || firstName.touched) && firstName.invalid) {
+              <p class="mt-1 text-xs text-red-600">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+            }
           </div>
           <div>
             <label class="block mb-1 font-medium">{{ 'AUTH.LASTNAME' | translate }}</label>
             <div class="relative">
               <i class="ph ph-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-              <input #lastName type="text" required
+              <input name="lastName" [(ngModel)]="form.lastName" #lastName="ngModel" type="text" required
                      class="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                     placeholder="Nom">
+                     [placeholder]="'AUTH.LASTNAME_PLACEHOLDER' | translate">
             </div>
+            @if ((f.submitted || lastName.touched) && lastName.invalid) {
+              <p class="mt-1 text-xs text-red-600">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+            }
+          </div>
+        </div>
+
+        <div>
+          <label class="block mb-1 font-medium">{{ 'AUTH.PHONE' | translate }}</label>
+          <div class="relative">
+            <i class="ph ph-phone absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input name="phone" [(ngModel)]="form.phone" #phone="ngModel" type="tel"
+                   class="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                   [placeholder]="'AUTH.PHONE_PLACEHOLDER' | translate">
           </div>
         </div>
 
@@ -41,41 +70,52 @@
           <label class="block mb-1 font-medium">{{ 'AUTH.EMAIL' | translate }}</label>
           <div class="relative">
             <i class="ph ph-envelope-simple absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            <input #emailRegister type="email" required
+            <input name="email" [(ngModel)]="form.email" #emailRegister="ngModel" type="email" required
                    class="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                   placeholder="votre@email.com">
+                   [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate">
           </div>
+          @if ((f.submitted || emailRegister.touched) && emailRegister.invalid) {
+            <p class="mt-1 text-xs text-red-600">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+          }
         </div>
 
         <div>
           <label class="block mb-1 font-medium">{{ 'AUTH.PASSWORD' | translate }}</label>
           <div class="relative">
             <i class="ph ph-lock-key absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            <input #passwordRegister [type]="showPassword() ? 'text' : 'password'" required
+            <input name="password" [(ngModel)]="form.password" #passwordRegister="ngModel" [type]="showPassword() ? 'text' : 'password'" required
                    class="w-full p-2 pl-10 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <button type="button" (click)="showPassword.set(!showPassword())"
                     class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
               <i [class]="showPassword() ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
             </button>
           </div>
+          @if ((f.submitted || passwordRegister.touched) && passwordRegister.invalid) {
+            <p class="mt-1 text-xs text-red-600">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+          }
         </div>
 
         <div>
           <label class="block mb-1 font-medium">{{ 'AUTH.CONFIRM_PASSWORD' | translate }}</label>
           <div class="relative">
             <i class="ph ph-lock-key absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            <input #confirmPassword [type]="showPassword() ? 'text' : 'password'" required
+            <input name="confirmPassword" [(ngModel)]="form.confirmPassword" #confirmPassword="ngModel" [type]="showPassword() ? 'text' : 'password'" required
                    class="w-full p-2 pl-10 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <button type="button" (click)="showPassword.set(!showPassword())"
                     class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
               <i [class]="showPassword() ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
             </button>
           </div>
+          @if ((f.submitted || confirmPassword.touched) && confirmPassword.invalid) {
+            <p class="mt-1 text-xs text-red-600">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+          } @else if ((f.submitted || confirmPassword.touched) && passwordsMismatch) {
+            <p class="mt-1 text-xs text-red-600">{{ 'AUTH.PASSWORDS_NOT_MATCH' | translate }}</p>
+          }
         </div>
 
         <button type="submit"
                 class="w-full py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200"
-                [disabled]="isLoading()">
+                [disabled]="isLoading() || f.invalid || passwordsMismatch">
           {{ isLoading() ? ('AUTH.REGISTERING' | translate) : ('AUTH.REGISTER' | translate) }}
         </button>
       </form>

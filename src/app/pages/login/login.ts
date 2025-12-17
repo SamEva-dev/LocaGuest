@@ -51,6 +51,16 @@ export class Login {
     if (expired) this.toast.info('AUTH.SESSION_EXPIRED');
   }
 
+  private getBackendErrorMessage(err: any): string | null {
+    const body = err?.error;
+    if (!body) return null;
+    if (typeof body === 'string') return body;
+    if (typeof body.error === 'string' && body.error.trim().length > 0) return body.error;
+    if (typeof body.message === 'string' && body.message.trim().length > 0) return body.message;
+    if (typeof body.title === 'string' && body.title.trim().length > 0) return body.title;
+    return null;
+  }
+
   private generateDeviceFingerprint(): string {
     // Simple fingerprint based on User-Agent (can be improved with fingerprintjs library)
     const userAgent = navigator.userAgent;
@@ -80,7 +90,7 @@ export class Login {
         console.log('🔐 2FA required');
         this.mfaToken.set(result.mfaToken);
         this.show2FAInput.set(true);
-        this.toast.info('Enter the 6-digit code from your authenticator app');
+        this.toast.info('AUTH.MFA.ENTER_CODE');
         return; // Stop here, wait for 2FA code
       }
       
@@ -90,10 +100,13 @@ export class Login {
       
     } catch (error: any) {
       console.error('❌ Login error:', error);
-      if (error.status === 401) {
-        this.toast.error('Invalid email or password');
+      const backendMessage = this.getBackendErrorMessage(error);
+      if (backendMessage) {
+        this.toast.errorDirect(backendMessage);
+      } else if (error.status === 401) {
+        this.toast.error('AUTH.INVALID_CREDENTIALS');
       } else {
-        this.toast.error('Connection error');
+        this.toast.error('COMMON.NETWORK_ERROR');
       }
     } finally {
       this.isLoading.set(false);
@@ -103,7 +116,7 @@ export class Login {
   async verify2FA() {
     const code = this.twoFactorCode();
     if (code.length !== 6) {
-      this.toast.error('Please enter a 6-digit code');
+      this.toast.error('AUTH.MFA.INVALID_CODE_LENGTH');
       return;
     }
 
@@ -125,10 +138,13 @@ export class Login {
       
     } catch (error: any) {
       console.error('❌ 2FA verification error:', error);
-      if (error.status === 401) {
-        this.toast.error('Invalid 2FA code. Please try again.');
+      const backendMessage = this.getBackendErrorMessage(error);
+      if (backendMessage) {
+        this.toast.errorDirect(backendMessage);
+      } else if (error.status === 401) {
+        this.toast.error('AUTH.MFA.INVALID_CODE');
       } else {
-        this.toast.error('Verification error');
+        this.toast.error('COMMON.ERROR');
       }
       // Clear code on error
       this.twoFactorCode.set('');
@@ -140,7 +156,7 @@ export class Login {
   async verifyRecoveryCode() {
     const code = this.recoveryCode().trim();
     if (code.length < 8) {
-      this.toast.error('Please enter a valid recovery code');
+      this.toast.error('AUTH.MFA.INVALID_RECOVERY_CODE');
       return;
     }
 
@@ -162,10 +178,13 @@ export class Login {
       
     } catch (error: any) {
       console.error('❌ Recovery code verification error:', error);
-      if (error.status === 401) {
-        this.toast.error('Invalid recovery code. Please check and try again.');
+      const backendMessage = this.getBackendErrorMessage(error);
+      if (backendMessage) {
+        this.toast.errorDirect(backendMessage);
+      } else if (error.status === 401) {
+        this.toast.error('AUTH.MFA.INVALID_RECOVERY_CODE');
       } else {
-        this.toast.error('Verification error');
+        this.toast.error('COMMON.ERROR');
       }
       // Clear code on error
       this.recoveryCode.set('');
@@ -196,7 +215,7 @@ export class Login {
     // Apply login will store tokens and user
     (this.auth as any).applyLogin(result);
     
-    this.toast.success('Login successful!');
+    this.toast.success('AUTH.LOGIN_SUCCESS');
     this.router.navigate(['/app']);
     
     console.log('✅ Login completed');

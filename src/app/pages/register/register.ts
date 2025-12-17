@@ -25,7 +25,29 @@ export class Register {
  showPassword = signal(false);
   isLoading = signal(false);
 
-  async register(firstName: string, lastName: string, email: string, password: string, confirmPassword: string) {
+  form = {
+    organizationName: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  };
+
+  get passwordsMismatch(): boolean {
+    return !!this.form.password && !!this.form.confirmPassword && this.form.password !== this.form.confirmPassword;
+  }
+
+  async register(
+    organizationName: string,
+    firstName: string,
+    lastName: string,
+    phone: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ) {
     
     this.isLoading.set(true);
     try {
@@ -33,29 +55,56 @@ export class Register {
       
       // Valider que les mots de passe correspondent
       if (password !== confirmPassword) {
-        throw new Error('Les mots de passe ne correspondent pas');
+        this.toast.error('AUTH.PASSWORDS_NOT_MATCH');
+        return;
+      }
+
+      if (!organizationName?.trim()) {
+        this.toast.error('AUTH.ORGANIZATION_REQUIRED');
+        return;
       }
       
       console.log('📝 Données envoyées:', { firstName, lastName, email });
       
       await this.auth.register({ 
         email, 
-        password, 
-        confirmPassword,
+        password,
+        organizationName,
         firstName, 
-        lastName
+        lastName,
+        phone
       });
       
       console.log('✅ Register réussi');
       this.toast.success('AUTH.REGISTER_SUCCESS');
       this.router.navigate(['/login']);
     
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erreur register:', error);
-      throw error;
+      // AuthService shows a toast already; keep a safe fallback here
+      if (!error?.status) {
+        this.toast.error('AUTH.REGISTER_FAILED');
+      }
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  async submit() {
+    if (this.passwordsMismatch) {
+      this.toast.error('AUTH.PASSWORDS_NOT_MATCH');
+      return;
+    }
+
+    return this.register(
+      this.form.organizationName,
+      this.form.firstName,
+      this.form.lastName,
+      this.form.phone,
+      this.form.email,
+      this.form.password,
+      this.form.confirmPassword
+    );
   }
 
   goToLogin() {

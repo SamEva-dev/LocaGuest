@@ -1,14 +1,32 @@
 {
-  "APP": { "TITLE": "LocaGuest" },
-  "NAV": { "LOGIN": "Sign in", "START": "Get started" },
-  "IMAGES": { "HERO_ALT": "Modern building", "DASHBOARD_ALT": "LocaGuest dashboard preview" },
+  "APP": {
+    "TITLE": "LocaGuest"
+  },
+  "NAV": {
+    "LOGIN": "Sign in",
+    "START": "Get started"
+  },
+  "IMAGES": {
+    "HERO_ALT": "Modern building",
+    "DASHBOARD_ALT": "LocaGuest dashboard preview"
+  },
   "HERO": {
     "TITLE": "Manage your properties with elegance",
     "SUBTITLE": "A modern platform for owners and managers: contracts, rents, tenants and real-time dashboards.",
-    "CTA": { "START": "Start", "DEMO": "See demo" },
-    "BADGE": { "TRIAL": "Free trial", "NOCARD": "No credit card required" }
+    "CTA": {
+      "START": "Start",
+      "DEMO": "See demo"
+    },
+    "BADGE": {
+      "TRIAL": "Free trial",
+      "NOCARD": "No credit card required"
+    }
   },
-  "STATS": { "PROPERTIES": "Managed properties", "USERS": "Users", "SATISFACTION": "Satisfaction" },
+  "STATS": {
+    "PROPERTIES": "Managed properties",
+    "USERS": "Users",
+    "SATISFACTION": "Satisfaction"
+  },
   "FEATURES": {
     "TITLE": "All your features in one place",
     "SUBTITLE": "From property management to payments, save time and peace of mind.",
@@ -42,13 +60,38 @@
   "DASHBOARD": {
     "TITLE": "Dashboard",
     "SUBTITLE": "Overview of your activity",
-    "ACTIONS": { "NEW_PROPERTY": "New property", "NEW_TENANT": "New tenant" },
-    "OCCUPANCY": { "TITLE": "Occupancy rate", "LAST30": "Last 30 days" },
-    "REVENUE": { "TITLE": "Revenue", "LAST12": "Last 12 months" },
-    "ACTIVITIES": { "TITLE": "Recent activities" },
-    "SHORTCUTS": { "TITLE": "Shortcuts", "MY_PROPERTIES": "My properties", "MY_TENANTS": "My tenants", "DOCUMENTS": "Documents", "REPORTS": "Reports" },
-    "STATS": { "PROPERTIES": "Properties", "TENANTS": "Tenants", "OCCUPANCY": "Occupancy", "REVENUE": "Revenue" },
-    "TREND": { "UP": "Up", "DOWN": "Down" }
+    "ACTIONS": {
+      "NEW_PROPERTY": "New property",
+      "NEW_TENANT": "New tenant"
+    },
+    "OCCUPANCY": {
+      "TITLE": "Occupancy rate",
+      "LAST30": "Last 30 days"
+    },
+    "REVENUE": {
+      "TITLE": "Revenue",
+      "LAST12": "Last 12 months"
+    },
+    "ACTIVITIES": {
+      "TITLE": "Recent activities"
+    },
+    "SHORTCUTS": {
+      "TITLE": "Shortcuts",
+      "MY_PROPERTIES": "My properties",
+      "MY_TENANTS": "My tenants",
+      "DOCUMENTS": "Documents",
+      "REPORTS": "Reports"
+    },
+    "STATS": {
+      "PROPERTIES": "Properties",
+      "TENANTS": "Tenants",
+      "OCCUPANCY": "Occupancy",
+      "REVENUE": "Revenue"
+    },
+    "TREND": {
+      "UP": "Up",
+      "DOWN": "Down"
+    }
   },
   "PROPERTY": {
     "ADD_PROPERTY": "Add property",
@@ -56,7 +99,11 @@
     "STATUS": "Status",
     "RENT": "Rent",
     "SURFACE": "Area",
-    "TABS": { "DETAILS": "Details", "TENANTS": "Tenants", "DOCUMENTS": "Documents" },
+    "TABS": {
+      "DETAILS": "Details",
+      "TENANTS": "Tenants",
+      "DOCUMENTS": "Documents"
+    },
     "TYPE": "Type",
     "ROOMS": "Rooms",
     "FLOOR": "Floor",
@@ -113,7 +160,11 @@
       "CONSTRUCTION_YEAR": "Construction year",
       "DESCRIPTION": "Description",
       "DESCRIPTION_PLACEHOLDER": "Add helpful details...",
-      "CREATE": "Create property"
+      "CREATE": "Create property",
+      "ADD_PROPERTY_DESCRIPTION": "PROPERTY.FORM.ADD_PROPERTY_DESCRIPTION",
+      "BEDROOMS_REQUIRED": "PROPERTY.FORM.BEDROOMS_REQUIRED",
+      "CREATING": "PROPERTY.FORM.CREATING",
+      "TYPE_REQUIRED": "PROPERTY.FORM.TYPE_REQUIRED"
     },
     "TYPE_LABELS": {
       "APARTMENT": "Apartment",
@@ -151,39 +202,69 @@
   "CTA": {
     "TITLE": "Take it to the next level",
     "SUBTITLE": "Try LocaGuest today and simplify your management",
-    "BUTTONS": { "START": "Get started", "DEMO": "See demo" }
+    "BUTTONS": {
+      "START": "Get started",
+      "DEMO": "See demo"
+    }
   },
   "FOOTER": {
     "DESCRIPTION": "The simple and modern solution for rental management.",
-    "PRODUCT": { "TITLE": "Product", "FEATURES": "Features", "PRICING": "Pricing", "DOCS": "Documentation" },
-    "SUPPORT": { "TITLE": "Support", "HELP": "Help", "CONTACT": "Contact", "TRAINING": "Training" },
-    "LEGAL": { "TITLE": "Legal", "PRIVACY": "Privacy", "TERMS": "Terms", "IMPRINT": "Imprint" },
+    "PRODUCT": {
+      "TITLE": "Product",
+      "FEATURES": "Features",
+      "PRICING": "Pricing",
+      "DOCS": "Documentation"
+    },
+    "SUPPORT": {
+      "TITLE": "Support",
+      "HELP": "Help",
+      "CONTACT": "Contact",
+      "TRAINING": "Training"
+    },
+    "LEGAL": {
+      "TITLE": "Legal",
+      "PRIVACY": "Privacy",
+      "TERMS": "Terms",
+      "IMPRINT": "Imprint"
+    },
     "COPYRIGHT": "All rights reserved."
   },
-  "THEME": { "TOGGLE": "Toggle theme" },
+  "THEME": {
+    "TOGGLE": "Toggle theme"
+  },
   "COMMON": {
     "CANCEL": "Cancel",
     "CLOSE": "Close",
     "VIEW": "View",
     "EDIT": "Edit",
     "ERROR": "An error occurred",
+    "FIELD_REQUIRED": "Required field",
     "NETWORK_ERROR": "Network error",
     "SERVER_ERROR": "Server error",
-    "ACCESS_DENIED": "Access denied"
+    "ACCESS_DENIED": "Access denied",
+    "CREATE": "Créer",
+    "SAVE": "Enregistrer"
   },
   "AUTH": {
     "SUBTITLE": "Sign in to your LocaGuest space",
     "WELCOME": "Welcome",
     "DEMO_HINT": "Use the demo account to test",
+    "ORGANIZATION": "Organization",
+    "ORGANIZATION_PLACEHOLDER": "Your organization name",
     "FIRSTNAME": "First name",
+    "FIRSTNAME_PLACEHOLDER": "First name",
     "LASTNAME": "Last name",
+    "LASTNAME_PLACEHOLDER": "Last name",
     "EMAIL": "Email",
     "PASSWORD": "Password",
     "CONFIRM_PASSWORD": "Confirm password",
     "EMAIL_PLACEHOLDER": "email@example.com",
+    "PHONE": "Phone",
+    "PHONE_PLACEHOLDER": "+1 212 555 0123",
     "REMEMBER_ME": "Remember me",
     "FORGOT_PASSWORD": "Forgot password?",
     "LOGGING": "Signing in...",
+    "REGISTERING": "Creating account...",
     "LOGIN": "Sign in",
     "OR": "or",
     "LOGIN_GOOGLE": "Continue with Google",
@@ -192,7 +273,55 @@
     "NO_ACCOUNT": "No account?",
     "REGISTER": "Create account",
     "DEMO_MODE": "Demo mode enabled",
-    "LOGOUT": "Log out"
+    "LOGOUT": "Log out",
+    "LOGIN_SUCCESS": "Signed in successfully",
+    "REGISTER_SUCCESS": "Account created successfully",
+    "REGISTER_FAILED": "Could not create account",
+    "INVALID_CREDENTIALS": "Invalid email or password",
+    "PASSWORDS_NOT_MATCH": "Passwords do not match",
+    "ORGANIZATION_REQUIRED": "Organization name is required",
+    "MFA": {
+      "TITLE": "Two-Factor Authentication",
+      "RECOVERY_TITLE": "Recovery code",
+      "ENTER_CODE": "Enter the 6-digit code from your authenticator app",
+      "VERIFICATION_CODE": "Verification code",
+      "CODE_EXPIRES": "Code expires in 5 minutes",
+      "VERIFYING": "Verifying...",
+      "VERIFY_AND_LOGIN": "Verify & sign in",
+      "RECOVERY_CODE": "Recovery code",
+      "RECOVERY_HINT": "Use one of your backup recovery codes",
+      "REMEMBER_DEVICE": "Remember this device for 30 days",
+      "REMEMBER_DEVICE_HINT": "You won't need to enter a code on this device",
+      "USE_RECOVERY": "Use recovery code instead",
+      "USE_AUTH_APP": "Use authenticator code instead",
+      "BACK_TO_LOGIN": "Back to sign in",
+      "LOST_DEVICE": "Lost your device?",
+      "CONTACT_ADMIN": "Contact your administrator for assistance",
+      "INVALID_CODE_LENGTH": "Please enter a 6-digit code",
+      "INVALID_CODE": "Invalid 2FA code",
+      "INVALID_RECOVERY_CODE": "Invalid recovery code"
+    },
+    "ACCOUNT_LOCKED": "AUTH.ACCOUNT_LOCKED",
+    "BACK_TO_LOGIN": "AUTH.BACK_TO_LOGIN",
+    "EMAIL_VALIDATED": "AUTH.EMAIL_VALIDATED",
+    "EMAIL_VALIDATION_FAILED": "AUTH.EMAIL_VALIDATION_FAILED",
+    "INVALID_MFA_CODE": "AUTH.INVALID_MFA_CODE",
+    "LOGOUT_SUCCESS": "AUTH.LOGOUT_SUCCESS",
+    "MFA_DISABLED": "AUTH.MFA_DISABLED",
+    "MFA_DISABLE_FAILED": "AUTH.MFA_DISABLE_FAILED",
+    "MFA_INVALID": "AUTH.MFA_INVALID",
+    "MFA_SETUP_FAILED": "AUTH.MFA_SETUP_FAILED",
+    "MFA_VERIFIED": "AUTH.MFA_VERIFIED",
+    "RESET_FAILED": "AUTH.RESET_FAILED",
+    "RESET_INSTRUCTIONS": "AUTH.RESET_INSTRUCTIONS",
+    "RESET_LINK_FAILED": "AUTH.RESET_LINK_FAILED",
+    "RESET_LINK_SENT": "AUTH.RESET_LINK_SENT",
+    "RESET_PASSWORD": "AUTH.RESET_PASSWORD",
+    "RESET_SUCCESS": "AUTH.RESET_SUCCESS",
+    "SENDING": "AUTH.SENDING",
+    "SEND_LINK": "AUTH.SEND_LINK",
+    "SESSION_EXPIRED": "AUTH.SESSION_EXPIRED",
+    "SESSION_EXPIRING": "AUTH.SESSION_EXPIRING"
   },
   "SUMMARY": {
     "TITLE": "Overview",
@@ -337,7 +466,21 @@
       "ACTIVE": "Active",
       "EXPIRING": "Expiring",
       "TERMINATED": "Terminated"
-    }
+    },
+    "CREATE_NEW": "Créer un nouveau contrat",
+    "DEPOSIT": "Dépôt de garantie",
+    "END_DATE": "Date de fin",
+    "MARK_PROPERTY_VACANT": "Marquer le bien comme vacant",
+    "PROPERTY": "Bien immobilier",
+    "RECORD_PAYMENT": "Enregistrer paiement",
+    "RENT": "Loyer mensuel",
+    "START_DATE": "Date de début",
+    "TENANT": "Locataire",
+    "TERMINATE": "Résilier",
+    "TERMINATE_CONTRACT": "Résilier le contrat",
+    "TERMINATE_WARNING": "Cette action marquera le contrat comme terminé. Cette action est irréversible.",
+    "TERMINATION_DATE": "Date de résiliation",
+    "TYPE": "Type de contrat"
   },
   "PROFITABILITY": {
     "TITLE": "Accounting & Projections",
@@ -347,7 +490,22 @@
     "TITLE": "Tenant documents",
     "UPLOAD": "Upload document",
     "CREATE_CONTRACT": "Create document/contract",
-    "UPLOAD_NEW": "Upload new document"
+    "UPLOAD_NEW": "Upload new document",
+    "ALL_DOCUMENTS": "Tous les documents",
+    "DOCUMENTS": "documents",
+    "DOWNLOAD": "Télécharger",
+    "LOADING": "Chargement...",
+    "NO_DOCUMENTS": "Aucun document trouvé",
+    "PAGE_SUBTITLE": "Vue centralisée de tous les documents de vos locataires",
+    "PAGE_TITLE": "Tous les Documents",
+    "REFRESH": "Actualiser",
+    "SEARCH_PLACEHOLDER": "Rechercher un document, locataire, bien...",
+    "STATS": {
+      "FILTERED": "Filtrés",
+      "THIS_MONTH": "Ce mois",
+      "TOTAL": "Total documents"
+    },
+    "VIEW": "Voir"
   },
   "DOCUMENTS_TAB": {
     "TITLE": "Document Generation",
@@ -358,6 +516,15 @@
     "SUBTITLE": "Manage your preferences and account settings",
     "SAVE": "Save",
     "RESET": "Reset",
+    "ORGANIZATION": {
+      "LOAD_ERROR": "Error loading organization settings",
+      "SAVE_SUCCESS": "Organization settings updated successfully",
+      "SAVE_ERROR": "Error updating organization settings",
+      "REQUIRED_FIELDS": "Please fill required fields",
+      "LOGO_FILE_TOO_LARGE": "File too large. Maximum size is 2MB.",
+      "LOGO_INVALID_FILE_TYPE": "Invalid file type. Only JPEG, PNG, SVG, and WebP are allowed.",
+      "LOGO_UPLOAD_SUCCESS": "Logo uploaded successfully!"
+    },
     "TABS": {
       "PROFILE": "Profile",
       "NOTIFICATIONS": "Notifications",
@@ -455,5 +622,250 @@
   },
   "MON_LOCAGUEST": {
     "TITLE": "My LocaGuest"
+  },
+  "PAYMENT": {
+    "AMOUNT": "Amount",
+    "DATE": "Date",
+    "METHOD": "Payment method",
+    "METHOD_BANK": "Bank transfer",
+    "METHOD_CARD": "Card",
+    "METHOD_CASH": "Cash",
+    "METHOD_CHECK": "Check"
+  },
+  "PRICING": {
+    "TITLE": "Pricing",
+    "SUBTITLE": "Choose the plan that fits your needs"
+  },
+  "RELATION": {
+    "CONTRACT_FILES": "RELATION.CONTRACT_FILES",
+    "CONTRACT_SUMMARY": "RELATION.CONTRACT_SUMMARY",
+    "FINANCIAL_SUMMARY": "RELATION.FINANCIAL_SUMMARY",
+    "NOT_FOUND": "RELATION.NOT_FOUND",
+    "NO_PAYMENTS": "RELATION.NO_PAYMENTS",
+    "PAYMENT_TRANSACTIONS": "RELATION.PAYMENT_TRANSACTIONS",
+    "PROFITABILITY": "RELATION.PROFITABILITY"
+  },
+  "RENTABILITY": {
+    "CALCULATE": "Calculer la rentabilité",
+    "DEFERRED_TYPES": {
+      "PARTIAL": "Différé partiel",
+      "TOTAL": "Différé total"
+    },
+    "EXPORT_EXCEL": "Export Excel",
+    "EXPORT_PDF": "Export PDF",
+    "KPI": {
+      "AFTER_TAX": "Après impôts",
+      "ANNUAL": "Annuel",
+      "CASH_ON_CASH": "Cash-on-Cash",
+      "DSCR": "DSCR",
+      "INTERNAL_RETURN": "Taux de rentabilité interne",
+      "IRR": "TRI",
+      "LTV": "LTV",
+      "MONTHLY_CASHFLOW": "Cashflow mensuel",
+      "NET_NET_YIELD": "Rendement net-net",
+      "NET_PRESENT_VALUE": "Valeur actuelle nette",
+      "NPV": "VAN",
+      "PAYBACK": "Payback"
+    },
+    "LOAN_TYPES": {
+      "FIXED": "Taux fixe",
+      "MIXED": "Mixte",
+      "VARIABLE": "Taux variable"
+    },
+    "MONTHS": "mois",
+    "NEW": "Nouveau",
+    "NEXT": "Suivant",
+    "OBJECTIVES": {
+      "APPRECIATION": "Valorisation",
+      "CASHFLOW": "Cashflow",
+      "TAX_REDUCTION": "Défiscalisation",
+      "YIELD": "Rendement"
+    },
+    "PREVIOUS": "Précédent",
+    "PROPERTY_TYPES": {
+      "APARTMENT": "Appartement",
+      "COMMERCIAL": "Commercial",
+      "HOUSE": "Maison",
+      "LAND": "Terrain",
+      "PARKING": "Parking"
+    },
+    "SAVED": "Sauvegardé",
+    "SAVING": "Sauvegarde...",
+    "SCENARIOS": {
+      "EMPTY": "Aucun scénario enregistré",
+      "LOAD": "Charger",
+      "MODIFIED": "RENTABILITY.SCENARIOS.MODIFIED",
+      "NEW": "Nouveau",
+      "TITLE": "Gestion des scénarios"
+    },
+    "STATES": {
+      "GOOD": "Bon état",
+      "NEW": "Neuf",
+      "RENOVATED": "Rénové",
+      "TO_RENOVATE": "À rénover"
+    },
+    "STEP1": {
+      "FINANCIAL_DETAILS": "Détails financiers",
+      "FURNITURE_COST": "Coût du mobilier",
+      "HORIZON": "Horizon d'investissement",
+      "LAND_VALUE": "Valeur du terrain",
+      "LAND_VALUE_HINT": "Pour amortissement LMNP",
+      "LOCATION": "Localisation",
+      "NOTARY_FEES": "Frais de notaire",
+      "NOTARY_FEES_HINT": "7-8% du prix pour l'ancien",
+      "OBJECTIVE": "Objectif d'investissement",
+      "PROPERTY_TYPE": "Type de bien",
+      "PURCHASE_PRICE": "Prix d'achat",
+      "RENOVATION_COST": "Coût des travaux",
+      "STATE": "État",
+      "STRATEGY": "Stratégie locative",
+      "SUBTITLE": "Informations sur le bien immobilier",
+      "SURFACE": "Surface",
+      "TITLE": "Bien & Contexte",
+      "TOTAL_INVESTMENT": "Investissement total"
+    },
+    "STEP2": {
+      "ADDITIONAL_REVENUES": "Revenus complémentaires",
+      "ANNUAL_REVENUE": "Revenus annuels bruts",
+      "FIXED": "Fixe",
+      "GUARANTEED_RENT": "Loyer garanti",
+      "GUARANTEED_RENT_DESC": "Bail commercial, conciergerie, etc.",
+      "HIGH_SEASON_MULTIPLIER": "Multiplicateur haute saison",
+      "INDEXATION": "Indexation",
+      "INDEXATION_RATE": "Taux d'indexation",
+      "MONTHLY_RENT": "Loyer mensuel",
+      "MULTIPLIER_HINT": "Ex: 1.5 = +50%",
+      "NET_AFTER_VACANCY": "Net après vacance",
+      "OTHER_REVENUES": "Autres revenus",
+      "PARKING_RENT": "Loyer parking",
+      "SEASONALITY": "Saisonnalité",
+      "SEASONALITY_DESC": "Haute/basse saison",
+      "STORAGE_RENT": "Loyer cave",
+      "SUBTITLE": "Définissez vos revenus locatifs",
+      "TITLE": "Hypothèses de Revenus",
+      "VACANCY_HINT": "5-10% typique",
+      "VACANCY_RATE": "Taux de vacance"
+    },
+    "STEP3": {
+      "ADD_CAPEX": "Ajouter un CAPEX",
+      "ANNUAL_CHARGES": "Charges annuelles",
+      "CHARGES_INCREASE": "Augmentation annuelle",
+      "CONDO_FEES": "Charges de copro",
+      "DESCRIPTION": "Description",
+      "INSURANCE": "Assurance",
+      "MAINTENANCE_RATE": "Maintenance",
+      "MANAGEMENT_FEES": "Frais de gestion",
+      "NO_CAPEX": "Aucun CAPEX planifié",
+      "PLANNED_CAPEX": "CAPEX planifiés",
+      "PROPERTY_TAX": "Taxe foncière",
+      "RECOVERABLE_CHARGES": "Charges récupérables",
+      "SUBTITLE": "Définissez vos charges et investissements",
+      "TITLE": "Charges & CAPEX",
+      "YEAR_ONE": "Année 1"
+    },
+    "STEP4": {
+      "DEFERRED_MONTHS": "Différé (mois)",
+      "DEFERRED_TYPE": "Type de différé",
+      "DURATION": "Durée",
+      "EARLY_REPAYMENT_PENALTY": "Pénalités remboursement anticipé",
+      "INCLUDE_NOTARY": "Inclure frais de notaire dans prêt",
+      "INCLUDE_RENOVATION": "Inclure travaux dans prêt",
+      "INCLUDING_INSURANCE": "Assurance incluse",
+      "INSURANCE_RATE": "Assurance emprunteur",
+      "INTEREST_RATE": "Taux d'intérêt",
+      "LOAN_AMOUNT": "Montant emprunté",
+      "LOAN_TYPE": "Type de prêt",
+      "MONTHLY_PAYMENT": "Mensualité estimée",
+      "SUBTITLE": "Paramètres de votre prêt",
+      "TITLE": "Financement"
+    },
+    "STEP5": {
+      "CRL": "Contribution sur revenus locatifs (CRL)",
+      "CRL_DESC": "2.5% si revenus > 23 000€",
+      "DEFICIT_CARRY_FORWARD": "Report du déficit foncier",
+      "DEFICIT_DESC": "Jusqu'à 10 700€/an déductibles du revenu global",
+      "DEPRECIATION_YEARS": "Années d'amortissement bien",
+      "FURNITURE_DEPRECIATION_YEARS": "Années d'amortissement mobilier",
+      "LMNP_PARAMS": "Paramètres LMNP",
+      "MARGINAL_TAX_RATE": "Taux marginal d'imposition",
+      "SOCIAL_CONTRIBUTIONS": "Prélèvements sociaux",
+      "SUBTITLE": "Régime fiscal et paramètres",
+      "TAX_INFO": "Informations fiscales",
+      "TAX_REGIME": "Régime fiscal",
+      "TITLE": "Fiscalité"
+    },
+    "STEP6": {
+      "BREAK_EVEN_RENT": "Loyer point mort",
+      "CASHFLOW": "Cashflow",
+      "CHARGES": "Charges",
+      "EXIT": "Sortie",
+      "EXIT_PRICE": "Prix de sortie",
+      "FINAL_EQUITY": "Patrimoine final",
+      "FINANCIAL_RATIOS": "Ratios financiers",
+      "INVESTMENT": "Investissement",
+      "LOAN": "Prêt",
+      "NET_CAPITAL_GAIN": "Plus-value nette",
+      "NO_RESULTS": "Aucun résultat - Veuillez compléter toutes les étapes et calculer",
+      "OWN_FUNDS": "Apport personnel",
+      "REVENUE": "Revenus",
+      "SUBTITLE": "KPIs et performance",
+      "TAX": "Impôts",
+      "TITLE": "Résultats",
+      "TOTAL_INVESTMENT": "Investissement total",
+      "YEAR": "Année",
+      "YEARLY_TABLE": "Tableau annuel"
+    },
+    "STEP7": {
+      "IMPACT_ON_CASHFLOW": "Impact sur cashflow",
+      "IMPACT_ON_LOAN": "Impact sur mensualité",
+      "IMPACT_ON_REVENUE": "Impact sur revenus",
+      "INTEREST_RATE": "Taux d'intérêt",
+      "MONTHLY_RENT": "Loyer mensuel",
+      "NO_DATA": "Aucune donnée - Veuillez calculer d'abord",
+      "QUICK_ADJUSTMENTS": "Ajustements rapides",
+      "RATE_PLUS_HALF": "Taux +0.5%",
+      "RECALCULATE": "Recalculer",
+      "RECOMMENDATIONS": "Recommandations",
+      "RENT_MINUS_10": "Loyer -10%",
+      "RENT_PLUS_10": "Loyer +10%",
+      "RESET": "Réinitialiser",
+      "SUBTITLE": "Ajustez vos hypothèses et analysez l'impact",
+      "TITLE": "Analyse & Ajustements",
+      "VACANCY_PLUS_5": "Vacance +5%",
+      "VACANCY_RATE": "Taux de vacance",
+      "WHAT_IF": "Scénarios What-If"
+    },
+    "STRATEGIES": {
+      "BARE": "Location nue",
+      "COLIVING": "Coliving",
+      "COMMERCIAL": "Commercial",
+      "FURNISHED": "Meublé",
+      "SEASONAL": "Saisonnier"
+    },
+    "SUBTITLE": "Analysez la rentabilité de votre investissement immobilier",
+    "VERSIONS": {
+      "EMPTY": "RENTABILITY.VERSIONS.EMPTY",
+      "REFRESH": "RENTABILITY.VERSIONS.REFRESH",
+      "TITLE": "RENTABILITY.VERSIONS.TITLE"
+    },
+    "YEARS": "ans"
+  },
+  "SCENARIOS": {
+    "ADD_SHARE": "SCENARIOS.ADD_SHARE",
+    "ADD_SHARE_BTN": "SCENARIOS.ADD_SHARE_BTN",
+    "CAN_EDIT": "SCENARIOS.CAN_EDIT",
+    "CURRENT_SHARES": "SCENARIOS.CURRENT_SHARES",
+    "EXPIRES": "SCENARIOS.EXPIRES",
+    "NO_EXPIRATION": "SCENARIOS.NO_EXPIRATION",
+    "NO_SHARES": "SCENARIOS.NO_SHARES",
+    "PERMISSION": "SCENARIOS.PERMISSION",
+    "SELECT_USER": "SCENARIOS.SELECT_USER",
+    "SELECT_USER_PLACEHOLDER": "SCENARIOS.SELECT_USER_PLACEHOLDER",
+    "SET_EXPIRATION": "SCENARIOS.SET_EXPIRATION",
+    "SHARE_TITLE": "SCENARIOS.SHARE_TITLE",
+    "VIEW_ONLY": "SCENARIOS.VIEW_ONLY"
+  },
+  "USER": {
+    "MENU": "USER.MENU"
   }
 }

@@ -64,7 +64,7 @@ export class OrganizationSettingsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading organization:', error);
-        this.toast.error('Error loading organization settings');
+        this.toast.error('SETTINGS.ORGANIZATION.LOAD_ERROR');
         this.isLoading.set(false);
       }
     });
@@ -82,14 +82,14 @@ export class OrganizationSettingsComponent implements OnInit {
     // Validation côté client
     const maxSize = 2 * 1024 * 1024; // 2 MB
     if (file.size > maxSize) {
-      this.toast.error('File too large. Maximum size is 2MB.');
+      this.toast.error('SETTINGS.ORGANIZATION.LOGO_FILE_TOO_LARGE');
       input.value = ''; // Reset input
       return;
     }
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      this.toast.error('Invalid file type. Only JPEG, PNG, SVG, and WebP are allowed.');
+      this.toast.error('SETTINGS.ORGANIZATION.LOGO_INVALID_FILE_TYPE');
       input.value = ''; // Reset input
       return;
     }
@@ -103,7 +103,7 @@ export class OrganizationSettingsComponent implements OnInit {
           ...current,
           logoUrl: response.logoUrl
         });
-        this.toast.success('Logo uploaded successfully!');
+        this.toast.success('SETTINGS.ORGANIZATION.LOGO_UPLOAD_SUCCESS');
         this.isUploadingLogo.set(false);
         
         // Refresh branding to update logo in header
@@ -136,7 +136,7 @@ export class OrganizationSettingsComponent implements OnInit {
     const org = this.organization();
     
     if (!org.name || !org.email) {
-      this.toast.error('Please fill required fields');
+      this.toast.error('SETTINGS.ORGANIZATION.REQUIRED_FIELDS');
       return;
     }
 
@@ -154,7 +154,7 @@ export class OrganizationSettingsComponent implements OnInit {
     }).subscribe({
       next: (updated) => {
         this.organization.set(updated);
-        this.toast.success('Organization settings updated successfully');
+        this.toast.success('SETTINGS.ORGANIZATION.SAVE_SUCCESS');
         this.isSaving.set(false);
         
         // Refresh branding to apply new colors
@@ -162,7 +162,7 @@ export class OrganizationSettingsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error updating organization:', error);
-        this.toast.error('Error updating organization settings');
+        this.toast.error('SETTINGS.ORGANIZATION.SAVE_ERROR');
         this.isSaving.set(false);
       }
     });

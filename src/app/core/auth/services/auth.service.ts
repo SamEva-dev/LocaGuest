@@ -18,6 +18,16 @@ export class AuthService {
   user = this.state.user.asReadonly();
   isAuthenticated = this.state.isAuthenticated;
 
+  private getBackendErrorMessage(err: any): string | null {
+    const body = err?.error;
+    if (!body) return null;
+    if (typeof body === 'string') return body;
+    if (typeof body.error === 'string' && body.error.trim().length > 0) return body.error;
+    if (typeof body.message === 'string' && body.message.trim().length > 0) return body.message;
+    if (typeof body.title === 'string' && body.title.trim().length > 0) return body.title;
+    return null;
+  }
+
   // Computed signals
 
   bootstrapFromStorage() {
@@ -61,7 +71,12 @@ export class AuthService {
       
     } catch (err: any) {
       console.error('❌ Register error:', err);
-      this.toast.error('AUTH.REGISTER_FAILED');
+      const backendMessage = this.getBackendErrorMessage(err);
+      if (backendMessage) {
+        this.toast.errorDirect(backendMessage);
+      } else {
+        this.toast.error('AUTH.REGISTER_FAILED');
+      }
       throw err;
     }
   }

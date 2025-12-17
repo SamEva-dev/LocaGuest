@@ -103,12 +103,12 @@
               <i [class]="useRecoveryCode() ? 'ph ph-shield-warning text-3xl text-orange-600' : 'ph ph-lock-key text-3xl text-blue-600'"></i>
             </div>
             <h2 class="text-xl font-semibold">
-              {{ useRecoveryCode() ? 'Recovery Code' : 'Two-Factor Authentication' }}
+              {{ useRecoveryCode() ? ('AUTH.MFA.RECOVERY_TITLE' | translate) : ('AUTH.MFA.TITLE' | translate) }}
             </h2>
             <p class="text-sm text-gray-500 mt-2">
               {{ useRecoveryCode() 
-                ? 'Use one of your backup recovery codes' 
-                : 'Enter the 6-digit code from your authenticator app' }}
+                ? ('AUTH.MFA.RECOVERY_HINT' | translate)
+                : ('AUTH.MFA.ENTER_CODE' | translate) }}
             </p>
             <p class="text-xs text-gray-400 mt-1">{{ userEmail() }}</p>
           </div>
@@ -116,7 +116,7 @@
           <!-- TOTP Code Input -->
           @if (!useRecoveryCode()) {
             <div>
-              <label class="block mb-2 font-medium text-center">Verification Code</label>
+              <label class="block mb-2 font-medium text-center">{{ 'AUTH.MFA.VERIFICATION_CODE' | translate }}</label>
               <input 
                 type="text" 
                 inputmode="numeric"
@@ -130,7 +130,7 @@
                 autofocus
               />
               <p class="text-xs text-gray-500 mt-2 text-center">
-                Code expires in 5 minutes
+                {{ 'AUTH.MFA.CODE_EXPIRES' | translate }}
               </p>
             </div>
 
@@ -139,14 +139,14 @@
               (click)="verify2FA()"
               [disabled]="twoFactorCode().length !== 6 || isLoading()"
               class="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              {{ isLoading() ? 'Verifying...' : 'Verify & Login' }}
+              {{ isLoading() ? ('AUTH.MFA.VERIFYING' | translate) : ('AUTH.MFA.VERIFY_AND_LOGIN' | translate) }}
             </button>
           }
 
           <!-- Recovery Code Input -->
           @if (useRecoveryCode()) {
             <div>
-              <label class="block mb-2 font-medium text-center">Recovery Code</label>
+              <label class="block mb-2 font-medium text-center">{{ 'AUTH.MFA.RECOVERY_CODE' | translate }}</label>
               <input 
                 type="text" 
                 maxlength="12"
@@ -159,7 +159,7 @@
                 autofocus
               />
               <p class="text-xs text-gray-500 mt-2 text-center">
-                Enter one of your backup recovery codes
+                {{ 'AUTH.MFA.RECOVERY_HINT' | translate }}
               </p>
             </div>
 
@@ -168,7 +168,7 @@
               (click)="verifyRecoveryCode()"
               [disabled]="recoveryCode().length < 8 || isLoading()"
               class="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-              {{ isLoading() ? 'Verifying...' : 'Verify & Login' }}
+              {{ isLoading() ? ('AUTH.MFA.VERIFYING' | translate) : ('AUTH.MFA.VERIFY_AND_LOGIN' | translate) }}
             </button>
           }
 
@@ -182,11 +182,11 @@
               class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
             <label for="rememberDevice" class="text-sm text-gray-700 cursor-pointer">
-              Remember this device for 30 days
+              {{ 'AUTH.MFA.REMEMBER_DEVICE' | translate }}
             </label>
           </div>
           <p class="text-xs text-gray-500 text-center">
-            You won't need to enter a code on this device
+            {{ 'AUTH.MFA.REMEMBER_DEVICE_HINT' | translate }}
           </p>
 
           <!-- Toggle Recovery Code -->
@@ -195,7 +195,7 @@
             (click)="toggleRecoveryCode()"
             [disabled]="isLoading()"
             class="w-full py-2 text-sm text-blue-600 hover:text-blue-700 hover:underline transition disabled:opacity-50">
-            {{ useRecoveryCode() ? 'Use authenticator code instead' : 'Use recovery code instead' }}
+            {{ useRecoveryCode() ? ('AUTH.MFA.USE_AUTH_APP' | translate) : ('AUTH.MFA.USE_RECOVERY' | translate) }}
           </button>
 
           <!-- Back Button -->
@@ -205,13 +205,13 @@
             [disabled]="isLoading()"
             class="w-full py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition disabled:opacity-50">
             <i class="ph ph-arrow-left mr-2"></i>
-            Back to Login
+            {{ 'AUTH.MFA.BACK_TO_LOGIN' | translate }}
           </button>
 
           <!-- Help Text -->
           <div class="text-center text-xs text-gray-500 mt-4">
-            <p>Lost your device?</p>
-            <p class="mt-1">Contact your administrator for assistance</p>
+            <p>{{ 'AUTH.MFA.LOST_DEVICE' | translate }}</p>
+            <p class="mt-1">{{ 'AUTH.MFA.CONTACT_ADMIN' | translate }}</p>
           </div>
         </div>
       }
