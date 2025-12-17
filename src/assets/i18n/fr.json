@@ -241,6 +241,9 @@
     "CREATE": "Créer",
     "CONFIRM": "Confirmer",
     "CLOSE": "Fermer",
+    "SAVING": "Enregistrement...",
+    "UPLOADING": "Téléversement...",
+    "NA": "N/A",
     "ACCESS_DENIED": "Access denied",
     "ERROR": "An error occurred",
     "FIELD_REQUIRED": "Required field",
@@ -303,27 +306,27 @@
       "INVALID_CODE": "Code 2FA invalide",
       "INVALID_RECOVERY_CODE": "Code de récupération invalide"
     },
-    "ACCOUNT_LOCKED": "AUTH.ACCOUNT_LOCKED",
-    "BACK_TO_LOGIN": "AUTH.BACK_TO_LOGIN",
-    "EMAIL_VALIDATED": "AUTH.EMAIL_VALIDATED",
-    "EMAIL_VALIDATION_FAILED": "AUTH.EMAIL_VALIDATION_FAILED",
-    "INVALID_MFA_CODE": "AUTH.INVALID_MFA_CODE",
-    "LOGOUT_SUCCESS": "AUTH.LOGOUT_SUCCESS",
-    "MFA_DISABLED": "AUTH.MFA_DISABLED",
-    "MFA_DISABLE_FAILED": "AUTH.MFA_DISABLE_FAILED",
-    "MFA_INVALID": "AUTH.MFA_INVALID",
-    "MFA_SETUP_FAILED": "AUTH.MFA_SETUP_FAILED",
-    "MFA_VERIFIED": "AUTH.MFA_VERIFIED",
-    "RESET_FAILED": "AUTH.RESET_FAILED",
-    "RESET_INSTRUCTIONS": "AUTH.RESET_INSTRUCTIONS",
-    "RESET_LINK_FAILED": "AUTH.RESET_LINK_FAILED",
-    "RESET_LINK_SENT": "AUTH.RESET_LINK_SENT",
-    "RESET_PASSWORD": "AUTH.RESET_PASSWORD",
-    "RESET_SUCCESS": "AUTH.RESET_SUCCESS",
-    "SENDING": "AUTH.SENDING",
-    "SEND_LINK": "AUTH.SEND_LINK",
-    "SESSION_EXPIRED": "AUTH.SESSION_EXPIRED",
-    "SESSION_EXPIRING": "AUTH.SESSION_EXPIRING"
+    "ACCOUNT_LOCKED": "Compte verrouillé. Réessayez plus tard ou contactez le support.",
+    "BACK_TO_LOGIN": "Retour à la connexion",
+    "EMAIL_VALIDATED": "Votre email a été validé.",
+    "EMAIL_VALIDATION_FAILED": "Échec de la validation de l'email.",
+    "INVALID_MFA_CODE": "Code MFA invalide.",
+    "LOGOUT_SUCCESS": "Déconnexion réussie.",
+    "MFA_DISABLED": "MFA désactivé.",
+    "MFA_DISABLE_FAILED": "Impossible de désactiver le MFA.",
+    "MFA_INVALID": "MFA invalide.",
+    "MFA_SETUP_FAILED": "Impossible de configurer le MFA.",
+    "MFA_VERIFIED": "MFA vérifié.",
+    "RESET_FAILED": "Impossible de réinitialiser le mot de passe.",
+    "RESET_INSTRUCTIONS": "Si votre email existe, vous recevrez un lien de réinitialisation.",
+    "RESET_LINK_FAILED": "Impossible d'envoyer le lien.",
+    "RESET_LINK_SENT": "Lien envoyé.",
+    "RESET_PASSWORD": "Réinitialiser le mot de passe",
+    "RESET_SUCCESS": "Mot de passe réinitialisé.",
+    "SENDING": "Envoi...",
+    "SEND_LINK": "Envoyer le lien",
+    "SESSION_EXPIRED": "Votre session a expiré. Veuillez vous reconnecter.",
+    "SESSION_EXPIRING": "Votre session va expirer bientôt."
   },
   "SUMMARY": {
     "TITLE": "Vue d'ensemble",
@@ -552,7 +555,41 @@
       "REQUIRED_FIELDS": "Veuillez remplir les champs obligatoires",
       "LOGO_FILE_TOO_LARGE": "Fichier trop volumineux. Taille maximale: 2 MB.",
       "LOGO_INVALID_FILE_TYPE": "Type de fichier invalide. Seuls JPEG, PNG, SVG et WebP sont autorisés.",
-      "LOGO_UPLOAD_SUCCESS": "Logo envoyé avec succès"
+      "LOGO_UPLOAD_SUCCESS": "Logo envoyé avec succès",
+      "INFO": {
+        "TITLE": "Informations de l'organisation",
+        "NAME": "Nom de l'organisation",
+        "NAME_PLACEHOLDER": "Ma société",
+        "CODE": "Code de l'organisation",
+        "EMAIL": "Email",
+        "EMAIL_PLACEHOLDER": "contact@societe.com",
+        "PHONE": "Téléphone",
+        "PHONE_PLACEHOLDER": "+33 6 12 34 56 78",
+        "WEBSITE": "Site web",
+        "WEBSITE_PLACEHOLDER": "https://www.societe.com"
+      },
+      "LOGO": {
+        "TITLE": "Logo",
+        "ALT": "Logo de l'organisation",
+        "UPLOAD": "Téléverser le logo",
+        "HELP": "PNG, JPG ou SVG. Max 2MB."
+      },
+      "BRANDING": {
+        "TITLE": "Couleurs de marque",
+        "RESET": "Réinitialiser",
+        "PRIMARY": "Couleur principale",
+        "SECONDARY": "Couleur secondaire",
+        "ACCENT": "Couleur d'accent",
+        "PREVIEW": "Aperçu",
+        "PRIMARY_BUTTON": "Bouton principal",
+        "SECONDARY_BUTTON": "Bouton secondaire",
+        "ACCENT_BUTTON": "Bouton accent"
+      },
+      "SUBSCRIPTION": {
+        "TITLE": "Abonnement",
+        "CURRENT_PLAN": "Plan actuel",
+        "STATUS": "Statut"
+      }
     },
     "TABS": {
       "PROFILE": "Profil",
@@ -572,7 +609,12 @@
       "PHONE": "Téléphone",
       "COMPANY": "Société",
       "ROLE": "Rôle",
-      "BIO": "Bio / Description"
+      "BIO": "Bio / Description",
+      "ROLES": {
+        "OWNER": "Propriétaire",
+        "MANAGER": "Gestionnaire",
+        "AGENT": "Agent"
+      }
     },
     "NOTIFICATIONS": {
       "TITLE": "Préférences de Notification",

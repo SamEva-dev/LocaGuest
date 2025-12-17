@@ -42,13 +42,13 @@
             <label class="px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded-lg cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 transition inline-block" [class.opacity-50]="uploadingPhoto" [class.cursor-not-allowed]="uploadingPhoto">
               @if (uploadingPhoto) {
                 <i class="ph ph-spinner animate-spin mr-2"></i>
-                Upload...
+                {{ 'COMMON.UPLOADING' | translate }}
               } @else {
                 {{ 'SETTINGS.PROFILE.CHANGE_PHOTO' | translate }}
               }
               <input type="file" class="hidden" accept="image/*" (change)="onPhotoChange($event)" [disabled]="uploadingPhoto">
             </label>
-            <p class="text-xs text-slate-400 mt-1">JPG, PNG ou GIF - Max 5MB</p>
+            <p class="text-xs text-slate-400 mt-1">{{ 'SETTINGS.PROFILE.PHOTO_HELP' | translate }}</p>
           </div>
         </div>
       </div>
@@ -100,9 +100,9 @@
           <select 
             [(ngModel)]="profileData().role"
             class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
-            <option>Propriétaire</option>
-            <option>Gestionnaire</option>
-            <option>Agent</option>
+            <option [value]="'Owner'">{{ 'SETTINGS.PROFILE.ROLES.OWNER' | translate }}</option>
+            <option [value]="'Manager'">{{ 'SETTINGS.PROFILE.ROLES.MANAGER' | translate }}</option>
+            <option [value]="'Agent'">{{ 'SETTINGS.PROFILE.ROLES.AGENT' | translate }}</option>
           </select>
         </div>
       </div>

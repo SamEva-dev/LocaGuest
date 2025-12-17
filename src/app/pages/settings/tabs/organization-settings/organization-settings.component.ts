@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { OrganizationsService, Organization } from '../../../../core/services/organizations.service';
 import { BrandingThemeService } from '../../../../core/services/branding-theme.service';
 import { ToastService } from '../../../../core/ui/toast.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 interface OrganizationSettings {
   id: string;
@@ -24,10 +25,11 @@ interface OrganizationSettings {
 @Component({
   selector: 'app-organization-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './organization-settings.component.html'
 })
 export class OrganizationSettingsComponent implements OnInit {
+  private translate = inject(TranslateService);
   private organizationsService = inject(OrganizationsService);
   private brandingThemeService = inject(BrandingThemeService);
   private toast = inject(ToastService);

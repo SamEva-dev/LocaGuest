@@ -242,6 +242,9 @@
     "NETWORK_ERROR": "Network error",
     "SERVER_ERROR": "Server error",
     "ACCESS_DENIED": "Access denied",
+    "SAVING": "Saving...",
+    "UPLOADING": "Uploading...",
+    "NA": "N/A",
     "CREATE": "Créer",
     "SAVE": "Enregistrer"
   },
@@ -301,27 +304,27 @@
       "INVALID_CODE": "Invalid 2FA code",
       "INVALID_RECOVERY_CODE": "Invalid recovery code"
     },
-    "ACCOUNT_LOCKED": "AUTH.ACCOUNT_LOCKED",
-    "BACK_TO_LOGIN": "AUTH.BACK_TO_LOGIN",
-    "EMAIL_VALIDATED": "AUTH.EMAIL_VALIDATED",
-    "EMAIL_VALIDATION_FAILED": "AUTH.EMAIL_VALIDATION_FAILED",
-    "INVALID_MFA_CODE": "AUTH.INVALID_MFA_CODE",
-    "LOGOUT_SUCCESS": "AUTH.LOGOUT_SUCCESS",
-    "MFA_DISABLED": "AUTH.MFA_DISABLED",
-    "MFA_DISABLE_FAILED": "AUTH.MFA_DISABLE_FAILED",
-    "MFA_INVALID": "AUTH.MFA_INVALID",
-    "MFA_SETUP_FAILED": "AUTH.MFA_SETUP_FAILED",
-    "MFA_VERIFIED": "AUTH.MFA_VERIFIED",
-    "RESET_FAILED": "AUTH.RESET_FAILED",
-    "RESET_INSTRUCTIONS": "AUTH.RESET_INSTRUCTIONS",
-    "RESET_LINK_FAILED": "AUTH.RESET_LINK_FAILED",
-    "RESET_LINK_SENT": "AUTH.RESET_LINK_SENT",
-    "RESET_PASSWORD": "AUTH.RESET_PASSWORD",
-    "RESET_SUCCESS": "AUTH.RESET_SUCCESS",
-    "SENDING": "AUTH.SENDING",
-    "SEND_LINK": "AUTH.SEND_LINK",
-    "SESSION_EXPIRED": "AUTH.SESSION_EXPIRED",
-    "SESSION_EXPIRING": "AUTH.SESSION_EXPIRING"
+    "ACCOUNT_LOCKED": "Account locked. Please try again later or contact support.",
+    "BACK_TO_LOGIN": "Back to sign in",
+    "EMAIL_VALIDATED": "Your email has been verified.",
+    "EMAIL_VALIDATION_FAILED": "Email verification failed.",
+    "INVALID_MFA_CODE": "Invalid MFA code.",
+    "LOGOUT_SUCCESS": "Signed out successfully.",
+    "MFA_DISABLED": "MFA disabled.",
+    "MFA_DISABLE_FAILED": "Could not disable MFA.",
+    "MFA_INVALID": "Invalid MFA.",
+    "MFA_SETUP_FAILED": "Could not set up MFA.",
+    "MFA_VERIFIED": "MFA verified.",
+    "RESET_FAILED": "Could not reset password.",
+    "RESET_INSTRUCTIONS": "If your email exists, you will receive a reset link.",
+    "RESET_LINK_FAILED": "Could not send reset link.",
+    "RESET_LINK_SENT": "Reset link sent.",
+    "RESET_PASSWORD": "Reset password",
+    "RESET_SUCCESS": "Password reset successfully.",
+    "SENDING": "Sending...",
+    "SEND_LINK": "Send link",
+    "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
+    "SESSION_EXPIRING": "Your session will expire soon."
   },
   "SUMMARY": {
     "TITLE": "Overview",
@@ -523,7 +526,41 @@
       "REQUIRED_FIELDS": "Please fill required fields",
       "LOGO_FILE_TOO_LARGE": "File too large. Maximum size is 2MB.",
       "LOGO_INVALID_FILE_TYPE": "Invalid file type. Only JPEG, PNG, SVG, and WebP are allowed.",
-      "LOGO_UPLOAD_SUCCESS": "Logo uploaded successfully!"
+      "LOGO_UPLOAD_SUCCESS": "Logo uploaded successfully!",
+      "INFO": {
+        "TITLE": "Organization information",
+        "NAME": "Organization name",
+        "NAME_PLACEHOLDER": "My company",
+        "CODE": "Organization code",
+        "EMAIL": "Email",
+        "EMAIL_PLACEHOLDER": "contact@company.com",
+        "PHONE": "Phone",
+        "PHONE_PLACEHOLDER": "+1 234 567 8900",
+        "WEBSITE": "Website",
+        "WEBSITE_PLACEHOLDER": "https://www.company.com"
+      },
+      "LOGO": {
+        "TITLE": "Logo",
+        "ALT": "Organization logo",
+        "UPLOAD": "Upload logo",
+        "HELP": "PNG, JPG or SVG. Max 2MB."
+      },
+      "BRANDING": {
+        "TITLE": "Brand colors",
+        "RESET": "Reset to defaults",
+        "PRIMARY": "Primary color",
+        "SECONDARY": "Secondary color",
+        "ACCENT": "Accent color",
+        "PREVIEW": "Preview",
+        "PRIMARY_BUTTON": "Primary button",
+        "SECONDARY_BUTTON": "Secondary button",
+        "ACCENT_BUTTON": "Accent button"
+      },
+      "SUBSCRIPTION": {
+        "TITLE": "Subscription",
+        "CURRENT_PLAN": "Current plan",
+        "STATUS": "Status"
+      }
     },
     "TABS": {
       "PROFILE": "Profile",
@@ -545,7 +582,12 @@
       "PHONE": "Phone",
       "COMPANY": "Company",
       "ROLE": "Role",
-      "BIO": "Bio / Description"
+      "BIO": "Bio / Description",
+      "ROLES": {
+        "OWNER": "Owner",
+        "MANAGER": "Manager",
+        "AGENT": "Agent"
+      }
     },
     "NOTIFICATIONS": {
       "TITLE": "Notification Preferences",
