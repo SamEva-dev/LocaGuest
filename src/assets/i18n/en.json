@@ -245,8 +245,76 @@
     "SAVING": "Saving...",
     "UPLOADING": "Uploading...",
     "NA": "N/A",
+    "UNKNOWN_PROPERTY": "Unknown property",
+    "UNKNOWN": "Unknown",
+    "ROOM": "Room {{number}}",
     "CREATE": "Créer",
     "SAVE": "Enregistrer"
+  },
+  "PROPERTY_TENANTS": {
+    "INVENTORY": {
+      "EXIT": {
+        "MISSING_ENTRY": "Error: no entry inventory found for this contract. Please create an entry inventory first."
+      }
+    },
+    "ERRORS": {
+      "TENANT_NOT_FOUND": "Tenant not found"
+    },
+    "RENEWAL": {
+      "SUCCESS": "Contract renewed successfully"
+    },
+    "ADDENDUM": {
+      "IN_PROGRESS": "Addendum feature is under development",
+      "ONLY_ACTIVE_OR_SIGNED": "Only active or signed contracts can have an addendum",
+      "SUCCESS": "Addendum created successfully"
+    },
+    "DISSOCIATE": {
+      "BLOCKED": "Cannot dissociate\n\nYou cannot dissociate {{tenantName}} from this property while:\n• The lease is still Signed or Active\n• Documents are associated\n\nProcedure: terminate/cancel the contract first.",
+      "TITLE": "Dissociate tenant",
+      "MESSAGE": "Are you sure you want to dissociate {{tenantName}} from this property?\n\nWarning: this does not delete the contract, it only removes the direct association.\nThe tenant will remain linked through the contract.",
+      "ERROR": "Error dissociating tenant"
+    },
+    "STATUS": {
+      "FUTURE_OCCUPANT": "Future occupant",
+      "CURRENT_OCCUPANT": "Current occupant",
+      "LEFT": "Left",
+      "NOTICE": "Notice",
+      "ACTIVE": "Active"
+    }
+  },
+  "PAYMENTS": {
+    "ADD": {
+      "TITLE": "Add a payment",
+      "FOR_TENANT": "For {{name}}",
+      "CONTRACT": "Contract / Property",
+      "LOADING_CONTRACTS": "Loading contracts...",
+      "NO_ACTIVE_CONTRACT": "No active contract found for this tenant",
+      "SELECT_CONTRACT": "Select a contract",
+      "AMOUNT_DUE": "Amount due",
+      "AMOUNT_PAID": "Amount paid",
+      "AMOUNT_PLACEHOLDER": "0.00",
+      "FILL_TOTAL": "Full amount",
+      "REMAINING": "Remaining due:",
+      "EXPECTED_DATE": "Due date",
+      "PAYMENT_DATE": "Payment date",
+      "METHOD": "Payment method",
+      "NOTE": "Note (optional)",
+      "NOTE_PLACEHOLDER": "Add a note...",
+      "SAVE": "Save payment"
+    },
+    "METHODS": {
+      "BANK_TRANSFER": "Bank transfer",
+      "CASH": "Cash",
+      "CHECK": "Check",
+      "OTHER": "Other"
+    },
+    "SUCCESS": {
+      "CREATED": "Payment saved successfully"
+    },
+    "ERRORS": {
+      "LOAD_CONTRACTS": "Error loading contracts",
+      "CREATE": "Error saving payment"
+    }
   },
   "AUTH": {
     "SUBTITLE": "Sign in to your LocaGuest space",

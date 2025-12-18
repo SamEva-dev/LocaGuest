@@ -7,6 +7,7 @@ import { InternalTabManagerService } from '../../../../core/services/internal-ta
 import { TenantsService } from '../../../../core/services/tenants.service';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
+import { TranslateService } from '@ngx-translate/core';
 import { 
   InventoryEntryWizardSimpleComponent, 
   InventoryEntryWizardData 
@@ -72,6 +73,7 @@ export class PropertyTenantsTab {
   
   private toasts = inject(ToastService);
   private confirmService = inject(ConfirmService);
+  private translate = inject(TranslateService);
   
   isLoading = signal(false);
   showActions = signal(false);
@@ -102,7 +104,7 @@ export class PropertyTenantsTab {
       const tenant = this.associatedTenants().find(t => t.id === contract.tenantId);
       const tenantData: TenantListItem = tenant || { 
         id: contract.tenantId, 
-        fullName: contract.tenantName || 'Inconnu', 
+        fullName: contract.tenantName || this.translate.instant('COMMON.UNKNOWN'), 
         code: '', 
         email: '',
         phone: '',
@@ -128,7 +130,9 @@ export class PropertyTenantsTab {
         contract,
         room: this.getRoomFromContract(contract),
         isFutureOccupant,
-        statusLabel: isFutureOccupant ? 'Futur occupant' : 'Occupant actuel',
+        statusLabel: isFutureOccupant
+          ? this.translate.instant('PROPERTY_TENANTS.STATUS.FUTURE_OCCUPANT')
+          : this.translate.instant('PROPERTY_TENANTS.STATUS.CURRENT_OCCUPANT'),
         statusColor: isFutureOccupant ? 'blue' : 'emerald',
         arrivalDate: isFutureOccupant ? this.formatDate(contract.startDate) : undefined,
         daysUntilArrival: isFutureOccupant ? daysUntilArrival : undefined,
@@ -155,7 +159,7 @@ export class PropertyTenantsTab {
     return pastContracts.map(contract => {
       const tenant = this.associatedTenants().find(t => t.id === contract.tenantId);
       return {
-        tenant: tenant || { id: contract.tenantId, fullName: contract.tenantName || 'Inconnu', code: '', status: 'Inactive' },
+        tenant: tenant || { id: contract.tenantId, fullName: contract.tenantName || this.translate.instant('COMMON.UNKNOWN'), code: '', status: 'Inactive' },
         contract
       } as TenantWithContract;
     });
@@ -173,7 +177,7 @@ export class PropertyTenantsTab {
   openTenantDetail(tenant: TenantListItem) {
     if (!tenant.id) return;
     // ✅ Passer les infos du bien pour afficher le badge d'association
-    this.tabManager.openTenant(tenant.id, tenant.fullName || 'Locataire', {
+    this.tabManager.openTenant(tenant.id, tenant.fullName || this.translate.instant('COMMON.TENANT'), {
       fromProperty: {
         id: this.property().id,
         code: this.property().code,
@@ -186,7 +190,7 @@ export class PropertyTenantsTab {
   viewInventoryEntry(tenant: TenantListItem) {
     if (!tenant.id) return;
     // Ouvrir l'onglet locataire avec focus sur l'onglet documents
-    this.tabManager.openTenant(tenant.id, tenant.fullName || 'Locataire', {
+    this.tabManager.openTenant(tenant.id, tenant.fullName || this.translate.instant('COMMON.TENANT'), {
       initialTab: 'documents',
       fromProperty: {
         id: this.property().id,
@@ -200,7 +204,7 @@ export class PropertyTenantsTab {
   viewInventoryExit(tenant: TenantListItem) {
     if (!tenant.id) return;
     // Ouvrir l'onglet locataire avec focus sur l'onglet documents
-    this.tabManager.openTenant(tenant.id, tenant.fullName || 'Locataire', {
+    this.tabManager.openTenant(tenant.id, tenant.fullName || this.translate.instant('COMMON.TENANT'), {
       initialTab: 'documents',
       fromProperty: {
         id: this.property().id,
@@ -240,8 +244,8 @@ export class PropertyTenantsTab {
       propertyId: property.id,
       propertyName: property.name,
       roomId: contract.roomId,
-      roomName: contract.roomId ? `Chambre ${contract.roomId}` : undefined,
-      tenantName: tenant?.fullName || contract.tenantName || 'Inconnu'
+      roomName: contract.roomId ? this.translate.instant('COMMON.ROOM', { number: contract.roomId }) : undefined,
+      tenantName: tenant?.fullName || contract.tenantName || this.translate.instant('COMMON.UNKNOWN')
     });
     
     this.showInventoryEntryWizard.set(true);
@@ -257,7 +261,7 @@ export class PropertyTenantsTab {
     const inventoryEntryId = (contract as any).inventoryEntryId;
     
     if (!inventoryEntryId) {
-      this.toasts.errorDirect('Erreur: Aucun EDL d\'entrée trouvé pour ce contrat.\n\nVous devez d\'abord créer un EDL d\'entrée.');
+      this.toasts.error('PROPERTY_TENANTS.INVENTORY.EXIT.MISSING_ENTRY');
       return;
     }
     
@@ -266,8 +270,8 @@ export class PropertyTenantsTab {
       propertyId: property.id,
       propertyName: property.name,
       roomId: contract.roomId,
-      roomName: contract.roomId ? `Chambre ${contract.roomId}` : undefined,
-      tenantName: tenant?.fullName || contract.tenantName || 'Inconnu',
+      roomName: contract.roomId ? this.translate.instant('COMMON.ROOM', { number: contract.roomId }) : undefined,
+      tenantName: tenant?.fullName || contract.tenantName || this.translate.instant('COMMON.UNKNOWN'),
       inventoryEntryId: inventoryEntryId
     });
     
@@ -287,7 +291,7 @@ export class PropertyTenantsTab {
   
   createAmendment(contract: Contract) {
     console.log('Create amendment for contract:', contract.id);
-    this.toasts.infoDirect('Fonction "Avenant" en cours de développement');
+    this.toasts.info('PROPERTY_TENANTS.ADDENDUM.IN_PROGRESS');
   }
   
   renewContract(contract: Contract) {
@@ -295,7 +299,7 @@ export class PropertyTenantsTab {
     const tenantItem = this.currentTenants().find(t => t.contract.id === contract.id);
     
     if (!tenantItem) {
-      this.toasts.errorDirect('Locataire introuvable');
+      this.toasts.error('PROPERTY_TENANTS.ERRORS.TENANT_NOT_FOUND');
       return;
     }
     
@@ -303,7 +307,7 @@ export class PropertyTenantsTab {
     const renewalData = {
       contract: contract,
       propertyName: this.property().name,
-      tenantName: tenantItem.tenant.fullName || 'Locataire',
+      tenantName: tenantItem.tenant.fullName || this.translate.instant('COMMON.TENANT'),
       roomName: tenantItem.room
     };
     
@@ -315,7 +319,7 @@ export class PropertyTenantsTab {
   onRenewalCompleted(newContractId: string) {
     this.showRenewalWizard.set(false);
     this.renewalWizardData.set(null);
-    this.toasts.successDirect('Contrat renouvelé avec succès !');
+    this.toasts.success('PROPERTY_TENANTS.RENEWAL.SUCCESS');
     // Recharger les données
     this.onRefreshNeeded.emit();
   }
@@ -330,7 +334,7 @@ export class PropertyTenantsTab {
   createAddendum(contract: Contract) {
     // Vérifier que le contrat peut avoir un avenant
     if (contract.status !== 'Active' && contract.status !== 'Signed') {
-      this.toasts.warningDirect('Seuls les contrats actifs ou signés peuvent avoir un avenant');
+      this.toasts.warning('PROPERTY_TENANTS.ADDENDUM.ONLY_ACTIVE_OR_SIGNED');
       return;
     }
     
@@ -338,7 +342,7 @@ export class PropertyTenantsTab {
     const tenantItem = this.currentTenants().find(t => t.contract.id === contract.id);
     
     if (!tenantItem) {
-      this.toasts.errorDirect('Locataire introuvable');
+      this.toasts.error('PROPERTY_TENANTS.ERRORS.TENANT_NOT_FOUND');
       return;
     }
     
@@ -346,7 +350,7 @@ export class PropertyTenantsTab {
     const addendumData: ContractAddendumData = {
       contract: contract,
       propertyName: this.property().name,
-      tenantName: tenantItem.tenant.fullName || 'Locataire',
+      tenantName: tenantItem.tenant.fullName || this.translate.instant('COMMON.TENANT'),
       roomName: tenantItem.room,
       availableRooms: [] // TODO: charger les chambres disponibles si colocation
     };
@@ -358,7 +362,7 @@ export class PropertyTenantsTab {
   onAddendumCompleted(addendumId: string) {
     this.showAddendumWizard.set(false);
     this.addendumWizardData.set(null);
-    this.toasts.successDirect('Avenant créé avec succès !');
+    this.toasts.success('PROPERTY_TENANTS.ADDENDUM.SUCCESS');
     // Recharger les données
     this.onRefreshNeeded.emit();
   }
@@ -376,14 +380,14 @@ export class PropertyTenantsTab {
     // ✅ Vérification: bloquer si contrat encore actif/signé
     if (!this.canDissociate(item.contract)) {
       this.toasts.warningDirect(
-        `Dissociation impossible\n\nVous ne pouvez pas dissocier ${item.tenant.fullName} de ce bien tant que :\n• Le bail est encore Signé ou Actif\n• Des documents sont associés\n\nProcédure : Terminez/Annulez d'abord le contrat.`
+        this.translate.instant('PROPERTY_TENANTS.DISSOCIATE.BLOCKED', { tenantName: item.tenant.fullName })
       );
       return;
     }
     
     const confirmed = await this.confirmService.warning(
-      'Dissocier le locataire',
-      `Êtes-vous sûr de vouloir dissocier ${item.tenant.fullName} de ce bien ?\n\n⚠️ Attention : Cette action ne supprime pas le contrat, elle retire seulement l'association directe.\nLe locataire restera lié via son contrat.`
+      this.translate.instant('PROPERTY_TENANTS.DISSOCIATE.TITLE'),
+      this.translate.instant('PROPERTY_TENANTS.DISSOCIATE.MESSAGE', { tenantName: item.tenant.fullName })
     );
     if (!confirmed) return;
     
@@ -394,7 +398,7 @@ export class PropertyTenantsTab {
       this.onRefreshNeeded.emit();
     } catch (error) {
       console.error('Error dissociating tenant:', error);
-      this.toasts.errorDirect('Erreur lors de la dissociation du locataire');
+      this.toasts.error('PROPERTY_TENANTS.DISSOCIATE.ERROR');
     } finally {
       this.isLoading.set(false);
     }
@@ -402,7 +406,7 @@ export class PropertyTenantsTab {
   
   getTenantStatus(contract: Contract): { label: string; color: string } {
     if (contract.status === 'Signed') {
-      return { label: 'Futur occupant', color: 'blue' };
+      return { label: this.translate.instant('PROPERTY_TENANTS.STATUS.FUTURE_OCCUPANT'), color: 'blue' };
     }
     
     const endDate = new Date(contract.endDate);
@@ -410,18 +414,18 @@ export class PropertyTenantsTab {
     const daysUntilEnd = Math.floor((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     
     if (contract.status === 'Terminated') {
-      return { label: 'Parti', color: 'slate' };
+      return { label: this.translate.instant('PROPERTY_TENANTS.STATUS.LEFT'), color: 'slate' };
     }
     
     if (daysUntilEnd <= 0) {
-      return { label: 'Parti', color: 'slate' };
+      return { label: this.translate.instant('PROPERTY_TENANTS.STATUS.LEFT'), color: 'slate' };
     }
     
     if (daysUntilEnd <= 60) {
-      return { label: 'Préavis', color: 'orange' };
+      return { label: this.translate.instant('PROPERTY_TENANTS.STATUS.NOTICE'), color: 'orange' };
     }
     
-    return { label: 'Actif', color: 'emerald' };
+    return { label: this.translate.instant('PROPERTY_TENANTS.STATUS.ACTIVE'), color: 'emerald' };
   }
   
   getInitials(name: string): string {
@@ -444,7 +448,7 @@ export class PropertyTenantsTab {
   private getRoomFromContract(contract: Contract): string | undefined {
     // Récupérer la chambre depuis le contrat (colocation individuelle)
     if (contract.roomId) {
-      return `Chambre ${contract.roomId}`;
+      return this.translate.instant('COMMON.ROOM', { number: contract.roomId });
     }
     return undefined;
   }

@@ -5,11 +5,11 @@
       <div>
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <i class="ph ph-wallet text-blue-600"></i>
-          Ajouter un paiement
+          {{ 'PAYMENTS.ADD.TITLE' | translate }}
         </h2>
         @if (tenantName()) {
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Pour {{ tenantName() }}
+            {{ 'PAYMENTS.ADD.FOR_TENANT' | translate:{ name: tenantName() } }}
           </p>
         }
       </div>
@@ -26,18 +26,18 @@
         <!-- Contract Selection -->
         <div>
           <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-            Contrat / Bien <span class="text-red-500">*</span>
+            {{ 'PAYMENTS.ADD.CONTRACT' | translate }} <span class="text-red-500">*</span>
           </label>
           @if (isLoadingContracts()) {
             <div class="flex items-center gap-2 text-sm text-slate-500">
               <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-              Chargement des contrats...
+              {{ 'PAYMENTS.ADD.LOADING_CONTRACTS' | translate }}
             </div>
           } @else if (contracts().length === 0) {
             <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
               <p class="text-sm text-yellow-800 dark:text-yellow-200">
                 <i class="ph ph-warning mr-2"></i>
-                Aucun contrat actif trouvé pour ce locataire
+                {{ 'PAYMENTS.ADD.NO_ACTIVE_CONTRACT' | translate }}
               </p>
             </div>
           } @else {
@@ -46,7 +46,7 @@
               (change)="onContractChange($event)"
               required
               class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option value="">Sélectionnez un contrat</option>
+              <option value="">{{ 'PAYMENTS.ADD.SELECT_CONTRACT' | translate }}</option>
               @for (contract of contracts(); track contract.id) {
                 <option [value]="contract.id">
                   {{ contract.propertyName }} - {{ formatCurrency(contract.rent + contract.charges) }}/mois
@@ -63,7 +63,7 @@
               <!-- Amount Due -->
               <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Montant Dû <span class="text-red-500">*</span>
+                  {{ 'PAYMENTS.ADD.AMOUNT_DUE' | translate }} <span class="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -73,18 +73,18 @@
                   min="0"
                   required
                   class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="0.00">
+                  [placeholder]="'PAYMENTS.ADD.AMOUNT_PLACEHOLDER' | translate">
               </div>
 
               <!-- Amount Paid -->
               <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
-                  <span>Montant Payé <span class="text-red-500">*</span></span>
+                  <span>{{ 'PAYMENTS.ADD.AMOUNT_PAID' | translate }} <span class="text-red-500">*</span></span>
                   <button
                     type="button"
                     (click)="fillFullAmount()"
                     class="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400">
-                    Montant total
+                    {{ 'PAYMENTS.ADD.FILL_TOTAL' | translate }}
                   </button>
                 </label>
                 <input
@@ -95,14 +95,14 @@
                   min="0"
                   required
                   class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="0.00">
+                  [placeholder]="'PAYMENTS.ADD.AMOUNT_PLACEHOLDER' | translate">
               </div>
             </div>
 
             <!-- Remaining Amount -->
             @if (form().amountDue > 0) {
               <div class="flex items-center justify-between text-sm">
-                <span class="text-slate-600 dark:text-slate-400">Restant dû:</span>
+                <span class="text-slate-600 dark:text-slate-400">{{ 'PAYMENTS.ADD.REMAINING' | translate }}</span>
                 <span 
                   [class]="(form().amountDue - form().amountPaid) > 0 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-emerald-600 dark:text-emerald-400 font-semibold'">
                   {{ formatCurrency(Math.max(0, form().amountDue - form().amountPaid)) }}
@@ -116,7 +116,7 @@
             <!-- Expected Date -->
             <div>
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Date d'échéance <span class="text-red-500">*</span>
+                {{ 'PAYMENTS.ADD.EXPECTED_DATE' | translate }} <span class="text-red-500">*</span>
               </label>
               <input
                 type="date"
@@ -129,7 +129,7 @@
             <!-- Payment Date -->
             <div>
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Date de paiement
+                {{ 'PAYMENTS.ADD.PAYMENT_DATE' | translate }}
               </label>
               <input
                 type="date"
@@ -142,7 +142,7 @@
           <!-- Payment Method -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Méthode de paiement <span class="text-red-500">*</span>
+              {{ 'PAYMENTS.ADD.METHOD' | translate }} <span class="text-red-500">*</span>
             </label>
             <select
               [(ngModel)]="form().paymentMethod"
@@ -150,7 +150,7 @@
               required
               class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               @for (method of paymentMethods; track method.value) {
-                <option [value]="method.value">{{ method.label }}</option>
+                <option [value]="method.value">{{ method.label | translate }}</option>
               }
             </select>
           </div>
@@ -158,14 +158,14 @@
           <!-- Note -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Note (optionnel)
+              {{ 'PAYMENTS.ADD.NOTE' | translate }}
             </label>
             <textarea
               [(ngModel)]="form().note"
               name="note"
               rows="3"
               class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-              placeholder="Ajoutez une note..."></textarea>
+              [placeholder]="'PAYMENTS.ADD.NOTE_PLACEHOLDER' | translate"></textarea>
           </div>
         }
       </form>
@@ -178,7 +178,7 @@
         (click)="handleClose()"
         [disabled]="isSaving()"
         class="px-6 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-        Annuler
+        {{ 'COMMON.CANCEL' | translate }}
       </button>
       <button
         type="submit"
@@ -187,10 +187,10 @@
         class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
         @if (isSaving()) {
           <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-          Enregistrement...
+          {{ 'COMMON.SAVING' | translate }}
         } @else {
           <i class="ph ph-check"></i>
-          Enregistrer le paiement
+          {{ 'PAYMENTS.ADD.SAVE' | translate }}
         }
       </button>
     </div>

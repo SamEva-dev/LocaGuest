@@ -1,6 +1,7 @@
 import { Component, input, signal, inject, computed, output, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { PropertyDetail, PropertyImage, PropertyImageCategory } from '../../../../core/api/properties.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { ImagesService } from '../../../../core/services/images.service';
@@ -22,6 +23,7 @@ export class PropertyInfoTab implements OnDestroy {
   // Services UI
   private toasts = inject(ToastService);
   private confirmService = inject(ConfirmService);
+  private translate = inject(TranslateService);
 
   // UI States
   isEditing = signal(false);
@@ -176,7 +178,7 @@ export class PropertyInfoTab implements OnDestroy {
       },
       error: (err) => {
         console.error('❌ Error updating property:', err);
-        this.toasts.errorDirect('Erreur lors de la mise à jour du bien');
+        this.toasts.error('PROPERTY.INFO.ERRORS.UPDATE');
         this.isSaving.set(false);
       }
     });
@@ -191,8 +193,8 @@ export class PropertyInfoTab implements OnDestroy {
 
     const statusLabel = this.availableStatuses.find(s => s.value === status)?.label;
     const confirmed = await this.confirmService.warning(
-      'Changer le statut',
-      `Voulez-vous vraiment changer le statut en "${statusLabel}" ?`
+      this.translate.instant('PROPERTY.INFO.CONFIRM.CHANGE_STATUS_TITLE'),
+      this.translate.instant('PROPERTY.INFO.CONFIRM.CHANGE_STATUS_MESSAGE', { status: statusLabel })
     );
     if (!confirmed) {
       this.showStatusDropdown.set(false);
@@ -208,7 +210,7 @@ export class PropertyInfoTab implements OnDestroy {
       },
       error: (err) => {
         console.error('❌ Error updating status:', err);
-        this.toasts.errorDirect('Erreur lors du changement de statut');
+        this.toasts.error('PROPERTY.INFO.ERRORS.CHANGE_STATUS');
         this.showStatusDropdown.set(false);
       }
     });

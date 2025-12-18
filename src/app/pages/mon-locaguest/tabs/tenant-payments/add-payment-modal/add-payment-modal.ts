@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { PaymentsApi, CreatePaymentRequest, PaymentMethod } from '../../../../../core/api/payments.api';
 import { ContractsApi } from '../../../../../core/api/contracts.api';
 import { ToastService } from '../../../../../core/ui/toast.service';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface ContractOption {
   id: string;
@@ -18,7 +20,7 @@ interface ContractOption {
 @Component({
   selector: 'add-payment-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './add-payment-modal.html'
 })
 export class AddPaymentModal implements OnInit {
@@ -34,6 +36,7 @@ export class AddPaymentModal implements OnInit {
   private paymentsApi = inject(PaymentsApi);
   private contractsApi = inject(ContractsApi);
   private toastService = inject(ToastService);
+  private translate = inject(TranslateService);
   
   // State
   contracts = signal<ContractOption[]>([]);
@@ -57,10 +60,10 @@ export class AddPaymentModal implements OnInit {
   
   // Payment methods
   paymentMethods: Array<{value: PaymentMethod, label: string}> = [
-    { value: 'BankTransfer', label: 'Virement bancaire' },
-    { value: 'Cash', label: 'Espèces' },
-    { value: 'Check', label: 'Chèque' },
-    { value: 'Other', label: 'Autre' }
+    { value: 'BankTransfer', label: 'PAYMENTS.METHODS.BANK_TRANSFER' },
+    { value: 'Cash', label: 'PAYMENTS.METHODS.CASH' },
+    { value: 'Check', label: 'PAYMENTS.METHODS.CHECK' },
+    { value: 'Other', label: 'PAYMENTS.METHODS.OTHER' }
   ];
   
   // Computed
@@ -100,7 +103,7 @@ export class AddPaymentModal implements OnInit {
           .map((c: any) => ({
             id: c.id,
             propertyId: c.propertyId,
-            propertyName: c.propertyName || 'Bien inconnu',
+            propertyName: c.propertyName || this.translate.instant('COMMON.UNKNOWN_PROPERTY'),
             startDate: new Date(c.startDate),
             endDate: new Date(c.endDate),
             rent: c.rent,
@@ -117,7 +120,7 @@ export class AddPaymentModal implements OnInit {
       },
       error: (err: any) => {
         console.error('Error loading contracts:', err);
-        this.toastService.error('Erreur lors du chargement des contrats');
+        this.toastService.error('PAYMENTS.ERRORS.LOAD_CONTRACTS');
         this.isLoadingContracts.set(false);
       }
     });
@@ -175,13 +178,13 @@ export class AddPaymentModal implements OnInit {
     this.isSaving.set(true);
     this.paymentsApi.createPayment(request).subscribe({
       next: (payment) => {
-        this.toastService.success('Paiement enregistré avec succès');
+        this.toastService.success('PAYMENTS.SUCCESS.CREATED');
         this.paymentCreated.emit();
       },
       error: (err) => {
         console.error('Error creating payment:', err);
-        this.toastService.error(
-          err.error?.message || 'Erreur lors de l\'enregistrement du paiement'
+        this.toastService.errorDirect(
+          err.error?.message || this.translate.instant('PAYMENTS.ERRORS.CREATE')
         );
         this.isSaving.set(false);
       }

@@ -244,11 +244,79 @@
     "SAVING": "Enregistrement...",
     "UPLOADING": "Téléversement...",
     "NA": "N/A",
+    "UNKNOWN_PROPERTY": "Bien inconnu",
+    "UNKNOWN": "Inconnu",
+    "ROOM": "Chambre {{number}}",
     "ACCESS_DENIED": "Access denied",
     "ERROR": "An error occurred",
     "FIELD_REQUIRED": "Required field",
     "NETWORK_ERROR": "Network error",
     "SERVER_ERROR": "Server error"
+  },
+  "PROPERTY_TENANTS": {
+    "INVENTORY": {
+      "EXIT": {
+        "MISSING_ENTRY": "Erreur : aucun EDL d'entrée trouvé pour ce contrat. Vous devez d'abord créer un EDL d'entrée."
+      }
+    },
+    "ERRORS": {
+      "TENANT_NOT_FOUND": "Locataire introuvable"
+    },
+    "RENEWAL": {
+      "SUCCESS": "Contrat renouvelé avec succès"
+    },
+    "ADDENDUM": {
+      "IN_PROGRESS": "Fonction “Avenant” en cours de développement",
+      "ONLY_ACTIVE_OR_SIGNED": "Seuls les contrats actifs ou signés peuvent avoir un avenant",
+      "SUCCESS": "Avenant créé avec succès"
+    },
+    "DISSOCIATE": {
+      "BLOCKED": "Dissociation impossible\n\nVous ne pouvez pas dissocier {{tenantName}} de ce bien tant que :\n• Le bail est encore Signé ou Actif\n• Des documents sont associés\n\nProcédure : terminez/annulez d'abord le contrat.",
+      "TITLE": "Dissocier le locataire",
+      "MESSAGE": "Êtes-vous sûr de vouloir dissocier {{tenantName}} de ce bien ?\n\n⚠️ Attention : cette action ne supprime pas le contrat, elle retire seulement l'association directe.\nLe locataire restera lié via son contrat.",
+      "ERROR": "Erreur lors de la dissociation du locataire"
+    },
+    "STATUS": {
+      "FUTURE_OCCUPANT": "Futur occupant",
+      "CURRENT_OCCUPANT": "Occupant actuel",
+      "LEFT": "Parti",
+      "NOTICE": "Préavis",
+      "ACTIVE": "Actif"
+    }
+  },
+  "PAYMENTS": {
+    "ADD": {
+      "TITLE": "Ajouter un paiement",
+      "FOR_TENANT": "Pour {{name}}",
+      "CONTRACT": "Contrat / Bien",
+      "LOADING_CONTRACTS": "Chargement des contrats...",
+      "NO_ACTIVE_CONTRACT": "Aucun contrat actif trouvé pour ce locataire",
+      "SELECT_CONTRACT": "Sélectionnez un contrat",
+      "AMOUNT_DUE": "Montant dû",
+      "AMOUNT_PAID": "Montant payé",
+      "AMOUNT_PLACEHOLDER": "0.00",
+      "FILL_TOTAL": "Montant total",
+      "REMAINING": "Restant dû:",
+      "EXPECTED_DATE": "Date d'échéance",
+      "PAYMENT_DATE": "Date de paiement",
+      "METHOD": "Méthode de paiement",
+      "NOTE": "Note (optionnel)",
+      "NOTE_PLACEHOLDER": "Ajoutez une note...",
+      "SAVE": "Enregistrer le paiement"
+    },
+    "METHODS": {
+      "BANK_TRANSFER": "Virement bancaire",
+      "CASH": "Espèces",
+      "CHECK": "Chèque",
+      "OTHER": "Autre"
+    },
+    "SUCCESS": {
+      "CREATED": "Paiement enregistré avec succès"
+    },
+    "ERRORS": {
+      "LOAD_CONTRACTS": "Erreur lors du chargement des contrats",
+      "CREATE": "Erreur lors de l'enregistrement du paiement"
+    }
   },
   "AUTH": {
     "SUBTITLE": "Connectez-vous à votre espace LocaGuest",
