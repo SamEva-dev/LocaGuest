@@ -76,13 +76,21 @@ export class Register {
       });
       
       console.log('✅ Register réussi');
-      this.toast.success('AUTH.REGISTER_SUCCESS');
       this.router.navigate(['/login']);
     
     } catch (error: any) {
       console.error('❌ Erreur register:', error);
-      // AuthService shows a toast already; keep a safe fallback here
-      if (!error?.status) {
+      const body = error?.error;
+      const backendMessage =
+        (typeof body === 'string' && body.trim().length > 0 ? body : null) ||
+        (typeof body?.error === 'string' && body.error.trim().length > 0 ? body.error : null) ||
+        (typeof body?.message === 'string' && body.message.trim().length > 0 ? body.message : null) ||
+        (typeof body?.title === 'string' && body.title.trim().length > 0 ? body.title : null) ||
+        (typeof error?.message === 'string' && error.message.trim().length > 0 ? error.message : null);
+
+      if (backendMessage) {
+        this.toast.errorDirect(backendMessage);
+      } else {
         this.toast.error('AUTH.REGISTER_FAILED');
       }
     } finally {
