@@ -8,6 +8,8 @@ import { of } from 'rxjs';
 export class RentabilityScenariosService {
   private api = inject(RentabilityScenariosApi);
 
+  private hasLoadedUserScenarios = false;
+
   // Signals
   scenarios = signal<RentabilityScenarioDto[]>([]);
   currentScenario = signal<RentabilityScenarioDto | null>(null);
@@ -17,7 +19,10 @@ export class RentabilityScenariosService {
   /**
    * Charger tous les scénarios de l'utilisateur
    */
-  loadUserScenarios() {
+  loadUserScenarios(options?: { force?: boolean }) {
+    if (this.isLoading()) return;
+    if (!options?.force && this.hasLoadedUserScenarios) return;
+
     this.isLoading.set(true);
     this.error.set(null);
 
@@ -25,11 +30,13 @@ export class RentabilityScenariosService {
       .pipe(
         tap(scenarios => {
           this.scenarios.set(scenarios);
+          this.hasLoadedUserScenarios = true;
           this.isLoading.set(false);
         }),
         catchError(err => {
           console.error('Error loading scenarios:', err);
           this.error.set('Erreur lors du chargement des scénarios');
+          this.hasLoadedUserScenarios = false;
           this.isLoading.set(false);
           return of([]);
         })

@@ -118,7 +118,9 @@ export class MainLayout {
     this.tabManager.setActiveTab(tabId);
     const tab = this.tabs().find(t => t.id === tabId);
     if (tab) {
-      this.router.navigate([tab.route]);
+      // Avoid re-navigating to the same route (can cause component re-creation loops)
+      if (this.router.url === tab.route) return;
+      this.router.navigateByUrl(tab.route);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, effect } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -135,7 +135,7 @@ import { ChargesAssumptions } from '../../../core/models/rentability.models';
     </div>
   `
 })
-export class Step3ChargesComponent implements OnInit {
+export class Step3ChargesComponent implements OnInit, OnChanges {
   @Input() data?: Partial<ChargesAssumptions> | undefined;
   @Output() dataChange = new EventEmitter<{data: ChargesAssumptions, isValid: boolean}>();
 
@@ -172,6 +172,18 @@ export class Step3ChargesComponent implements OnInit {
       this.form.patchValue(this.data, { emitEvent: false });
     }
     setTimeout(() => this.emitChanges(), 0);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['data'] && this.data) {
+      // Reset CAPEX array to match new input
+      this.plannedCapex.clear();
+      if (this.data.plannedCapex) {
+        this.data.plannedCapex.forEach(capex => this.addCapexItem(capex));
+      }
+      this.form.patchValue(this.data, { emitEvent: false });
+      setTimeout(() => this.emitChanges(), 0);
+    }
   }
 
   addCapex() {

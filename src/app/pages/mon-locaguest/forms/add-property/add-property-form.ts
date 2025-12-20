@@ -52,6 +52,12 @@ export class AddPropertyForm {
       charges: [0, Validators.min(0)],
       purchasePrice: [null, Validators.min(0)],
       purchaseDate: [null],
+      insurance: [null, Validators.min(0)],
+      managementFeesRate: [null, [Validators.min(0), Validators.max(100)]],
+      maintenanceRate: [null, [Validators.min(0), Validators.max(100)]],
+      vacancyRate: [null, [Validators.min(0), Validators.max(100)]],
+      propertyTax: [null, Validators.min(0)],
+      condominiumCharges: [null, Validators.min(0)],
       
       // Informations complémentaires
       energyClass: [''],
@@ -65,18 +71,42 @@ export class AddPropertyForm {
       // Pour Airbnb (validation conditionnelle)
       minimumStay: [null],
       maximumStay: [null, Validators.min(1)],
-      pricePerNight: [null]
+      pricePerNight: [null],
+      nightsBookedPerMonth: [null, [Validators.min(0), Validators.max(31)]]
     });
     
     // ✅ Gestion des validations conditionnelles selon le type d'utilisation
     this.form.get('propertyUsageType')?.valueChanges.subscribe(usageType => {
       this.updateConditionalValidators(usageType);
+      this.updateFinancialBehavior(usageType);
+    });
+
+    // Keep financial values in sync with sub-forms
+    this.rooms.valueChanges.subscribe(() => {
+      if (this.form.get('propertyUsageType')?.value === 'colocation') {
+        this.recomputeColocationTotals();
+      }
+    });
+
+    this.form.get('minimumStay')?.valueChanges.subscribe(() => {
+      if (this.form.get('propertyUsageType')?.value === 'airbnb') {
+        this.recomputeAirbnbRent();
+      }
+    });
+
+    this.form.get('pricePerNight')?.valueChanges.subscribe(() => {
+      if (this.form.get('propertyUsageType')?.value === 'airbnb') {
+        this.recomputeAirbnbRent();
+      }
     });
     
     // ✅ NOUVEAU: Gestion dynamique des chambres quand totalRooms change
     this.form.get('totalRooms')?.valueChanges.subscribe(totalRooms => {
       this.onTotalRoomsChange(totalRooms);
     });
+
+    // Apply initial behavior
+    this.updateFinancialBehavior(this.form.get('propertyUsageType')?.value);
   }
   
   // ✅ NOUVEAU: Getter pour accéder au FormArray des chambres
@@ -170,6 +200,64 @@ export class AddPropertyForm {
     pricePerNight?.updateValueAndValidity();
   }
 
+  private updateFinancialBehavior(usageType: string) {
+    const rent = this.form.get('rent');
+    const charges = this.form.get('charges');
+
+    if (!rent || !charges) return;
+
+    if (usageType === 'complete') {
+      rent.enable({ emitEvent: false });
+      charges.enable({ emitEvent: false });
+      return;
+    }
+
+    if (usageType === 'colocation') {
+      rent.disable({ emitEvent: false });
+      charges.disable({ emitEvent: false });
+      this.recomputeColocationTotals();
+      return;
+    }
+
+    if (usageType === 'airbnb') {
+      rent.disable({ emitEvent: false });
+      charges.disable({ emitEvent: false });
+      charges.setValue(0, { emitEvent: false });
+      this.recomputeAirbnbRent();
+      return;
+    }
+  }
+
+  private recomputeColocationTotals() {
+    const rentCtrl = this.form.get('rent');
+    const chargesCtrl = this.form.get('charges');
+    if (!rentCtrl || !chargesCtrl) return;
+
+    const toNumber = (v: any) => {
+      const n = typeof v === 'number' ? v : Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    const roomsRaw = this.rooms.getRawValue() as Array<{ rent?: any; charges?: any }>;
+    const totalRent = roomsRaw.reduce((sum, r) => sum + toNumber(r?.rent), 0);
+    const totalCharges = roomsRaw.reduce((sum, r) => sum + toNumber(r?.charges), 0);
+
+    rentCtrl.setValue(totalRent, { emitEvent: false });
+    chargesCtrl.setValue(totalCharges, { emitEvent: false });
+  }
+
+  private recomputeAirbnbRent() {
+    const rentCtrl = this.form.get('rent');
+    if (!rentCtrl) return;
+
+    const nights = Number(this.form.get('minimumStay')?.value ?? 0);
+    const price = Number(this.form.get('pricePerNight')?.value ?? 0);
+    const safeNights = Number.isFinite(nights) ? nights : 0;
+    const safePrice = Number.isFinite(price) ? price : 0;
+
+    rentCtrl.setValue(safeNights * safePrice, { emitEvent: false });
+  }
+
   onSubmit() {
     console.log('📝 Form submission attempt');
     console.log('Form value:', this.form.value);
@@ -184,7 +272,7 @@ export class AddPropertyForm {
 
     this.isSubmitting.set(true);
 
-    const formValue = this.form.value;
+    const formValue = this.form.getRawValue();
     const createPropertyDto: CreatePropertyDto = {
       name: formValue.name,
       address: formValue.address,
@@ -205,13 +293,21 @@ export class AddPropertyForm {
       description: formValue.description,
       purchaseDate: formValue.purchaseDate,
       purchasePrice: formValue.purchasePrice,
+
+      insurance: formValue.insurance,
+      managementFeesRate: formValue.managementFeesRate,
+      maintenanceRate: formValue.maintenanceRate,
+      vacancyRate: formValue.vacancyRate,
+      propertyTax: formValue.propertyTax,
+      condominiumCharges: formValue.condominiumCharges,
       energyClass: formValue.energyClass,
       constructionYear: formValue.constructionYear,
       totalRooms: formValue.totalRooms,
       rooms: formValue.propertyUsageType === 'colocation' ? formValue.rooms : undefined,  // ✅ NOUVEAU: Inclure les chambres si colocation
       minimumStay: formValue.minimumStay,
       maximumStay: formValue.maximumStay,
-      pricePerNight: formValue.pricePerNight
+      pricePerNight: formValue.pricePerNight,
+      nightsBookedPerMonth: formValue.nightsBookedPerMonth
     };
     
     console.log('📦 Creating property with DTO:', createPropertyDto);

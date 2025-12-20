@@ -90,7 +90,7 @@
         @switch (activeSubTab()) {
           @case ('informations') {
             @if (property()) {
-              <property-info-tab [property]="property()!" (propertyUpdated)="reloadProperty()" />
+              <property-info-tab #infoTab [property]="property()!" (propertyUpdated)="reloadProperty()" />
             }
           }
           @case ('tenants') {

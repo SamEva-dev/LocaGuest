@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, effect } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -150,7 +150,7 @@ import { RevenueAssumptions } from '../../../core/models/rentability.models';
     </div>
   `
 })
-export class Step2RevenuesComponent implements OnInit {
+export class Step2RevenuesComponent implements OnInit, OnChanges {
   @Input() data?: Partial<RevenueAssumptions> | undefined;
   @Output() dataChange = new EventEmitter<{data: RevenueAssumptions, isValid: boolean}>();
 
@@ -180,9 +180,16 @@ export class Step2RevenuesComponent implements OnInit {
 
   ngOnInit() {
     if (this.data) {
-      this.form.patchValue(this.data);
+      this.form.patchValue(this.data, { emitEvent: false });
     }
     setTimeout(() => this.emitChanges(), 0);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['data'] && this.data) {
+      this.form.patchValue(this.data, { emitEvent: false });
+      setTimeout(() => this.emitChanges(), 0);
+    }
   }
 
   annualRevenue(): number {

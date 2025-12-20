@@ -11,6 +11,8 @@ import { TenantsApi, TenantListItem } from '../../../../core/api/tenants.api';
 import { DashboardApi } from '../../../../core/api/dashboard.api';
 import { AddPropertyForm } from '../../forms/add-property/add-property-form';
 import { AddTenantForm } from '../../forms/add-tenant/add-tenant-form';
+import { ConfirmService } from '../../../../core/ui/confirm.service';
+import { ToastService } from '../../../../core/ui/toast.service';
 
 @Component({
   selector: 'summary-tab',
@@ -23,6 +25,8 @@ export class SummaryTab {
   private propertiesApi = inject(PropertiesApi);
   private tenantsApi = inject(TenantsApi);
   private dashboardApi = inject(DashboardApi);
+  private confirmService = inject(ConfirmService);
+  private toasts = inject(ToastService);
 
   viewMode = signal<'properties' | 'tenants'>('properties');
   displayMode = signal<'card' | 'table'>('card');
@@ -46,6 +50,8 @@ export class SummaryTab {
   tenants = signal<TenantListItem[]>([]);
   notifications = signal<any[]>([]);
   deadlines = signal<any[]>([]);
+
+  openMenuId = signal<string | null>(null);
 
   stats = computed(() => {
     const props = this.properties();
@@ -218,6 +224,105 @@ export class SummaryTab {
   openTenant(tenant: TenantListItem) {
     console.log('tenant', tenant);
     this.tabManager.openTenant(tenant.id, tenant.fullName);
+  }
+
+  toggleMenu(id: string, event?: Event) {
+    event?.stopPropagation();
+    this.openMenuId.update((current) => (current === id ? null : id));
+  }
+
+  closeMenu(event?: Event) {
+    event?.stopPropagation();
+    this.openMenuId.set(null);
+  }
+
+  viewPropertyDetail(property: PropertyListItem, event?: Event) {
+    event?.stopPropagation();
+    this.openMenuId.set(null);
+    this.openProperty(property);
+  }
+
+  editProperty(property: PropertyListItem, event?: Event) {
+    event?.stopPropagation();
+    this.openMenuId.set(null);
+    this.tabManager.openProperty(property.id, property.name, { edit: true });
+  }
+
+  async deleteProperty(property: PropertyListItem, event?: Event) {
+    event?.stopPropagation();
+    this.openMenuId.set(null);
+
+    const status = (property.status ?? '').toLowerCase();
+    const isOccupiedStatus =
+      status === 'occupied' ||
+      status === 'occupé' ||
+      status === 'partiallyoccupied' ||
+      status === 'partiellement occupé' ||
+      status === 'reserved' ||
+      status === 'réservé';
+
+    const hasOccupants = (property.occupiedRooms ?? 0) > 0;
+
+    if (isOccupiedStatus || hasOccupants) {
+      this.toasts.errorDirect('Suppression impossible: le bien est occupé (ou réservé).');
+      return;
+    }
+
+    const confirmed = await this.confirmService.danger(
+      'Supprimer le bien',
+      `Êtes-vous sûr de vouloir supprimer "${property.name}" ?`
+    );
+    if (!confirmed) return;
+
+    this.propertiesApi.deleteProperty(property.id).subscribe({
+      next: () => {
+        this.toasts.successDirect('Bien supprimé');
+        this.reloadCurrentView();
+      },
+      error: (err) => {
+        console.error('❌ Error deleting property:', err);
+        this.toasts.errorDirect('Erreur lors de la suppression du bien');
+      }
+    });
+  }
+
+  viewTenantDetail(tenant: TenantListItem, event?: Event) {
+    event?.stopPropagation();
+    this.openMenuId.set(null);
+    this.openTenant(tenant);
+  }
+
+  editTenant(tenant: TenantListItem, event?: Event) {
+    event?.stopPropagation();
+    this.openMenuId.set(null);
+    this.openTenant(tenant);
+  }
+
+  async deleteTenant(tenant: TenantListItem, event?: Event) {
+    event?.stopPropagation();
+    this.openMenuId.set(null);
+
+    if ((tenant.activeContracts ?? 0) > 0) {
+      this.toasts.errorDirect('Suppression impossible: le locataire a un contrat actif.');
+      return;
+    }
+
+    const confirmed = await this.confirmService.danger(
+      'Supprimer le locataire',
+      `Êtes-vous sûr de vouloir supprimer "${tenant.fullName}" ?`
+    );
+    if (!confirmed) return;
+
+    this.tenantsApi.deleteTenant(tenant.id).subscribe({
+      next: () => {
+        this.toasts.successDirect('Locataire supprimé');
+        this.reloadCurrentView();
+      },
+      error: (err) => {
+        console.error('❌ Error deleting tenant:', err);
+        this.toasts.errorDirect('Erreur lors de la suppression du locataire');
+      }
+    });
   }
 
   getInitials(name: string): string {

@@ -56,6 +56,15 @@ export class InternalTabManagerService {
     const existingTab = this._tabs().find((t) => t.id === tabId);
 
     if (existingTab) {
+      if (data) {
+        this._tabs.update((tabs) =>
+          tabs.map((t) =>
+            t.id === tabId
+              ? { ...t, data: { ...(t.data ?? {}), propertyId, ...(data ?? {}) } }
+              : t
+          )
+        );
+      }
       this._activeTabId.set(tabId);
     } else {
       const newTab: InternalTab = {
@@ -77,6 +86,15 @@ export class InternalTabManagerService {
     const existingTab = this._tabs().find((t) => t.id === tabId);
 
     if (existingTab) {
+      if (data) {
+        this._tabs.update((tabs) =>
+          tabs.map((t) =>
+            t.id === tabId
+              ? { ...t, data: { ...(t.data ?? {}), tenantId, ...(data ?? {}) } }
+              : t
+          )
+        );
+      }
       this._activeTabId.set(tabId);
     } else {
       const newTab: InternalTab = {

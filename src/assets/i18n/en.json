@@ -161,7 +161,7 @@
       "DESCRIPTION": "Description",
       "DESCRIPTION_PLACEHOLDER": "Add helpful details...",
       "CREATE": "Create property",
-      "ADD_PROPERTY_DESCRIPTION": "PROPERTY.FORM.ADD_PROPERTY_DESCRIPTION",
+      "ADD_PROPERTY_DESCRIPTION": "Add a property to manage your rents, expenses, and profitability.",
       "BEDROOMS_REQUIRED": "PROPERTY.FORM.BEDROOMS_REQUIRED",
       "CREATING": "PROPERTY.FORM.CREATING",
       "TYPE_REQUIRED": "PROPERTY.FORM.TYPE_REQUIRED"
@@ -804,7 +804,7 @@
     "SCENARIOS": {
       "EMPTY": "Aucun scénario enregistré",
       "LOAD": "Charger",
-      "MODIFIED": "RENTABILITY.SCENARIOS.MODIFIED",
+      "MODIFIED": "Modified",
       "NEW": "Nouveau",
       "TITLE": "Gestion des scénarios"
     },

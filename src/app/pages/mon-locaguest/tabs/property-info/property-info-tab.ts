@@ -167,7 +167,19 @@ export class PropertyInfoTab implements OnDestroy {
 
     this.isSaving.set(true);
 
-    this.propertiesService.updateProperty(prop.id, form).subscribe({
+    const dto: any = { ...form };
+    // Backend uses AcquisitionDate; UI uses purchaseDate
+    const purchaseDateValue = dto.purchaseDate;
+    if (purchaseDateValue instanceof Date) {
+      dto.acquisitionDate = purchaseDateValue.toISOString();
+    } else if (typeof purchaseDateValue === 'string' && purchaseDateValue.trim().length > 0) {
+      dto.acquisitionDate = purchaseDateValue;
+    }
+
+    // Avoid sending purchaseDate to backend (not part of UpdatePropertyCommand)
+    delete dto.purchaseDate;
+
+    this.propertiesService.updateProperty(prop.id, dto).subscribe({
       next: (updated) => {
         console.log('✅ Property updated successfully', updated);
         this.isEditing.set(false);

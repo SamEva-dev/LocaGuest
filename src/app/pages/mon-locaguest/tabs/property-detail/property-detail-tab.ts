@@ -34,6 +34,9 @@ export class PropertyDetailTab {
   
   tenantModal = viewChild<TenantSelectionModal>('tenantModal');
   contractsTab = viewChild<PropertyContractsTab>('contractsTab');
+  infoTab = viewChild<PropertyInfoTab>('infoTab');
+
+  private autoEditDone = signal(false);
 
   activeSubTab = signal('informations');
   isLoading = signal(false);
@@ -81,10 +84,29 @@ export class PropertyDetailTab {
       console.log('🔍 PropertyDetailTab data:', tabData);
       if (tabData?.propertyId) {
         console.log('✅ Loading property:', tabData.propertyId);
+        this.autoEditDone.set(false);
         this.loadProperty(tabData.propertyId);
       } else {
         console.warn('⚠️ No propertyId found in data');
       }
+    });
+
+    effect(() => {
+      const tabData = this.data();
+      const prop = this.property();
+      const info = this.infoTab();
+
+      if (!tabData?.edit) return;
+      if (!prop) return;
+      if (!info) return;
+      if (this.autoEditDone()) return;
+
+      this.activeSubTab.set('informations');
+
+      setTimeout(() => {
+        this.infoTab()?.startEditing();
+        this.autoEditDone.set(true);
+      }, 0);
     });
     
     // ✅ Charger les EDL quand la tab "contracts" est activée

@@ -30,6 +30,7 @@ export interface PropertyListItem {
   type: string;
   status: string;
   rent: number;
+  purchasePrice?: number;
   bedrooms: number;
   bathrooms: number;
   surface?: number;
@@ -55,6 +56,8 @@ export interface PropertyDetail extends PropertyListItem {
   images?: PropertyImage[];
   createdAt: Date;
   createdBy: string;
+
+  purchaseDate?: Date;
   // Airbnb specifics
   minimumStay?: number;  // Durée minimum de séjour en jours
   maximumStay?: number;  // Durée maximum de séjour en jours
@@ -75,6 +78,12 @@ export interface PropertyDetail extends PropertyListItem {
   // Informations financières complémentaires
   propertyTax?: number;  // Taxe foncière annuelle
   condominiumCharges?: number;  // Charges de copropriété annuelles
+
+  insurance?: number;
+  managementFeesRate?: number;
+  maintenanceRate?: number;
+  vacancyRate?: number;
+  nightsBookedPerMonth?: number;
   
   // Informations administratives
   cadastralReference?: string;  // Référence cadastrale
@@ -204,6 +213,14 @@ export interface CreatePropertyDto {
   minimumStay?: number;
   maximumStay?: number;
   pricePerNight?: number;
+
+  insurance?: number;
+  managementFeesRate?: number;
+  maintenanceRate?: number;
+  vacancyRate?: number;
+  propertyTax?: number;
+  condominiumCharges?: number;
+  nightsBookedPerMonth?: number;
 }
 
 export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {

@@ -45,6 +45,7 @@ export class AuthApi {
 
   // AuthGate Auth endpoints
   login(body: LoginRequest) {
+    console.log('base',this.base)
     return this.http.post<LoginResponse>(`${this.base}/Auth/login`, body);
   }
 

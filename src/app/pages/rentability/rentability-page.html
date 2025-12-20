@@ -16,6 +16,33 @@
     }
   </div>
 
+  <!-- Sélection du bien (pré-remplissage) -->
+  <div class="mb-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 border border-slate-200 dark:border-slate-700">
+    <div class="flex items-center justify-between gap-4">
+      <div>
+        <div class="font-medium text-slate-900 dark:text-white">
+          Sélection du bien
+        </div>
+        <div class="text-sm text-slate-600 dark:text-slate-400">
+          Choisis un bien pour pré-remplir les étapes. Tu peux ensuite ajuster les hypothèses.
+        </div>
+      </div>
+
+      <div class="min-w-[320px]">
+        <select
+          class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white"
+          [value]="selectedPropertyId() || ''"
+          (change)="onSelectProperty(($any($event.target)).value)"
+        >
+          <option value="">-- Sélectionner --</option>
+          @for (p of properties(); track p.id) {
+            <option [value]="p.id">{{ p.name }} - {{ p.city }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
   <!-- Header -->
   <div class="bg-white dark:bg-slate-800 rounded-t-xl shadow-sm p-6 border-b border-slate-200 dark:border-slate-700">
     <div class="flex items-center justify-between">
