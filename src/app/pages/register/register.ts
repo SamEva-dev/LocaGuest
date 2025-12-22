@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/services/auth.service';
@@ -13,7 +13,7 @@ import { ToastService } from '../../core/ui/toast.service';
   styleUrl: './register.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Register {
+export class Register implements OnDestroy {
  constructor(private translate: TranslateService) {
       translate.setDefaultLang('fr');
       translate.use('fr'); // 
@@ -22,9 +22,12 @@ export class Register {
  private router = inject(Router);
   private toast = inject(ToastService);
 
+ private redirectTimeoutId: number | null = null;
+
  showPassword = signal(false);
   isLoading = signal(false);
-
+  errorMessage : string='';
+  succesMessage : string='';
   form = {
     organizationName: '',
     firstName: '',
@@ -51,6 +54,8 @@ export class Register {
     
     this.isLoading.set(true);
     try {
+      this.errorMessage = '';
+      this.succesMessage = '';
       console.log('🔐 Register avec:', { firstName, lastName, email, passwordLength: password.length });
       
       // Valider que les mots de passe correspondent
@@ -76,11 +81,16 @@ export class Register {
       });
       
       console.log('✅ Register réussi');
-      this.router.navigate(['/login']);
+      this.toast.successDirect('Inscription réussie. Vous serez redirigé vers la page de login dans 5s.');
+      this.succesMessage = 'Inscription réussie. Vous serez redirigé vers la page de login dans 5s.';
+      this.redirectTimeoutId = window.setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 5000);
     
     } catch (error: any) {
       console.error('❌ Erreur register:', error);
       const body = error?.error;
+      console.error('❌ Erreur register.body:', body);
       const backendMessage =
         (typeof body === 'string' && body.trim().length > 0 ? body : null) ||
         (typeof body?.error === 'string' && body.error.trim().length > 0 ? body.error : null) ||
@@ -88,10 +98,13 @@ export class Register {
         (typeof body?.title === 'string' && body.title.trim().length > 0 ? body.title : null) ||
         (typeof error?.message === 'string' && error.message.trim().length > 0 ? error.message : null);
 
+        console.error('❌ backendMessage:', backendMessage);
       if (backendMessage) {
         this.toast.errorDirect(backendMessage);
+        this.errorMessage =backendMessage; 
       } else {
         this.toast.error('AUTH.REGISTER_FAILED');
+        this.errorMessage = "Something went wrong"; 
       }
     } finally {
       this.isLoading.set(false);
@@ -118,5 +131,12 @@ export class Register {
   goToLogin() {
   this.router.navigate(['/login']);
 }
+
+ ngOnDestroy(): void {
+  if (this.redirectTimeoutId !== null) {
+    window.clearTimeout(this.redirectTimeoutId);
+    this.redirectTimeoutId = null;
+  }
+ }
 
 }

@@ -67,7 +67,6 @@ export class AuthService {
       if (!res) throw new Error('No response from API');
       
       console.log('✅ Register response:', res);
-      this.toast.success('AUTH.REGISTER_SUCCESS');
       
     } catch (err: any) {
       console.error('❌ Register error:', err);

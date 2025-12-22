@@ -632,8 +632,10 @@
     },
     "TABS": {
       "PROFILE": "Profile",
-      "NOTIFICATIONS": "Notifications",
+      "ORGANIZATION": "Organization",
+      "TEAM": "Team",
       "SECURITY": "Security",
+      "NOTIFICATIONS": "Notifications",
       "BILLING": "Billing",
       "PREFERENCES": "Preferences",
       "INTERFACE": "Interface"

@@ -97,7 +97,7 @@ export class SettingsTab implements OnInit {
 
   subTabs = [
     { id: 'profile', label: 'SETTINGS.TABS.PROFILE', icon: 'ph-user' },
-    { id: 'organization', label: 'Organization', icon: 'ph-building' },
+    { id: 'organization', label: 'SETTINGS.TABS.ORGANIZATION', icon: 'ph-building' },
     { id: 'team', label: 'SETTINGS.TABS.TEAM', icon: 'ph-users-three' },
     { id: 'security', label: 'SETTINGS.TABS.SECURITY', icon: 'ph-shield-check' },
     { id: 'notifications', label: 'SETTINGS.TABS.NOTIFICATIONS', icon: 'ph-bell' },
