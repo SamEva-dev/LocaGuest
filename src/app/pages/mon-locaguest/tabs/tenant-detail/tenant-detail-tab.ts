@@ -8,7 +8,7 @@ import { TenantsService } from '../../../../core/services/tenants.service';
 import { Contract } from '../../../../core/api/properties.api';
 import { DocumentsManagerComponent } from '../../components/documents-manager/documents-manager';
 import { ContractDocumentsStatusComponent } from '../../components/contract-documents-status/contract-documents-status.component';
-import { ContractWizardComponent } from '../../components/contract-wizard/contract-wizard.component';
+import { ContractWizardModal } from '../property-contracts/contract-wizard-modal/contract-wizard-modal';
 import { TenantPaymentsTab } from '../tenant-payments/tenant-payments-tab';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
@@ -22,7 +22,7 @@ import { ConfirmService } from '../../../../core/ui/confirm.service';
     OccupancyChart, 
     DocumentsManagerComponent,
     ContractDocumentsStatusComponent,
-    ContractWizardComponent,
+    ContractWizardModal,
     TenantPaymentsTab
   ],
   templateUrl: './tenant-detail-tab.html'
@@ -306,6 +306,10 @@ export class TenantDetailTab {
    * Ouvre le wizard de création de contrat
    */
   openContractWizard() {
+    const t = this.tenant();
+    if (t?.status === 'Active') {
+      return;
+    }
     this.showContractWizard.set(true);
   }
 
@@ -319,8 +323,8 @@ export class TenantDetailTab {
   /**
    * Callback quand un contrat est créé via le wizard
    */
-  onContractCreated(contractId: string) {
-    console.log('✅ Contract created:', contractId);
+  onContractCreated() {
+    console.log('✅ Contract created');
     this.showContractWizard.set(false);
     // Refresh contracts list
     const t = this.tenant();

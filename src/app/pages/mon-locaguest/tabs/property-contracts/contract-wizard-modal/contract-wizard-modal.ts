@@ -1,7 +1,8 @@
 import { Component, computed, inject, signal, input, output, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PropertyDetail } from '../../../../../core/api/properties.api';
-import { TenantListItem, TenantsApi } from '../../../../../core/api/tenants.api';
+import { NgClass } from '@angular/common';
+import { PropertyDetail, PropertyListItem, PropertiesApi } from '../../../../../core/api/properties.api';
+import { TenantListItem, TenantsApi, TenantDetail } from '../../../../../core/api/tenants.api';
 import { ContractsApi, CreateContractRequest } from '../../../../../core/api/contracts.api';
 import { PropertiesService } from '../../../../../core/services/properties.service';
 import { ToastService } from '../../../../../core/ui/toast.service';
@@ -31,9 +32,11 @@ interface ContractTemplate {
 }
 
 interface ContractForm {
-  // Étape 1 - Locataire
+  // Étape 1 - Locataire ou Bien (selon contexte)
   tenantId: string;
   tenantName?: string;
+  propertyId?: string; // ✅ NOUVEAU: Pour mode tenant
+  propertyName?: string; // ✅ NOUVEAU: Pour mode tenant
   room?: string; // Pour colocation (nom affiché)
   roomId?: string; // ✅ NOUVEAU: ID de la chambre pour colocation
   
@@ -71,18 +74,27 @@ interface ContractForm {
 @Component({
   selector: 'contract-wizard-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, NgClass],
   templateUrl: './contract-wizard-modal.html'
 })
 export class ContractWizardModal {
-  property = input.required<PropertyDetail>();
+  // ✅ NOUVEAU: Context détermine si on vient du bien ou du locataire
+  context = input<'property' | 'tenant'>('property');
+  
+  // Inputs conditionnels selon le contexte
+  property = input<PropertyDetail | null>(null);
+  tenant = input<TenantDetail | null>(null);
+  
   mode = input<'new' | 'paper'>('new');
   existingContract = input<any>(null);
   
   close = output<void>();
   success = output<void>();
+
+  private lastLoadedContext = signal<'property' | 'tenant' | null>(null);
   
   private propertiesService = inject(PropertiesService);
+  private propertiesApi = inject(PropertiesApi);
   private tenantsApi = inject(TenantsApi);
   private contractsApi = inject(ContractsApi);
   private toasts = inject(ToastService);
@@ -111,7 +123,7 @@ export class ContractWizardModal {
     inventoryOption: 'schedule_later'
   });
   
-  // Tenants
+  // Tenants (mode property)
   availableTenants = signal<TenantListItem[]>([]);
   filteredTenants = signal<TenantListItem[]>([]);
   searchTerm = signal('');
@@ -125,6 +137,11 @@ export class ContractWizardModal {
     address: ''
   });
   
+  // ✅ NOUVEAU: Properties (mode tenant)
+  availableProperties = signal<PropertyListItem[]>([]);
+  filteredProperties = signal<PropertyListItem[]>([]);
+  propertySearchTerm = signal('');
+  
   // UI States
   isLoading = signal(false);
   isSaving = signal(false);
@@ -133,7 +150,10 @@ export class ContractWizardModal {
   
   // Options - Filtrées selon le type de bien
   contractTypes = computed(() => {
-    const usageType = this.property().propertyUsageType;
+    const prop = this.property();
+    if (!prop) return ['Non meublé', 'Meublé'];
+    
+    const usageType = prop.propertyUsageType;
     if (usageType === 'colocation') {
       return ['Non meublé', 'Meublé', 'Colocation individuelle', 'Colocation solidaire'];
     } else {
@@ -194,13 +214,22 @@ export class ContractWizardModal {
   selectedRoom = computed(() => {
     const roomId = this.form().roomId;
     if (!roomId) return null;
-    return this.property().rooms?.find(r => r.id === roomId);
+
+    if (this.context() === 'property') {
+      const prop = this.property();
+      if (!prop) return null;
+      return prop.rooms?.find(r => r.id === roomId) || null;
+    }
+
+    const selectedProp = this.selectedPropertyDetail();
+    if (!selectedProp) return null;
+    return selectedProp.rooms?.find(r => r.id === roomId) || null;
   });
   
   constructor() {
     // PHASE 2: Auto-complétion intelligente
     effect(() => {
-      const prop = this.property();
+      const prop = this.context() === 'property' ? this.property() : this.selectedPropertyDetail();
       if (!prop) return;
 
       const current = untracked(() => this.form());
@@ -259,10 +288,11 @@ export class ContractWizardModal {
       }
     }, { allowSignalWrites: true });
     
+    // ✅ NOUVEAU: Effect pour filtrer les locataires (mode property)
     effect(() => {
       const search = this.searchTerm();
-  const tenants = this.availableTenants();
-  if (!tenants) return;
+      const tenants = this.availableTenants();
+      if (!tenants) return;
       
       if (!search) {
         this.filteredTenants.set(tenants);
@@ -277,18 +307,51 @@ export class ContractWizardModal {
       }
     });
     
-    this.loadTenants();
+    // ✅ NOUVEAU: Effect pour filtrer les biens (mode tenant)
+    effect(() => {
+      const search = this.propertySearchTerm();
+      const properties = this.availableProperties();
+      if (!properties) return;
+      
+      if (!search) {
+        this.filteredProperties.set(properties);
+      } else {
+        this.filteredProperties.set(
+          properties.filter(p => 
+            p.name?.toLowerCase().includes(search) ||
+            p.address?.toLowerCase().includes(search) ||
+            p.code?.toLowerCase().includes(search)
+          )
+        );
+      }
+    });
+
+    // Charger les données selon le contexte (après initialisation des inputs)
+    effect(() => {
+      const ctx = this.context();
+
+      if (this.lastLoadedContext() === ctx) return;
+      this.lastLoadedContext.set(ctx);
+
+      if (ctx === 'property') {
+        this.loadTenants();
+      } else {
+        this.loadProperties();
+      }
+    }, { allowSignalWrites: true });
   }
   
   private loadTenants() {
+    console.log("********loadTenants************")
     this.isLoading.set(true);
     this.tenantsApi.getTenants().subscribe({
       next: (result) => {
         // ✅ FILTRAGE: Exclure les locataires avec contrat actif ou signé
         const allTenants = result.items || [];
+         console.log('***********************************', allTenants);
         const availableTenants = allTenants.filter(tenant => {
           // Un locataire est disponible si son statut n'est pas "Occupant" ou "Reserved"
-          return tenant.status !== 'Occupant' && tenant.status !== 'Reserved';
+          return tenant.status !== 'Active' && tenant.status !== 'Occupant' && tenant.status !== 'Reserved';
         });
         
         console.log(`📋 ${allTenants.length} locataires total, ${availableTenants.length} disponibles`);
@@ -302,39 +365,111 @@ export class ContractWizardModal {
     });
   }
   
+  // ✅ NOUVEAU: Charger les biens disponibles (mode tenant)
+  private loadProperties() {
+    this.isLoading.set(true);
+    console.log("********loadProperties************")
+    this.propertiesApi.getProperties().subscribe({
+      next: (result) => {
+        const allProperties = result.items || [];
+        console.log('***********************************', allProperties);
+        // ✅ FILTRAGE: Biens NON actifs (tous sauf 'Active')
+        // Un bien avec contrat actif a le status 'Active' et ne peut pas recevoir de nouveau contrat
+        const availableProperties = allProperties.filter(property => {
+          return property.status !== 'Occupied';
+        });
+        
+        console.log(`🏠 ${allProperties.length} biens total, ${availableProperties.length} disponibles (non Active)`);
+        this.availableProperties.set(availableProperties);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading properties:', err);
+        this.isLoading.set(false);
+      }
+    });
+  }
+  
   // ✅ Computed: Détection colocation
   isColocation = computed(() => {
-    const prop = this.property();
-    const usageType = prop?.propertyUsageType?.toLowerCase();
-    console.log('🏠 isColocation check:', { usageType, propertyId: prop?.id, hasRooms: !!prop?.rooms });
-    return usageType === 'colocation';
+    if (this.context() === 'property') {
+      // Mode property: vérifier le bien passé en input
+      const prop = this.property();
+      const usageType = prop?.propertyUsageType?.toLowerCase();
+      console.log('🏠 isColocation check (property mode):', { usageType, propertyId: prop?.id, hasRooms: !!prop?.rooms });
+      return usageType === 'colocation';
+    } else {
+      // Mode tenant: vérifier le bien sélectionné dans le formulaire
+      const propertyId = this.form().propertyId;
+      if (!propertyId) return false;
+      
+      const selectedProperty = this.availableProperties().find(p => p.id === propertyId);
+      const usageType = selectedProperty?.propertyUsageType?.toLowerCase();
+      console.log('🏠 isColocation check (tenant mode):', { usageType, propertyId, selectedProperty });
+      return usageType === 'colocation';
+    }
+  });
+  
+  // ✅ NOUVEAU: Détection Airbnb
+  isAirbnb = computed(() => {
+    if (this.context() === 'property') {
+      const prop = this.property();
+      const usageType = prop?.propertyUsageType?.toLowerCase();
+      return usageType === 'airbnb';
+    } else {
+      const propertyId = this.form().propertyId;
+      if (!propertyId) return false;
+      
+      const selectedProperty = this.availableProperties().find(p => p.id === propertyId);
+      const usageType = selectedProperty?.propertyUsageType?.toLowerCase();
+      return usageType === 'airbnb';
+    }
   });
   
   // ✅ Computed: Chambres disponibles (utilise prop.rooms si disponible)
   availableRooms = computed(() => {
-    const prop = this.property();
-    console.log('prop', prop);
-    if (!prop) {
-      console.log('🚪 No property');
-      return [];
-    }
-    
     if (!this.isColocation()) {
       console.log('🚪 Not a colocation');
       return [];
     }
     
-    // ✅ CORRECTION #1: Utiliser uniquement les vraies chambres avec GUID
-    if (prop.rooms && Array.isArray(prop.rooms)) {
-      const available = prop.rooms.filter(r => r.status === 'Available');
-      console.log('🚪 Real rooms available:', available.length, 'out of', prop.rooms.length, available);
-      return available;
+    if (this.context() === 'property') {
+      // Mode property: utiliser le bien passé en input
+      const prop = this.property();
+      console.log('🚪 Property mode - prop:', prop);
+      if (!prop) {
+        console.log('🚪 No property');
+        return [];
+      }
+      
+      if (prop.rooms && Array.isArray(prop.rooms)) {
+        const available = prop.rooms.filter(r => r.status === 'Available');
+        console.log('🚪 Real rooms available (property mode):', available.length, 'out of', prop.rooms.length, available);
+        return available;
+      }
+      
+      console.error('❌ No rooms array for colocation property! PropertyId:', prop.id);
+      return [];
+    } else {
+      // Mode tenant: charger les chambres du bien sélectionné
+      const propertyId = this.form().propertyId;
+      if (!propertyId) {
+        console.log('� No property selected yet');
+        return [];
+      }
+      
+      // TODO: Charger les détails du bien avec ses chambres via API
+      // Pour l'instant, retourner un tableau vide car PropertyListItem n'a pas rooms
+      console.log('🚪 Tenant mode - need to load property details for rooms');
+      const selectedProperty = this.selectedPropertyDetail();
+      if (selectedProperty?.rooms && Array.isArray(selectedProperty.rooms)) {
+        const available = selectedProperty.rooms.filter(r => r.status === 'Available');
+        console.log('🚪 Real rooms available (tenant mode):', available.length, available);
+        return available;
+      }
+      
+      return [];
     }
-    
-    // ⚠️ IMPORTANT: Pas de chambres réelles disponibles
-    console.error('❌ No rooms array for colocation property! PropertyId:', prop.id);
-    console.error('💡 Please ensure PropertyRooms are loaded with the property.');
-    return [];
   });
   
   canGoNext = computed(() => {
@@ -356,6 +491,61 @@ export class ContractWizardModal {
     return tenant?.fullName || '';
   });
   
+  // ✅ NOUVEAU: Computed pour le nom du bien sélectionné (mode tenant)
+  selectedPropertyName = computed(() => {
+    const propertyId = this.form().propertyId;
+    if (!propertyId) return '';
+    
+    const property = this.availableProperties().find(p => p.id === propertyId);
+    return property?.name || '';
+  });
+  
+  // ✅ NOUVEAU: Signal pour stocker les détails du bien sélectionné (mode tenant)
+  selectedPropertyDetail = signal<PropertyDetail | null>(null);
+  private lastSelectedPropertyDetailId = signal<string | null>(null);
+  
+  // ✅ NOUVEAU: Computed pour le thème dynamique selon contexte
+  themeColors = computed(() => {
+    return this.context() === 'property' 
+      ? { gradient: 'from-emerald-500 to-teal-600', ring: 'emerald', bg: 'emerald' }
+      : { gradient: 'from-orange-500 to-rose-500', ring: 'orange', bg: 'orange' };
+  });
+  
+  // ✅ NOUVEAU: Computed pour le titre du header selon contexte
+  headerTitle = computed(() => {
+    if (this.mode() === 'paper') {
+      return 'Ajouter un contrat papier';
+    }
+    return this.context() === 'property' 
+      ? 'Créer un nouveau contrat'
+      : 'Créer un contrat pour le locataire';
+  });
+  
+  // ✅ NOUVEAU: Computed pour les infos contextuelles du header
+  contextInfo = computed(() => {
+    if (this.context() === 'property') {
+      const prop = this.property();
+      return prop ? {
+        icon: 'ph-house',
+        name: prop.name,
+        type: prop.type,
+        usageType: prop.propertyUsageType,
+        extra: this.isColocation() && prop.totalRooms 
+          ? `${this.availableRooms().length} / ${prop.totalRooms} chambres disponibles`
+          : null
+      } : null;
+    } else {
+      const ten = this.tenant();
+      return ten ? {
+        icon: 'ph-user',
+        name: ten.fullName || `${ten.id}`,
+        type: ten.email,
+        usageType: null,
+        extra: ten.phone || null
+      } : null;
+    }
+  });
+  
   // Actions
   nextStep() {
     if (this.canGoNext()) {
@@ -374,6 +564,38 @@ export class ContractWizardModal {
       tenantName: tenant.fullName 
     }));
     this.showCreateTenant.set(false);
+  }
+  
+  // ✅ NOUVEAU: Sélectionner un bien (mode tenant)
+  selectProperty(property: PropertyListItem) {
+    this.form.update(f => ({ 
+      ...f, 
+      propertyId: property.id,
+      propertyName: property.name,
+      // Auto-remplir les infos financières si disponibles
+      rent: property.rent || f.rent || 0,
+      charges: f.charges || 0, // PropertyListItem n'a pas charges
+      roomId: undefined // Réinitialiser la chambre sélectionnée
+    }));
+
+    // Charger les détails du bien (rooms/charges/airbnb fields) pour que l'auto-complétion fonctionne
+    // Éviter les appels répétés si l'utilisateur re-clique sur le même bien.
+    if (this.lastSelectedPropertyDetailId() === property.id) {
+      return;
+    }
+    this.lastSelectedPropertyDetailId.set(property.id);
+
+    this.propertiesApi.getProperty(property.id).subscribe({
+      next: (propertyDetail) => {
+        this.selectedPropertyDetail.set(propertyDetail);
+      },
+      error: (err) => {
+        console.error('❌ Error loading property details:', err);
+        this.selectedPropertyDetail.set(null);
+        this.lastSelectedPropertyDetailId.set(null);
+        this.toasts.errorDirect('Erreur lors du chargement des détails du bien');
+      }
+    });
   }
   
   toggleCreateTenant() {
@@ -471,7 +693,6 @@ export class ContractWizardModal {
   
   submitContract() {
     const f = this.form();
-    const prop = this.property();
     
     // Validation finale
     const allErrors = this.validateAllSteps();
@@ -484,10 +705,25 @@ export class ContractWizardModal {
     this.isSaving.set(true);
     this.validationErrors.set([]);
     
+    // ✅ NOUVEAU: Déterminer propertyId et tenantId selon le contexte
+    const propertyId = this.context() === 'property' 
+      ? this.property()?.id 
+      : f.propertyId;
+    
+    const tenantId = this.context() === 'tenant'
+      ? this.tenant()?.id
+      : f.tenantId;
+    
+    if (!propertyId || !tenantId) {
+      this.toasts.errorDirect('Bien ou locataire manquant');
+      this.isSaving.set(false);
+      return;
+    }
+    
     // Préparer la requête API
     const request: CreateContractRequest = {
-      propertyId: prop.id,
-      tenantId: f.tenantId!,
+      propertyId: propertyId,
+      tenantId: tenantId,
       type: this.mapContractType(f.type!),
       startDate: f.startDate!,
       endDate: f.endDate!,
@@ -534,17 +770,16 @@ export class ContractWizardModal {
   
   getStepTitle(step: number): string {
     if (this.mode() === 'paper') {
-      // Mode contrat papier - 3 étapes
       switch(step) {
-        case 1: return 'Sélection du locataire';
-        case 2: return 'Upload du contrat signé';
+        case 1: return this.context() === 'property' ? 'Sélection du locataire' : 'Sélection du bien';
+        case 2: return 'Téléversement du PDF';
         case 3: return 'Récapitulatif';
         default: return '';
       }
     } else {
       // Mode création standard - 4 étapes
       switch(step) {
-        case 1: return 'Sélection du locataire';
+        case 1: return this.context() === 'property' ? 'Sélection du locataire' : 'Sélection du bien';
         case 2: return 'Paramétrage du bail';
         case 3: return 'État des lieux (optionnel)';
         case 4: return 'Récapitulatif & Confirmation';
@@ -556,14 +791,18 @@ export class ContractWizardModal {
   getStepDescription(step: number): string {
     if (this.mode() === 'paper') {
       switch(step) {
-        case 1: return 'Sélectionnez un locataire non déjà assigné';
+        case 1: return this.context() === 'property' 
+          ? 'Sélectionnez un locataire non déjà assigné'
+          : 'Sélectionnez un bien disponible';
         case 2: return 'Téléversez le contrat papier signé (PDF)';
         case 3: return 'Vérifiez les informations avant de créer le contrat';
         default: return '';
       }
     } else {
       switch(step) {
-        case 1: return 'Sélectionnez un locataire existant ou créez-en un nouveau';
+        case 1: return this.context() === 'property'
+          ? 'Sélectionnez un locataire existant ou créez-en un nouveau'
+          : 'Sélectionnez un bien disponible pour ce locataire';
         case 2: return 'Définissez les informations légales du bail';
         case 3: return 'Planifiez l\'état des lieux d\'entrée (optionnel)';
         case 4: return 'Vérifiez toutes les informations avant de créer le contrat';
@@ -590,18 +829,26 @@ export class ContractWizardModal {
     console.log('🔍 Validation étape', step, 'Form:', f);
     
     switch(step) {
-      case 1: // Locataire
-        if (!f.tenantId) {
-          errors.push('Veuillez sélectionner un locataire');
-        }
-        // ✅ Validation chambre pour colocation
-        if (this.isColocation()) {
-          console.log('🚪 Colocation validation - roomId:', f.roomId, 'Available rooms:', this.availableRooms().length);
-          if (!f.roomId) {
-            errors.push('Veuillez sélectionner une chambre');
+      case 1: // Locataire ou Bien selon contexte
+        if (this.context() === 'property') {
+          // Mode property: vérifier tenantId
+          if (!f.tenantId) {
+            errors.push('Veuillez sélectionner un locataire');
           }
-          if (this.availableRooms().length === 0) {
-            errors.push('Aucune chambre disponible pour ce bien');
+          // ✅ Validation chambre pour colocation
+          if (this.isColocation()) {
+            console.log('🚪 Colocation validation - roomId:', f.roomId, 'Available rooms:', this.availableRooms().length);
+            if (!f.roomId) {
+              errors.push('Veuillez sélectionner une chambre');
+            }
+            if (this.availableRooms().length === 0) {
+              errors.push('Aucune chambre disponible pour ce bien');
+            }
+          }
+        } else {
+          // Mode tenant: vérifier propertyId
+          if (!f.propertyId) {
+            errors.push('Veuillez sélectionner un bien');
           }
         }
         break;

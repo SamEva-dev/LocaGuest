@@ -257,6 +257,7 @@ export class PropertiesApi {
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
     }
+    console.log('this.baseUrl',this.baseUrl)
     return this.http.get<PaginatedResult<PropertyListItem>>(this.baseUrl, { params: httpParams });
   }
 

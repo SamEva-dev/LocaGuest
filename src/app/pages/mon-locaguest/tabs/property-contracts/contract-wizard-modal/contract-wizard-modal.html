@@ -3,38 +3,34 @@
   <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
     
     <!-- Header -->
-    <div class="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white">
+    <div class="bg-gradient-to-r p-6 text-white" [ngClass]="themeColors().gradient">
       <div class="flex items-center justify-between mb-4">
         <div class="flex-1">
-          <h2 class="text-2xl font-bold">
-            @if (mode() === 'paper') {
-              Ajouter un contrat papier
-            } @else {
-              Créer un nouveau contrat
-            }
-          </h2>
-          <!-- ✅ NOUVEAU: Informations du bien -->
-          <div class="flex items-center gap-3 mt-2 text-sm text-white/90">
-            <div class="flex items-center gap-1.5">
-              <i class="ph ph-house text-base"></i>
-              <span class="font-medium">{{ property().name }}</span>
+          <h2 class="text-2xl font-bold">{{ headerTitle() }}</h2>
+          <!-- ✅ NOUVEAU: Informations contextuelles (bien ou locataire) -->
+          @if (contextInfo(); as info) {
+            <div class="flex items-center gap-3 mt-2 text-sm text-white/90">
+              <div class="flex items-center gap-1.5">
+                <i class="ph text-base" [ngClass]="info.icon"></i>
+                <span class="font-medium">{{ info.name }}</span>
+              </div>
+              <span class="text-white/50">•</span>
+              <span>{{ info.type }}</span>
+              @if (info.usageType) {
+                <span class="text-white/50">•</span>
+                <span class="px-2 py-0.5 bg-white/20 rounded text-xs font-medium">
+                  {{ info.usageType }}
+                </span>
+              }
+              @if (info.extra) {
+                <span class="text-white/50">•</span>
+                <span class="flex items-center gap-1">
+                  <i class="ph ph-door text-sm"></i>
+                  {{ info.extra }}
+                </span>
+              }
             </div>
-            <span class="text-white/50">•</span>
-            <span>{{ property().type }}</span>
-            @if (property().propertyUsageType) {
-              <span class="text-white/50">•</span>
-              <span class="px-2 py-0.5 bg-white/20 rounded text-xs font-medium">
-                {{ property().propertyUsageType }}
-              </span>
-            }
-            @if (isColocation() && property().totalRooms) {
-              <span class="text-white/50">•</span>
-              <span class="flex items-center gap-1">
-                <i class="ph ph-door text-sm"></i>
-                {{ availableRooms().length }} / {{ property().totalRooms }} chambres disponibles
-              </span>
-            }
-          </div>
+          }
         </div>
         <button
           (click)="closeModal()"
@@ -51,7 +47,10 @@
             <div class="flex items-center flex-1">
               <div 
                 class="flex items-center justify-center w-8 h-8 rounded-full font-semibold transition"
-                [class]="currentStep() >= step ? 'bg-white text-emerald-600' : 'bg-white/30 text-white'"
+                [class.bg-white]="currentStep() >= step"
+                [class.bg-white/30]="currentStep() < step"
+                [class.text-white]="currentStep() < step"
+                [ngClass]="currentStep() >= step ? 'text-' + themeColors().ring + '-600' : ''"
               >
                 @if (currentStep() > step) {
                   <i class="ph ph-check text-lg"></i>
@@ -99,19 +98,37 @@
     <!-- Content -->
     <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 280px);">
       
-      <!-- Step 1: Tenant Selection -->
+      <!-- Step 1: Tenant or Property Selection -->
       @if (currentStep() === 1) {
         <div class="space-y-4">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold">Sélectionnez un locataire</h3>
-            <button
-              (click)="toggleCreateTenant()"
-              class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition"
-            >
-              <i class="ph ph-plus mr-1"></i>
-              Nouveau locataire
-            </button>
-          </div>
+          <!-- Mode Property: Sélection locataire -->
+          @if (context() === 'property') {
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold">Sélectionnez un locataire</h3>
+              <button
+                (click)="toggleCreateTenant()"
+                class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition"
+              >
+                <i class="ph ph-plus mr-1"></i>
+                Nouveau locataire
+              </button>
+            </div>
+          }
+          
+          <!-- Mode Tenant: Sélection bien -->
+          @if (context() === 'tenant') {
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold">Sélectionnez un bien</h3>
+              <div class="flex items-center gap-2">
+                <input
+                  type="text"
+                  [(ngModel)]="propertySearchTerm"
+                  placeholder="Rechercher un bien..."
+                  class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
+                />
+              </div>
+            </div>
+          }
           
           @if (showCreateTenant()) {
             <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
@@ -176,32 +193,79 @@
               <i class="ph ph-spinner text-4xl animate-spin text-slate-400"></i>
             </div>
           } @else {
-            <div class="grid gap-2 max-h-96 overflow-y-auto">
-              @for (tenant of availableTenants(); track tenant.id) {
-                <div
-                  (click)="selectTenant(tenant)"
-                  class="border rounded-lg p-3 cursor-pointer transition"
-                  [class]="form().tenantId === tenant.id 
-                    ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' 
-                    : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700'"
-                >
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">
-                      {{ tenant.fullName.charAt(0) || 'T' }}
-                    </div>
-                    <div class="flex-1">
-                      <div class="font-semibold">{{ tenant.fullName }}</div>
-                      <div class="text-xs text-slate-500 dark:text-slate-400">
-                        {{ tenant.email || 'Pas d\'email' }}
+            <!-- Liste des locataires (mode property) -->
+            @if (context() === 'property') {
+              <div class="grid gap-2 max-h-96 overflow-y-auto">
+                @for (tenant of filteredTenants(); track tenant.id) {
+                  <div
+                    (click)="selectTenant(tenant)"
+                    class="border rounded-lg p-3 cursor-pointer transition"
+                    [class]="form().tenantId === tenant.id 
+                      ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20' 
+                      : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700'"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">
+                        {{ tenant.fullName?.charAt(0) || 'T' }}
                       </div>
+                      <div class="flex-1">
+                        <div class="font-semibold">{{ tenant.fullName }}</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">
+                          {{ tenant.email || 'Pas d\'email' }}
+                        </div>
+                      </div>
+                      @if (form().tenantId === tenant.id) {
+                        <i class="ph ph-check-circle text-emerald-600 text-xl"></i>
+                      }
                     </div>
-                    @if (form().tenantId === tenant.id) {
-                      <i class="ph ph-check-circle text-emerald-600 text-xl"></i>
-                    }
                   </div>
-                </div>
-              }
-            </div>
+                }
+              </div>
+            }
+            
+            <!-- Liste des biens (mode tenant) -->
+            @if (context() === 'tenant') {
+              <div class="grid gap-2 max-h-96 overflow-y-auto">
+                @for (property of filteredProperties(); track property.id) {
+                  <div
+                    (click)="selectProperty(property)"
+                    class="border rounded-lg p-3 cursor-pointer transition"
+                    [class]="form().propertyId === property.id 
+                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20' 
+                      : 'border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-700'"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-white">
+                        <i class="ph ph-house text-lg"></i>
+                      </div>
+                      <div class="flex-1">
+                        <div class="font-semibold">{{ property.name }}</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">
+                          {{ property.address || 'Pas d\'adresse' }}
+                          @if (property.propertyUsageType) {
+                            <span class="ml-2 px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded text-xs">{{ property.propertyUsageType }}</span>
+                          }
+                        </div>
+                        @if (property.rent) {
+                          <div class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                            <i class="ph ph-currency-eur text-xs"></i> {{ property.rent }}€/mois
+                          </div>
+                        }
+                      </div>
+                      @if (form().propertyId === property.id) {
+                        <i class="ph ph-check-circle text-orange-600 text-xl"></i>
+                      }
+                    </div>
+                  </div>
+                }
+                @if (filteredProperties().length === 0) {
+                  <div class="text-center py-8 text-slate-500">
+                    <i class="ph ph-house text-4xl mb-2"></i>
+                    <p>Aucun bien disponible</p>
+                  </div>
+                }
+              </div>
+            }
           }
           
           <!-- ✅ NOUVEAU: Sélecteur de chambre pour colocation -->
@@ -227,7 +291,11 @@
               </select>
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
                 <i class="ph ph-info"></i>
-                {{ availableRooms().length }} chambre(s) disponible(s) sur {{ property().totalRooms }}
+                @if (context() === 'property') {
+                  {{ availableRooms().length }} chambre(s) disponible(s) sur {{ property()?.totalRooms || 0 }}
+                } @else {
+                  {{ availableRooms().length }} chambre(s) disponible(s) sur {{ selectedPropertyDetail()?.totalRooms || 0 }}
+                }
               </p>
             </div>
           }
@@ -421,7 +489,7 @@
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
                 <span class="text-slate-600 dark:text-slate-400">Bien :</span>
-                <span class="font-medium">{{ property().name }}</span>
+                <span class="font-medium">{{ property()?.name || selectedPropertyName() }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-slate-600 dark:text-slate-400">Locataire :</span>

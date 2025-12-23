@@ -395,7 +395,10 @@
                 <h3 class="text-lg font-semibold">{{ 'TENANT.CONTRACTS' | translate }}</h3>
                 <button
                   (click)="openContractWizard()"
-                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center gap-2"
+                  [disabled]="tenant()?.status === 'Active'"
+                  [class]="tenant()?.status === 'Active'
+                    ? 'px-4 py-2 bg-slate-300 dark:bg-slate-700 text-slate-600 dark:text-slate-400 rounded-lg transition flex items-center gap-2 cursor-not-allowed'
+                    : 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center gap-2'"
                 >
                   <i class="ph ph-plus-circle"></i>
                   <span>Nouveau Contrat</span>
@@ -707,9 +710,12 @@
 
   <!-- Contract Creation Wizard -->
   @if (showContractWizard()) {
-    <app-contract-wizard
-      (closed)="onWizardClosed()"
-      (contractCreated)="onContractCreated($event)"
+    <contract-wizard-modal
+      [context]="'tenant'"
+      [tenant]="tenant()"
+      mode="new"
+      (close)="onWizardClosed()"
+      (success)="onContractCreated()"
     />
   }
 </div>

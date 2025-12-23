@@ -577,6 +577,7 @@
 <!-- Contract Wizard Modal -->
 @if (showWizard()) {
   <contract-wizard-modal
+    [context]="'property'"
     [property]="property()"
     [mode]="wizardMode()"
     [existingContract]="selectedContract()"
