@@ -262,6 +262,18 @@ export class ContractWizardModal {
         }
       }
     }, { allowSignalWrites: true });
+
+    // Guard: if selected room is no longer available, reset selection
+    effect(() => {
+      if (this.isColocation() && !this.isSelectedRoomAvailable()) {
+        untracked(() => {
+          this.form.update(f => ({
+            ...f,
+            roomId: ''
+          }));
+        });
+      }
+    }, { allowSignalWrites: true });
     
     // Auto-update financial info when room selected (colocation)
     effect(() => {
@@ -443,7 +455,7 @@ export class ContractWizardModal {
       }
       
       if (prop.rooms && Array.isArray(prop.rooms)) {
-        const available = prop.rooms.filter(r => r.status === 'Available');
+        const available = prop.rooms.filter(r => (r.status || '').toLowerCase() === 'available');
         console.log('🚪 Real rooms available (property mode):', available.length, 'out of', prop.rooms.length, available);
         return available;
       }
@@ -463,13 +475,19 @@ export class ContractWizardModal {
       console.log('🚪 Tenant mode - need to load property details for rooms');
       const selectedProperty = this.selectedPropertyDetail();
       if (selectedProperty?.rooms && Array.isArray(selectedProperty.rooms)) {
-        const available = selectedProperty.rooms.filter(r => r.status === 'Available');
+        const available = selectedProperty.rooms.filter(r => (r.status || '').toLowerCase() === 'available');
         console.log('🚪 Real rooms available (tenant mode):', available.length, available);
         return available;
       }
       
       return [];
     }
+  });
+
+  private isSelectedRoomAvailable = computed(() => {
+    const roomId = this.form().roomId;
+    if (!roomId) return true;
+    return this.availableRooms().some(r => r.id === roomId);
   });
   
   canGoNext = computed(() => {

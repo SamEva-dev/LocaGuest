@@ -82,13 +82,13 @@
             <button 
               (click)="deleteImage(currentImageIndex())"
               class="absolute top-3 left-3 w-10 h-10 bg-red-500/80 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition"
-              title="Supprimer cette photo">
+              [title]="'PROPERTY.INFO.PHOTOS.DELETE_CURRENT' | translate">
               <i class="ph ph-trash text-lg"></i>
             </button>
           } @else {
             <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
               <i class="ph ph-image text-6xl mb-2"></i>
-              <p class="text-sm">Aucune photo</p>
+              <p class="text-sm">{{ 'PROPERTY.INFO.PHOTOS.NONE' | translate }}</p>
             </div>
           }
           
@@ -97,13 +97,13 @@
             (click)="triggerImageUpload()"
             [disabled]="isUploadingImages()"
             class="absolute bottom-3 left-3 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:shadow-lg text-white rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Ajouter des photos">
+            [title]="'PROPERTY.INFO.PHOTOS.ADD' | translate">
             @if (isUploadingImages()) {
               <i class="ph ph-circle-notch animate-spin"></i>
-              <span class="text-sm">Upload...</span>
+              <span class="text-sm">{{ 'PROPERTY.INFO.PHOTOS.UPLOADING' | translate }}</span>
             } @else {
               <i class="ph ph-camera-plus text-lg"></i>
-              <span class="text-sm">Ajouter photos</span>
+              <span class="text-sm">{{ 'PROPERTY.INFO.PHOTOS.ADD_SHORT' | translate }}</span>
             }
           </button>
         </div>
@@ -113,7 +113,7 @@
           <!-- Status -->
           <div class="relative">
             <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-              Statut
+              {{ 'PROPERTY.INFO.FIELDS.STATUS' | translate }}
             </label>
             <button 
               (click)="showStatusDropdown.set(!showStatusDropdown())"
@@ -124,7 +124,7 @@
               <span class="flex items-center gap-2">
                 <span 
                   [class]="'w-2 h-2 rounded-full bg-' + currentStatus().color + '-500'"></span>
-                <span class="font-medium">{{ currentStatus().label }}</span>
+                <span class="font-medium">{{ currentStatus().label | translate }}</span>
               </span>
               <i class="ph ph-caret-down"></i>
             </button>
@@ -139,7 +139,7 @@
                     [class.bg-slate-50]="status.value === property().status"
                     [class.dark:bg-slate-700]="status.value === property().status">
                     <span [class]="'w-2 h-2 rounded-full bg-' + status.color + '-500'"></span>
-                    <span>{{ status.label }}</span>
+                    <span>{{ status.label | translate }}</span>
                   </button>
                 }
               </div>
@@ -150,12 +150,12 @@
           @if (occupationInfo()) {
             <div>
               <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                Occupation
+                {{ 'PROPERTY.INFO.FIELDS.OCCUPANCY' | translate }}
               </label>
               <div class="px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-sm font-medium text-blue-900 dark:text-blue-100">
-                    {{ occupationInfo()!.occupied }} / {{ occupationInfo()!.total }} chambres
+                    {{ 'PROPERTY.INFO.COLOCATION.OCCUPIED_OF_TOTAL_SHORT' | translate:{occupied: occupationInfo()!.occupied, total: occupationInfo()!.total} }}
                   </span>
                   <span class="text-xs text-blue-600 dark:text-blue-400">
                     {{ occupationInfo()!.percentage | number:'1.0-0' }}%
@@ -179,7 +179,7 @@
       <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
         <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
           <i class="ph ph-info text-amber-500"></i>
-          Informations générales
+          {{ 'PROPERTY.INFO.SECTIONS.GENERAL' | translate }}
         </h3>
 
         <div class="grid md:grid-cols-2 gap-4">
@@ -208,11 +208,11 @@
                 [(ngModel)]="editForm()!.type"
                 class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none">
                 @for (type of propertyTypes; track type) {
-                  <option [value]="type">{{ type }}</option>
+                  <option [value]="type">{{ getPropertyTypeLabel(type) }}</option>
                 }
               </select>
             } @else {
-              <p class="text-slate-900 dark:text-white">{{ property().type }}</p>
+              <p class="text-slate-900 dark:text-white">{{ getPropertyTypeLabel(property().type) }}</p>
             }
           </div>
 
@@ -288,19 +288,19 @@
           <!-- Usage Type -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Type d'utilisation
+              {{ 'PROPERTY.INFO.FIELDS.USAGE_TYPE' | translate }}
             </label>
             <div 
               [class]="'inline-flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium bg-' + getUsageTypeColor(property().propertyUsageType) + '-100 text-' + getUsageTypeColor(property().propertyUsageType) + '-700 dark:bg-' + getUsageTypeColor(property().propertyUsageType) + '-900/30 dark:text-' + getUsageTypeColor(property().propertyUsageType) + '-400'">
               <i [class]="getUsageTypeIcon(property().propertyUsageType)"></i>
-              {{ getUsageTypeLabel(property().propertyUsageType) }}
+              {{ getUsageTypeLabel(property().propertyUsageType) | translate }}
             </div>
           </div>
 
           <!-- Insurance -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Assurance (mensuelle)
+              {{ 'PROPERTY.INFO.FIELDS.INSURANCE_MONTHLY' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -315,7 +315,7 @@
                 @if (property().insurance) {
                   {{ property().insurance | number:'1.2-2' }} €
                 } @else {
-                  <span class="text-sm text-slate-400">N/A</span>
+                  <span class="text-sm text-slate-400">{{ 'COMMON.NA' | translate }}</span>
                 }
               </p>
             }
@@ -324,7 +324,7 @@
           <!-- Management Fees Rate -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Frais de gestion (%)
+              {{ 'PROPERTY.INFO.FIELDS.MANAGEMENT_FEES_RATE' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -339,7 +339,7 @@
                 @if (property().managementFeesRate !== undefined && property().managementFeesRate !== null) {
                   {{ property().managementFeesRate | number:'1.1-1' }} %
                 } @else {
-                  <span class="text-sm text-slate-400">N/A</span>
+                  <span class="text-sm text-slate-400">{{ 'COMMON.NA' | translate }}</span>
                 }
               </p>
             }
@@ -348,7 +348,7 @@
           <!-- Maintenance Rate -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Maintenance (%)
+              {{ 'PROPERTY.INFO.FIELDS.MAINTENANCE_RATE' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -363,7 +363,7 @@
                 @if (property().maintenanceRate !== undefined && property().maintenanceRate !== null) {
                   {{ property().maintenanceRate | number:'1.1-1' }} %
                 } @else {
-                  <span class="text-sm text-slate-400">N/A</span>
+                  <span class="text-sm text-slate-400">{{ 'COMMON.NA' | translate }}</span>
                 }
               </p>
             }
@@ -372,7 +372,7 @@
           <!-- Vacancy Rate -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Vacance (%)
+              {{ 'PROPERTY.INFO.FIELDS.VACANCY_RATE' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -387,7 +387,7 @@
                 @if (property().vacancyRate !== undefined && property().vacancyRate !== null) {
                   {{ property().vacancyRate | number:'1.1-1' }} %
                 } @else {
-                  <span class="text-sm text-slate-400">N/A</span>
+                  <span class="text-sm text-slate-400">{{ 'COMMON.NA' | translate }}</span>
                 }
               </p>
             }
@@ -397,7 +397,7 @@
             <!-- Airbnb Nights booked per month -->
             <div>
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Nuits réservées / mois
+                {{ 'PROPERTY.INFO.FIELDS.NIGHTS_BOOKED_PER_MONTH' | translate }}
               </label>
               @if (isEditing()) {
                 <input 
@@ -409,7 +409,7 @@
                   @if (property().nightsBookedPerMonth !== undefined && property().nightsBookedPerMonth !== null) {
                     {{ property().nightsBookedPerMonth }}
                   } @else {
-                    <span class="text-sm text-slate-400">N/A</span>
+                    <span class="text-sm text-slate-400">{{ 'COMMON.NA' | translate }}</span>
                   }
                 </p>
               }
@@ -550,7 +550,7 @@
                 @if (property().rent > 0) {
                   {{ property().rent | number:'1.2-2' }} €
                 } @else {
-                  <span class="text-orange-500 text-sm">Non renseigné</span>
+                  <span class="text-orange-500 text-sm">{{ 'COMMON.NOT_PROVIDED' | translate }}</span>
                 }
               </p>
             }
@@ -559,7 +559,7 @@
           <!-- Charges -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Charges récupérables
+              {{ 'PROPERTY.INFO.FIELDS.CHARGES' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -577,7 +577,7 @@
           <!-- Deposit -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Dépôt de garantie
+              {{ 'PROPERTY.INFO.FIELDS.DEPOSIT' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -595,7 +595,7 @@
           <!-- Purchase Price -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Prix d'achat
+              {{ 'PROPERTY.INFO.FIELDS.PURCHASE_PRICE' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -610,7 +610,7 @@
                 @if (property().purchasePrice) {
                   {{ property().purchasePrice | number:'1.2-2' }} €
                 } @else {
-                  <span class="text-sm text-slate-400">N/A</span>
+                  <span class="text-sm text-slate-400">{{ 'COMMON.NA' | translate }}</span>
                 }
               </p>
             }
@@ -619,7 +619,7 @@
           <!-- Purchase Date -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Date d'achat
+              {{ 'PROPERTY.INFO.FIELDS.PURCHASE_DATE' | translate }}
             </label>
             @if (isEditing()) {
               <input 
@@ -631,7 +631,7 @@
                 @if (property().purchaseDate) {
                   {{ property().purchaseDate | date:'dd/MM/yyyy' }}
                 } @else {
-                  <span class="text-sm text-slate-400">N/A</span>
+                  <span class="text-sm text-slate-400">{{ 'COMMON.NA' | translate }}</span>
                 }
               </p>
             }
@@ -640,7 +640,7 @@
           <!-- Property Tax -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Taxe foncière (annuelle)
+              {{ 'PROPERTY.INFO.FIELDS.PROPERTY_TAX' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -655,7 +655,7 @@
                 @if (property().propertyTax) {
                   {{ property().propertyTax | number:'1.2-2' }} €
                 } @else {
-                  <span class="text-sm text-slate-400">N/A</span>
+                  <span class="text-sm text-slate-400">{{ 'COMMON.NA' | translate }}</span>
                 }
               </p>
             }
@@ -664,7 +664,7 @@
           <!-- Condominium Charges -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Charges copropriété (annuelles)
+              {{ 'PROPERTY.INFO.FIELDS.CONDO_CHARGES' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -679,7 +679,7 @@
                 @if (property().condominiumCharges) {
                   {{ property().condominiumCharges | number:'1.2-2' }} €
                 } @else {
-                  <span class="text-sm text-slate-400">N/A</span>
+                  <span class="text-sm text-slate-400">{{ 'COMMON.NA' | translate }}</span>
                 }
               </p>
             }
@@ -691,21 +691,21 @@
       <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
         <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
           <i class="ph ph-certificate text-amber-500"></i>
-          Diagnostics obligatoires
+          {{ 'PROPERTY.INFO.SECTIONS.DIAGNOSTICS' | translate }}
         </h3>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           <!-- DPE -->
           <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              DPE (Diagnostic de Performance Énergétique)
+              {{ 'PROPERTY.INFO.DIAGNOSTICS.DPE' | translate }}
             </label>
             @if (isEditing()) {
               <div class="space-y-2">
                 <select 
                   [(ngModel)]="editForm()!.dpeRating"
                   class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm">
-                  <option value="">Non renseigné</option>
+                  <option value="">{{ 'COMMON.NOT_PROVIDED' | translate }}</option>
                   <option value="A">A</option>
                   <option value="B">B</option>
                   <option value="C">C</option>
@@ -717,7 +717,7 @@
                 <input 
                   type="number"
                   [(ngModel)]="editForm()!.dpeValue"
-                  placeholder="kWh/m²/an"
+                  [placeholder]="'PROPERTY.INFO.DIAGNOSTICS.DPE_VALUE_PLACEHOLDER' | translate"
                   class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
               </div>
             } @else {
@@ -735,7 +735,7 @@
               } @else {
                 <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
                   <i class="ph ph-warning-circle mr-1"></i>
-                  Non renseigné
+                  {{ 'COMMON.NOT_PROVIDED' | translate }}
                 </div>
               }
             }
@@ -744,13 +744,13 @@
           <!-- GES -->
           <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              GES (Gaz à Effet de Serre)
+              {{ 'PROPERTY.INFO.DIAGNOSTICS.GES' | translate }}
             </label>
             @if (isEditing()) {
               <select 
                 [(ngModel)]="editForm()!.gesRating"
                 class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm">
-                <option value="">Non renseigné</option>
+                <option value="">{{ 'COMMON.NOT_PROVIDED' | translate }}</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="C">C</option>
@@ -767,7 +767,7 @@
               } @else {
                 <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
                   <i class="ph ph-warning-circle mr-1"></i>
-                  Non renseigné
+                  {{ 'COMMON.NOT_PROVIDED' | translate }}
                 </div>
               }
             }
@@ -787,24 +787,24 @@
                 <input 
                   type="date"
                   [(ngModel)]="editForm()!.electricDiagnosticExpiry"
-                  placeholder="Date d'expiration"
+                  [placeholder]="'PROPERTY.INFO.DIAGNOSTICS.EXPIRY_DATE_PLACEHOLDER' | translate"
                   class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
               </div>
             } @else {
               @if (property().electricDiagnosticDate) {
                 <div class="text-sm space-y-1">
                   <p class="text-slate-600 dark:text-slate-400">
-                    Réalisé le: <span class="font-medium text-slate-900 dark:text-white">{{ property().electricDiagnosticDate | date:'dd/MM/yyyy' }}</span>
+                    {{ 'PROPERTY.INFO.DIAGNOSTICS.DONE_ON' | translate }} <span class="font-medium text-slate-900 dark:text-white">{{ property().electricDiagnosticDate | date:'dd/MM/yyyy' }}</span>
                   </p>
                   @if (property().electricDiagnosticExpiry) {
                     <p [class]="isDiagnosticExpired(property().electricDiagnosticExpiry) ? 'text-red-600' : 'text-slate-600 dark:text-slate-400'">
-                      Expire le: <span class="font-medium">{{ property().electricDiagnosticExpiry | date:'dd/MM/yyyy' }}</span>
+                      {{ 'PROPERTY.INFO.DIAGNOSTICS.EXPIRES_ON' | translate }} <span class="font-medium">{{ property().electricDiagnosticExpiry | date:'dd/MM/yyyy' }}</span>
                     </p>
                   }
                 </div>
               } @else {
                 <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
-                  Non renseigné
+                  {{ 'COMMON.NOT_PROVIDED' | translate }}
                 </div>
               }
             }
@@ -813,7 +813,7 @@
           <!-- Gas Diagnostic -->
           <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Diagnostic Gaz
+              {{ 'PROPERTY.INFO.DIAGNOSTICS.GAS' | translate }}
             </label>
             @if (isEditing()) {
               <div class="space-y-2">
@@ -824,18 +824,18 @@
                 <input 
                   type="date"
                   [(ngModel)]="editForm()!.gasDiagnosticExpiry"
-                  placeholder="Date d'expiration"
+                  [placeholder]="'PROPERTY.INFO.DIAGNOSTICS.EXPIRY_DATE_PLACEHOLDER' | translate"
                   class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
               </div>
             } @else {
               @if (property().gasDiagnosticDate) {
                 <div class="text-sm space-y-1">
                   <p class="text-slate-600 dark:text-slate-400">
-                    Réalisé le: <span class="font-medium text-slate-900 dark:text-white">{{ property().gasDiagnosticDate | date:'dd/MM/yyyy' }}</span>
+                    {{ 'PROPERTY.INFO.DIAGNOSTICS.DONE_ON' | translate }} <span class="font-medium text-slate-900 dark:text-white">{{ property().gasDiagnosticDate | date:'dd/MM/yyyy' }}</span>
                   </p>
                   @if (property().gasDiagnosticExpiry) {
                     <p [class]="isDiagnosticExpired(property().gasDiagnosticExpiry) ? 'text-red-600' : 'text-slate-600 dark:text-slate-400'">
-                      Expire le: <span class="font-medium">{{ property().gasDiagnosticExpiry | date:'dd/MM/yyyy' }}</span>
+                      {{ 'PROPERTY.INFO.DIAGNOSTICS.EXPIRES_ON' | translate }} <span class="font-medium">{{ property().gasDiagnosticExpiry | date:'dd/MM/yyyy' }}</span>
                     </p>
                   }
                 </div>
@@ -933,23 +933,27 @@
             <!-- Stats -->
             <div class="space-y-4">
               <div class="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres totales</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ 'PROPERTY.INFO.COLOCATION.TOTAL_ROOMS' | translate }}</span>
                 <span class="text-2xl font-bold text-blue-600">{{ property().totalRooms || 0 }}</span>
               </div>
               <div class="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
                 <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres occupées</span>
                 <span class="text-2xl font-bold text-emerald-600">{{ property().occupiedRooms || 0 }}</span>
               </div>
+              <div class="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres réservées</span>
+                <span class="text-2xl font-bold text-amber-600">{{ property().reservedRooms || 0 }}</span>
+              </div>
               <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
                 <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres disponibles</span>
-                <span class="text-2xl font-bold text-slate-600">{{ (property().totalRooms || 0) - (property().occupiedRooms || 0) }}</span>
+                <span class="text-2xl font-bold text-slate-600">{{ (property().totalRooms || 0) - (property().occupiedRooms || 0) - (property().reservedRooms || 0) }}</span>
               </div>
             </div>
 
             <!-- Progress visualization -->
             <div class="flex flex-col justify-center">
               <div class="mb-2">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Taux d'occupation</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ 'PROPERTY.INFO.COLOCATION.OCCUPANCY_RATE' | translate }}</span>
               </div>
               <div class="relative">
                 <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-8 overflow-hidden">
@@ -1110,7 +1114,7 @@
         <div class="bg-gradient-to-r from-blue-500 to-cyan-500 px-6 py-4 flex items-center justify-between">
           <h3 class="text-xl font-bold text-white flex items-center gap-2">
             <i class="ph ph-image-square text-2xl"></i>
-            Catégoriser les photos ({{ pendingImages().length }})
+            {{ 'PROPERTY.INFO.PHOTOS.CATEGORIZE_TITLE' | translate:{count: pendingImages().length} }}
           </h3>
           <button 
             (click)="cancelImageUpload()"
@@ -1142,7 +1146,7 @@
                 <!-- Category Selector -->
                 <div class="p-4">
                   <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Catégorie de la photo
+                    {{ 'PROPERTY.INFO.PHOTOS.CATEGORY' | translate }}
                   </label>
                   <div class="grid grid-cols-3 gap-2">
                     @for (cat of imageCategories; track cat.value) {
@@ -1168,7 +1172,7 @@
           @if (pendingImages().length === 0) {
             <div class="text-center py-12">
               <i class="ph ph-image text-6xl text-slate-300 dark:text-slate-600 mb-3"></i>
-              <p class="text-slate-500 dark:text-slate-400">Aucune photo sélectionnée</p>
+              <p class="text-slate-500 dark:text-slate-400">{{ 'PROPERTY.INFO.PHOTOS.NONE_SELECTED' | translate }}</p>
             </div>
           }
         </div>
@@ -1178,7 +1182,7 @@
           <button 
             (click)="cancelImageUpload()"
             class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg font-medium transition">
-            Annuler
+            {{ 'COMMON.CANCEL' | translate }}
           </button>
           <button 
             (click)="confirmImageUpload()"
@@ -1186,10 +1190,10 @@
             class="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:shadow-lg text-white rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
             @if (isUploadingImages()) {
               <i class="ph ph-circle-notch animate-spin"></i>
-              <span>Upload en cours...</span>
+              <span>{{ 'COMMON.UPLOADING' | translate }}</span>
             } @else {
               <i class="ph ph-upload-simple"></i>
-              <span>Ajouter {{ pendingImages().length }} photo(s)</span>
+              <span>{{ 'PROPERTY.INFO.PHOTOS.ADD_N' | translate:{count: pendingImages().length} }}</span>
             }
           </button>
         </div>

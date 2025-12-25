@@ -41,6 +41,7 @@ export interface PropertyListItem {
   // Pour les colocations
   totalRooms?: number;  // Nombre total de chambres disponibles
   occupiedRooms?: number;  // Nombre de chambres occupées
+  reservedRooms?: number;  // Nombre de chambres réservées (contrats en attente/signés)
 }
 
 export interface PropertyDetail extends PropertyListItem {

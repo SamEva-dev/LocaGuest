@@ -1,4 +1,4 @@
-import { Component, input, signal, inject, effect } from '@angular/core';
+import { Component, input, signal, inject, effect, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
@@ -12,6 +12,8 @@ import { ContractWizardModal } from '../property-contracts/contract-wizard-modal
 import { TenantPaymentsTab } from '../tenant-payments/tenant-payments-tab';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
+import { PropertiesService } from '../../../../core/services/properties.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'tenant-detail-tab',
@@ -31,6 +33,7 @@ export class TenantDetailTab {
   data = input<any>();
   private tabManager = inject(InternalTabManagerService);
   private tenantsService = inject(TenantsService);
+  private propertiesService = inject(PropertiesService);
   private toasts = inject(ToastService);
   private confirmService = inject(ConfirmService);
 
@@ -44,6 +47,20 @@ export class TenantDetailTab {
   
   // ✅ NOUVEAU: Stocker les infos du bien d'origine (si ouvert depuis une fiche bien)
   fromProperty = signal<{ id: string; code: string; name: string } | null>(null);
+
+  associatedProperty = computed(() => {
+    const explicit = this.fromProperty();
+    if (explicit) return explicit;
+
+    const t = this.tenant();
+    if (!t?.propertyId) return null;
+
+    return {
+      id: t.propertyId,
+      code: t.propertyCode || '',
+      name: ''
+    };
+  });
   
   // Pour gérer l'expansion des documents de contrat
   expandedContractId = signal<string | null>(null);
@@ -470,6 +487,12 @@ export class TenantDetailTab {
   async dissociateTenant() {
     const tenant = this.tenant();
     if (!tenant) return;
+
+    const assoc = this.associatedProperty();
+    if (!assoc?.id) {
+      this.toasts.errorDirect('Impossible: aucun bien associé à ce locataire.');
+      return;
+    }
     
     // Vérification des contrats actifs
     if (!this.canDissociateTenant()) {
@@ -495,8 +518,7 @@ export class TenantDetailTab {
     if (!confirmed) return;
     
     try {
-      // TODO: Appeler API pour dissocier
-      // await this.tenantsService.dissociate(tenant.id);
+      await firstValueFrom(this.propertiesService.dissociateTenant(assoc.id, tenant.id));
       
       this.toasts.successDirect(
         `Locataire dissocié: ${tenant.fullName} a été dissocié du bien avec succès.`

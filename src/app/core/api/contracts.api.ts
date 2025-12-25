@@ -56,7 +56,8 @@ export interface RecordPaymentRequest {
 
 export interface TerminateContractRequest {
   terminationDate: string;
-  markPropertyVacant?: boolean;
+  contractId: string;
+  reason?: string;
 }
 
 export interface MarkAsSignedRequest {

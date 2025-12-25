@@ -99,6 +99,128 @@
     "STATUS": "Statut",
     "RENT": "Loyer",
     "SURFACE": "Surface",
+    "STATUS_PARTIALLY_OCCUPIED": "Partiellement occupé",
+    "STATUS_RESERVED": "Réservé",
+    "STATUS_UNDER_MAINTENANCE": "En travaux",
+     "INFO": {
+      "ACTIONS": {
+        "EDIT": "Modifier",
+        "CANCEL": "Annuler",
+        "SAVE": "Enregistrer",
+        "SAVING": "Enregistrement..."
+      },
+      "SECTIONS": {
+        "GENERAL": "Informations générales",
+        "DETAILS": "Détails du bien",
+        "FINANCIAL": "Informations financières",
+        "DIAGNOSTICS": "Diagnostics obligatoires",
+        "COLOCATION": "Informations colocation",
+        "ADMIN": "Informations administratives",
+        "NOTES": "Notes"
+      },
+      "FIELDS": {
+        "STATUS": "Statut",
+        "OCCUPANCY": "Occupation",
+        "USAGE_TYPE": "Type d'utilisation",
+        "CHARGES": "Charges récupérables",
+        "DEPOSIT": "Dépôt de garantie",
+        "PURCHASE_PRICE": "Prix d'achat",
+        "PURCHASE_DATE": "Date d'achat",
+        "PROPERTY_TAX": "Taxe foncière (annuelle)",
+        "CONDO_CHARGES": "Charges copropriété (annuelles)",
+        "INSURANCE_MONTHLY": "Assurance (mensuelle)",
+        "MANAGEMENT_FEES_RATE": "Frais de gestion (%)",
+        "MAINTENANCE_RATE": "Maintenance (%)",
+        "VACANCY_RATE": "Vacance (%)",
+        "NIGHTS_BOOKED_PER_MONTH": "Nuits réservées / mois"
+      },
+      "USAGE_TYPE": {
+        "COMPLETE": "Location complète",
+        "COLOCATION": "Colocation",
+        "AIRBNB": "Airbnb",
+        "UNDEFINED": "Non défini"
+      },
+      "IMAGE_CATEGORIES": {
+        "EXTERIOR": "Extérieur",
+        "LIVING_ROOM": "Salon",
+        "KITCHEN": "Cuisine",
+        "BEDROOM": "Chambre",
+        "BATHROOM": "Salle de bain",
+        "OTHER": "Autre"
+      },
+      "CONFIRM": {
+        "CHANGE_STATUS_TITLE": "Changer le statut du bien",
+        "CHANGE_STATUS_MESSAGE": "Voulez-vous vraiment changer le statut du bien pour {{status}} ?"
+      },
+      "ERRORS": {
+        "UPDATE": "Erreur lors de la mise à jour du bien",
+        "CHANGE_STATUS": "Erreur lors du changement de statut"
+      },
+      "SUCCESS": {
+        "IMAGES_UPLOADED": "{{count}} photo(s) ajoutée(s) avec succès!",
+        "IMAGE_DELETED": "Photo supprimée avec succès"
+      },
+      "ERROR_MESSAGES": {
+        "UPLOAD_IMAGES": "Erreur lors de l'upload des photos",
+        "DELETE_IMAGE": "Erreur lors de la suppression de la photo",
+        "NO_IMAGES_UPLOADED": "Aucune image uploadée"
+      },
+      "DELETE_CONFIRM": {
+        "TITLE": "Supprimer la photo",
+        "MESSAGE": "Voulez-vous vraiment supprimer cette photo ?",
+        "BUTTON": "Supprimer"
+      },
+      "MISSING_FIELDS": {
+        "ALL_INFO": "Toutes les informations",
+        "PROPERTY_NAME": "Nom du bien",
+        "PROPERTY_TYPE": "Type de bien",
+        "RENTAL_USAGE": "Usage locatif",
+        "SURFACE": "Surface",
+        "ADDRESS": "Adresse",
+        "REFERENCE_RENT": "Loyer de référence",
+        "DPE": "DPE"
+      },
+      "PROPERTY_TYPES": {
+        "APARTMENT": "Appartement",
+        "HOUSE": "Maison",
+        "STUDIO": "Studio",
+        "VILLA": "Villa",
+        "DUPLEX": "Duplex",
+        "LOFT": "Loft"
+      },
+      "DIAGNOSTICS": {
+        "DPE": "DPE (Diagnostic de Performance Énergétique)",
+        "GES": "GES (Gaz à Effet de Serre)",
+        "GAS": "Diagnostic Gaz",
+        "DPE_VALUE_PLACEHOLDER": "kWh/m²/an",
+        "EXPIRY_DATE_PLACEHOLDER": "Date d'expiration",
+        "DONE_ON": "Réalisé le:",
+        "EXPIRES_ON": "Expire le:"
+      },
+      "COLOCATION": {
+        "TOTAL_ROOMS": "Chambres totales",
+        "OCCUPIED_ROOMS": "Chambres occupées",
+        "RESERVED_ROOMS": "Chambres réservées",
+        "AVAILABLE_ROOMS": "Chambres disponibles",
+        "OCCUPANCY_RATE": "Taux d'occupation",
+        "FULLY_OCCUPIED": "Colocation complètement occupée",
+        "NONE_OCCUPIED": "Aucune chambre occupée",
+        "OCCUPIED_OF_TOTAL": "{{occupied}} sur {{total}} chambres occupées",
+        "OCCUPIED_OF_TOTAL_SHORT": "{{occupied}} / {{total}} chambres",
+        "TOTAL_ROOMS_MISSING": "Le nombre total de chambres n'est pas renseigné. Veuillez compléter cette information."
+      },
+      "PHOTOS": {
+        "ADD": "Ajouter des photos",
+        "ADD_SHORT": "Ajouter photos",
+        "UPLOADING": "Upload...",
+        "NONE": "Aucune photo",
+        "DELETE_CURRENT": "Supprimer cette photo",
+        "CATEGORIZE_TITLE": "Catégoriser les photos ({{count}})",
+        "CATEGORY": "Catégorie de la photo",
+        "NONE_SELECTED": "Aucune photo sélectionnée",
+        "ADD_N": "Ajouter {{count}} photo(s)"
+      }
+    },
     "TABS": {
       "DETAILS": "Détails",
       "TENANTS": "Locataires",
@@ -243,7 +365,12 @@
     "CLOSE": "Fermer",
     "SAVING": "Enregistrement...",
     "UPLOADING": "Téléversement...",
+    "YES": "Oui",
+    "NO": "Non",
     "NA": "N/A",
+    "NOT_PROVIDED": "Non renseigné",
+    "NOT_PROVIDED_FEM": "Non renseignée",
+    "ATTENTION": "Attention",
     "UNKNOWN_PROPERTY": "Bien inconnu",
     "UNKNOWN": "Inconnu",
     "ROOM": "Chambre {{number}}",
@@ -541,6 +668,8 @@
     "TERMINATE_CONTRACT": "Résilier le contrat",
     "TERMINATE_WARNING": "Cette action marquera le contrat comme terminé. Cette action est irréversible.",
     "TERMINATION_DATE": "Date de résiliation",
+    "TERMINATION_REASON": "Motif de résiliation",
+    "TERMINATION_REASON_PLACEHOLDER": "Ex: fin de bail anticipée, impayés, accord amiable...",
     "MARK_PROPERTY_VACANT": "Marquer le bien comme vacant",
     "STATS": {
       "ACTIVE": "Contrats actifs",
@@ -552,6 +681,7 @@
     "STATUS": {
       "ACTIVE": "Actif",
       "EXPIRING": "En fin de validité",
+      "SIGNED": "Signé",
       "TERMINATED": "Terminé"
     }
   },

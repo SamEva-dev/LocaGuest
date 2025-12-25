@@ -1,7 +1,7 @@
 import { Component, input, signal, inject, computed, output, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PropertyDetail, PropertyImage, PropertyImageCategory } from '../../../../core/api/properties.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { ImagesService } from '../../../../core/services/images.service';
@@ -11,7 +11,7 @@ import { ConfirmService } from '../../../../core/ui/confirm.service';
 @Component({
   selector: 'property-info-tab',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, TranslateModule],
   templateUrl: './property-info-tab.html'
 })
 export class PropertyInfoTab implements OnDestroy {
@@ -41,23 +41,27 @@ export class PropertyInfoTab implements OnDestroy {
 
   // Available statuses
   availableStatuses = [
-    { value: 'Vacant', label: 'Vacant', color: 'slate', icon: 'ph-house' },
-    { value: 'Occupied', label: 'Occupé', color: 'emerald', icon: 'ph-user' },
-    { value: 'PartiallyOccupied', label: 'Partiellement occupé', color: 'blue', icon: 'ph-users-three' },
-    { value: 'Reserved', label: 'Réservé', color: 'amber', icon: 'ph-calendar-check' },
-    { value: 'UnderMaintenance', label: 'En travaux', color: 'orange', icon: 'ph-wrench' }
+    { value: 'Vacant', label: 'PROPERTY.STATUS_VACANT', color: 'slate', icon: 'ph-house' },
+    { value: 'Occupied', label: 'PROPERTY.STATUS_OCCUPIED', color: 'emerald', icon: 'ph-user' },
+    { value: 'PartiallyOccupied', label: 'PROPERTY.STATUS_PARTIALLY_OCCUPIED', color: 'blue', icon: 'ph-users-three' },
+    { value: 'Reserved', label: 'PROPERTY.STATUS_RESERVED', color: 'amber', icon: 'ph-calendar-check' },
+    { value: 'UnderMaintenance', label: 'PROPERTY.STATUS_UNDER_MAINTENANCE', color: 'orange', icon: 'ph-wrench' }
   ];
 
   // Property types
-  propertyTypes = ['Appartement', 'Maison', 'Studio', 'Villa', 'Duplex', 'Loft'];
+  propertyTypes = ['APARTMENT', 'HOUSE', 'STUDIO', 'VILLA', 'DUPLEX', 'LOFT'];
+  
+  getPropertyTypeLabel(type: string): string {
+    return this.translate.instant(`PROPERTY.INFO.PROPERTY_TYPES.${type.toUpperCase()}`);
+  }
   
   imageCategories: {value: PropertyImageCategory, label: string, icon: string}[] = [
-    { value: 'exterior', label: 'Extérieur', icon: 'ph-house' },
-    { value: 'living_room', label: 'Salon', icon: 'ph-couch' },
-    { value: 'kitchen', label: 'Cuisine', icon: 'ph-cooking-pot' },
-    { value: 'bedroom', label: 'Chambre', icon: 'ph-bed' },
-    { value: 'bathroom', label: 'Salle de bain', icon: 'ph-bathtub' },
-    { value: 'other', label: 'Autre', icon: 'ph-image' }
+    { value: 'exterior', label: 'PROPERTY.INFO.IMAGE_CATEGORIES.EXTERIOR', icon: 'ph-house' },
+    { value: 'living_room', label: 'PROPERTY.INFO.IMAGE_CATEGORIES.LIVING_ROOM', icon: 'ph-couch' },
+    { value: 'kitchen', label: 'PROPERTY.INFO.IMAGE_CATEGORIES.KITCHEN', icon: 'ph-cooking-pot' },
+    { value: 'bedroom', label: 'PROPERTY.INFO.IMAGE_CATEGORIES.BEDROOM', icon: 'ph-bed' },
+    { value: 'bathroom', label: 'PROPERTY.INFO.IMAGE_CATEGORIES.BATHROOM', icon: 'ph-bathtub' },
+    { value: 'other', label: 'PROPERTY.INFO.IMAGE_CATEGORIES.OTHER', icon: 'ph-image' }
   ];
 
   // Computed
@@ -137,7 +141,7 @@ export class PropertyInfoTab implements OnDestroy {
     
     if (usageType === 'colocation') {
       return {
-        type: 'Colocation',
+        type: this.translate.instant('PROPERTY.INFO.USAGE_TYPE.COLOCATION'),
         occupied: prop.occupiedRooms || 0,
         total: prop.totalRooms || 0,
         percentage: ((prop.occupiedRooms || 0) / (prop.totalRooms || 1)) * 100
@@ -323,7 +327,7 @@ export class PropertyInfoTab implements OnDestroy {
       const uploadResult = await this.imagesService.uploadImages(prop.id, files, 'other').toPromise();
       
       if (!uploadResult || uploadResult.images.length === 0) {
-        throw new Error('Aucune image uploadée');
+        throw new Error(this.translate.instant('PROPERTY.INFO.ERROR_MESSAGES.NO_IMAGES_UPLOADED'));
       }
 
       // 2. Succès - le backend a déjà mis à jour property.imageUrls
@@ -340,16 +344,16 @@ export class PropertyInfoTab implements OnDestroy {
       this.showImageUploadModal.set(false);
       this.pendingImages.set([]);
       this.propertyUpdated.emit(); // Recharger la propriété depuis le backend
-      this.toasts.successDirect(`${uploadResult.images.length} photo(s) ajoutée(s) avec succès!`);
+      this.toasts.successDirect(this.translate.instant('PROPERTY.INFO.SUCCESS.IMAGES_UPLOADED', { count: uploadResult.images.length }));
     } catch (err) {
       console.error('❌ Error uploading images:', err);
-      this.toasts.errorDirect('Erreur lors de l\'upload des photos');
+      this.toasts.errorDirect(this.translate.instant('PROPERTY.INFO.ERROR_MESSAGES.UPLOAD_IMAGES'));
       this.isUploadingImages.set(false);
     }
   }
 
   getCategoryLabel(category: PropertyImageCategory): string {
-    return this.imageCategories.find(c => c.value === category)?.label || 'Autre';
+    return this.translate.instant(this.imageCategories.find(c => c.value === category)?.label || 'PROPERTY.INFO.IMAGE_CATEGORIES.OTHER');
   }
 
   async deleteImage(index: number) {
@@ -357,9 +361,9 @@ export class PropertyInfoTab implements OnDestroy {
     if (!prop) return;
 
     const confirmed = await this.confirmService.danger(
-      'Supprimer la photo',
-      'Voulez-vous vraiment supprimer cette photo ?',
-      'Supprimer'
+      this.translate.instant('PROPERTY.INFO.DELETE_CONFIRM.TITLE'),
+      this.translate.instant('PROPERTY.INFO.DELETE_CONFIRM.MESSAGE'),
+      this.translate.instant('PROPERTY.INFO.DELETE_CONFIRM.BUTTON')
     );
     if (!confirmed) return;
 
@@ -394,10 +398,10 @@ export class PropertyInfoTab implements OnDestroy {
         this.currentImageIndex.set(0);
       }
       this.propertyUpdated.emit(); // Recharger la propriété depuis le backend
-      this.toasts.successDirect('Photo supprimée avec succès');
+      this.toasts.successDirect(this.translate.instant('PROPERTY.INFO.SUCCESS.IMAGE_DELETED'));
     } catch (err) {
       console.error('❌ Error deleting image:', err);
-      this.toasts.errorDirect('Erreur lors de la suppression de la photo');
+      this.toasts.errorDirect(this.translate.instant('PROPERTY.INFO.ERROR_MESSAGES.DELETE_IMAGE'));
     }
   }
 
@@ -416,10 +420,10 @@ export class PropertyInfoTab implements OnDestroy {
   // Helpers
   getUsageTypeLabel(type?: string): string {
     switch(type?.toLowerCase()) {
-      case 'complete': return 'Location complète';
-      case 'colocation': return 'Colocation';
-      case 'airbnb': return 'Airbnb';
-      default: return 'Non défini';
+      case 'complete': return 'PROPERTY.INFO.USAGE_TYPE.COMPLETE';
+      case 'colocation': return 'PROPERTY.INFO.USAGE_TYPE.COLOCATION';
+      case 'airbnb': return 'PROPERTY.INFO.USAGE_TYPE.AIRBNB';
+      default: return 'PROPERTY.INFO.USAGE_TYPE.UNDEFINED';
     }
   }
 
@@ -506,14 +510,14 @@ export class PropertyInfoTab implements OnDestroy {
     const prop = this.property();
     const missing: string[] = [];
     
-    if (!prop) return ['Toutes les informations'];
-    if (!prop.name) missing.push('Nom du bien');
-    if (!prop.type) missing.push('Type de bien');
-    if (!prop.propertyUsageType) missing.push('Usage locatif');
-    if (!prop.surface || prop.surface <= 0) missing.push('Surface');
-    if (!prop.address) missing.push('Adresse');
-    if (!prop.rent || prop.rent <= 0) missing.push('Loyer de référence');
-    if (!prop.dpeRating) missing.push('DPE');
+    if (!prop) return [this.translate.instant('PROPERTY.INFO.MISSING_FIELDS.ALL_INFO')];
+    if (!prop.name) missing.push(this.translate.instant('PROPERTY.INFO.MISSING_FIELDS.PROPERTY_NAME'));
+    if (!prop.type) missing.push(this.translate.instant('PROPERTY.INFO.MISSING_FIELDS.PROPERTY_TYPE'));
+    if (!prop.propertyUsageType) missing.push(this.translate.instant('PROPERTY.INFO.MISSING_FIELDS.RENTAL_USAGE'));
+    if (!prop.surface || prop.surface <= 0) missing.push(this.translate.instant('PROPERTY.INFO.MISSING_FIELDS.SURFACE'));
+    if (!prop.address) missing.push(this.translate.instant('PROPERTY.INFO.MISSING_FIELDS.ADDRESS'));
+    if (!prop.rent || prop.rent <= 0) missing.push(this.translate.instant('PROPERTY.INFO.MISSING_FIELDS.REFERENCE_RENT'));
+    if (!prop.dpeRating) missing.push(this.translate.instant('PROPERTY.INFO.MISSING_FIELDS.DPE'));
     
     return missing;
   }

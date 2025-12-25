@@ -41,6 +41,8 @@ export class Login {
   // Remember device state
   rememberDevice2FA = signal(false);
 
+  errorMessage : string='';
+
   constructor(private translate: TranslateService) {
       translate.setDefaultLang('fr');
       translate.use('fr'); // 
@@ -70,6 +72,7 @@ export class Login {
 
   async login(email: string, password: string) {
     this.isLoading.set(true);
+    this.errorMessage = '';
     try {
       this.auth.setRememberMe(this.rememberMe());
       this.userEmail.set(email);
@@ -102,6 +105,7 @@ export class Login {
       console.error('❌ Login error:', error);
       const backendMessage = this.getBackendErrorMessage(error);
       if (backendMessage) {
+        this.errorMessage = backendMessage;
         this.toast.errorDirect(backendMessage);
       } else if (error.status === 401) {
         this.toast.error('AUTH.INVALID_CREDENTIALS');

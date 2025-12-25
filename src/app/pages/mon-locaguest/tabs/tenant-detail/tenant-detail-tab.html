@@ -18,11 +18,11 @@
               <span class="text-sm px-2 py-1 rounded-lg bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 font-mono">{{ tenant()!.code }}</span>
               
               <!-- ✅ NOUVEAU: Badge association bien -->
-              @if (fromProperty()) {
+              @if (associatedProperty()) {
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 text-sm font-medium border border-teal-200 dark:border-teal-800">
                   <i class="ph ph-link text-base"></i>
                   <span>Associé à</span>
-                  <span class="font-bold">{{ fromProperty()!.code }}</span>
+                  <span class="font-bold">{{ associatedProperty()!.code }}</span>
                 </span>
               }
             </div>
@@ -355,7 +355,7 @@
     </div>
 
     <!-- ✅ NOUVEAU: Actions globales locataire -->
-    @if (fromProperty() && tenant()) {
+    @if (associatedProperty() && tenant()) {
       <div class="flex justify-end gap-3">
         <button
           (click)="dissociateTenant()"

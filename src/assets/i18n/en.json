@@ -99,6 +99,128 @@
     "STATUS": "Status",
     "RENT": "Rent",
     "SURFACE": "Area",
+    "STATUS_PARTIALLY_OCCUPIED": "Partially occupied",
+    "STATUS_RESERVED": "Reserved",
+    "STATUS_UNDER_MAINTENANCE": "Under maintenance",
+    "INFO": {
+      "ACTIONS": {
+        "EDIT": "Edit",
+        "CANCEL": "Cancel",
+        "SAVE": "Save",
+        "SAVING": "Saving..."
+      },
+      "SECTIONS": {
+        "GENERAL": "General information",
+        "DETAILS": "Property details",
+        "FINANCIAL": "Financial information",
+        "DIAGNOSTICS": "Required diagnostics",
+        "COLOCATION": "Shared housing information",
+        "ADMIN": "Administrative information",
+        "NOTES": "Notes"
+      },
+      "FIELDS": {
+        "STATUS": "Status",
+        "OCCUPANCY": "Occupancy",
+        "USAGE_TYPE": "Usage type",
+        "CHARGES": "Recoverable charges",
+        "DEPOSIT": "Security deposit",
+        "PURCHASE_PRICE": "Purchase price",
+        "PURCHASE_DATE": "Purchase date",
+        "PROPERTY_TAX": "Property tax (annual)",
+        "CONDO_CHARGES": "Condominium charges (annual)",
+        "INSURANCE_MONTHLY": "Insurance (monthly)",
+        "MANAGEMENT_FEES_RATE": "Management fees (%)",
+        "MAINTENANCE_RATE": "Maintenance (%)",
+        "VACANCY_RATE": "Vacancy (%)",
+        "NIGHTS_BOOKED_PER_MONTH": "Booked nights / month"
+      },
+      "USAGE_TYPE": {
+        "COMPLETE": "Complete rental",
+        "COLOCATION": "Colocation",
+        "AIRBNB": "Airbnb",
+        "UNDEFINED": "Undefined"
+      },
+      "IMAGE_CATEGORIES": {
+        "EXTERIOR": "Exterior",
+        "LIVING_ROOM": "Living room",
+        "KITCHEN": "Kitchen",
+        "BEDROOM": "Bedroom",
+        "BATHROOM": "Bathroom",
+        "OTHER": "Other"
+      },
+      "CONFIRM": {
+        "CHANGE_STATUS_TITLE": "Change property status",
+        "CHANGE_STATUS_MESSAGE": "Do you really want to change the property status to {{status}}?"
+      },
+      "ERRORS": {
+        "UPDATE": "Error updating property",
+        "CHANGE_STATUS": "Error changing status"
+      },
+      "SUCCESS": {
+        "IMAGES_UPLOADED": "{{count}} photo(s) added successfully!",
+        "IMAGE_DELETED": "Photo deleted successfully"
+      },
+      "ERROR_MESSAGES": {
+        "UPLOAD_IMAGES": "Error uploading photos",
+        "DELETE_IMAGE": "Error deleting photo",
+        "NO_IMAGES_UPLOADED": "No images uploaded"
+      },
+      "DELETE_CONFIRM": {
+        "TITLE": "Delete photo",
+        "MESSAGE": "Do you really want to delete this photo?",
+        "BUTTON": "Delete"
+      },
+      "MISSING_FIELDS": {
+        "ALL_INFO": "All information",
+        "PROPERTY_NAME": "Property name",
+        "PROPERTY_TYPE": "Property type",
+        "RENTAL_USAGE": "Rental usage",
+        "SURFACE": "Surface",
+        "ADDRESS": "Address",
+        "REFERENCE_RENT": "Reference rent",
+        "DPE": "DPE"
+      },
+      "PROPERTY_TYPES": {
+        "APARTMENT": "Apartment",
+        "HOUSE": "House",
+        "STUDIO": "Studio",
+        "VILLA": "Villa",
+        "DUPLEX": "Duplex",
+        "LOFT": "Loft"
+      },
+      "DIAGNOSTICS": {
+        "DPE": "Energy performance diagnosis (DPE)",
+        "GES": "Greenhouse gas emissions (GES)",
+        "GAS": "Gas diagnosis",
+        "DPE_VALUE_PLACEHOLDER": "kWh/m²/year",
+        "EXPIRY_DATE_PLACEHOLDER": "Expiry date",
+        "DONE_ON": "Done on:",
+        "EXPIRES_ON": "Expires on:"
+      },
+      "COLOCATION": {
+        "TOTAL_ROOMS": "Total rooms",
+        "OCCUPIED_ROOMS": "Occupied rooms",
+        "RESERVED_ROOMS": "Reserved rooms",
+        "AVAILABLE_ROOMS": "Available rooms",
+        "OCCUPANCY_RATE": "Occupancy rate",
+        "FULLY_OCCUPIED": "Fully occupied",
+        "NONE_OCCUPIED": "No occupied rooms",
+        "OCCUPIED_OF_TOTAL": "{{occupied}} of {{total}} rooms occupied",
+        "OCCUPIED_OF_TOTAL_SHORT": "{{occupied}} / {{total}} rooms",
+        "TOTAL_ROOMS_MISSING": "Total rooms is not set. Please fill in this information."
+      },
+      "PHOTOS": {
+        "ADD": "Add photos",
+        "ADD_SHORT": "Add photos",
+        "UPLOADING": "Uploading...",
+        "NONE": "No photos",
+        "DELETE_CURRENT": "Delete this photo",
+        "CATEGORIZE_TITLE": "Categorize photos ({{count}})",
+        "CATEGORY": "Photo category",
+        "NONE_SELECTED": "No photo selected",
+        "ADD_N": "Add {{count}} photo(s)"
+      }
+    },
     "TABS": {
       "DETAILS": "Details",
       "TENANTS": "Tenants",
@@ -244,12 +366,17 @@
     "ACCESS_DENIED": "Access denied",
     "SAVING": "Saving...",
     "UPLOADING": "Uploading...",
+    "YES": "Yes",
+    "NO": "No",
     "NA": "N/A",
+    "NOT_PROVIDED": "Not provided",
+    "NOT_PROVIDED_FEM": "Not provided",
+    "ATTENTION": "Attention",
     "UNKNOWN_PROPERTY": "Unknown property",
     "UNKNOWN": "Unknown",
     "ROOM": "Room {{number}}",
-    "CREATE": "Créer",
-    "SAVE": "Enregistrer"
+    "CREATE": "Create",
+    "SAVE": "Save"
   },
   "PROPERTY_TENANTS": {
     "INVENTORY": {
@@ -536,6 +663,7 @@
     "STATUS": {
       "ACTIVE": "Active",
       "EXPIRING": "Expiring",
+      "SIGNED": "Signed",
       "TERMINATED": "Terminated"
     },
     "CREATE_NEW": "Créer un nouveau contrat",
@@ -551,6 +679,8 @@
     "TERMINATE_CONTRACT": "Résilier le contrat",
     "TERMINATE_WARNING": "Cette action marquera le contrat comme terminé. Cette action est irréversible.",
     "TERMINATION_DATE": "Date de résiliation",
+    "TERMINATION_REASON": "Termination reason",
+    "TERMINATION_REASON_PLACEHOLDER": "E.g. early termination, unpaid rent, mutual agreement...",
     "TYPE": "Type de contrat"
   },
   "PROFITABILITY": {
