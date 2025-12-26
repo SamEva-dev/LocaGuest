@@ -352,7 +352,7 @@ export class PropertyTenantsTab {
       propertyName: this.property().name,
       tenantName: tenantItem.tenant.fullName || this.translate.instant('COMMON.TENANT'),
       roomName: tenantItem.room,
-      availableRooms: [] // TODO: charger les chambres disponibles si colocation
+      availableRooms: (this.property().rooms || []).filter(r => r.status === 'Available')
     };
     
     this.addendumWizardData.set(addendumData);

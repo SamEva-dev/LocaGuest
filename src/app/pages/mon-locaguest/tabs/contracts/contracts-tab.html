@@ -136,6 +136,12 @@
                           {{ contract.status }}
                         </span>
                       }
+
+                      @if (contract.noticeEndDate) {
+                        <span class="px-2 py-0.5 text-xs rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/30">
+                          En préavis · {{ contract.noticeEndDate | date:'dd/MM/yyyy' }}
+                        </span>
+                      }
                     </div>
                     <div class="flex items-center gap-4 mt-1 text-sm text-slate-500">
                       <span><i class="ph ph-users mr-1"></i>{{ contract.tenantName || 'Tenant' }}</span>

@@ -439,6 +439,12 @@
                                   {{ getContractStatusBadge(contract.status).label }}
                                 </span>
                               }
+
+                              @if (contract.noticeEndDate) {
+                                <span class="text-xs px-2 py-1 rounded-full font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
+                                  En préavis · {{ contract.noticeEndDate | date:'dd/MM/yyyy' }}
+                                </span>
+                              }
                             </div>
                             <p class="text-sm text-slate-500">{{ contract.startDate | date:'dd/MM/yyyy' }} - {{ contract.endDate | date:'dd/MM/yyyy' }}</p>
                             <p class="text-sm font-medium mt-1">{{ formatCurrency(contract.rent) }}/mois</p>
@@ -743,6 +749,28 @@
 
   @if (showInventoryExitWizard()) {
     <app-inventory-exit-wizard [wizardData]="inventoryExitData()!" (onClose)="handleInventoryExitClose($event)"></app-inventory-exit-wizard>
+  }
+
+  @if (showAddendumWizard() && addendumWizardData()) {
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div class="w-full max-w-6xl h-[95vh] overflow-hidden">
+        <contract-addendum-wizard
+          [data]="addendumWizardData()!"
+          (completed)="onAddendumCompleted()"
+          (cancelled)="onAddendumCancelled()"
+        />
+      </div>
+    </div>
+  }
+
+  @if (showNoticeWizard() && noticeWizardData()) {
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <contract-notice-wizard
+        [data]="noticeWizardData()!"
+        (completed)="onNoticeCompleted()"
+        (cancelled)="onNoticeCancelled()"
+      />
+    </div>
   }
 
   <contract-viewer-modal

@@ -93,6 +93,13 @@
                     <i [class]="getContractStatusIcon(contract.status)"></i>
                     {{ getContractStatusLabel(contract.status) }}
                   </span>
+
+                  @if (contract.noticeEndDate) {
+                    <span class="text-xs px-2 py-1 rounded font-medium inline-flex items-center gap-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
+                      <i class="ph ph-sign-out"></i>
+                      En préavis · {{ contract.noticeEndDate | date:'dd/MM/yyyy' }}
+                    </span>
+                  }
                   @if (isContractInConflict(contract)) {
                     <span 
                       class="text-xs px-2 py-1 rounded bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium inline-flex items-center gap-1"
@@ -380,6 +387,30 @@
           <div>
             <h3 class="text-lg font-semibold">Contrat actuel</h3>
             <p class="text-sm text-slate-500 dark:text-slate-400">Bail en cours</p>
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                <i class="ph ph-user text-xl text-white"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="text-xl font-bold">{{ getTenantName(activeContract()!.tenantId) }}</h4>
+                  <span class="px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium inline-flex items-center gap-1.5">
+                    <i class="ph ph-check-circle"></i>
+                    {{ getContractStatusLabel(activeContract()!.status) }}
+                  </span>
+                  
+                  @if (activeContract()!.noticeEndDate) {
+                    <span class="px-3 py-1 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm font-medium inline-flex items-center gap-1.5">
+                      <i class="ph ph-sign-out"></i>
+                      En préavis · {{ activeContract()!.noticeEndDate | date:'dd/MM/yyyy' }}
+                    </span>
+                  }
+                </div>
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                  {{ formatDate(activeContract()!.startDate) }} - {{ formatDate(activeContract()!.endDate) }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -393,6 +424,13 @@
                 <i class="ph ph-check-circle"></i>
                 {{ getContractStatusLabel(activeContract()!.status) }}
               </span>
+              
+              @if (activeContract()!.noticeEndDate) {
+                <span class="px-3 py-1 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm font-medium inline-flex items-center gap-1.5">
+                  <i class="ph ph-sign-out"></i>
+                  En préavis · {{ activeContract()!.noticeEndDate | date:'dd/MM/yyyy' }}
+                </span>
+              }
             </div>
             
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">

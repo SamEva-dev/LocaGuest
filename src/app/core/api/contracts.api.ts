@@ -29,6 +29,11 @@ export interface ContractDto {
   paymentsCount?: number;
   createdAt?: string;
 
+  // ✅ Préavis
+  noticeEndDate?: string;
+  noticeDate?: string;
+  noticeReason?: string;
+
   // ✅ Inventories
   hasInventoryEntry?: boolean;
   hasInventoryExit?: boolean;
@@ -76,6 +81,12 @@ export interface TerminateContractRequest {
   terminationDate: string;
   contractId: string;
   reason?: string;
+}
+
+export interface GiveNoticeRequest {
+  noticeDate: string;
+  noticeEndDate: string;
+  reason: string;
 }
 
 export interface MarkAsSignedRequest {
@@ -187,6 +198,14 @@ export class ContractsApi {
   
   createAddendum(contractId: string, request: CreateAddendumRequest): Promise<{ message: string; addendumId: string }> {
     return this.http.post<{ message: string; addendumId: string }>(`${this.baseUrl}/${contractId}/addendum`, request).toPromise() as Promise<{ message: string; addendumId: string }>;
+  }
+
+  giveNotice(contractId: string, request: GiveNoticeRequest): Observable<{ message: string; id: string }> {
+    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/notice`, request);
+  }
+
+  cancelNotice(contractId: string): Observable<{ message: string; id: string }> {
+    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/notice/cancel`, {});
   }
 }
 

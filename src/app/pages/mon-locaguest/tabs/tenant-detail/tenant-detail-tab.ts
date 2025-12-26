@@ -14,10 +14,13 @@ import { TenantPaymentsTab } from '../tenant-payments/tenant-payments-tab';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { PropertiesService } from '../../../../core/services/properties.service';
+import { ContractsApi } from '../../../../core/api/contracts.api';
 import { firstValueFrom } from 'rxjs';
 import { InventoriesApiService } from '../../../../core/api/inventories.api';
 import { InventoryExitWizardData, InventoryExitWizardSimpleComponent } from '../property-contracts/inventory-exit-wizard/inventory-exit-wizard-simple';
 import { ContractViewerModal } from '../../components/contract-viewer-modal/contract-viewer-modal';
+import { ContractAddendumData, ContractAddendumWizard } from '../property-contracts/contract-addendum-wizard/contract-addendum-wizard';
+import { ContractNoticeData, ContractNoticeWizard } from '../property-contracts/contract-notice-wizard/contract-notice-wizard';
 
 @Component({
   selector: 'tenant-detail-tab',
@@ -31,7 +34,9 @@ import { ContractViewerModal } from '../../components/contract-viewer-modal/cont
     ContractWizardModal,
     TenantPaymentsTab,
     InventoryExitWizardSimpleComponent,
-    ContractViewerModal
+    ContractViewerModal,
+    ContractAddendumWizard,
+    ContractNoticeWizard
   ],
   templateUrl: './tenant-detail-tab.html'
 })
@@ -43,6 +48,7 @@ export class TenantDetailTab {
   private inventoriesApi = inject(InventoriesApiService);
   private toasts = inject(ToastService);
   private confirmService = inject(ConfirmService);
+  private contractsApi = inject(ContractsApi);
   private documentsApi = inject(DocumentsApi);
 
   activeSubTab = signal('contracts');
@@ -87,6 +93,23 @@ export class TenantDetailTab {
   // Pour gérer le wizard de préavis/rupture
   showNoticeWizard = signal(false);
   selectedContractForNotice = signal<Contract | null>(null);
+
+  showAddendumWizard = signal(false);
+  addendumWizardData = signal<ContractAddendumData | null>(null);
+
+  noticeWizardData = computed<ContractNoticeData | null>(() => {
+    const c = this.selectedContractForNotice();
+    const t = this.tenant();
+    if (!c || !t) return null;
+
+    const propertyName = (c as any)?.propertyName || this.associatedProperty()?.code || 'Bien';
+    return {
+      contract: c,
+      propertyName,
+      tenantName: t.fullName,
+      roomName: (c as any)?.roomName
+    };
+  });
   
   // Données enrichies du locataire
   currentOccupancy = signal<{
@@ -492,14 +515,97 @@ export class TenantDetailTab {
    * Créer un avenant
    */
   createAddendum(contract: Contract) {
-    this.toasts.infoDirect('Ouverture du wizard d\'avenant...');
-    // TODO: Ouvrir le wizard d'avenant
+    const t = this.tenant();
+    if (!t) {
+      this.toasts.errorDirect('Locataire introuvable');
+      return;
+    }
+
+    const propertyId = (contract as any)?.propertyId || t.propertyId;
+    if (!propertyId) {
+      this.toasts.errorDirect('Bien introuvable pour ce contrat');
+      return;
+    }
+
+    this.propertiesService.getProperty(propertyId).subscribe({
+      next: (prop) => {
+        const rooms = (prop.rooms || []).filter(r => r.status === 'Available');
+        const data: ContractAddendumData = {
+          contract,
+          propertyName: prop.name,
+          tenantName: t.fullName,
+          roomName: (contract as any)?.roomName,
+          availableRooms: rooms
+        };
+        this.addendumWizardData.set(data);
+        this.showAddendumWizard.set(true);
+      },
+      error: () => this.toasts.errorDirect('Erreur lors du chargement du bien')
+    });
+  }
+
+  onAddendumCompleted() {
+    this.showAddendumWizard.set(false);
+    this.addendumWizardData.set(null);
+    const t = this.tenant();
+    if (t?.id) this.loadContracts(t.id);
+  }
+
+  onAddendumCancelled() {
+    this.showAddendumWizard.set(false);
+    this.addendumWizardData.set(null);
+  }
+
+  onNoticeCompleted() {
+    this.showNoticeWizard.set(false);
+    this.selectedContractForNotice.set(null);
+    const t = this.tenant();
+    if (t?.id) this.loadContracts(t.id);
+  }
+
+  onNoticeCancelled() {
+    this.showNoticeWizard.set(false);
+    this.selectedContractForNotice.set(null);
   }
   
   /**
    * Donner préavis / Rompre contrat
    */
   giveNotice(contract: Contract) {
+    const noticeEndDate = (contract as any)?.noticeEndDate;
+    const noticeReason = (contract as any)?.noticeReason;
+    const noticeDate = (contract as any)?.noticeDate;
+
+    if (noticeEndDate) {
+      const end = new Date(noticeEndDate);
+      const start = noticeDate ? new Date(noticeDate) : null;
+      const details = [
+        start ? `Date de notification : ${start.toLocaleDateString()}` : null,
+        `Fin de préavis : ${end.toLocaleDateString()}`,
+        noticeReason ? `Motif : ${noticeReason}` : null
+      ].filter(Boolean).join('\n');
+
+      this.confirmService.ask({
+        title: 'Préavis existant',
+        message: `${details}\n\nSouhaitez-vous annuler ce préavis ?`,
+        type: 'warning',
+        confirmText: 'Annuler le préavis',
+        cancelText: 'Fermer',
+        showCancel: true
+      }).then(async (confirmed) => {
+        if (!confirmed) return;
+        try {
+          await firstValueFrom(this.contractsApi.cancelNotice(contract.id));
+          this.toasts.successDirect('Préavis annulé');
+          const t = this.tenant();
+          if (t?.id) this.loadContracts(t.id);
+        } catch (err: any) {
+          this.toasts.errorDirect(err?.error?.message || 'Erreur lors de l\'annulation du préavis');
+        }
+      });
+      return;
+    }
+
     this.selectedContractForNotice.set(contract);
     this.showNoticeWizard.set(true);
   }
