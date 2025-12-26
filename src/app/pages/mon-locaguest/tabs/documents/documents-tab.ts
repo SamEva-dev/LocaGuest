@@ -3,6 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DocumentsApi, DocumentDto } from '../../../../core/api/documents.api';
+import { DocumentViewerService } from '../../../../core/services/document-viewer.service';
 
 interface DocumentWithTenantInfo extends DocumentDto {
   tenantName?: string;
@@ -24,6 +25,7 @@ interface DocumentStats {
 })
 export class DocumentsTab implements OnInit {
   private documentsApi = inject(DocumentsApi);
+  private documentViewer = inject(DocumentViewerService);
   
   allDocuments = signal<DocumentWithTenantInfo[]>([]);
   isLoading = signal(false);
@@ -148,17 +150,9 @@ export class DocumentsTab implements OnInit {
   
   viewDocument(doc: DocumentWithTenantInfo) {
     if (!doc.id) return;
-    
-    this.documentsApi.downloadDocument(doc.id).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        window.open(url, '_blank');
-        window.URL.revokeObjectURL(url);
-      },
-      error: (err) => {
-        console.error('❌ View error:', err);
-        alert('Erreur lors de l\'ouverture');
-      }
+
+    void this.documentViewer.open(doc.id, {
+      fileName: doc.fileName
     });
   }
   

@@ -11,12 +11,24 @@
     </div>
     
     @if (!isEditing()) {
-      <button 
-        (click)="startEditing()"
-        class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition flex items-center gap-2">
-        <i class="ph ph-pencil-simple"></i>
-        Modifier
-      </button>
+      <div class="flex items-center gap-2">
+        <button 
+          (click)="startEditing()"
+          class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition flex items-center gap-2">
+          <i class="ph ph-pencil-simple"></i>
+          Modifier
+        </button>
+
+        <button
+          (click)="printPropertySheet()"
+          [disabled]="isPrintingSheet()"
+          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Imprimer la fiche"
+        >
+          <i class="ph" [class.ph-printer]="!isPrintingSheet()" [class.ph-circle-notch]="isPrintingSheet()" [class.animate-spin]="isPrintingSheet()"></i>
+          <span>{{ isPrintingSheet() ? 'Génération...' : 'Imprimer la fiche' }}</span>
+        </button>
+      </div>
     } @else {
       <div class="flex items-center gap-2">
         <button 

@@ -7,6 +7,7 @@ import {
   MarkDocumentAsSignedRequest, 
   ContractDocumentsStatusDto 
 } from '../models/documents.models';
+import { ContractViewerDto } from '../models/contract-viewer.models';
 
 // Re-export pour compatibilité avec le code existant
 export type { DocumentDto, MarkDocumentAsSignedRequest, ContractDocumentsStatusDto };
@@ -87,5 +88,23 @@ export class DocumentsApi {
     return this.http.get<ContractDocumentsStatusDto>(
       `${this.baseUrl}/contract/${contractId}/status`
     );
+  }
+
+  getContractViewer(contractId: string): Observable<ContractViewerDto> {
+    return this.http.get<ContractViewerDto>(
+      `${this.baseUrl}/contract/${contractId}/viewer`
+    );
+  }
+
+  downloadPropertySheet(propertyId: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/property/${propertyId}/sheet`, {
+      responseType: 'blob'
+    });
+  }
+
+  downloadTenantSheet(tenantId: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/tenant/${tenantId}/sheet`, {
+      responseType: 'blob'
+    });
   }
 }

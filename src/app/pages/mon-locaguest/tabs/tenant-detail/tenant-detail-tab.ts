@@ -8,12 +8,16 @@ import { TenantsService } from '../../../../core/services/tenants.service';
 import { Contract } from '../../../../core/api/properties.api';
 import { DocumentsManagerComponent } from '../../components/documents-manager/documents-manager';
 import { ContractDocumentsStatusComponent } from '../../components/contract-documents-status/contract-documents-status.component';
+import { DocumentsApi } from '../../../../core/api/documents.api';
 import { ContractWizardModal } from '../property-contracts/contract-wizard-modal/contract-wizard-modal';
 import { TenantPaymentsTab } from '../tenant-payments/tenant-payments-tab';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { firstValueFrom } from 'rxjs';
+import { InventoriesApiService } from '../../../../core/api/inventories.api';
+import { InventoryExitWizardData, InventoryExitWizardSimpleComponent } from '../property-contracts/inventory-exit-wizard/inventory-exit-wizard-simple';
+import { ContractViewerModal } from '../../components/contract-viewer-modal/contract-viewer-modal';
 
 @Component({
   selector: 'tenant-detail-tab',
@@ -25,7 +29,9 @@ import { firstValueFrom } from 'rxjs';
     DocumentsManagerComponent,
     ContractDocumentsStatusComponent,
     ContractWizardModal,
-    TenantPaymentsTab
+    TenantPaymentsTab,
+    InventoryExitWizardSimpleComponent,
+    ContractViewerModal
   ],
   templateUrl: './tenant-detail-tab.html'
 })
@@ -34,8 +40,10 @@ export class TenantDetailTab {
   private tabManager = inject(InternalTabManagerService);
   private tenantsService = inject(TenantsService);
   private propertiesService = inject(PropertiesService);
+  private inventoriesApi = inject(InventoriesApiService);
   private toasts = inject(ToastService);
   private confirmService = inject(ConfirmService);
+  private documentsApi = inject(DocumentsApi);
 
   activeSubTab = signal('contracts');
   isLoading = signal(false);
@@ -64,6 +72,14 @@ export class TenantDetailTab {
   
   // Pour gérer l'expansion des documents de contrat
   expandedContractId = signal<string | null>(null);
+
+  showContractViewer = signal(false);
+  viewerContractId = signal<string | null>(null);
+
+  showInventoryExitWizard = signal(false);
+  inventoryExitData = signal<InventoryExitWizardData | null>(null);
+
+  isPrintingSheet = signal(false);
   
   // Pour gérer le wizard de création de contrat
   showContractWizard = signal(false);
@@ -120,6 +136,30 @@ export class TenantDetailTab {
         console.warn('⚠️ No tenantId found in data');
       }
     });
+  }
+
+  async printTenantSheet() {
+    const t = this.tenant();
+    if (!t?.id) {
+      this.toasts.errorDirect('Locataire introuvable');
+      return;
+    }
+
+    this.isPrintingSheet.set(true);
+    try {
+      const blob = await firstValueFrom(this.documentsApi.downloadTenantSheet(t.id));
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Fiche_Locataire_${t.code || t.id}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('❌ Error printing tenant sheet:', err);
+      this.toasts.errorDirect('Erreur lors de la génération de la fiche');
+    } finally {
+      this.isPrintingSheet.set(false);
+    }
   }
 
   private loadTenant(id: string) {
@@ -253,9 +293,39 @@ export class TenantDetailTab {
   }
 
   openPropertyTab(contract: Contract) {
-    // Extract property ID from contract if available
-    // Assuming contract has propertyId field or we need to navigate based on contract data
-    alert('Ouvrir property - À implémenter avec propertyId du contract');
+    const tenant = this.tenant();
+    const propertyId = (contract as any)?.propertyId || tenant?.propertyId;
+
+    if (!propertyId) {
+      this.toasts.errorDirect('Impossible d\'ouvrir le bien: identifiant manquant');
+      return;
+    }
+
+    const fromProperty = this.fromProperty();
+    const propertyName =
+      (contract as any)?.propertyName ||
+      fromProperty?.name ||
+      tenant?.propertyCode ||
+      'Bien';
+
+    this.tabManager.openProperty(propertyId, propertyName, {
+      fromTenant: {
+        id: tenant?.id,
+        name: tenant?.fullName
+      }
+    });
+  }
+
+  async viewContractDocument(contract: Contract, event?: Event) {
+    event?.stopPropagation();
+
+    if (!contract?.id) {
+      this.toasts.errorDirect('Impossible d\'ouvrir le contrat: identifiant manquant');
+      return;
+    }
+
+    this.viewerContractId.set(contract.id);
+    this.showContractViewer.set(true);
   }
 
   getTenantInfo() {
@@ -446,16 +516,79 @@ export class TenantDetailTab {
    * Créer EDL sortie
    */
   createExitInventory(contract: Contract) {
-    this.toasts.infoDirect('Ouverture du wizard EDL sortie...');
-    // TODO: Ouvrir le wizard EDL sortie
+    this.inventoriesApi.getByContract(contract.id).subscribe({
+      next: (inv) => {
+        const entryId = inv?.entry?.id;
+        if (!entryId) {
+          this.toasts.errorDirect('EDL entrée manquant pour ce contrat');
+          return;
+        }
+
+        const propertyId = (contract as any)?.propertyId || this.tenant()?.propertyId;
+        if (!propertyId) {
+          this.toasts.errorDirect('Bien introuvable pour ce contrat');
+          return;
+        }
+
+        const data: InventoryExitWizardData = {
+          contractId: contract.id,
+          propertyId,
+          propertyName: (contract as any)?.propertyName || this.tenant()?.propertyCode || 'Bien',
+          roomId: contract.roomId,
+          tenantName: this.tenant()?.fullName || 'Locataire',
+          inventoryEntryId: entryId
+        };
+
+        this.inventoryExitData.set(data);
+        this.showInventoryExitWizard.set(true);
+      },
+      error: () => this.toasts.errorDirect('Erreur lors de la vérification des EDL')
+    });
   }
   
   /**
    * Télécharger PDF du contrat
    */
   async downloadContractPDF(contract: Contract) {
-    this.toasts.infoDirect('Génération du PDF en cours...');
-    // TODO: Appeler API pour générer et télécharger PDF
+    try {
+      const tenant = this.tenant();
+      const propertyId = (contract as any)?.propertyId || tenant?.propertyId;
+      if (!tenant?.id || !propertyId) {
+        this.toasts.errorDirect('Impossible de générer le PDF: données manquantes');
+        return;
+      }
+
+      const dto = {
+        contractId: contract.id,
+        tenantId: tenant.id,
+        propertyId,
+        contractType: 'Bail',
+        startDate: new Date(contract.startDate).toISOString().split('T')[0],
+        endDate: new Date(contract.endDate).toISOString().split('T')[0],
+        rent: contract.rent,
+        deposit: contract.deposit ?? null,
+        charges: contract.charges ?? null,
+        additionalClauses: null,
+        isThirdPartyLandlord: false,
+        landlordInfo: null
+      };
+
+      const blob = await firstValueFrom(this.documentsApi.generateContract(dto));
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Contrat_${contract.id}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('❌ Error generating contract PDF:', error);
+      this.toasts.errorDirect('Erreur lors de la génération du PDF');
+    }
+  }
+
+  handleInventoryExitClose(_: any) {
+    this.showInventoryExitWizard.set(false);
+    this.inventoryExitData.set(null);
   }
   
   /**

@@ -28,6 +28,24 @@ export interface ContractDto {
   notes?: string;
   paymentsCount?: number;
   createdAt?: string;
+
+  // ✅ Inventories
+  hasInventoryEntry?: boolean;
+  hasInventoryExit?: boolean;
+  inventoryEntryId?: string;
+  inventoryExitId?: string;
+}
+
+export interface ContractTerminationEligibilityDto {
+  canTerminate: boolean;
+  hasInventoryEntry: boolean;
+  hasInventoryExit: boolean;
+  inventoryEntryId?: string | null;
+  inventoryExitId?: string | null;
+  paymentsUpToDate: boolean;
+  outstandingAmount: number;
+  overduePaymentsCount: number;
+  blockReason?: string | null;
 }
 
 export interface ContractDetailDto extends ContractDto {
@@ -141,6 +159,14 @@ export class ContractsApi {
 
   terminateContract(contractId: string, request: TerminateContractRequest): Observable<{ message: string; id: string }> {
     return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/terminate`, request);
+  }
+
+  getTerminationEligibility(contractId: string): Observable<ContractTerminationEligibilityDto> {
+    return this.http.get<ContractTerminationEligibilityDto>(`${this.baseUrl}/${contractId}/termination-eligibility`);
+  }
+
+  cancelContract(contractId: string): Observable<{ message: string; id: string }> {
+    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/cancel`, {});
   }
 
   markAsSigned(contractId: string, request?: MarkAsSignedRequest): Observable<{ message: string; id: string }> {

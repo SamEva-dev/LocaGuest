@@ -664,7 +664,8 @@
       "ACTIVE": "Active",
       "EXPIRING": "Expiring",
       "SIGNED": "Signed",
-      "TERMINATED": "Terminated"
+      "TERMINATED": "Terminated",
+      "CANCELLED":"Cancelled"
     },
     "CREATE_NEW": "Créer un nouveau contrat",
     "DEPOSIT": "Dépôt de garantie",
@@ -678,6 +679,13 @@
     "TERMINATE": "Résilier",
     "TERMINATE_CONTRACT": "Résilier le contrat",
     "TERMINATE_WARNING": "Cette action marquera le contrat comme terminé. Cette action est irréversible.",
+    "TERMINATION_BLOCKED": "Termination blocked: prerequisites not met.",
+    "TERMINATION_REQUIRES_INVENTORY_ENTRY": "Required action: complete the entry inventory.",
+    "TERMINATION_REQUIRES_INVENTORY_EXIT": "Required action: complete the exit inventory.",
+    "TERMINATION_REASON_REQUIRED": "Termination reason is required.",
+    "DO_INVENTORY_ENTRY": "Complete entry inventory",
+    "DO_INVENTORY_EXIT": "Complete exit inventory",
+    "PAYMENTS_NOT_UP_TO_DATE": "Tenant payments are not up to date.",
     "TERMINATION_DATE": "Date de résiliation",
     "TERMINATION_REASON": "Termination reason",
     "TERMINATION_REASON_PLACEHOLDER": "E.g. early termination, unpaid rent, mutual agreement...",

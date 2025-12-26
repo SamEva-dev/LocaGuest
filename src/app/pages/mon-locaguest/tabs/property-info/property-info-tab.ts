@@ -5,8 +5,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PropertyDetail, PropertyImage, PropertyImageCategory } from '../../../../core/api/properties.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { ImagesService } from '../../../../core/services/images.service';
+import { DocumentsApi } from '../../../../core/api/documents.api';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'property-info-tab',
@@ -19,6 +21,7 @@ export class PropertyInfoTab implements OnDestroy {
   propertyUpdated = output<void>();
   private propertiesService = inject(PropertiesService);
   private imagesService = inject(ImagesService);
+  private documentsApi = inject(DocumentsApi);
   
   // Services UI
   private toasts = inject(ToastService);
@@ -31,6 +34,7 @@ export class PropertyInfoTab implements OnDestroy {
   isUploadingImages = signal(false);
   currentImageIndex = signal(0);
   showStatusDropdown = signal(false);
+  isPrintingSheet = signal(false);
   
   // Image upload modal
   showImageUploadModal = signal(false);
@@ -119,6 +123,30 @@ export class PropertyInfoTab implements OnDestroy {
         });
       }
     });
+  }
+
+  async printPropertySheet() {
+    const prop = this.property();
+    if (!prop?.id) {
+      this.toasts.errorDirect('Bien introuvable');
+      return;
+    }
+
+    this.isPrintingSheet.set(true);
+    try {
+      const blob = await firstValueFrom(this.documentsApi.downloadPropertySheet(prop.id));
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Fiche_Bien_${prop.code || prop.id}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('❌ Error printing property sheet:', err);
+      this.toasts.errorDirect('Erreur lors de la génération de la fiche');
+    } finally {
+      this.isPrintingSheet.set(false);
+    }
   }
 
   private clearImageCache(): void {

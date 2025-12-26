@@ -667,6 +667,13 @@
     "TERMINATE": "Résilier",
     "TERMINATE_CONTRACT": "Résilier le contrat",
     "TERMINATE_WARNING": "Cette action marquera le contrat comme terminé. Cette action est irréversible.",
+    "TERMINATION_BLOCKED": "Résiliation bloquée: prérequis non satisfaits.",
+    "TERMINATION_REQUIRES_INVENTORY_ENTRY": "Action obligatoire: réaliser l'état des lieux d'entrée (EDL entrée).",
+    "TERMINATION_REQUIRES_INVENTORY_EXIT": "Action obligatoire: réaliser l'état des lieux de sortie (EDL sortie).",
+    "TERMINATION_REASON_REQUIRED": "Le motif de résiliation est obligatoire.",
+    "DO_INVENTORY_ENTRY": "Faire l'état des lieux d'entrée",
+    "DO_INVENTORY_EXIT": "Faire l'état des lieux de sortie",
+    "PAYMENTS_NOT_UP_TO_DATE": "Le locataire n'est pas à jour de ses paiements.",
     "TERMINATION_DATE": "Date de résiliation",
     "TERMINATION_REASON": "Motif de résiliation",
     "TERMINATION_REASON_PLACEHOLDER": "Ex: fin de bail anticipée, impayés, accord amiable...",
@@ -682,7 +689,8 @@
       "ACTIVE": "Actif",
       "EXPIRING": "En fin de validité",
       "SIGNED": "Signé",
-      "TERMINATED": "Terminé"
+      "TERMINATED": "Terminé",
+      "CANCELLED":"Annulé"
     }
   },
   "PAYMENT": {

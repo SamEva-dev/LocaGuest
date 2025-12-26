@@ -2,13 +2,14 @@ import { Component, input, signal, inject, effect, computed } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { HttpClient, HttpEventType } from '@angular/common/http';
+import { HttpEventType } from '@angular/common/http';
 import { DocumentsApi, DocumentDto } from '../../../../core/api/documents.api';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { TenantsApi } from '../../../../core/api/tenants.api';
 import { Contract } from '../../../../core/api/properties.api';
 import { DocumentTemplate, TenantDocument, TenantInfo, GenerateContractDto, DocumentType } from '../../../../core/models/documents.models';
+import { DocumentViewerService } from '../../../../core/services/document-viewer.service';
 
 @Component({
   selector: 'documents-manager',
@@ -19,13 +20,13 @@ import { DocumentTemplate, TenantDocument, TenantInfo, GenerateContractDto, Docu
 })
 export class DocumentsManagerComponent {
   tenantInfo = input.required<TenantInfo>();
-  private http = inject(HttpClient);
   private documentsApi = inject(DocumentsApi);
   private tenantsApi = inject(TenantsApi);
   
   // ✅ Services UI
   private toasts = inject(ToastService);
   private confirmService = inject(ConfirmService);
+  private documentViewer = inject(DocumentViewerService);
   
   // Documents from API
   realDocuments = signal<DocumentDto[]>([]);
@@ -55,6 +56,17 @@ export class DocumentsManagerComponent {
     
     return docs;
   });
+
+  viewDocument(doc: TenantDocument) {
+    if (!doc.id) {
+      this.toasts.errorDirect('Document introuvable');
+      return;
+    }
+
+    void this.documentViewer.open(doc.id, {
+      fileName: doc.fileName
+    });
+  }
   
   tenantId = input.required<string>();
   // Mock documents for demo - will be replaced with real API calls
@@ -561,34 +573,25 @@ export class DocumentsManagerComponent {
     }
 
     console.log('📄 Generating contract with full DTO:', dto);
-    
-    // Call API to generate contract PDF
-    this.http.post(`https://localhost:5001/api/documents/generate-contract`, dto, {
-      responseType: 'blob',
-      observe: 'response'
-    }).subscribe({
-      next: (response) => {
-        // Download the PDF
-        const blob = response.body;
-        if (blob) {
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          
-          // Format: Contrat_{Type}_{Nom_du_locataire}_Date_{numero}
-          const tenantName = this.tenantInfo()?.fullName.replace(/\s+/g, '_') || 'Locataire';
-          const date = new Date().toISOString().split('T')[0];
-          const numero = this.documents().length + 1;
-          link.download = `Contrat_${this.contractFormType()}_${tenantName}_${date}_${numero}.pdf`;
-          
-          link.click();
-          window.URL.revokeObjectURL(url);
-          
-          console.log('✅ Contract generated successfully');
-          this.toasts.successDirect('Contrat généré avec succès !');
-          this.showContractModal.set(false);
-          this.loadDocuments(); // Refresh documents list to show the new contract
-        }
+
+    this.documentsApi.generateContract(dto).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+
+        const tenantName = this.tenantInfo()?.fullName.replace(/\s+/g, '_') || 'Locataire';
+        const date = new Date().toISOString().split('T')[0];
+        const numero = this.documents().length + 1;
+        link.download = `Contrat_${this.contractFormType()}_${tenantName}_${date}_${numero}.pdf`;
+
+        link.click();
+        window.URL.revokeObjectURL(url);
+
+        console.log('✅ Contract generated successfully');
+        this.toasts.successDirect('Contrat généré avec succès !');
+        this.showContractModal.set(false);
+        this.loadDocuments();
       },
       error: (err) => {
         console.error('❌ Error generating contract:', err);
