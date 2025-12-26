@@ -85,14 +85,14 @@ export class SettingsTab implements OnInit {
   ];
 
   notificationsList = [
-    { key: 'paymentReceived', label: 'Paiement reçu', desc: 'Recevoir une notification lors de la réception d\'un paiement' },
-    { key: 'paymentOverdue', label: 'Paiement en retard', desc: 'Alertes pour les paiements en retard' },
-    { key: 'paymentReminder', label: 'Rappel de paiement', desc: 'Rappels avant échéance' },
-    { key: 'contractSigned', label: 'Contrat signé', desc: 'Notification lors de la signature d\'un contrat' },
-    { key: 'contractExpiring', label: 'Contrat expirant', desc: 'Alerte avant expiration du bail' },
-    { key: 'newTenantRequest', label: 'Nouvelle demande locataire', desc: 'Notification pour les nouvelles demandes' },
-    { key: 'systemUpdates', label: 'Mises à jour système', desc: 'Nouvelles fonctionnalités et améliorations' },
-    { key: 'marketingEmails', label: 'Emails marketing', desc: 'Conseils et offres spéciales' }
+    { key: 'paymentReceived', label: 'SETTINGS.NOTIFICATIONS.ITEMS.PAYMENT_RECEIVED.TITLE', desc: 'SETTINGS.NOTIFICATIONS.ITEMS.PAYMENT_RECEIVED.DESC' },
+    { key: 'paymentOverdue', label: 'SETTINGS.NOTIFICATIONS.ITEMS.PAYMENT_OVERDUE.TITLE', desc: 'SETTINGS.NOTIFICATIONS.ITEMS.PAYMENT_OVERDUE.DESC' },
+    { key: 'paymentReminder', label: 'SETTINGS.NOTIFICATIONS.ITEMS.PAYMENT_REMINDER.TITLE', desc: 'SETTINGS.NOTIFICATIONS.ITEMS.PAYMENT_REMINDER.DESC' },
+    { key: 'contractSigned', label: 'SETTINGS.NOTIFICATIONS.ITEMS.CONTRACT_SIGNED.TITLE', desc: 'SETTINGS.NOTIFICATIONS.ITEMS.CONTRACT_SIGNED.DESC' },
+    { key: 'contractExpiring', label: 'SETTINGS.NOTIFICATIONS.ITEMS.CONTRACT_EXPIRING.TITLE', desc: 'SETTINGS.NOTIFICATIONS.ITEMS.CONTRACT_EXPIRING.DESC' },
+    { key: 'newTenantRequest', label: 'SETTINGS.NOTIFICATIONS.ITEMS.NEW_TENANT_REQUEST.TITLE', desc: 'SETTINGS.NOTIFICATIONS.ITEMS.NEW_TENANT_REQUEST.DESC' },
+    { key: 'systemUpdates', label: 'SETTINGS.NOTIFICATIONS.ITEMS.SYSTEM_UPDATES.TITLE', desc: 'SETTINGS.NOTIFICATIONS.ITEMS.SYSTEM_UPDATES.DESC' },
+    { key: 'marketingEmails', label: 'SETTINGS.NOTIFICATIONS.ITEMS.MARKETING_EMAILS.TITLE', desc: 'SETTINGS.NOTIFICATIONS.ITEMS.MARKETING_EMAILS.DESC' }
   ];
 
   subTabs = [

@@ -93,6 +93,60 @@
       "DOWN": "En baisse"
     }
   },
+  "SETTINGS": {
+    "TABS": {
+      "PROFILE": "Profil",
+      "ORGANIZATION": "Organisation",
+      "TEAM": "Équipe",
+      "SECURITY": "Sécurité",
+      "NOTIFICATIONS": "Notifications",
+      "BILLING": "Facturation",
+      "PREFERENCES": "Préférences",
+      "INTERFACE": "Interface"
+    },
+    "NOTIFICATIONS": {
+      "ITEMS": {
+        "PAYMENT_RECEIVED": {
+          "TITLE": "Paiement reçu",
+          "DESC": "Recevoir une notification lors de la réception d'un paiement"
+        },
+        "PAYMENT_OVERDUE": {
+          "TITLE": "Paiement en retard",
+          "DESC": "Alertes pour les paiements en retard"
+        },
+        "PAYMENT_REMINDER": {
+          "TITLE": "Rappel de paiement",
+          "DESC": "Rappels avant échéance"
+        },
+        "CONTRACT_SIGNED": {
+          "TITLE": "Contrat signé",
+          "DESC": "Notification lors de la signature d'un contrat"
+        },
+        "CONTRACT_EXPIRING": {
+          "TITLE": "Contrat expirant",
+          "DESC": "Alerte avant expiration du bail"
+        },
+        "NEW_TENANT_REQUEST": {
+          "TITLE": "Nouvelle demande locataire",
+          "DESC": "Notification pour les nouvelles demandes"
+        },
+        "SYSTEM_UPDATES": {
+          "TITLE": "Mises à jour système",
+          "DESC": "Nouvelles fonctionnalités et améliorations"
+        },
+        "MARKETING_EMAILS": {
+          "TITLE": "Emails marketing",
+          "DESC": "Conseils et offres spéciales"
+        }
+      }
+    }
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "EMPTY": "Aucune notification",
+    "EMPTY_HINT": "Les alertes (paiements, contrats, échéances) apparaîtront ici.",
+    "GO_TO_SETTINGS": "Gérer mes notifications"
+  },
   "PROPERTY": {
     "ADD_PROPERTY": "Ajouter un bien",
     "EDIT": "Modifier",

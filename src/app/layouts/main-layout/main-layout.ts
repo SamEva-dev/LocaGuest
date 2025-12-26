@@ -31,6 +31,7 @@ export class MainLayout {
   tabs = this.tabManager.tabs;
   activeTabId = this.tabManager.activeTabId;
   showUserMenu = signal(false);
+  showNotificationsMenu = signal(false);
   
   // ✅ Getters pour template
   toastItems = this.toasts.items;
@@ -142,6 +143,10 @@ export class MainLayout {
     this.showUserMenu.set(!this.showUserMenu());
   }
 
+  toggleNotificationsMenu() {
+    this.showNotificationsMenu.set(!this.showNotificationsMenu());
+  }
+
   goToPricing() {
     this.showUserMenu.set(false);
     this.router.navigate(['/pricing']);
@@ -152,6 +157,10 @@ export class MainLayout {
     const target = event.target as HTMLElement;
     if (this.showUserMenu() && !target.closest('.relative')) {
       this.showUserMenu.set(false);
+    }
+
+    if (this.showNotificationsMenu() && !target.closest('.notifications-menu')) {
+      this.showNotificationsMenu.set(false);
     }
   }
 }
