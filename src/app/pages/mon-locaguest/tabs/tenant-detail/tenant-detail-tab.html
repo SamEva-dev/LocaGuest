@@ -17,6 +17,13 @@
               <div class="flex items-center gap-2 mb-1 flex-wrap">
                 <h3 class="text-xl font-bold">{{ tenant()!.fullName }}</h3>
                 <span class="text-sm px-2 py-1 rounded-lg bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 font-mono">{{ tenant()!.code }}</span>
+
+                @if (hasSignedAddendums()) {
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium border border-purple-200 dark:border-purple-800">
+                    <i class="ph ph-file-plus text-base"></i>
+                    <span>Avenant</span>
+                  </span>
+                }
               
               <!-- ✅ NOUVEAU: Badge association bien -->
               @if (associatedProperty()) {
@@ -440,6 +447,12 @@
                                 </span>
                               }
 
+                              @if (getSignedAddendums(contract.id).length > 0) {
+                                <span class="text-xs px-2 py-1 rounded-full font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
+                                  Avenant signé
+                                </span>
+                              }
+
                               @if (contract.noticeEndDate) {
                                 <span class="text-xs px-2 py-1 rounded-full font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
                                   En préavis · {{ contract.noticeEndDate | date:'dd/MM/yyyy' }}
@@ -549,6 +562,17 @@
                             <i class="ph ph-download"></i>
                             <span>PDF</span>
                           </button>
+
+                          @if (getSignedAddendums(contract.id).length > 0) {
+                            <button
+                              (click)="downloadAddendumPdf(getSignedAddendums(contract.id)[0], $event)"
+                              class="px-3 py-1.5 text-sm rounded-lg border border-purple-300 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition flex items-center gap-1.5"
+                              title="Télécharger le PDF de l'avenant signé"
+                            >
+                              <i class="ph ph-file-pdf"></i>
+                              <span>PDF Avenant</span>
+                            </button>
+                          }
                           
                           <!-- Historique -->
                           <button
@@ -685,6 +709,68 @@
                 <i class="ph ph-clock-clockwise text-slate-600"></i>
                 <span>{{ 'TENANT.PAYMENT_HISTORY' | translate }}</span>
               </h3>
+
+              <div class="mb-6">
+                <h4 class="font-semibold mb-3 flex items-center gap-2">
+                  <i class="ph ph-receipt text-slate-600"></i>
+                  <span>Échéances</span>
+                </h4>
+
+                @if (isLoadingInvoices()) {
+                  <div class="flex items-center justify-center p-6">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                  </div>
+                } @else if (rentInvoices().length === 0) {
+                  <div class="text-sm text-slate-500 text-center py-4">
+                    Aucune échéance trouvée
+                  </div>
+                } @else {
+                  <div class="space-y-2">
+                    @for (invoice of rentInvoices(); track invoice.id) {
+                      <div class="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                        <div class="flex items-center gap-3">
+                          <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                            <i class="ph ph-file-pdf text-blue-600"></i>
+                          </div>
+                          <div>
+                            <p class="font-medium text-slate-800 dark:text-white">
+                              {{ invoice.month }}/{{ invoice.year }}
+                            </p>
+                            <p class="text-xs text-slate-500">
+                              Échéance: {{ invoice.dueDate | date:'dd/MM/yyyy' }}
+                            </p>
+                            @if (invoice.propertyName) {
+                              <p class="text-xs text-slate-400">
+                                <i class="ph ph-house-line text-xs"></i> {{ invoice.propertyName }}
+                              </p>
+                            }
+                          </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                          <div class="text-right">
+                            <p class="font-semibold text-lg text-slate-800 dark:text-white">{{ formatCurrency(invoice.amount) }}</p>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-900/30 dark:text-slate-300">
+                              {{ invoice.status }}
+                            </span>
+                          </div>
+                          <button
+                            (click)="downloadInvoicePdf(invoice)"
+                            class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            [disabled]="downloadingInvoiceId() === invoice.id"
+                            title="Télécharger la facture PDF">
+                            @if (downloadingInvoiceId() === invoice.id) {
+                              <i class="ph ph-spinner-gap animate-spin"></i>
+                            } @else {
+                              <i class="ph ph-download"></i>
+                            }
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
               
               @if (payments().length > 0) {
                 <div class="space-y-2">

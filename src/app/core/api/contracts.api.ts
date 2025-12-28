@@ -116,6 +116,24 @@ export interface PaginatedResponse<T> {
   data: T[];
 }
 
+export type BillingShareType = 'Percentage' | 'FixedAmount';
+
+export interface OccupantParticipantChangeDto {
+  tenantId: string;
+  shareValue: number;
+}
+
+export interface OccupantRoomChangeDto {
+  oldRoomLabel?: string | null;
+  newRoomId: string;
+}
+
+export interface OccupantChangesDto {
+  splitType: BillingShareType;
+  participants: OccupantParticipantChangeDto[];
+  roomChange?: OccupantRoomChangeDto;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ContractsApi {
   private readonly http = inject(HttpClient);
@@ -217,7 +235,7 @@ export interface CreateAddendumRequest {
   newRent?: number | null;
   newCharges?: number | null;
   newEndDate?: string | null;
-  occupantChanges?: string | null;
+  occupantChanges?: OccupantChangesDto | null;
   newRoomId?: string | null;
   newClauses?: string | null;
   attachedDocumentIds?: string[];

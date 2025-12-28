@@ -280,161 +280,119 @@
             </h3>
             
             <div class="space-y-4">
-              <!-- Action Selection -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Type de modification *
-                </label>
-                <div class="grid grid-cols-3 gap-2">
-                  <button
-                    (click)="updateOccupantsField('action', 'add')"
-                    [class]="occupantsForm().action === 'add' ? 
-                      'px-4 py-2 border-2 border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg font-medium' : 
-                      'px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'"
-                  >
-                    <i class="ph ph-user-plus"></i> Ajouter
-                  </button>
-                  <button
-                    (click)="updateOccupantsField('action', 'remove')"
-                    [class]="occupantsForm().action === 'remove' ? 
-                      'px-4 py-2 border-2 border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg font-medium' : 
-                      'px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'"
-                  >
-                    <i class="ph ph-user-minus"></i> Retirer
-                  </button>
-                  <button
-                    (click)="updateOccupantsField('action', 'changeRoom')"
-                    [class]="occupantsForm().action === 'changeRoom' ? 
-                      'px-4 py-2 border-2 border-purple-500 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg font-medium' : 
-                      'px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'"
-                  >
-                    <i class="ph ph-door"></i> Changer chambre
-                  </button>
-                </div>
-              </div>
-              
-              <!-- Add Occupant Fields -->
-              @if (occupantsForm().action === 'add') {
-                <div class="space-y-4 p-4 bg-purple-50 dark:bg-purple-900/10 rounded-lg">
+              <div class="space-y-4 p-4 bg-purple-50 dark:bg-purple-900/10 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Nom complet *
-                    </label>
-                    <input
-                      type="text"
-                      [(ngModel)]="occupantsForm().occupantName"
-                      (ngModelChange)="updateOccupantsField('occupantName', $event)"
-                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="Jean Dupont"
-                    />
-                  </div>
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Email *
-                      </label>
-                      <input
-                        type="email"
-                        [(ngModel)]="occupantsForm().occupantEmail"
-                        (ngModelChange)="updateOccupantsField('occupantEmail', $event)"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="email@exemple.fr"
-                      />
-                    </div>
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Téléphone
-                      </label>
-                      <input
-                        type="tel"
-                        [(ngModel)]="occupantsForm().occupantPhone"
-                        (ngModelChange)="updateOccupantsField('occupantPhone', $event)"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="+33 6 12 34 56 78"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Part du loyer (optionnel)
-                    </label>
-                    <input
-                      type="number"
-                      [(ngModel)]="occupantsForm().rentShare"
-                      (ngModelChange)="updateOccupantsField('rentShare', $event)"
-                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                      step="0.01"
-                      placeholder="450.00"
-                    />
-                  </div>
-                </div>
-              }
-              
-              <!-- Remove Occupant Fields -->
-              @if (occupantsForm().action === 'remove') {
-                <div class="space-y-4 p-4 bg-red-50 dark:bg-red-900/10 rounded-lg">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Colocataire sortant *
-                    </label>
-                    <input
-                      type="text"
-                      [(ngModel)]="occupantsForm().occupantToRemove"
-                      (ngModelChange)="updateOccupantsField('occupantToRemove', $event)"
-                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="Nom du colocataire"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Date de départ *
-                    </label>
-                    <input
-                      type="date"
-                      [(ngModel)]="occupantsForm().departureDate"
-                      (ngModelChange)="updateOccupantsField('departureDate', $event)"
-                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Ajustement dépôt de garantie (optionnel)
-                    </label>
-                    <input
-                      type="number"
-                      [(ngModel)]="occupantsForm().depositAdjustment"
-                      (ngModelChange)="updateOccupantsField('depositAdjustment', $event)"
-                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white"
-                      step="0.01"
-                    />
-                  </div>
-                </div>
-              }
-              
-              <!-- Change Room Fields -->
-              @if (occupantsForm().action === 'changeRoom') {
-                <div class="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg">
-                  <div class="p-3 bg-white dark:bg-gray-800 rounded border border-blue-200 dark:border-blue-800">
-                    <label class="text-sm font-medium text-gray-600 dark:text-gray-400">Chambre actuelle</label>
-                    <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ occupantsForm().currentRoom || 'Non spécifiée' }}</p>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Nouvelle chambre *
+                      Type de répartition *
                     </label>
                     <select
-                      [(ngModel)]="occupantsForm().newRoom"
-                      (ngModelChange)="updateOccupantsField('newRoom', $event)"
-                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      [(ngModel)]="occupantsForm().splitType"
+                      (ngModelChange)="updateOccupantsField('splitType', $event)"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
                     >
-                      <option value="">-- Sélectionner une chambre --</option>
+                      <option value="Percentage">Pourcentage (%)</option>
+                      <option value="FixedAmount">Montant fixe (€)</option>
+                    </select>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Total (loyer + charges): {{ formatCurrency(occupantsTotalAmount()) }}
+                    </p>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Changement de chambre (optionnel)
+                    </label>
+                    <select
+                      [(ngModel)]="occupantsForm().newRoomId"
+                      (ngModelChange)="updateOccupantsField('newRoomId', $event)"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                    >
+                      <option value="">-- Ne pas changer --</option>
                       @for (room of data.availableRooms || []; track room.id) {
                         <option [value]="room.id">{{ room.name }} - {{ formatCurrency(room.rent) }}</option>
                       }
                     </select>
                   </div>
                 </div>
-              }
+
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Occupants & parts *
+                    </label>
+                    <button
+                      (click)="addOccupantParticipant()"
+                      type="button"
+                      class="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm"
+                    >
+                      <i class="ph ph-plus"></i> Ajouter
+                    </button>
+                  </div>
+
+                  <div class="space-y-2">
+                    @for (p of occupantsForm().participants; track $index) {
+                      <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end p-3 bg-white dark:bg-gray-800 rounded-lg border border-purple-100 dark:border-purple-900">
+                        <div class="md:col-span-8">
+                          <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Locataire</label>
+                          <select
+                            [ngModel]="p.tenantId"
+                            (ngModelChange)="updateOccupantParticipant($index, { tenantId: $event })"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                          >
+                            <option value="">-- Sélectionner --</option>
+                            @for (t of availableTenants(); track t.id) {
+                              <option [value]="t.id">{{ t.fullName }} ({{ t.email }})</option>
+                            }
+                          </select>
+                        </div>
+                        <div class="md:col-span-3">
+                          <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                            @if (occupantsForm().splitType === 'Percentage') {
+                              Part (%)
+                            } @else {
+                              Montant (€)
+                            }
+                          </label>
+                          <input
+                            type="number"
+                            [ngModel]="p.shareValue"
+                            (ngModelChange)="updateOccupantParticipant($index, { shareValue: $event === '' ? null : +$event })"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
+                            step="0.01"
+                            min="0"
+                          />
+                        </div>
+                        <div class="md:col-span-1 flex justify-end">
+                          <button
+                            (click)="removeOccupantParticipant($index)"
+                            type="button"
+                            class="p-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            [disabled]="occupantsForm().participants.length <= 1"
+                          >
+                            <i class="ph ph-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="flex items-center justify-between text-sm">
+                    <div class="text-gray-600 dark:text-gray-400">
+                      Total: 
+                      @if (occupantsForm().splitType === 'Percentage') {
+                        {{ occupantsShareSum() }}%
+                      } @else {
+                        {{ formatCurrency(occupantsShareSum()) }} / {{ formatCurrency(occupantsTotalAmount()) }}
+                      }
+                    </div>
+                    @if (occupantsShareError()) {
+                      <div class="text-red-600 dark:text-red-400">
+                        {{ occupantsShareError() }}
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
               
               <!-- Common Fields -->
               <div>
@@ -813,22 +771,47 @@
           @if (selectedType() === 'Occupants') {
             <div class="space-y-3">
               <div>
-                <span class="text-gray-600 dark:text-gray-400">Action:</span>
+                <span class="text-gray-600 dark:text-gray-400">Répartition:</span>
                 <span class="ml-2 font-semibold text-purple-600">
-                  @if (occupantsForm().action === 'add') { Ajout d'un colocataire }
-                  @if (occupantsForm().action === 'remove') { Retrait d'un colocataire }
-                  @if (occupantsForm().action === 'changeRoom') { Changement de chambre }
+                  @if (occupantsForm().splitType === 'Percentage') {
+                    Pourcentage
+                  } @else {
+                    Montant fixe
+                  }
                 </span>
               </div>
-              @if (occupantsForm().action === 'add') {
-                <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
-                  <p class="font-medium text-gray-800 dark:text-white">{{ occupantsForm().occupantName }}</p>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">{{ occupantsForm().occupantEmail }}</p>
-                  @if (occupantsForm().occupantPhone) {
-                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ occupantsForm().occupantPhone }}</p>
-                  }
+
+              @if (occupantsForm().newRoomId) {
+                <div>
+                  <span class="text-gray-600 dark:text-gray-400">Chambre:</span>
+                  <span class="ml-2 font-medium text-gray-800 dark:text-white">
+                    {{ occupantsForm().currentRoom || 'Non spécifiée' }}
+                    <i class="ph ph-arrow-right mx-2 text-gray-400"></i>
+                    {{ occupantsForm().newRoomId }}
+                  </span>
                 </div>
               }
+
+              <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-gray-600 dark:text-gray-400 block mb-2">Participants:</span>
+                <div class="space-y-2">
+                  @for (p of occupantsForm().participants; track $index) {
+                    <div class="flex justify-between items-center text-sm">
+                      <span class="text-gray-800 dark:text-white font-medium">
+                        {{ getTenantLabel(p.tenantId) }}
+                      </span>
+                      <span class="text-gray-600 dark:text-gray-400">
+                        @if (occupantsForm().splitType === 'Percentage') {
+                          {{ p.shareValue ?? 0 }}%
+                        } @else {
+                          {{ formatCurrency(p.shareValue ?? 0) }}
+                        }
+                      </span>
+                    </div>
+                  }
+                </div>
+              </div>
+
               <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
                 <span class="text-gray-600 dark:text-gray-400">Motif:</span>
                 <p class="text-sm text-gray-800 dark:text-white mt-1">{{ occupantsForm().reason }}</p>

@@ -21,6 +21,8 @@ import { InventoryExitWizardData, InventoryExitWizardSimpleComponent } from '../
 import { ContractViewerModal } from '../../components/contract-viewer-modal/contract-viewer-modal';
 import { ContractAddendumData, ContractAddendumWizard } from '../property-contracts/contract-addendum-wizard/contract-addendum-wizard';
 import { ContractNoticeData, ContractNoticeWizard } from '../property-contracts/contract-notice-wizard/contract-notice-wizard';
+import { AddendumsApi, AddendumDto } from '../../../../core/api/addendums.api';
+import { InvoicesApi, RentInvoiceDto } from '../../../../core/api/invoices.api';
 
 @Component({
   selector: 'tenant-detail-tab',
@@ -50,6 +52,8 @@ export class TenantDetailTab {
   private confirmService = inject(ConfirmService);
   private contractsApi = inject(ContractsApi);
   private documentsApi = inject(DocumentsApi);
+  private addendumsApi = inject(AddendumsApi);
+  private invoicesApi = inject(InvoicesApi);
 
   activeSubTab = signal('contracts');
   isLoading = signal(false);
@@ -58,6 +62,14 @@ export class TenantDetailTab {
   payments = signal<TenantPayment[]>([]);
   contracts = signal<Contract[]>([]);
   paymentStats = signal<TenantPaymentStats | null>(null);
+
+  rentInvoices = signal<RentInvoiceDto[]>([]);
+  isLoadingInvoices = signal(false);
+  downloadingInvoiceId = signal<string | null>(null);
+
+  // ✅ Addendums
+  addendumsByContract = signal<Map<string, AddendumDto[]>>(new Map());
+  isLoadingAddendums = signal(false);
   
   // ✅ NOUVEAU: Stocker les infos du bien d'origine (si ouvert depuis une fiche bien)
   fromProperty = signal<{ id: string; code: string; name: string } | null>(null);
@@ -75,6 +87,18 @@ export class TenantDetailTab {
       name: ''
     };
   });
+
+  signedAddendumsCount = computed(() => {
+    let count = 0;
+    const map = this.addendumsByContract();
+    for (const contract of this.contracts()) {
+      const adds = map.get(contract.id) ?? [];
+      count += adds.filter(a => (a.signatureStatus || '').toLowerCase() === 'signed').length;
+    }
+    return count;
+  });
+
+  hasSignedAddendums = computed(() => this.signedAddendumsCount() > 0);
   
   // Pour gérer l'expansion des documents de contrat
   expandedContractId = signal<string | null>(null);
@@ -210,6 +234,9 @@ export class TenantDetailTab {
       error: (err) => console.error('❌ Error loading tenant payments:', err)
     });
 
+    // Load rent invoices (échéances)
+    this.loadRentInvoices(id);
+
     // Load contracts
     this.loadContracts(id);
 
@@ -223,20 +250,112 @@ export class TenantDetailTab {
     });
   }
 
+  private loadRentInvoices(tenantId: string) {
+    this.isLoadingInvoices.set(true);
+    this.invoicesApi.getInvoicesByTenant(tenantId).subscribe({
+      next: (invoices) => {
+        const sorted = [...(invoices ?? [])].sort((a, b) => {
+          if (a.year !== b.year) return b.year - a.year;
+          return b.month - a.month;
+        });
+        this.rentInvoices.set(sorted);
+        this.isLoadingInvoices.set(false);
+      },
+      error: (err) => {
+        console.error('❌ Error loading tenant invoices:', err);
+        this.rentInvoices.set([]);
+        this.isLoadingInvoices.set(false);
+      }
+    });
+  }
+
+  async downloadInvoicePdf(invoice: RentInvoiceDto) {
+    if (!invoice?.id) return;
+
+    this.downloadingInvoiceId.set(invoice.id);
+    try {
+      const blob = await firstValueFrom(this.invoicesApi.getInvoicePdf(invoice.id));
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Facture_${invoice.year}${String(invoice.month).padStart(2, '0')}_${invoice.id}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('❌ Error downloading invoice PDF:', err);
+      this.toasts.errorDirect('Erreur lors du téléchargement de la facture');
+    } finally {
+      this.downloadingInvoiceId.set(null);
+    }
+  }
   private loadContracts(id: string) {
     this.tenantsService.getTenantContracts(id).subscribe({
       next: (contracts) => {
         this.contracts.set(contracts);
-        console.log('✅ Tenant contracts loaded:', contracts.length, contracts);
-        
+        console.log('✅ Tenant contracts loaded:', contracts.length);
+
+        // ✅ Load addendums for tenant contracts
+        void this.loadAllAddendumsForContracts();
+
         // ✅ Calculer occupation actuelle depuis contrat actif
         this.calculateCurrentOccupancy(contracts);
-        
+
         // ✅ Calculer statut financier depuis paiements
         this.calculateFinancialStatus(id);
       },
       error: (err) => console.error('❌ Error loading tenant contracts:', err)
     });
+  }
+
+  async loadAllAddendumsForContracts() {
+    if (this.isLoadingAddendums()) return;
+
+    try {
+      this.isLoadingAddendums.set(true);
+      const map = new Map<string, AddendumDto[]>();
+
+      for (const contract of this.contracts()) {
+        try {
+          const res = await firstValueFrom(
+            this.addendumsApi.getAddendums({ contractId: contract.id, page: 1, pageSize: 50 })
+          );
+          map.set(contract.id, res?.data ?? []);
+        } catch {
+          map.set(contract.id, []);
+        }
+      }
+
+      this.addendumsByContract.set(map);
+    } finally {
+      this.isLoadingAddendums.set(false);
+    }
+  }
+
+  getSignedAddendums(contractId: string): AddendumDto[] {
+    const adds = this.addendumsByContract().get(contractId) ?? [];
+    return adds.filter(a => (a.signatureStatus || '').toLowerCase() === 'signed');
+  }
+
+  async downloadAddendumPdf(addendum: AddendumDto, event?: Event) {
+    event?.stopPropagation();
+    const docId = addendum.attachedDocumentIds?.[0];
+    if (!docId) {
+      this.toasts.warningDirect('Aucun PDF d\'avenant trouvé');
+      return;
+    }
+
+    try {
+      const blob = await firstValueFrom(this.documentsApi.downloadDocument(docId));
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Avenant_${addendum.id}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('❌ Error downloading addendum pdf:', err);
+      this.toasts.errorDirect('Erreur lors du téléchargement du PDF');
+    }
   }
   
   /**

@@ -178,10 +178,84 @@
                   </div>
                 </div>
               </div>
+
+              @for (addendum of getAddendumsForContract(contract.id); track addendum.id) {
+                <div class="px-6 pb-3">
+                  <div class="p-3 rounded-lg border border-purple-200 dark:border-purple-800 bg-purple-50/60 dark:bg-purple-900/10">
+                    <div class="flex items-center gap-4">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                          <h3 class="font-medium">Avenant</h3>
+                          <span class="px-2 py-0.5 text-xs rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30">
+                            {{ addendum.signatureStatus }}
+                          </span>
+                          <span class="text-xs text-slate-500">· {{ addendum.type }} · effet {{ addendum.effectiveDate | date:'dd/MM/yyyy' }}</span>
+                        </div>
+                        <div class="text-sm text-slate-500 mt-1">
+                          <span>{{ addendum.reason }}</span>
+                        </div>
+                      </div>
+                      <div class="flex gap-2">
+                        <button (click)="downloadAddendumPdf(addendum, $event)" class="px-3 py-1.5 text-sm rounded-lg border border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition" title="PDF">
+                          <i class="ph ph-download mr-1"></i>PDF
+                        </button>
+
+                        <button (click)="openAddendumSignatureModal(addendum, $event)" class="px-3 py-1.5 text-sm rounded-lg border border-purple-300 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition" title="Signature électronique">
+                          <i class="ph ph-signature mr-1"></i>Signature
+                        </button>
+
+                        @if ((addendum.signatureStatus || '').toLowerCase() === 'draft') {
+                          <button (click)="markAddendumAsSigned(addendum, $event)" class="px-3 py-1.5 text-sm rounded-lg border border-emerald-300 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition">
+                            <i class="ph ph-check-circle mr-1"></i>Signer
+                          </button>
+                          <button (click)="openEditAddendum(addendum, $event)" class="px-3 py-1.5 text-sm rounded-lg border border-amber-300 text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition">
+                            <i class="ph ph-pencil mr-1"></i>Modifier
+                          </button>
+                          <button (click)="deleteAddendum(addendum, $event)" class="px-3 py-1.5 text-sm rounded-lg border border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                            <i class="ph ph-trash mr-1"></i>{{ 'COMMON.DELETE' | translate }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
             }
           }
         </div>
       </div>
+
+      @if (showEditAddendumModal()) {
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="closeEditAddendum()">
+          <div class="bg-white dark:bg-slate-800 rounded-xl max-w-xl w-full" (click)="$event.stopPropagation()">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+              <h2 class="text-xl font-bold">Modifier l'avenant</h2>
+            </div>
+            <form [formGroup]="editAddendumForm" (ngSubmit)="saveAddendumEdits()" class="p-6 space-y-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">Date d'effet</label>
+                <input type="date" formControlName="effectiveDate" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Motif</label>
+                <input type="text" formControlName="reason" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Description</label>
+                <textarea rows="3" formControlName="description" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"></textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Notes</label>
+                <textarea rows="2" formControlName="notes" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"></textarea>
+              </div>
+              <div class="flex gap-3 justify-end pt-4">
+                <button type="button" (click)="closeEditAddendum()" class="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">{{ 'COMMON.CANCEL' | translate }}</button>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Enregistrer</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
 
       <!-- Create Contract Modal -->
       @if (showCreateModal()) {
@@ -361,4 +435,49 @@
         (visibleChange)="showContractViewer.set($event)"
         [contractIdInput]="viewerContractId() || ''"
       />
+
+      @if (showAddendumSignatureModal() && addendumToSign()) {
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="closeAddendumSignatureModal()">
+          <div class="bg-white dark:bg-slate-800 rounded-xl max-w-lg w-full" (click)="$event.stopPropagation()">
+            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
+              <h2 class="text-xl font-bold">Signature électronique - Avenant</h2>
+            </div>
+
+            <div class="p-6 space-y-4">
+              <div class="text-sm text-slate-600 dark:text-slate-300">
+                <div><span class="font-medium">Type :</span> {{ addendumToSign()!.type }}</div>
+                <div class="mt-1"><span class="font-medium">Date d'effet :</span> {{ addendumToSign()!.effectiveDate | date:'dd/MM/yyyy' }}</div>
+              </div>
+
+              <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  class="w-4 h-4"
+                  [checked]="signAllOccupants()"
+                  (change)="onSignAllOccupantsToggle($event)"
+                />
+                <span>Faire signer tous les occupants (colocation)</span>
+              </label>
+
+              <div class="text-xs text-slate-500 dark:text-slate-400">
+                Si décoché, seul le locataire principal signera l'avenant.
+              </div>
+            </div>
+
+            <div class="p-6 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2">
+              <button type="button" (click)="closeAddendumSignatureModal()" [disabled]="isSendingAddendumForSignature()" class="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
+                {{ 'COMMON.CANCEL' | translate }}
+              </button>
+              <button type="button" (click)="confirmSendAddendumForSignature()" [disabled]="isSendingAddendumForSignature()" class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50">
+                @if (isSendingAddendumForSignature()) {
+                  <i class="ph ph-circle-notch animate-spin mr-2"></i>
+                } @else {
+                  <i class="ph ph-paper-plane-right mr-2"></i>
+                }
+                Envoyer
+              </button>
+            </div>
+          </div>
+        </div>
+      }
     </div>

@@ -1,5 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output, inject, signal, computed, effect } from '@angular/core';
+import { AddendumsApi, AddendumDto } from '../../../../core/api/addendums.api';
 import { DocumentsApi } from '../../../../core/api/documents.api';
 import { ContractViewerDto } from '../../../../core/models/contract-viewer.models';
 
@@ -18,10 +19,12 @@ export class ContractViewerModal {
   contractId = signal<string | null>(null);
 
   private readonly documentsApi = inject(DocumentsApi);
+  private readonly addendumsApi = inject(AddendumsApi);
 
   isLoading = signal(false);
   error = signal<string | null>(null);
   data = signal<ContractViewerDto | null>(null);
+  signedAddendums = signal<AddendumDto[]>([]);
 
   title = computed(() => {
     const d = this.data();
@@ -54,6 +57,7 @@ export class ContractViewerModal {
 
       this.isLoading.set(true);
       this.error.set(null);
+      this.signedAddendums.set([]);
 
       this.documentsApi.getContractViewer(id).subscribe({
         next: (dto) => {
@@ -64,6 +68,19 @@ export class ContractViewerModal {
           console.error('❌ Error loading contract viewer:', err);
           this.error.set('Erreur lors du chargement du contrat');
           this.isLoading.set(false);
+        }
+      });
+
+      this.addendumsApi.getAddendums({ contractId: id, signatureStatus: 'Signed', page: 1, pageSize: 50 }).subscribe({
+        next: (res) => {
+          const items = (res?.data ?? [])
+            .slice()
+            .sort((a, b) => (a.effectiveDate || '').localeCompare(b.effectiveDate || ''));
+          this.signedAddendums.set(items);
+        },
+        error: (err) => {
+          console.error('❌ Error loading signed addendums for contract viewer:', err);
+          this.signedAddendums.set([]);
         }
       });
     }, { allowSignalWrites: true });

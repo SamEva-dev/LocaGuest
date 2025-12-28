@@ -11,6 +11,60 @@
             @if (draftContracts().length > 0) {
               {{ draftContracts().length }} contrat(s) brouillon
             }
+
+<!-- ✅ NOUVEAU: Addendum Signature Modal -->
+@if (showAddendumSignatureModal() && addendumToSign()) {
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="closeAddendumSignatureModal()">
+    <div class="bg-white dark:bg-slate-800 rounded-xl max-w-lg w-full" (click)="$event.stopPropagation()">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+        <h3 class="text-lg font-semibold">Signature électronique - Avenant</h3>
+      </div>
+
+      <div class="p-5 space-y-4">
+        <div class="text-sm text-slate-600 dark:text-slate-300">
+          <div><span class="font-medium">Type :</span> {{ addendumToSign()!.addendum.type }}</div>
+          <div class="mt-1"><span class="font-medium">Date d'effet :</span> {{ formatDate(addendumToSign()!.addendum.effectiveDate) }}</div>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+          <input
+            type="checkbox"
+            class="w-4 h-4"
+            [checked]="signAllOccupants()"
+            (change)="onSignAllOccupantsToggle($event)"
+          />
+          <span>Faire signer tous les occupants (colocation)</span>
+        </label>
+
+        <div class="text-xs text-slate-500 dark:text-slate-400">
+          Si décoché, seul le locataire principal signera l'avenant.
+        </div>
+      </div>
+
+      <div class="p-5 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2">
+        <button
+          (click)="closeAddendumSignatureModal()"
+          [disabled]="isSendingAddendumForSignature()"
+          class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition disabled:opacity-50"
+        >
+          Annuler
+        </button>
+        <button
+          (click)="confirmSendAddendumForSignature()"
+          [disabled]="isSendingAddendumForSignature()"
+          class="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition disabled:opacity-50"
+        >
+          @if (isSendingAddendumForSignature()) {
+            <i class="ph ph-circle-notch animate-spin mr-2"></i>
+          } @else {
+            <i class="ph ph-paper-plane-right mr-2"></i>
+          }
+          Envoyer
+        </button>
+      </div>
+    </div>
+  </div>
+}
             @if (draftContracts().length > 0 && draftInventories().length > 0) {
               <span> • </span>
             }
@@ -60,7 +114,7 @@
   </div>
 
   <!-- Draft Contracts -->
-  @if (draftContracts().length > 0) {
+  @if (draftContracts().length > 0 || draftAddendums().length > 0) {
     <div class="bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-200 dark:border-amber-800">
       <div class="p-5 border-b border-amber-200 dark:border-amber-800">
         <div class="flex items-center gap-3">
@@ -75,6 +129,98 @@
       </div>
       
       <div class="divide-y divide-amber-200 dark:divide-amber-800">
+        @for (item of draftAddendums(); track item.addendum.id) {
+          <div class="p-5 hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition">
+            <div class="flex items-start gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                  <h4 class="font-semibold">{{ getTenantName(item.contract.tenantId) }}</h4>
+                  <span class="text-xs px-2 py-1 rounded font-medium inline-flex items-center gap-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
+                    <i class="ph ph-file-plus"></i>
+                    Avenant
+                  </span>
+                  <span class="text-xs px-2 py-1 rounded font-medium inline-flex items-center gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
+                    <i class="ph ph-clock"></i>
+                    Brouillon
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                  <div>
+                    <span class="text-slate-500 dark:text-slate-400">Type :</span>
+                    <span class="font-medium ml-1">{{ item.addendum.type }}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 dark:text-slate-400">Date d'effet :</span>
+                    <span class="font-medium ml-1">{{ formatDate(item.addendum.effectiveDate) }}</span>
+                  </div>
+                  <div class="md:col-span-2">
+                    <span class="text-slate-500 dark:text-slate-400">Motif :</span>
+                    <span class="font-medium ml-1">{{ item.addendum.reason }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <button
+                  (click)="downloadAddendumPdf(item.addendum)"
+                  class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/40 transition inline-flex items-center gap-1.5"
+                >
+                  <i class="ph ph-file-pdf"></i>
+                  PDF
+                </button>
+                <button
+                  (click)="generateAddendumPdf(item.addendum)"
+                  class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/40 transition inline-flex items-center gap-1.5"
+                >
+                  <i class="ph ph-file-pdf"></i>
+                  Générer PDF
+                </button>
+                <button
+                  (click)="openAddendumSignatureModal(item)"
+                  class="px-3 py-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium hover:bg-purple-200 dark:hover:bg-purple-900/40 transition inline-flex items-center gap-1.5"
+                >
+                  <i class="ph ph-signature"></i>
+                  Signature électronique
+                </button>
+                <button
+                  (click)="markAddendumAsSigned(item)"
+                  [disabled]="isMarkingAddendumAsSigned()"
+                  class="px-3 py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium hover:bg-emerald-200 dark:hover:bg-emerald-900/40 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  @if (isMarkingAddendumAsSigned()) {
+                    <i class="ph ph-circle-notch animate-spin"></i>
+                  } @else {
+                    <i class="ph ph-check-circle"></i>
+                  }
+                  Signaler comme signé
+                </button>
+
+                <button
+                  (click)="openEditAddendum(item.addendum)"
+                  class="px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-sm font-medium hover:bg-amber-200 dark:hover:bg-amber-900/40 transition inline-flex items-center gap-1.5"
+                >
+                  <i class="ph ph-pencil"></i>
+                  Modifier
+                </button>
+
+                <button
+                  (click)="deleteAddendum(item.addendum)"
+                  [disabled]="isDeletingAddendum()"
+                  class="px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/40 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  @if (isDeletingAddendum()) {
+                    <i class="ph ph-circle-notch animate-spin"></i>
+                  } @else {
+                    <i class="ph ph-trash"></i>
+                  }
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
         @for (contract of draftContracts(); track contract.id) {
           <div class="p-5 hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition">
             <div class="flex items-start gap-4">
@@ -656,4 +802,67 @@
     (onClose)="closeFinalizeInventoryModal()"
     (onConfirm)="handleFinalizeInventory($event)"
   />
+}
+
+<!-- ✅ NOUVEAU: Addendum Edit Modal -->
+@if (showEditAddendumModal() && editAddendumForm()) {
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="closeEditAddendum()">
+    <div class="bg-white dark:bg-slate-800 rounded-xl max-w-xl w-full" (click)="$event.stopPropagation()">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+        <h3 class="text-lg font-semibold">Modifier l'avenant</h3>
+      </div>
+      <div class="p-5 space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Date d'effet</label>
+          <input
+            type="date"
+            class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+            [ngModel]="editAddendumForm()!.effectiveDate"
+            (ngModelChange)="updateEditAddendumField('effectiveDate', $event)"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Motif</label>
+          <input
+            type="text"
+            class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+            [ngModel]="editAddendumForm()!.reason"
+            (ngModelChange)="updateEditAddendumField('reason', $event)"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Description</label>
+          <textarea
+            rows="3"
+            class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+            [ngModel]="editAddendumForm()!.description"
+            (ngModelChange)="updateEditAddendumField('description', $event)"
+          ></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Notes</label>
+          <textarea
+            rows="2"
+            class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+            [ngModel]="editAddendumForm()!.notes"
+            (ngModelChange)="updateEditAddendumField('notes', $event)"
+          ></textarea>
+        </div>
+      </div>
+      <div class="p-5 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2">
+        <button
+          (click)="closeEditAddendum()"
+          class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+        >
+          Annuler
+        </button>
+        <button
+          (click)="saveAddendumEdits()"
+          class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+        >
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
 }

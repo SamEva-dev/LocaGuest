@@ -9,6 +9,8 @@ import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { InventoriesApiService } from '../../../../core/api/inventories.api';
 import { DocumentsApi } from '../../../../core/api/documents.api';
+import { AddendumsApi, AddendumDto } from '../../../../core/api/addendums.api';
+import { DocumentsService } from '../../../../core/services/documents.service';
 import { firstValueFrom } from 'rxjs';
 import { InventoryExitWizardData, InventoryExitWizardSimpleComponent } from '../property-contracts/inventory-exit-wizard/inventory-exit-wizard-simple';
 import { InventoryEntryWizardData, InventoryEntryWizardSimpleComponent } from '../property-contracts/inventory-entry-wizard/inventory-entry-wizard-simple';
@@ -27,6 +29,8 @@ export class ContractsTab implements OnInit {
   private propertiesApi = inject(PropertiesApi);
   private inventoriesApi = inject(InventoriesApiService);
   private documentsApi = inject(DocumentsApi);
+  private addendumsApi = inject(AddendumsApi);
+  private documentsService = inject(DocumentsService);
   private fb = inject(FormBuilder);
   
   // ✅ Services UI
@@ -35,6 +39,23 @@ export class ContractsTab implements OnInit {
   
   stats = signal<ContractStats | null>(null);
   contracts = signal<ContractDto[]>([]);
+  addendumsByContract = signal<Map<string, AddendumDto[]>>(new Map());
+  isLoadingAddendums = signal(false);
+
+  showEditAddendumModal = signal(false);
+  addendumToEdit = signal<AddendumDto | null>(null);
+
+  showAddendumSignatureModal = signal(false);
+  addendumToSign = signal<AddendumDto | null>(null);
+  signAllOccupants = signal(false);
+  isSendingAddendumForSignature = signal(false);
+
+  editAddendumForm = this.fb.group({
+    effectiveDate: [''],
+    reason: [''],
+    description: [''],
+    notes: ['']
+  });
   isLoading = signal(false);
   
   searchTerm = '';
@@ -85,6 +106,245 @@ export class ContractsTab implements OnInit {
     this.loadContracts();
   }
 
+  openAddendumSignatureModal(addendum: AddendumDto, event?: Event) {
+    event?.stopPropagation();
+    this.addendumToSign.set(addendum);
+    this.signAllOccupants.set(false);
+    this.showAddendumSignatureModal.set(true);
+  }
+
+  closeAddendumSignatureModal() {
+    if (this.isSendingAddendumForSignature()) return;
+    this.showAddendumSignatureModal.set(false);
+    this.addendumToSign.set(null);
+    this.signAllOccupants.set(false);
+  }
+
+  onSignAllOccupantsToggle(event: Event) {
+    const checked = (event.target as HTMLInputElement | null)?.checked === true;
+    this.signAllOccupants.set(checked);
+  }
+
+  private parseOccupantTenantIdsFromAddendum(addendum: AddendumDto): string[] {
+    const raw = (addendum as any)?.occupantChanges;
+    if (!raw) return [];
+    try {
+      const obj = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      const participants = Array.isArray(obj?.participants) ? obj.participants : [];
+      const ids = participants
+        .map((p: any) => p?.tenantId)
+        .filter((x: any) => typeof x === 'string' && x.length > 0);
+      return Array.from(new Set(ids));
+    } catch {
+      return [];
+    }
+  }
+
+  private async resolveRecipient(tenantId: string): Promise<{ email: string; name: string } | null> {
+    try {
+      const t = await firstValueFrom(this.tenantsApi.getTenant(tenantId));
+      if (!t?.email) return null;
+      return { email: t.email, name: t.fullName };
+    } catch {
+      return null;
+    }
+  }
+
+  async confirmSendAddendumForSignature() {
+    const addendum = this.addendumToSign();
+    if (!addendum) return;
+    if (this.isSendingAddendumForSignature()) return;
+
+    const docId = addendum.attachedDocumentIds?.[0];
+    if (!docId) {
+      this.toasts.warningDirect('Aucun PDF d\'avenant trouvé');
+      return;
+    }
+
+    try {
+      this.isSendingAddendumForSignature.set(true);
+
+      let recipientTenantIds: string[];
+      if (!this.signAllOccupants()) {
+        // fallback: principal tenant from contract list by contractId
+        const contract = this.contracts().find(c => c.id === addendum.contractId);
+        if (!contract) {
+          this.toasts.errorDirect('Contrat introuvable pour cet avenant');
+          return;
+        }
+        recipientTenantIds = [contract.tenantId];
+      } else {
+        const full = await firstValueFrom(this.addendumsApi.getAddendum(addendum.id));
+        recipientTenantIds = this.parseOccupantTenantIdsFromAddendum(full);
+        if (recipientTenantIds.length === 0) {
+          const contract = this.contracts().find(c => c.id === addendum.contractId);
+          recipientTenantIds = contract ? [contract.tenantId] : [];
+        }
+      }
+
+      const recipients: Array<{ email: string; name: string; signingOrder?: number }> = [];
+      for (const id of recipientTenantIds) {
+        const r = await this.resolveRecipient(id);
+        if (r) recipients.push(r);
+      }
+
+      if (recipients.length === 0) {
+        this.toasts.errorDirect('Aucun destinataire valide (email manquant)');
+        return;
+      }
+
+      const response = await firstValueFrom(
+        this.documentsService.sendForElectronicSignature(docId, {
+          recipients,
+          message: `Signature de l'avenant (${addendum.type})`,
+          expirationDays: 14
+        })
+      );
+
+      console.log('✅ Signature envoyée:', response);
+      this.toasts.successDirect('Demande de signature envoyée');
+      this.closeAddendumSignatureModal();
+    } catch (err: any) {
+      console.error('❌ Error sending addendum for signature:', err);
+      this.toasts.errorDirect(err?.error?.message || 'Erreur lors de l\'envoi pour signature');
+    } finally {
+      this.isSendingAddendumForSignature.set(false);
+    }
+  }
+
+  getAddendumsForContract(contractId: string): AddendumDto[] {
+    return this.addendumsByContract().get(contractId) ?? [];
+  }
+
+  getDraftAddendumsForContract(contractId: string): AddendumDto[] {
+    return this.getAddendumsForContract(contractId).filter(a => (a.signatureStatus || '').toLowerCase() === 'draft');
+  }
+
+  async loadAddendumsForVisibleContracts() {
+    if (this.isLoadingAddendums()) return;
+
+    try {
+      this.isLoadingAddendums.set(true);
+      const map = new Map<string, AddendumDto[]>();
+
+      for (const contract of this.contracts()) {
+        try {
+          const res = await firstValueFrom(
+            this.addendumsApi.getAddendums({ contractId: contract.id, page: 1, pageSize: 50 })
+          );
+          map.set(contract.id, res?.data ?? []);
+        } catch {
+          map.set(contract.id, []);
+        }
+      }
+
+      this.addendumsByContract.set(map);
+    } finally {
+      this.isLoadingAddendums.set(false);
+    }
+  }
+
+  async downloadAddendumPdf(addendum: AddendumDto, event?: Event) {
+    event?.stopPropagation();
+    const docId = addendum.attachedDocumentIds?.[0];
+    if (!docId) {
+      this.toasts.warningDirect('Aucun PDF d\'avenant trouvé');
+      return;
+    }
+
+    try {
+      const blob = await firstValueFrom(this.documentsApi.downloadDocument(docId));
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Avenant_${addendum.id}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('❌ Error downloading addendum pdf:', err);
+      this.toasts.errorDirect('Erreur lors du téléchargement du PDF');
+    }
+  }
+
+  async markAddendumAsSigned(addendum: AddendumDto, event?: Event) {
+    event?.stopPropagation();
+    const confirmed = await this.confirmService.info(
+      'Signaler l\'avenant comme signé',
+      `Confirmer la signature de l'avenant ?\n\nDate d'effet: ${addendum.effectiveDate}`
+    );
+    if (!confirmed) return;
+
+    try {
+      await firstValueFrom(this.addendumsApi.markAddendumAsSigned(addendum.id, { signedDateUtc: new Date().toISOString() }));
+      this.toasts.successDirect('Avenant marqué comme signé');
+      await this.loadAddendumsForVisibleContracts();
+      this.loadStats();
+    } catch (err: any) {
+      console.error('❌ Error marking addendum signed:', err);
+      this.toasts.errorDirect(err?.error?.message || 'Erreur lors de la signature de l\'avenant');
+    }
+  }
+
+  openEditAddendum(addendum: AddendumDto, event?: Event) {
+    event?.stopPropagation();
+    this.addendumToEdit.set(addendum);
+    this.editAddendumForm.reset({
+      effectiveDate: (addendum.effectiveDate || '').split('T')[0],
+      reason: addendum.reason || '',
+      description: addendum.description || '',
+      notes: (addendum.notes as any) || ''
+    });
+    this.showEditAddendumModal.set(true);
+  }
+
+  closeEditAddendum() {
+    this.showEditAddendumModal.set(false);
+    this.addendumToEdit.set(null);
+  }
+
+  async saveAddendumEdits() {
+    const addendum = this.addendumToEdit();
+    if (!addendum) return;
+
+    const v = this.editAddendumForm.value;
+    try {
+      await firstValueFrom(
+        this.addendumsApi.updateAddendum(addendum.id, {
+          effectiveDate: v.effectiveDate || undefined,
+          reason: v.reason || undefined,
+          description: v.description || undefined,
+          notes: v.notes || ''
+        })
+      );
+      this.toasts.successDirect('Avenant mis à jour');
+      this.closeEditAddendum();
+      await this.loadAddendumsForVisibleContracts();
+    } catch (err: any) {
+      console.error('❌ Error updating addendum:', err);
+      this.toasts.errorDirect(err?.error?.message || 'Erreur lors de la mise à jour de l\'avenant');
+    }
+  }
+
+  async deleteAddendum(addendum: AddendumDto, event?: Event) {
+    event?.stopPropagation();
+    const confirmed = await this.confirmService.danger(
+      'Supprimer l\'avenant',
+      'Êtes-vous sûr de vouloir supprimer cet avenant ? Cette action est irréversible.',
+      'Supprimer'
+    );
+    if (!confirmed) return;
+
+    try {
+      await firstValueFrom(this.addendumsApi.deleteAddendum(addendum.id));
+      this.toasts.successDirect('Avenant supprimé');
+      await this.loadAddendumsForVisibleContracts();
+      this.loadStats();
+    } catch (err: any) {
+      console.error('❌ Error deleting addendum:', err);
+      this.toasts.errorDirect(err?.error?.message || 'Erreur lors de la suppression de l\'avenant');
+    }
+  }
+
   loadStats() {
     this.contractsApi.getStats().subscribe({
       next: (data) => this.stats.set(data),
@@ -99,6 +359,8 @@ export class ContractsTab implements OnInit {
         this.contracts.set(data);
         this.isLoading.set(false);
         console.log('✅ Contracts loaded:', data.length);
+
+        void this.loadAddendumsForVisibleContracts();
       },
       error: (err) => {
         console.error('❌ Error loading contracts:', err);

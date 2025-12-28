@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ContractsApi } from '../../../../../core/api/contracts.api';
+import { ContractsApi, CreateAddendumRequest, OccupantChangesDto } from '../../../../../core/api/contracts.api';
+import { TenantsApi, TenantListItem } from '../../../../../core/api/tenants.api';
 import { ToastService } from '../../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../../core/ui/confirm.service';
 
@@ -35,6 +36,7 @@ export class ContractAddendumWizard {
   @Output() cancelled = new EventEmitter<void>();
 
   private contractsApi = inject(ContractsApi);
+  private tenantsApi = inject(TenantsApi);
   private toasts = inject(ToastService);
   private confirmService = inject(ConfirmService);
 
@@ -124,22 +126,53 @@ export class ContractAddendumWizard {
 
   // Occupants
   occupantsForm = signal({
-    action: '' as 'add' | 'remove' | 'changeRoom' | '',
-    // Add occupant
-    occupantName: '',
-    occupantEmail: '',
-    occupantPhone: '',
-    rentShare: null as number | null,
-    // Remove occupant
-    occupantToRemove: '',
-    departureDate: '',
-    depositAdjustment: null as number | null,
-    // Change room
+    splitType: 'Percentage' as 'Percentage' | 'FixedAmount',
+    participants: [] as Array<{ tenantId: string; shareValue: number | null }>,
+    // Optional room change
     currentRoom: '',
-    newRoom: '',
+    newRoomId: '',
     // Common
     reason: '',
     effectiveDate: ''
+  });
+
+  availableTenants = signal<TenantListItem[]>([]);
+
+  occupantsTotalAmount = computed(() => {
+    const contract = this.data?.contract;
+    if (!contract) return 0;
+    const rent = Number(contract.rent ?? 0);
+    const charges = Number(contract.charges ?? 0);
+    return Math.round((rent + charges) * 100) / 100;
+  });
+
+  occupantsShareSum = computed(() => {
+    const form = this.occupantsForm();
+    return Math.round(
+      (form.participants
+        .map(p => Number(p.shareValue ?? 0))
+        .reduce((a, b) => a + b, 0)) * 100
+    ) / 100;
+  });
+
+  occupantsShareError = computed(() => {
+    const form = this.occupantsForm();
+    if (!form.participants || form.participants.length === 0) return 'Ajoutez au moins un occupant';
+
+    if (form.participants.some(p => !p.tenantId)) return 'Sélectionnez un locataire pour chaque occupant';
+    if (form.participants.some(p => p.shareValue == null || Number.isNaN(Number(p.shareValue)))) return 'Saisissez une part valide pour chaque occupant';
+    if (form.participants.some(p => Number(p.shareValue) < 0)) return 'Les parts ne peuvent pas être négatives';
+
+    if (form.splitType === 'Percentage') {
+      if (this.occupantsShareSum() !== 100) return 'La somme des pourcentages doit être égale à 100%';
+    } else {
+      if (this.occupantsShareSum() !== this.occupantsTotalAmount()) return 'La somme des montants doit être égale au total (loyer + charges)';
+    }
+
+    const ids = form.participants.map(p => p.tenantId).filter(Boolean);
+    if (new Set(ids).size !== ids.length) return 'Un locataire ne peut pas être présent plusieurs fois';
+
+    return null;
   });
 
   // Clauses
@@ -189,20 +222,8 @@ export class ContractAddendumWizard {
       }
       case 'Occupants': {
         const form = this.occupantsForm();
-        if (!form.action || !form.reason.trim() || !form.effectiveDate) return false;
-        
-        if (form.action === 'add') {
-          return form.occupantName.trim().length > 0 && 
-                 form.occupantEmail.trim().length > 0;
-        }
-        if (form.action === 'remove') {
-          return form.occupantToRemove !== '' && 
-                 form.departureDate !== '';
-        }
-        if (form.action === 'changeRoom') {
-          return form.newRoom !== '';
-        }
-        return false;
+        if (!form.reason.trim() || !form.effectiveDate) return false;
+        return this.occupantsShareError() === null;
       }
       case 'Clauses': {
         const form = this.clausesForm();
@@ -279,6 +300,17 @@ export class ContractAddendumWizard {
       }));
     }
 
+    if (this.availableTenants().length === 0) {
+      this.tenantsApi.getTenants({ page: 1, pageSize: 200 }).subscribe({
+        next: res => this.availableTenants.set(res?.items ?? []),
+        error: () => this.availableTenants.set([])
+      });
+    }
+
+    if (this.occupantsForm().participants.length === 0) {
+      this.addOccupantParticipant();
+    }
+
     // Clauses
     this.clausesForm.update(f => ({
       ...f,
@@ -291,6 +323,33 @@ export class ContractAddendumWizard {
       ...f,
       effectiveDate: today
     }));
+  }
+
+  addOccupantParticipant() {
+    this.occupantsForm.update(f => ({
+      ...f,
+      participants: [...f.participants, { tenantId: '', shareValue: null }]
+    }));
+  }
+
+  removeOccupantParticipant(index: number) {
+    this.occupantsForm.update(f => ({
+      ...f,
+      participants: f.participants.filter((_, i) => i !== index)
+    }));
+  }
+
+  updateOccupantParticipant(index: number, patch: Partial<{ tenantId: string; shareValue: number | null }>) {
+    this.occupantsForm.update(f => ({
+      ...f,
+      participants: f.participants.map((p, i) => (i === index ? { ...p, ...patch } : p))
+    }));
+  }
+
+  getTenantLabel(tenantId: string): string {
+    if (!tenantId) return '';
+    const t = this.availableTenants().find(x => x.id === tenantId);
+    return t ? t.fullName : tenantId;
   }
 
   // ========== NAVIGATION ==========
@@ -386,7 +445,7 @@ export class ContractAddendumWizard {
       const contract = this.data.contract;
       const type = this.selectedType()!;
       
-      let request: any = {
+      let request: Partial<CreateAddendumRequest> = {
         type: type,
         sendEmail: this.documentsForm().sendEmail,
         requireSignature: this.documentsForm().requireSignature,
@@ -421,42 +480,32 @@ export class ContractAddendumWizard {
         }
         case 'Occupants': {
           const form = this.occupantsForm();
-          let description = '';
-          let occupantChanges: any = { action: form.action };
+          const occupantChanges: OccupantChangesDto = {
+            splitType: form.splitType,
+            participants: form.participants.map(p => ({
+              tenantId: p.tenantId,
+              shareValue: Number(p.shareValue ?? 0)
+            }))
+          };
 
-          if (form.action === 'add') {
-            description = `Ajout colocataire: ${form.occupantName}`;
-            occupantChanges = {
-              ...occupantChanges,
-              name: form.occupantName,
-              email: form.occupantEmail,
-              phone: form.occupantPhone,
-              rentShare: form.rentShare
-            };
-          } else if (form.action === 'remove') {
-            description = `Retrait colocataire: ${form.occupantToRemove}`;
-            occupantChanges = {
-              ...occupantChanges,
-              occupantId: form.occupantToRemove,
-              departureDate: form.departureDate,
-              depositAdjustment: form.depositAdjustment
-            };
-          } else if (form.action === 'changeRoom') {
-            description = `Changement de chambre: ${form.currentRoom} → ${form.newRoom}`;
-            occupantChanges = {
-              ...occupantChanges,
-              oldRoom: form.currentRoom,
-              newRoomId: form.newRoom
-            };
-            request.newRoomId = form.newRoom;
+          if (form.newRoomId) {
+            occupantChanges.roomChange = { oldRoomLabel: form.currentRoom || null, newRoomId: form.newRoomId };
+            request.newRoomId = form.newRoomId;
           }
+
+          const shareLabel = form.splitType === 'Percentage' ? 'pourcentage' : 'montant';
+          const shareTotalLabel = form.splitType === 'Percentage'
+            ? `${this.occupantsShareSum()}%`
+            : `${this.formatCurrency(this.occupantsShareSum())} / ${this.formatCurrency(this.occupantsTotalAmount())}`;
+
+          const description = `Modification occupants: répartition par ${shareLabel} (${shareTotalLabel})`;
 
           request = {
             ...request,
             effectiveDate: form.effectiveDate,
             reason: form.reason,
             description: description,
-            occupantChanges: JSON.stringify(occupantChanges)
+            occupantChanges: occupantChanges
           };
           break;
         }
@@ -483,7 +532,7 @@ export class ContractAddendumWizard {
         }
       }
 
-      const response = await this.contractsApi.createAddendum(contract.id, request);
+      const response = await this.contractsApi.createAddendum(contract.id, request as CreateAddendumRequest);
       
       this.toasts.successDirect('Avenant créé avec succès !');
       this.completed.emit(response.addendumId);
