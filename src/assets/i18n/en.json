@@ -585,6 +585,13 @@
     "NOTIFICATIONS": "Notifications",
     "DEADLINES": "Upcoming deadlines",
     "PROJECTIONS": "Annual projections",
+    "OCCUPIED":"Occupied",
+    "RESERVED":"Reserved",
+    "PARTIALLY_OCCUPIED":"Partially occupied",
+    "VACANT":"Vacant",
+    "VOIRDETAILS":"View details",
+    "MODIFIER":"Modify",
+    "SUPPRIMER":"Delete",
     "FILTERS": {
       "STATUS_ALL": "All statuses",
       "FILTERS": "Filters"

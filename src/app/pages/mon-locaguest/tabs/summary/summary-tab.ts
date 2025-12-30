@@ -61,6 +61,7 @@ export class SummaryTab {
     const occupancy = total > 0 ? Math.round((occupied / total) * 100) : 0;
     const revenue = props?.reduce((sum, p) => sum + (p.rent || 0), 0);
     console.log('tens', tens);
+    console.log('props', props);
     
     return [
       { key: 'properties', label: 'SUMMARY.STATS.PROPERTIES', value: total?.toString(), icon: 'ph-house', bgColor: '#38B2AC', delta: undefined, deltaPositive: true },
@@ -135,7 +136,7 @@ export class SummaryTab {
     
     this.propertiesApi.getProperties(params).subscribe({
       next: (result) => {
-        console.log('✅ params:', params);
+        console.log('✅ result:', result);
         this.properties.set(result.items);
         this.totalItems.set(result.totalCount);
         this.isLoading.set(false);

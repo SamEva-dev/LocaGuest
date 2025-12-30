@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaymentsApi, Payment, PaymentStats } from '../../../../core/api/payments.api';
 import { AddPaymentModal } from './add-payment-modal/add-payment-modal';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'tenant-payments-tab',
@@ -26,6 +27,8 @@ export class TenantPaymentsTab implements OnInit {
   stats = signal<PaymentStats | null>(null);
   isLoading = signal(false);
   showAddModal = signal(false);
+
+  downloadingQuittancePaymentId = signal<string | null>(null);
   
   // Filters
   filterYear = signal<number>(new Date().getFullYear());
@@ -136,11 +139,28 @@ export class TenantPaymentsTab implements OnInit {
     return d.toLocaleDateString('fr-FR');
   }
   
-  downloadReceipt(payment: Payment) {
-    if (payment.receiptId) {
-      console.log('Download receipt:', payment.receiptId);
-      // TODO: Implement receipt download
-      alert('Téléchargement de la quittance - À implémenter');
+  async downloadQuittance(payment: Payment) {
+    if (!payment?.id) return;
+
+    if (payment.status !== 'Paid' && payment.status !== 'PaidLate') {
+      alert('La quittance est disponible uniquement pour les paiements payés.');
+      return;
+    }
+
+    this.downloadingQuittancePaymentId.set(payment.id);
+    try {
+      const blob = await firstValueFrom(this.paymentsApi.getPaymentQuittance(payment.id));
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Quittance_${payment.year}${String(payment.month).padStart(2, '0')}_${payment.id}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading quittance:', err);
+      alert('Erreur lors du téléchargement de la quittance');
+    } finally {
+      this.downloadingQuittancePaymentId.set(null);
     }
   }
 }

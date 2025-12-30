@@ -587,6 +587,13 @@
     "NOTIFICATIONS": "Notifications",
     "DEADLINES": "Échéances à venir",
     "PROJECTIONS": "Projections annuelles",
+    "OCCUPIED":"Occupé",
+    "RESERVED":"Reserve",
+    "PARTIALLY_OCCUPIED":"Partiellement occupé",
+    "VACANT":"Vacant",
+    "VOIRDETAILS":"Voir les détails",
+    "MODIFIER":"Modifier",
+    "SUPPRIMER":"Supprimer",
     "FILTERS": {
       "STATUS_ALL": "Tous les statuts",
       "FILTERS": "Filtres"

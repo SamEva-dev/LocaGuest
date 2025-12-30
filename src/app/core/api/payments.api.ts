@@ -158,6 +158,12 @@ export class PaymentsApi {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
+  getPaymentQuittance(paymentId: string): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${paymentId}/quittance`, {
+      responseType: 'blob',
+    });
+  }
+
   /**
    * Helper: Get formatted month name
    */
