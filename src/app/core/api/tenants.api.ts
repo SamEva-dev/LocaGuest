@@ -15,6 +15,8 @@ export interface TenantListItem {
   activeContracts: number;
   propertyId?: string;  // Associated property ID
   propertyCode?: string;  // Associated property code (T0001-APP0001)
+
+  hasIdentityDocument?: boolean;
   
   // Statut administratif
   hasCompleteFile?: boolean;        // Dossier complet

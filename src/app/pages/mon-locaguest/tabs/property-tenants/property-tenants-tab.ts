@@ -523,9 +523,16 @@ export class PropertyTenantsTab {
     if (!contract.hasInventoryEntry) {
       missing.push('EDL entrée');
     }
+
+    // 2b. Vérifier EDL sortie (si contrat terminé)
+    const endDate = new Date(contract.endDate);
+    const today = new Date();
+    if (endDate < today && !contract.hasInventoryExit) {
+      missing.push('EDL sortie');
+    }
     
     // 3. Vérifier CNI
-    if (!tenant.idNumber) {
+    if (!tenant.hasIdentityDocument) {
       missing.push('CNI');
     }
     

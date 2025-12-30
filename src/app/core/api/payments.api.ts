@@ -9,6 +9,7 @@ export interface Payment {
   tenantId: string;
   propertyId: string;
   contractId: string;
+  paymentType?: 'Rent' | 'Deposit';
   amountDue: number;
   amountPaid: number;
   remainingAmount: number;
@@ -20,6 +21,7 @@ export interface Payment {
   month: number;
   year: number;
   receiptId?: string;
+  invoiceDocumentId?: string;
   createdAt: Date;
   updatedAt?: Date;
   tenantName?: string;
@@ -47,6 +49,7 @@ export interface CreatePaymentRequest {
   tenantId: string;
   propertyId: string;
   contractId: string;
+  paymentType: 'Rent' | 'Deposit';
   amountDue: number;
   amountPaid: number;
   paymentDate?: Date;

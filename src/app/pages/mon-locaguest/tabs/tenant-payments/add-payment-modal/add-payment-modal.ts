@@ -47,6 +47,7 @@ export class AddPaymentModal implements OnInit {
   form = signal({
     contractId: '',
     propertyId: '',
+    paymentType: 'Rent' as 'Rent' | 'Deposit',
     amountDue: 0,
     amountPaid: 0,
     paymentDate: new Date().toISOString().split('T')[0],
@@ -167,6 +168,7 @@ export class AddPaymentModal implements OnInit {
       tenantId: this.tenantId(),
       propertyId: f.propertyId,
       contractId: f.contractId,
+      paymentType: f.paymentType,
       amountDue: f.amountDue,
       amountPaid: f.amountPaid,
       paymentDate: f.paymentDate ? new Date(f.paymentDate) : undefined,

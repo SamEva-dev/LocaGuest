@@ -340,6 +340,15 @@
                 }
               </div>
             }
+
+            @if (depositBadge()) {
+              <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg font-medium" [class]="depositBadge()!.color">
+                  <i class="ph ph-warning-circle"></i>
+                  <span>{{ depositBadge()!.label }}</span>
+                </span>
+              </div>
+            }
             
             <!-- Badge statut -->
             <div class="border-t border-slate-200 dark:border-slate-700 pt-4">

@@ -706,7 +706,7 @@ export class ContractWizardModal {
   
   calculateDeposit() {
     const rent = this.form().rent || 0;
-    this.form.update(f => ({ ...f, deposit: rent }));
+    this.form.update(f => ({ ...f, deposit: rent * 2 }));
   }
   
   submitContract() {

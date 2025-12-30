@@ -147,6 +147,38 @@ export class TenantDetailTab {
     monthlyCharges: number;
     deposit: number;
   } | null>(null);
+
+  depositBadge = computed<{ label: string; color: string } | null>(() => {
+    const occ = this.currentOccupancy();
+    if (!occ) return null;
+
+    const startDate = occ.moveInDate;
+    const today = new Date();
+    if (startDate && today < startDate) return null;
+
+    const deposit = occ.deposit || 0;
+    if (deposit <= 0) return null;
+
+    const payments = this.payments() ?? [];
+    const paidDeposit = payments
+      .filter(p => (p as any)?.paymentType === 'Deposit')
+      .reduce((sum, p) => sum + ((p as any)?.amountPaid ?? (p as any)?.amount ?? 0), 0);
+
+    const remaining = Math.max(0, deposit - paidDeposit);
+    if (remaining <= 0) return null;
+
+    if (paidDeposit <= 0) {
+      return {
+        label: 'Caution non payée',
+        color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+      };
+    }
+
+    return {
+      label: `Reste caution: ${this.formatCurrency(remaining)}`,
+      color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+    };
+  });
   
   financialStatus = signal<{
     currentMonthBalance: number;
