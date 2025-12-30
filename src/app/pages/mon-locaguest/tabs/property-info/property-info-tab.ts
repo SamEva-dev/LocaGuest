@@ -183,7 +183,29 @@ export class PropertyInfoTab implements OnDestroy {
   startEditing() {
     const prop = this.property();
     console.log('prop',prop)
-    this.editForm.set({ ...prop });
+
+    const toDateInput = (value: any): any => {
+      if (!value) return value;
+      if (value instanceof Date) {
+        return value.toISOString().slice(0, 10);
+      }
+      if (typeof value === 'string') {
+        // Accept ISO strings and already formatted YYYY-MM-DD
+        if (value.length >= 10) return value.slice(0, 10);
+      }
+      return value;
+    };
+
+    const edit: any = { ...prop };
+    // Normalize all date inputs so <input type="date"> is prefilled.
+    edit.purchaseDate = toDateInput(edit.purchaseDate);
+    edit.electricDiagnosticDate = toDateInput(edit.electricDiagnosticDate);
+    edit.electricDiagnosticExpiry = toDateInput(edit.electricDiagnosticExpiry);
+    edit.gasDiagnosticDate = toDateInput(edit.gasDiagnosticDate);
+    edit.gasDiagnosticExpiry = toDateInput(edit.gasDiagnosticExpiry);
+    edit.asbestosDiagnosticDate = toDateInput(edit.asbestosDiagnosticDate);
+
+    this.editForm.set(edit);
     this.isEditing.set(true);
   }
 
@@ -200,16 +222,28 @@ export class PropertyInfoTab implements OnDestroy {
     this.isSaving.set(true);
 
     const dto: any = { ...form };
-    // Backend uses AcquisitionDate; UI uses purchaseDate
-    const purchaseDateValue = dto.purchaseDate;
-    if (purchaseDateValue instanceof Date) {
-      dto.acquisitionDate = purchaseDateValue.toISOString();
-    } else if (typeof purchaseDateValue === 'string' && purchaseDateValue.trim().length > 0) {
-      dto.acquisitionDate = purchaseDateValue;
-    }
 
-    // Avoid sending purchaseDate to backend (not part of UpdatePropertyCommand)
-    delete dto.purchaseDate;
+    const toIsoOrNull = (value: any): string | null | undefined => {
+      if (value === undefined) return undefined;
+      if (value === null) return null;
+      if (value instanceof Date) return value.toISOString();
+      if (typeof value === 'string') {
+        const v = value.trim();
+        if (v.length === 0) return null;
+        // If already YYYY-MM-DD from input[type=date], convert to ISO.
+        if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return `${v}T00:00:00.000Z`;
+        return v;
+      }
+      return value;
+    };
+
+    // Ensure dates are sent in a backend-friendly format.
+    dto.purchaseDate = toIsoOrNull(dto.purchaseDate);
+    dto.electricDiagnosticDate = toIsoOrNull(dto.electricDiagnosticDate);
+    dto.electricDiagnosticExpiry = toIsoOrNull(dto.electricDiagnosticExpiry);
+    dto.gasDiagnosticDate = toIsoOrNull(dto.gasDiagnosticDate);
+    dto.gasDiagnosticExpiry = toIsoOrNull(dto.gasDiagnosticExpiry);
+    dto.asbestosDiagnosticDate = toIsoOrNull(dto.asbestosDiagnosticDate);
 
     this.propertiesService.updateProperty(prop.id, dto).subscribe({
       next: (updated) => {

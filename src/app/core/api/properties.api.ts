@@ -48,17 +48,18 @@ export interface PropertyDetail extends PropertyListItem {
   country?: string;
   hasElevator: boolean;
   hasParking: boolean;
+  hasBalcony?: boolean;
   floor?: number;
   isFurnished: boolean;
   charges?: number;
   deposit?: number;
-  notes?: string;
+  description?: string;
+  energyClass?: string;
+  constructionYear?: number;
   imageUrls: string[];
   images?: PropertyImage[];
   createdAt: Date;
   createdBy: string;
-
-  purchaseDate?: Date;
   // Airbnb specifics
   minimumStay?: number;  // Durée minimum de séjour en jours
   maximumStay?: number;  // Durée maximum de séjour en jours
@@ -89,7 +90,7 @@ export interface PropertyDetail extends PropertyListItem {
   // Informations administratives
   cadastralReference?: string;  // Référence cadastrale
   lotNumber?: string;  // Numéro de lot
-  acquisitionDate?: Date;  // Date d'acquisition
+  purchaseDate?: Date;  // Date d'acquisition
   totalWorksAmount?: number;  // Montant total des travaux réalisés
   
   // ✅ NOUVEAU: Chambres pour les colocations
@@ -202,9 +203,8 @@ export interface CreatePropertyDto {
   charges?: number;
   description?: string;
   purchaseDate?: string | null;
-  purchasePrice?: number | null;
-  energyClass?: string;
   constructionYear?: number | null;
+  purchasePrice?: number | null;
   // Nouveau: Type d'utilisation
   propertyUsageType: PropertyUsageType;
   // Pour les colocations
@@ -222,6 +222,7 @@ export interface CreatePropertyDto {
   propertyTax?: number;
   condominiumCharges?: number;
   nightsBookedPerMonth?: number;
+  energyClass?: string;
 }
 
 export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {
