@@ -3,6 +3,7 @@ export interface UserDto {
   id: string;
   email: string;
   fullName: string;
+  organizationId: string;
   roles: string[];
   permissions: string[];
   mfaEnabled: boolean;
@@ -38,6 +39,24 @@ export interface AuthTokens {
   accessToken: string;
   refreshToken?: string;
   expiresAtUtc?: string; // ISO
+}
+
+export interface JwtPayload {
+  sub: string;
+  email: string;
+  organization_id?: string;
+  tenant_id?: string;
+  role?: string | string[];
+  roles?: string | string[];
+  permission?: string | string[];
+  permissions?: string | string[];
+  mfa_enabled?: boolean | string;
+  mfa?: boolean | string;
+  exp?: number;
+  iat?: number;
+  nbf?: number;
+  iss?: string;
+  aud?: string;
 }
 
 export interface Tokens {

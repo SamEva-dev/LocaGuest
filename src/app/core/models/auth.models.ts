@@ -56,9 +56,14 @@ export interface CurrentUserResponse {
 export interface JwtPayload {
   sub: string; // User ID
   email: string;
-  roles: string[];
-  permissions: string[];
-  mfa: boolean;
+  organization_id?: string;
+  tenant_id?: string;
+  role?: string | string[];
+  roles?: string | string[];
+  permission?: string | string[];
+  permissions?: string | string[];
+  mfa_enabled?: boolean | string;
+  mfa?: boolean | string;
   jti: string; // JWT ID
   exp: number; // Expiration timestamp
   iat: number; // Issued at timestamp
@@ -71,9 +76,8 @@ export interface JwtPayload {
 export interface AuthUser {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
   fullName: string;
+  organizationId: string;
   roles: string[];
   permissions: string[];
   mfaEnabled: boolean;

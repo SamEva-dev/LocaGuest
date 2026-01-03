@@ -5,7 +5,6 @@ import { AuthState } from '../auth.state';
 import { LoginRequest, LoginResponse, MfaLoginRequest, RegisterRequest, RegisterResponse, UserDto } from '../auth.models';
 import { ToastService } from '../../ui/toast.service';
 import { Router } from '@angular/router';
-import { AuthUser } from '../../models/auth.models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -30,9 +29,53 @@ export class AuthService {
 
   // Computed signals
 
+  private normalizeToArray(value: unknown): string[] {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.filter(v => typeof v === 'string') as string[];
+    if (typeof value === 'string') return [value];
+    return [];
+  }
+
+  private buildUserFromAccessToken(accessToken: string, res?: LoginResponse): UserDto | null {
+    const payload = this.tokens.decode(accessToken);
+    if (!payload || typeof payload !== 'object') return null;
+
+    const organizationId = (payload.organization_id ?? payload.tenant_id) as string | undefined;
+    if (!organizationId) return null;
+
+    const roleClaim = payload.role ?? payload.roles;
+    const permClaim = payload.permission ?? payload.permissions;
+
+    const roles = this.normalizeToArray(roleClaim);
+    const permissions = this.normalizeToArray(permClaim);
+
+    const mfaEnabledRaw = payload.mfa_enabled ?? payload.mfa;
+    const mfaEnabled = mfaEnabledRaw === true || mfaEnabledRaw === 'true';
+
+    return {
+      id: payload.sub,
+      email: payload.email,
+      fullName: res?.user?.fullName || `${payload.email}`,
+      organizationId,
+      roles,
+      permissions,
+      mfaEnabled,
+    };
+  }
+
   bootstrapFromStorage() {
     const t = this.tokens.load();
-    if (t) this.state.tokens.set(t);
+    if (t) {
+      this.state.tokens.set(t);
+
+      const user = this.buildUserFromAccessToken(t.accessToken);
+      if (user) {
+        this.state.user.set(user);
+      } else {
+        // Token invalide/incomplet => repartir clean
+        this.logout();
+      }
+    }
   }
 
   setRememberMe(value: boolean) { this.tokens.setRememberMe(value); }
@@ -213,40 +256,11 @@ export class AuthService {
       localStorage.removeItem('lg.internal.activeTab');
     } catch {}
 
-    try {
-      const token = res.accessToken;
-      const parts = token.split('.');
-      const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-      const pad = b64.length % 4 === 2 ? '==' : b64.length % 4 === 3 ? '=' : '';
-      const json = atob(b64 + pad);
-      const payload = JSON.parse(json);
-
-      const roleClaim = payload.role ?? payload.roles;
-      const permClaim = payload.permission ?? payload.permissions;
-      const roles = Array.isArray(roleClaim) ? roleClaim : (roleClaim ? [roleClaim] : []);
-      const permissions = Array.isArray(permClaim) ? permClaim : (permClaim ? [permClaim] : []);
-
-      const user = {
-        id: payload.sub,
-        email: payload.email,
-        fullName: res.user?.fullName || `${payload.email}`,
-        roles,
-        permissions,
-        mfaEnabled: payload.mfa_enabled === 'true'
-      };
-      this.state.user.set(user);
-      console.log('JWT payload', payload);
-    } catch {
-      // En cas d'erreur de décodage, créer un utilisateur minimal
-      const fallbackUser = {
-        id: 'unknown',
-        email: res.user?.email || 'unknown@example.com',
-        fullName: res.user?.fullName || 'Unknown User',
-        roles: [],
-        permissions: [],
-        mfaEnabled: false
-      };
-      this.state.user.set(fallbackUser);
+    const user = this.buildUserFromAccessToken(res.accessToken, res);
+    if (!user) {
+      this.logout();
+      return;
     }
+    this.state.user.set(user);
   }
 }
