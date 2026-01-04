@@ -1,10 +1,12 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { TeamApi, TeamMemberDto, InviteTeamMemberRequest } from '../api/team.api';
+import { InvitationsApi } from '../api/invitations.api';
 import { Observable, tap, catchError, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TeamService {
   private teamApi = inject(TeamApi);
+  private invitationsApi = inject(InvitationsApi);
 
   // Signals pour état réactif
   teamMembers = signal<TeamMemberDto[]>([]);
@@ -27,7 +29,10 @@ export class TeamService {
 
   inviteTeamMember(request: InviteTeamMemberRequest): Observable<any> {
     this.loading.set(true);
-    return this.teamApi.inviteTeamMember(request).pipe(
+    return this.invitationsApi.inviteCollaborator({
+      email: request.email,
+      role: request.role
+    }).pipe(
       tap(() => {
         this.loading.set(false);
         // Recharger la liste après invitation

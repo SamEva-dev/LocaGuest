@@ -19,7 +19,7 @@ export const routes: Routes = [
   },
   {
     path: 'accept-invitation',
-    loadComponent: () => import('./pages/accept-invitation/accept-invitation.component').then(m => m.AcceptInvitationComponent)
+    loadComponent: () => import('./pages/accept-invitation/accept-invitation').then(m => m.AcceptInvitationComponent)
   },
   {
     path: 'app',

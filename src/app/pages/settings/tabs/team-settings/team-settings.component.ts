@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InvitationsApi, TeamMember, UserInvitation } from '../../../../core/api/invitations.api';
+import { TeamApi, TeamMemberDto } from '../../../../core/api/team.api';
 import { InviteDialogComponent } from '../../../../shared/components/invite-dialog/invite-dialog.component';
 
 @Component({
@@ -206,6 +207,7 @@ import { InviteDialogComponent } from '../../../../shared/components/invite-dial
 })
 export class TeamSettingsComponent implements OnInit {
   private invitationsApi = inject(InvitationsApi);
+  private teamApi = inject(TeamApi);
 
   activeTab = signal<'members' | 'invitations'>('members');
   isLoading = signal(false);
@@ -227,9 +229,21 @@ export class TeamSettingsComponent implements OnInit {
     this.isLoading.set(true);
     
     // Load team members
-    this.invitationsApi.getTeamMembers().subscribe({
-      next: (members) => {
-        this.teamMembers.set(members);
+    this.teamApi.getTeamMembers(true).subscribe({
+      next: (members: TeamMemberDto[]) => {
+        const mapped: TeamMember[] = members.map(m => ({
+          id: m.id,
+          email: m.userEmail,
+          firstName: m.userFirstName,
+          lastName: m.userLastName,
+          fullName: `${m.userFirstName ?? ''} ${m.userLastName ?? ''}`.trim() || m.userEmail,
+          role: m.role,
+          status: m.isActive ? 'Active' : 'Inactive',
+          lastLogin: undefined,
+          createdAt: new Date(m.invitedAt)
+        }));
+
+        this.teamMembers.set(mapped);
         this.isLoading.set(false);
       },
       error: (err) => {
