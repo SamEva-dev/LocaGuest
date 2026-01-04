@@ -240,7 +240,7 @@ export class AuthService {
     return !!user;
   }
 
-  private applyLogin(res: LoginResponse) {
+  applyLogin(res: LoginResponse) {
     // Créer l'objet AuthTokens attendu par TokenService
     const authTokens = {
       accessToken: res.accessToken,

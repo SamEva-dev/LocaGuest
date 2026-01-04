@@ -27,6 +27,8 @@ export class Login {
   showPassword = signal(false);
   isLoading = signal(false);
   rememberMe = signal(false);
+  loginStep = signal<'email' | 'password'>('email');
+  loginEmail = signal<string>('');
   
   // 2FA state
   show2FAInput = signal(false);
@@ -51,6 +53,46 @@ export class Login {
   ngOnInit() {
     const expired = this.route.snapshot.queryParamMap.get('expired');
     if (expired) this.toast.info('AUTH.SESSION_EXPIRED');
+  }
+
+  async continueWithEmail(email: string) {
+    this.isLoading.set(true);
+    this.errorMessage = '';
+    try {
+      const normalized = (email ?? '').trim().toLowerCase();
+      if (!normalized) {
+        this.toast.error('COMMON.FIELD_REQUIRED');
+        return;
+      }
+
+      const res = await firstValueFrom(this.authApi.prelogin({ email: normalized }));
+
+      if (res.nextStep === 'Password') {
+        this.loginEmail.set(normalized);
+        this.userEmail.set(normalized);
+        this.loginStep.set('password');
+        return;
+      }
+
+      if (res.nextStep === 'Register') {
+        this.router.navigate(['/register']);
+        return;
+      }
+
+      const message = res.error || 'COMMON.ERROR';
+      this.errorMessage = res.error || '';
+      this.toast.errorDirect(message);
+    } catch (error: any) {
+      const backendMessage = this.getBackendErrorMessage(error);
+      if (backendMessage) {
+        this.errorMessage = backendMessage;
+        this.toast.errorDirect(backendMessage);
+      } else {
+        this.toast.error('COMMON.NETWORK_ERROR');
+      }
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   private getBackendErrorMessage(err: any): string | null {

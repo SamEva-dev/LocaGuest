@@ -2,7 +2,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environnements/environment';
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '../auth/auth.models';
+import { AcceptLocaGuestInvitationRequest, AcceptLocaGuestInvitationResponse, LoginRequest, LoginResponse, PreLoginRequest, PreLoginResponse, RegisterRequest, RegisterResponse } from '../auth/auth.models';
 import { MfaSetupResponse, MfaVerifyRequest } from '../mfa/mfa.models';
 
 @Injectable({ providedIn: 'root' })
@@ -44,6 +44,10 @@ export class AuthApi {
   }
 
   // AuthGate Auth endpoints
+  prelogin(body: PreLoginRequest) {
+    return this.http.post<PreLoginResponse>(`${this.base}/Auth/prelogin`, body);
+  }
+
   login(body: LoginRequest) {
     console.log('base',this.base)
     return this.http.post<LoginResponse>(`${this.base}/Auth/login`, body);
@@ -51,6 +55,10 @@ export class AuthApi {
 
   register(body: RegisterRequest) {
     return this.http.post<RegisterResponse>(`${this.base}/Auth/register-with-tenant`, body);
+  }
+
+  acceptLocaGuestInvitation(body: AcceptLocaGuestInvitationRequest) {
+    return this.http.post<AcceptLocaGuestInvitationResponse>(`${this.base}/Auth/invitations/accept`, body);
   }
 
   forgotPassword(email: string) {

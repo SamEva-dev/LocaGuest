@@ -15,6 +15,15 @@ export interface LoginRequest {
   code?: string;
   deviceFingerprint?: string;
 }
+
+export interface PreLoginRequest {
+  email: string;
+}
+
+export interface PreLoginResponse {
+  nextStep: string;
+  error?: string;
+}
 export interface RegisterRequest { 
   email: string; 
   password: string; 
@@ -73,6 +82,23 @@ export interface LoginResponse {
   requiresMfa: boolean;
   mfaToken?: string;
   status?: 'Success' | 'MfaRequired';
+}
+
+export interface AcceptLocaGuestInvitationRequest {
+  token: string;
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface AcceptLocaGuestInvitationResponse {
+  userId: string;
+  email: string;
+  organizationId: string;
+  role: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface ApiError {

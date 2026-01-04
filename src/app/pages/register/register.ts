@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnDestroy } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../core/ui/toast.service';
+import { AuthApi } from '../../core/api/auth.api';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -19,7 +21,9 @@ export class Register implements OnDestroy {
       translate.use('fr'); // 
   }
  private auth = inject(AuthService);
+ private authApi = inject(AuthApi);
  private router = inject(Router);
+ private route = inject(ActivatedRoute);
   private toast = inject(ToastService);
 
  private redirectTimeoutId: number | null = null;
@@ -28,6 +32,8 @@ export class Register implements OnDestroy {
   isLoading = signal(false);
   errorMessage : string='';
   succesMessage : string='';
+ joinMode = signal(false);
+ invitationToken = signal<string>('');
   form = {
     organizationName: '',
     firstName: '',
@@ -37,6 +43,15 @@ export class Register implements OnDestroy {
     password: '',
     confirmPassword: ''
   };
+
+  ngOnInit() {
+    const mode = this.route.snapshot.queryParamMap.get('mode');
+    const token = this.route.snapshot.queryParamMap.get('token');
+    if (mode === 'join' && token) {
+      this.joinMode.set(true);
+      this.invitationToken.set(token);
+    }
+  }
 
   get passwordsMismatch(): boolean {
     return !!this.form.password && !!this.form.confirmPassword && this.form.password !== this.form.confirmPassword;
@@ -117,6 +132,10 @@ export class Register implements OnDestroy {
       return;
     }
 
+    if (this.joinMode()) {
+      return this.acceptInvitation();
+    }
+
     return this.register(
       this.form.organizationName,
       this.form.firstName,
@@ -126,6 +145,63 @@ export class Register implements OnDestroy {
       this.form.password,
       this.form.confirmPassword
     );
+  }
+
+  private async acceptInvitation() {
+    this.isLoading.set(true);
+    try {
+      this.errorMessage = '';
+      this.succesMessage = '';
+
+      const token = this.invitationToken();
+      const email = (this.form.email ?? '').trim();
+      const password = this.form.password;
+
+      if (!token) {
+        this.toast.errorDirect('Invitation token missing');
+        return;
+      }
+      if (!email) {
+        this.toast.error('COMMON.FIELD_REQUIRED');
+        return;
+      }
+
+      const res = await firstValueFrom(this.authApi.acceptLocaGuestInvitation({
+        token,
+        email,
+        password,
+        firstName: this.form.firstName,
+        lastName: this.form.lastName,
+      }));
+
+      this.auth.applyLogin({
+        accessToken: res.accessToken,
+        refreshToken: res.refreshToken,
+        expiresIn: 900,
+        requiresMfa: false,
+      });
+
+      this.toast.successDirect('Invitation acceptée. Connexion en cours...');
+      this.router.navigate(['/app']);
+    } catch (error: any) {
+      const body = error?.error;
+      const backendMessage =
+        (typeof body === 'string' && body.trim().length > 0 ? body : null) ||
+        (typeof body?.error === 'string' && body.error.trim().length > 0 ? body.error : null) ||
+        (typeof body?.message === 'string' && body.message.trim().length > 0 ? body.message : null) ||
+        (typeof body?.title === 'string' && body.title.trim().length > 0 ? body.title : null) ||
+        (typeof error?.message === 'string' && error.message.trim().length > 0 ? error.message : null);
+
+      if (backendMessage) {
+        this.toast.errorDirect(backendMessage);
+        this.errorMessage = backendMessage;
+      } else {
+        this.toast.error('AUTH.REGISTER_FAILED');
+        this.errorMessage = 'Something went wrong';
+      }
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   goToLogin() {
