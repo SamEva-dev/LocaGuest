@@ -86,7 +86,7 @@ export class AuthService {
       if (!res) throw new Error('No response from API');
       if (res.requiresMfa) {
       this.mfaPendingUser.set(res.user || null);
-      this.router.navigate(['/mfa']);
+      throw new Error('MFA required');
     } else {
       this.applyLogin(res);
     }
@@ -167,20 +167,7 @@ export class AuthService {
   }
 
   async verifyMfa(req: MfaLoginRequest) {
-    try {
-      const res = await this.api.verifyMfa(req).toPromise();
-      if (!res) throw new Error('No response from API');  
-      this.applyLogin(res);
-      this.mfaPendingUser.set(null);
-      this.toast.success('AUTH.LOGIN_SUCCESS');
-    } catch (err: any) {
-      if (err.status === 401) {
-        this.toast.error('AUTH.INVALID_MFA_CODE');
-      } else {
-        this.toast.error('COMMON.ERROR');
-      }
-      throw err;
-    }
+    throw new Error('Deprecated MFA flow: use verify2FA/verifyRecoveryCode from login page flow.');
   }
 
   logout() {

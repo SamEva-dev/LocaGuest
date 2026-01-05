@@ -2,33 +2,24 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environnements/environment';
+import type { paths as AuthGatePaths } from '../sdk/authgate/openapi.types';
 
-export interface TwoFactorStatusDto {
-  isEnabled: boolean;
-  enabledAt?: string;
-  lastUsedAt?: string;
-  recoveryCodesRemaining: number;
-}
+export type TwoFactorStatusDto =
+  AuthGatePaths['/api/TwoFactor/status']['get']['responses'][200]['content']['application/json'];
 
-export interface EnableTwoFactorResponse {
-  secret: string;
-  qrCodeUri: string;
-  qrCodeImage: string; // Base64
-  recoveryCodes: string[];
-}
+export type EnableTwoFactorResponse =
+  AuthGatePaths['/api/TwoFactor/enable']['post']['responses'][200]['content']['application/json'];
 
-export interface VerifyRequest {
-  code: string;
-}
+export type VerifyRequest =
+  NonNullable<AuthGatePaths['/api/TwoFactor/verify']['post']['requestBody']>['content']['application/json'];
 
-export interface DisableRequest {
-  password: string;
-}
+export type DisableRequest =
+  NonNullable<AuthGatePaths['/api/TwoFactor/disable']['post']['requestBody']>['content']['application/json'];
 
 @Injectable({ providedIn: 'root' })
 export class TwoFactorApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_AUTH_API}/api/twofactor`;
+  private readonly baseUrl = `${environment.BASE_AUTH_API}/api/TwoFactor`;
 
   getStatus(): Observable<TwoFactorStatusDto> {
     return this.http.get<TwoFactorStatusDto>(`${this.baseUrl}/status`);
@@ -38,11 +29,11 @@ export class TwoFactorApi {
     return this.http.post<EnableTwoFactorResponse>(`${this.baseUrl}/enable`, {});
   }
 
-  verifyAndEnable(request: VerifyRequest): Observable<{ success: boolean; message: string }> {
-    return this.http.post<{ success: boolean; message: string }>(`${this.baseUrl}/verify`, request);
+  verifyAndEnable(request: VerifyRequest): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/verify`, request);
   }
 
-  disable(request: DisableRequest): Observable<{ success: boolean; message: string }> {
-    return this.http.post<{ success: boolean; message: string }>(`${this.baseUrl}/disable`, request);
+  disable(request: DisableRequest): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/disable`, request);
   }
 }

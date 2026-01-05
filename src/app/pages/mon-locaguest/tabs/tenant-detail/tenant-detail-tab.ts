@@ -2,7 +2,6 @@ import { Component, input, signal, inject, effect, computed } from '@angular/cor
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
-import { OccupancyChart } from '../../../../components/charts/occupancy-chart/occupancy-chart';
 import { TenantDetail, TenantPayment, TenantPaymentStats } from '../../../../core/api/tenants.api';
 import { TenantsService } from '../../../../core/services/tenants.service';
 import { Contract } from '../../../../core/api/properties.api';
@@ -30,7 +29,6 @@ import { InvoicesApi, RentInvoiceDto } from '../../../../core/api/invoices.api';
   imports: [
     TranslatePipe, 
     DatePipe, 
-    OccupancyChart, 
     DocumentsManagerComponent,
     ContractDocumentsStatusComponent,
     ContractWizardModal,

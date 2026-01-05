@@ -3,21 +3,11 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environnements/environment';
 import { AcceptLocaGuestInvitationRequest, AcceptLocaGuestInvitationResponse, LoginRequest, LoginResponse, PreLoginRequest, PreLoginResponse, RegisterRequest, RegisterResponse } from '../auth/auth.models';
-import { MfaSetupResponse, MfaVerifyRequest } from '../mfa/mfa.models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApi {
   private http = inject(HttpClient);
   private base = environment.BASE_AUTH_API+"/api";
-
-  // AuthGate MFA endpoints (TODO: verify these exist in AuthGate)
-  enableMfa(type: 'TOTP' | 'SMS') {
-    return this.http.post<MfaSetupResponse>(`${this.base}/Mfa/setup`, { type });
-  }
-
-  verifyMfa(body: MfaVerifyRequest) {
-    return this.http.post<LoginResponse>(`${this.base}/Auth/mfa-login`, body);
-  }
 
   verify2FA(mfaToken: string, code: string, rememberDevice: boolean = false, deviceFingerprint?: string, userAgent?: string) {
     return this.http.post<LoginResponse>(`${this.base}/Auth/verify-2fa`, { 
@@ -37,10 +27,6 @@ export class AuthApi {
       deviceFingerprint,
       userAgent
     });
-  }
-
-  disableMfa() {
-    return this.http.post<void>(`${this.base}/Mfa/disable`, {});
   }
 
   // AuthGate Auth endpoints

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TwoFactorApi, EnableTwoFactorResponse } from '../../../../core/api/two-factor.api';
+import { TwoFactorApi, EnableTwoFactorResponse, TwoFactorStatusDto } from '../../../../core/api/two-factor.api';
 
 @Component({
   selector: 'two-factor-settings',
@@ -37,7 +37,7 @@ import { TwoFactorApi, EnableTwoFactorResponse } from '../../../../core/api/two-
           }
         </div>
 
-        @if (status() && status()!.isEnabled) {
+        @if (status() && !!status()!.isEnabled) {
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
               <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Activé le</p>
@@ -54,7 +54,7 @@ import { TwoFactorApi, EnableTwoFactorResponse } from '../../../../core/api/two-
             <div class="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
               <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Codes de récupération</p>
               <p class="text-sm font-semibold text-slate-800 dark:text-white">
-                {{ status()!.recoveryCodesRemaining }} restants
+                {{ status()!.recoveryCodesRemaining ?? 0 }} restants
               </p>
             </div>
           </div>
@@ -249,7 +249,7 @@ import { TwoFactorApi, EnableTwoFactorResponse } from '../../../../core/api/two-
 export class TwoFactorSettingsComponent implements OnInit {
   private twoFactorApi = inject(TwoFactorApi);
 
-  status = signal<{ isEnabled: boolean; enabledAt?: string; lastUsedAt?: string; recoveryCodesRemaining: number } | null>(null);
+  status = signal<TwoFactorStatusDto | null>(null);
   loading = signal(false);
   showEnableDialog = signal(false);
   showDisableDialog = signal(false);
@@ -286,12 +286,8 @@ export class TwoFactorSettingsComponent implements OnInit {
 
   verifyAndEnable() {
     this.twoFactorApi.verifyAndEnable({ code: this.verificationCode }).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.verified.set(true);
-        } else {
-          alert('Code invalide. Veuillez réessayer.');
-        }
+      next: () => {
+        this.verified.set(true);
       },
       error: (err) => {
         console.error('Failed to verify code:', err);
@@ -317,13 +313,11 @@ export class TwoFactorSettingsComponent implements OnInit {
 
   disable() {
     this.twoFactorApi.disable({ password: this.password }).subscribe({
-      next: (response) => {
-        if (response.success) {
-          alert('2FA désactivé avec succès');
-          this.showDisableDialog.set(false);
-          this.password = '';
-          this.loadStatus();
-        }
+      next: () => {
+        alert('2FA désactivé avec succès');
+        this.showDisableDialog.set(false);
+        this.password = '';
+        this.loadStatus();
       },
       error: (err) => {
         console.error('Failed to disable 2FA:', err);
