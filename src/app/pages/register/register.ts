@@ -71,7 +71,6 @@ export class Register implements OnDestroy {
     try {
       this.errorMessage = '';
       this.succesMessage = '';
-      console.log('🔐 Register avec:', { firstName, lastName, email, passwordLength: password.length });
       
       // Valider que les mots de passe correspondent
       if (password !== confirmPassword) {
@@ -84,8 +83,6 @@ export class Register implements OnDestroy {
         return;
       }
       
-      console.log('📝 Données envoyées:', { firstName, lastName, email });
-      
       await this.auth.register({ 
         email, 
         password,
@@ -94,8 +91,6 @@ export class Register implements OnDestroy {
         lastName,
         phone
       });
-      
-      console.log('✅ Register réussi');
       this.toast.successDirect('Inscription réussie. Vous serez redirigé vers la page de login dans 5s.');
       this.succesMessage = 'Inscription réussie. Vous serez redirigé vers la page de login dans 5s.';
       this.redirectTimeoutId = window.setTimeout(() => {

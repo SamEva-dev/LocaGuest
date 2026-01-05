@@ -83,7 +83,6 @@ export class AddTenantForm {
 
     this.tenantsService.createTenant(createTenantDto).subscribe({
       next: (tenant: TenantDetail) => {
-        console.log('✅ Tenant created successfully:', tenant);
         this.isSubmitting.set(false);
         this.tenantCreated.emit(tenant);
         this.close();

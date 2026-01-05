@@ -44,7 +44,7 @@ export interface TeamMember {
 @Injectable({ providedIn: 'root' })
 export class InvitationsApi {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_AUTH_API}/api/auth`;
+  private baseUrl = `${environment.BASE_AUTH_API}/api/Auth`;
 
   /**
    * Invite a new collaborator

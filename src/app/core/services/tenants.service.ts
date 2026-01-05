@@ -7,6 +7,27 @@ import { Observable, catchError, of, shareReplay, tap } from 'rxjs';
 export class TenantsService {
   private tenantsApi = inject(TenantsApi);
 
+  private toDate(value: unknown): Date | undefined {
+    if (!value) return undefined;
+    if (value instanceof Date) return value;
+    if (typeof value === 'string' || typeof value === 'number') {
+      const d = new Date(value);
+      if (!Number.isNaN(d.getTime())) return d;
+    }
+    return undefined;
+  }
+
+  private normalizeTenant<T extends Partial<TenantDetail>>(tenant: T): T {
+    return {
+      ...tenant,
+      moveInDate: this.toDate((tenant as any).moveInDate),
+      createdAt: this.toDate((tenant as any).createdAt),
+      dateOfBirth: this.toDate((tenant as any).dateOfBirth),
+      birthDate: this.toDate((tenant as any).birthDate),
+      insuranceExpiryDate: this.toDate((tenant as any).insuranceExpiryDate),
+    } as T;
+  }
+
   // Signals for reactive state
   tenants = signal<TenantListItem[]>([]);
   selectedTenant = signal<TenantDetail | null>(null);
@@ -22,9 +43,14 @@ export class TenantsService {
     pageSize?: number;
   }): Observable<PaginatedResult<TenantListItem>> {
     this.loading.set(true);
-    return this.tenantsApi.getTenants(params).pipe(
+    return this.tenantsApi.getTenants({
+      search: params?.q,
+      status: params?.status,
+      page: params?.page,
+      pageSize: params?.pageSize,
+    }).pipe(
       tap(result => {
-        this.tenants.set(result.items);
+        this.tenants.set(result.items.map(t => this.normalizeTenant(t)));
         this.loading.set(false);
       }),
       catchError((err: unknown) => {
@@ -40,7 +66,7 @@ export class TenantsService {
     this.loading.set(true);
     return this.tenantsApi.getTenant(id).pipe(
       tap(tenant => {
-        this.selectedTenant.set(tenant);
+        this.selectedTenant.set(this.normalizeTenant(tenant));
         this.loading.set(false);
       }),
       catchError((err: unknown) => {
@@ -86,7 +112,6 @@ export class TenantsService {
 
   // Mutations
   createTenant(dto: CreateTenantDto): Observable<TenantDetail> {
-    console.log('Creating tenant:', dto);
     return this.tenantsApi.createTenant(dto).pipe(
       tap((created) => {
         if (this.tenants()?.length) {

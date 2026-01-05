@@ -105,7 +105,6 @@ export class PropertyInfoTab implements OnDestroy {
     this.imagesService.getImageBlob(imageId).subscribe({
       next: (blob: Blob) => {
         const blobUrl = URL.createObjectURL(blob);
-        console.log('✅ Image blob créée:', blobUrl);
         // Mettre à jour le signal avec une nouvelle Map
         this.imageBlobCache.update(cache => {
           const newCache = new Map(cache);
@@ -167,7 +166,7 @@ export class PropertyInfoTab implements OnDestroy {
 
     const usageType = prop.propertyUsageType?.toLowerCase();
     
-    if (usageType === 'colocation') {
+    if (usageType === 'Colocation') {
       return {
         type: this.translate.instant('PROPERTY.INFO.USAGE_TYPE.COLOCATION'),
         occupied: prop.occupiedRooms || 0,
@@ -182,7 +181,6 @@ export class PropertyInfoTab implements OnDestroy {
   // Actions
   startEditing() {
     const prop = this.property();
-    console.log('prop',prop)
 
     const toDateInput = (value: any): any => {
       if (!value) return value;
@@ -247,7 +245,7 @@ export class PropertyInfoTab implements OnDestroy {
 
     this.propertiesService.updateProperty(prop.id, dto).subscribe({
       next: (updated) => {
-        console.log('✅ Property updated successfully', updated);
+        void updated;
         this.isEditing.set(false);
         this.editForm.set(null);
         this.isSaving.set(false);
@@ -281,7 +279,6 @@ export class PropertyInfoTab implements OnDestroy {
 
     this.propertiesService.updatePropertyStatus(prop.id, status).subscribe({
       next: () => {
-        console.log('✅ Status updated successfully');
         this.showStatusDropdown.set(false);
         // Notify parent to reload property from DB
         this.propertyUpdated.emit();
@@ -393,7 +390,6 @@ export class PropertyInfoTab implements OnDestroy {
       }
 
       // 2. Succès - le backend a déjà mis à jour property.imageUrls
-      console.log('✅ Images uploaded successfully');
       
       // Vider le cache pour forcer le rechargement des nouvelles images
       this.clearImageCache();
@@ -437,7 +433,6 @@ export class PropertyInfoTab implements OnDestroy {
       await this.imagesService.deleteImage(imageIdToDelete).toPromise();
 
       // 2. Succès - le backend a déjà mis à jour property.imageUrls
-      console.log('✅ Image deleted successfully');
       
       // Supprimer l'URL blob du cache si elle existe
       const cache = this.imageBlobCache();
@@ -500,9 +495,9 @@ export class PropertyInfoTab implements OnDestroy {
 
   getUsageTypeColor(type?: string): string {
     switch(type?.toLowerCase()) {
-      case 'complete': return 'emerald';
-      case 'colocation': return 'blue';
-      case 'airbnb': return 'purple';
+      case 'Complete': return 'emerald';
+      case 'Colocation': return 'blue';
+      case 'Airbnb': return 'purple';
       default: return 'slate';
     }
   }
@@ -510,7 +505,7 @@ export class PropertyInfoTab implements OnDestroy {
   // Colocation helpers
   isColocation = computed(() => {
     const usageType = this.property()?.propertyUsageType?.toLowerCase();
-    return usageType === 'colocation' || usageType === 'colocationindividual' || usageType === 'colocationsolidaire';
+    return usageType === 'Colocation' || usageType === 'colocationindividual' || usageType === 'colocationsolidaire';
   });
 
   getOccupancyRate(): number {

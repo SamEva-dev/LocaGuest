@@ -98,7 +98,7 @@ export interface PaymentStats {
 })
 export class PaymentsService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/payments`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Payments`;
 
   /**
    * Create a new payment

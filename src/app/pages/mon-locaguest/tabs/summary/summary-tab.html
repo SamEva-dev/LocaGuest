@@ -219,7 +219,7 @@
                       </span>
                       
                       <!-- Info colocation -->
-                      @if (property.propertyUsageType === 'colocation' && property.totalRooms) {
+                      @if (property.propertyUsageType === 'Colocation' && property.totalRooms) {
                         <span class="text-xs px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium">
                           <i class="ph ph-door mr-1"></i>
                           {{ property.occupiedRooms || 0 }}/{{ property.totalRooms }} chambres
@@ -275,7 +275,7 @@
                     </td>
                     <td class="py-3 text-sm text-slate-600 dark:text-slate-400">{{ property.address }}</td>
                     <td class="py-3 text-xs">
-                      @if (property.propertyUsageType === 'colocation' && property.totalRooms) {
+                      @if (property.propertyUsageType === 'Colocation' && property.totalRooms) {
                         <span class="px-2 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-medium inline-flex items-center gap-1">
                           <i class="ph ph-door"></i>
                           {{ property.occupiedRooms || 0 }}/{{ property.totalRooms }}

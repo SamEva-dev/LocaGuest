@@ -105,12 +105,9 @@ export class AuthService {
 
   async register(request: RegisterRequest): Promise<void> {
     try {
-      console.log('🔐 Register avec:', request);
       const res = await this.api.register(request).toPromise();
       if (!res) throw new Error('No response from API');
-      
-      console.log('✅ Register response:', res);
-      
+      void res;
     } catch (err: any) {
       console.error('❌ Register error:', err);
       const backendMessage = this.getBackendErrorMessage(err);
@@ -124,7 +121,6 @@ export class AuthService {
   }
 
   async refreshIfNeeded(): Promise<boolean> {
-    console.log('Refreshing tokens...');
     const current = this.state.tokens();
     if (!current?.refreshToken) return false;
     try {

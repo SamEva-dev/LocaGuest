@@ -35,7 +35,6 @@ export class AuthApi {
   }
 
   login(body: LoginRequest) {
-    console.log('base',this.base)
     return this.http.post<LoginResponse>(`${this.base}/Auth/login`, body);
   }
 

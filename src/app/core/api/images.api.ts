@@ -24,7 +24,7 @@ export interface ImageUploadResponse {
 })
 export class ImagesApi {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/images`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Images`;
 
   /**
    * Upload plusieurs images pour une propriété

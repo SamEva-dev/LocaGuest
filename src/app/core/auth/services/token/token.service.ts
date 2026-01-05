@@ -13,7 +13,6 @@ export class TokenService {
   setRememberMe(value: boolean) { this._persist.set(value); }
 
   save(tokens: AuthTokens) {
-    console.log("save tokens", tokens); 
     if (this._persist()) {
       localStorage.setItem(ACCESS, tokens.accessToken);
       tokens.refreshToken && localStorage.setItem(REFRESH, tokens.refreshToken);

@@ -58,7 +58,7 @@ export interface SignatureResponse {
 @Injectable({ providedIn: 'root' })
 export class DocumentsService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/documents`;
+  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Documents`;
 
   /**
    * Génère le PDF d'un contrat

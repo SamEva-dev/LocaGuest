@@ -46,7 +46,7 @@ export interface AcceptInvitationResponse {
 @Injectable({ providedIn: 'root' })
 export class TeamApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/team`;
+  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Team`;
 
   getTeamMembers(activeOnly: boolean = true): Observable<TeamMemberDto[]> {
     return this.http.get<TeamMemberDto[]>(`${this.baseUrl}?activeOnly=${activeOnly}`);

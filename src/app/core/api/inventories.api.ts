@@ -148,7 +148,7 @@ export interface CreateInventoryExitRequest {
   providedIn: 'root'
 })
 export class InventoriesApiService {
-  private apiUrl = `${environment.BASE_LOCAGUEST_API}/api/inventories`;
+  private apiUrl = `${environment.BASE_LOCAGUEST_API}/api/Inventories`;
 
   constructor(private http: HttpClient) {}
 

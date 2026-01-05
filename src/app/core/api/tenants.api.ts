@@ -107,7 +107,7 @@ export interface UpdateTenantDto extends Partial<CreateTenantDto> {}
 @Injectable({ providedIn: 'root' })
 export class TenantsApi {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/tenants`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Occupants`;
 
   getTenants(params?: {
     search?: string;
@@ -145,14 +145,14 @@ export class TenantsApi {
   }
 
   createTenant(dto: CreateTenantDto): Observable<TenantDetail> {
-    return this.http.post<TenantDetail>(`${environment.BASE_LOCAGUEST_API}/api/tenants`, dto);
+    return this.http.post<TenantDetail>(this.baseUrl, dto);
   }
 
   updateTenant(id: string, dto: UpdateTenantDto): Observable<TenantDetail> {
-    return this.http.put<TenantDetail>(`${environment.BASE_LOCAGUEST_API}/api/tenants/${id}`, dto);
+    return this.http.put<TenantDetail>(`${this.baseUrl}/${id}`, dto);
   }
 
   deleteTenant(id: string): Observable<void> {
-    return this.http.delete<void>(`${environment.BASE_LOCAGUEST_API}/api/tenants/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

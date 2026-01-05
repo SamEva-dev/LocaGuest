@@ -37,7 +37,6 @@ export class Property {
 
   ngOnInit() {
     const id = this.property().id;
-    console.log('Loading property details for ID:', id);
     this.propertiesService.getProperty(id).subscribe(detail => {
       this.property.update(p => ({
         ...p,

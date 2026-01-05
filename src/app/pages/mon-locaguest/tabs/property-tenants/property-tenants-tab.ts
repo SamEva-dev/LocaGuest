@@ -215,23 +215,19 @@ export class PropertyTenantsTab {
   }
   
   openContractDetail(contract: Contract) {
-    console.log('Open contract:', contract.id);
     // TODO: Implement contract detail view
   }
   
   createContract() {
     // TODO: Open contract creation wizard with pre-selected property
-    console.log('Create contract for property:', this.property().id);
   }
   
   addPaperContract() {
     // TODO: Open paper contract entry form
-    console.log('Add paper contract');
   }
   
   generateContract() {
     // TODO: Open contract generation wizard
-    console.log('Generate contract');
   }
   
   // ✅ Ouvrir wizard EDL d'entrée
@@ -290,7 +286,6 @@ export class PropertyTenantsTab {
   }
   
   createAmendment(contract: Contract) {
-    console.log('Create amendment for contract:', contract.id);
     this.toasts.info('PROPERTY_TENANTS.ADDENDUM.IN_PROGRESS');
   }
   

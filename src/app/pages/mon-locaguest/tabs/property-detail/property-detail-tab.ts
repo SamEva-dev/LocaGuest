@@ -81,13 +81,9 @@ export class PropertyDetailTab {
   constructor() {
     effect(() => {
       const tabData = this.data();
-      console.log('🔍 PropertyDetailTab data:', tabData);
       if (tabData?.propertyId) {
-        console.log('✅ Loading property:', tabData.propertyId);
         this.autoEditDone.set(false);
         this.loadProperty(tabData.propertyId);
-      } else {
-        console.warn('⚠️ No propertyId found in data');
       }
     });
 
@@ -115,7 +111,6 @@ export class PropertyDetailTab {
       const contractsTabRef = this.contractsTab();
       
       if (currentTab === 'contracts' && contractsTabRef) {
-        console.log('📋 Initializing inventories for contracts tab');
         contractsTabRef.initializeInventories();
       }
     });
@@ -124,7 +119,6 @@ export class PropertyDetailTab {
   reloadProperty() {
     const tabData = this.data();
     if (tabData?.propertyId) {
-      console.log('🔄 Reloading property from DB:', tabData.propertyId);
       this.loadProperty(tabData.propertyId);
     }
   }
@@ -137,7 +131,6 @@ export class PropertyDetailTab {
       next: (property) => {
         this.property.set(property);
         this.isLoading.set(false);
-        console.log('✅ Property loaded:', property.name);
       },
       error: (err) => {
         console.error('❌ Error loading property:', err);
@@ -150,7 +143,6 @@ export class PropertyDetailTab {
       next: (payments) => {
         this.payments.set(payments);
         this.recentPayments.set(payments.slice(0, 3));
-        console.log('✅ Payments loaded:', payments.length);
       },
       error: (err) => console.error('❌ Error loading payments:', err)
     });
@@ -159,7 +151,6 @@ export class PropertyDetailTab {
     this.propertiesService.getPropertyContracts(id).subscribe({
       next: (contracts) => {
         this.contracts.set(contracts);
-        console.log('✅ Contracts loaded:', contracts.length);
       },
       error: (err) => console.error('❌ Error loading contracts:', err)
     });
@@ -168,7 +159,6 @@ export class PropertyDetailTab {
     this.propertiesService.getAssociatedTenants(id).subscribe({
       next: (tenants) => {
         this.associatedTenants.set(tenants);
-        console.log('✅ Associated tenants loaded:', tenants.length, tenants);
       },
       error: (err) => console.error('❌ Error loading associated tenants:', err)
     });
@@ -177,7 +167,6 @@ export class PropertyDetailTab {
     this.propertiesService.getFinancialSummary(id).subscribe({
       next: (summary) => {
         this.financialSummary.set(summary);
-        console.log('✅ Financial summary loaded', summary);
       },
       error: (err) => console.error('❌ Error loading financial summary:', err)
     });
@@ -186,7 +175,6 @@ export class PropertyDetailTab {
     this.documentsApi.getPropertyDocuments(id).subscribe({
       next: (categories) => {
         this.documentCategories.set(categories);
-        console.log('✅ Documents loaded:', categories.length, 'categories');
       },
       error: (err) => console.error('❌ Error loading documents:', err)
     });
@@ -202,11 +190,8 @@ export class PropertyDetailTab {
       console.error('⚠️ No propertyId available');
       return;
     }
-
-    console.log('🔍 Loading available tenants for property:', propertyId);
     this.propertiesService.getAvailableTenants(propertyId).subscribe({
       next: (tenants: any) => {
-        console.log('✅ Available tenants loaded:', tenants.length);
         this.availableTenants.set(tenants);
         this.showTenantModal.set(true);
         
@@ -242,11 +227,8 @@ export class PropertyDetailTab {
       rent: result.rent,
       deposit: result.deposit
     };
-
-    console.log('🔄 Assigning tenant to property:', contractDto);
     this.propertiesService.assignTenant(propertyId, contractDto).subscribe({
       next: (contract: any) => {
-        console.log('✅ Tenant assigned successfully:', contract);
         this.showTenantModal.set(false);
         // Recharger les contrats
         this.loadProperty(propertyId);
@@ -290,74 +272,61 @@ export class PropertyDetailTab {
   }
 
   confirmDissociation() {
-    const form = this.dissociationForm();
     const propertyId = this.data()?.propertyId;
-    
-    if (!form || !propertyId) {
+    const form = this.dissociationForm();
+    if (!propertyId || !form?.tenantId) return;
+
+    const reason = (form.reason || '').trim();
+    if (!reason) {
+      this.toasts.errorDirect('Veuillez sélectionner un motif de dissociation');
       return;
     }
 
-    // Validation: raison obligatoire
-    if (!form.reason) {
-      this.toasts.warningDirect('Veuillez sélectionner un motif de dissociation');
+    const customReason = (form.customReason || '').trim();
+    if (reason === 'Autre (préciser)' && !customReason) {
+      this.toasts.errorDirect('Veuillez préciser le motif de la dissociation');
       return;
     }
 
-    // Si "Autre", le champ custom est obligatoire
-    if (form.reason === 'Autre (préciser)' && !form.customReason.trim()) {
-      this.toasts.warningDirect('Veuillez préciser le motif');
-      return;
-    }
-
-    const finalReason = form.reason === 'Autre (préciser)' 
-      ? form.customReason 
-      : form.reason;
-
-    console.log('🔄 Dissociating tenant from property:', { 
-      propertyId, 
-      tenantId: form.tenantId,
-      reason: finalReason
-    });
+    const finalReason = reason === 'Autre (préciser)' ? customReason : reason;
+    void finalReason;
 
     this.propertiesService.dissociateTenant(propertyId, form.tenantId).subscribe({
       next: () => {
-        console.log('✅ Tenant dissociated successfully');
-        this.toasts.successDirect(`Locataire "${form.tenantName}" retiré avec succès !\nMotif: ${finalReason}`);
         this.closeDissociationModal();
-        // Recharger la propriété
         this.loadProperty(propertyId);
+        this.toasts.successDirect('Association retirée avec succès');
       },
       error: (err: any) => {
         console.error('❌ Error dissociating tenant:', err);
-        const errorMsg = err?.error?.message || err?.message || 'Erreur inconnue';
-        this.toasts.errorDirect(`Erreur lors de la dissociation: ${errorMsg}`);
+        this.toasts.errorDirect('Erreur lors de la dissociation du locataire');
       }
     });
   }
 
   getUsageTypeIcon(usageType?: string): string {
     switch(usageType) {
-      case 'complete': return 'ph-house';
-      case 'colocation': return 'ph-users-three';
-      case 'airbnb': return 'ph-airplane-in-flight';
+      case 'Complete': return 'ph-house';
+      case 'Colocation': return 'ph-users-three';
+      case 'Airbnb': return 'ph-airplane-in-flight';
       default: return 'ph-house';
     }
   }
 
   getUsageTypeLabel(usageType?: string): string {
     switch(usageType) {
-      case 'complete': return 'Location complète';
-      case 'colocation': return 'Colocation';
-      case 'airbnb': return 'Airbnb';
+      case 'Complete': return 'Location complète';
+      case 'Colocation': return 'Colocation';
+      case 'Airbnb': return 'Airbnb';
       default: return 'Non défini';
     }
   }
 
   getUsageTypeColor(usageType?: string): string {
     switch(usageType) {
-      case 'complete': return 'emerald';
-      case 'colocation': return 'blue';
-      case 'airbnb': return 'purple';
+      case 'Complete': return 'emerald';
+      case 'Colocation': return 'blue';
+      case 'Airbnb': return 'purple';
       default: return 'slate';
     }
   }
@@ -381,7 +350,6 @@ export class PropertyDetailTab {
   }
 
   downloadDocument(doc: DocumentDto) {
-    console.log('📥 Downloading document:', doc.fileName);
     this.documentsApi.downloadDocument(doc.id).subscribe({
       next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
@@ -390,7 +358,6 @@ export class PropertyDetailTab {
         link.download = doc.fileName;
         link.click();
         window.URL.revokeObjectURL(url);
-        console.log('✅ Document downloaded');
       },
       error: (err: any) => {
         console.error('❌ Error downloading document:', err);
@@ -400,12 +367,10 @@ export class PropertyDetailTab {
   }
 
   viewDocument(doc: DocumentDto) {
-    console.log('👁️ Viewing document:', doc.fileName);
     this.documentsApi.downloadDocument(doc.id).subscribe({
       next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         window.open(url, '_blank');
-        console.log('✅ Document opened in new tab');
       },
       error: (err: any) => {
         console.error('❌ Error viewing document:', err);
@@ -423,11 +388,8 @@ export class PropertyDetailTab {
       `Êtes-vous sûr de vouloir dissocier le document "${doc.fileName}" ?`
     );
     if (!confirmed) return;
-
-    console.log('🗑️ Dissociating document:', doc.fileName);
     this.documentsApi.dissociateDocument(doc.id).subscribe({
       next: () => {
-        console.log('✅ Document dissociated');
         this.toasts.successDirect('Document dissocié avec succès');
         // Recharger les documents
         this.documentsApi.getPropertyDocuments(propertyId).subscribe({

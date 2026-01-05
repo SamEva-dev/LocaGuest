@@ -201,7 +201,7 @@ export class ContractsTab implements OnInit {
         })
       );
 
-      console.log('✅ Signature envoyée:', response);
+      void response;
       this.toasts.successDirect('Demande de signature envoyée');
       this.closeAddendumSignatureModal();
     } catch (err: any) {
@@ -358,7 +358,8 @@ export class ContractsTab implements OnInit {
       next: (data) => {
         this.contracts.set(data);
         this.isLoading.set(false);
-        console.log('✅ Contracts loaded:', data.length);
+
+        void data;
 
         void this.loadAddendumsForVisibleContracts();
       },

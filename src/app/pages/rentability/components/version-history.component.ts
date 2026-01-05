@@ -1,17 +1,7 @@
 import { Component, inject, signal, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { TranslatePipe } from '@ngx-translate/core';
-import { environment } from '../../../../environnements/environment';
-
-export interface ScenarioVersion {
-  id: string;
-  scenarioId: string;
-  versionNumber: number;
-  changeDescription: string;
-  snapshotJson: string;
-  createdAt: string;
-}
+import { RentabilityScenariosApi, ScenarioVersion } from '../../../core/api/rentability-scenarios.api';
 
 @Component({
   selector: 'app-version-history',
@@ -120,7 +110,7 @@ export interface ScenarioVersion {
   `]
 })
 export class VersionHistoryComponent {
-  private http = inject(HttpClient);
+  private rentabilityApi = inject(RentabilityScenariosApi);
   
   scenarioId = input.required<string>();
   currentVersion = input<number>(1);
@@ -131,8 +121,6 @@ export class VersionHistoryComponent {
   error = signal<string | null>(null);
   previewData = signal<ScenarioVersion | null>(null);
 
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/rentabilityscenarios`;
-
   ngOnInit() {
     this.loadVersions();
   }
@@ -141,7 +129,7 @@ export class VersionHistoryComponent {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.http.get<ScenarioVersion[]>(`${this.baseUrl}/${this.scenarioId()}/versions`)
+    this.rentabilityApi.getScenarioVersions(this.scenarioId())
       .subscribe({
         next: (versions) => {
           this.versions.set(versions);
@@ -164,7 +152,7 @@ export class VersionHistoryComponent {
   restoreVersion(version: ScenarioVersion) {
     this.isLoading.set(true);
 
-    this.http.post(`${this.baseUrl}/${this.scenarioId()}/versions/${version.id}/restore`, {})
+    this.rentabilityApi.restoreScenarioVersion(this.scenarioId(), version.id)
       .subscribe({
         next: () => {
           this.isLoading.set(false);

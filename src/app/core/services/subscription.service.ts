@@ -59,7 +59,7 @@ export interface UsageDto {
 @Injectable({ providedIn: 'root' })
 export class SubscriptionService {
   private http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/subscriptions`;
+  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Subscriptions`;
   
   // State
   private currentSubscription = signal<SubscriptionDto | null>(null);

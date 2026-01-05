@@ -483,7 +483,6 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
   async loadEntryInventory() {
     try {
       const d = this.data();
-      console.log('📥 Chargement EDL entrée', d.inventoryEntryId);
       const entry = await this.inventoriesApi.getEntry(d.inventoryEntryId).toPromise();
       this.entryData.set(entry || null);
       
@@ -498,7 +497,6 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
       }));
       
       this.form.update(f => ({ ...f, comparisons }));
-      console.log('✅ EDL entrée chargé', entry);
     } catch (error) {
       console.error('❌ Erreur chargement EDL entrée', error);
     } finally {
@@ -639,10 +637,7 @@ export class InventoryExitWizardSimpleComponent implements OnInit {
         ownerCoveredAmount: this.ownerPart(),
         financialNotes: f.financialNotes
       };
-
-      console.log('📤 Création EDL sortie', request);
       const result = await this.inventoriesApi.createExit(request).toPromise();
-      console.log('✅ EDL sortie créé', result);
       
       this.createdInventoryId.set(result!.id);
       this.onClose.emit(result);

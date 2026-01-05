@@ -3,8 +3,9 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environnements/environment';
 import { TenantListItem } from './tenants.api';
+import type { paths as LocaGuestPaths } from '../sdk/locaguest/openapi.types';
 
-export type PropertyUsageType = 'complete' | 'colocation' | 'airbnb';
+export type PropertyUsageType = 'Complete' | 'Colocation' | 'Airbnb';
 
 export type PropertyImageCategory = 
   | 'exterior' 
@@ -185,6 +186,18 @@ export interface CreateContractDto {
   notes?: string;
 }
 
+type CreatePropertyCommand =
+  NonNullable<LocaGuestPaths['/api/Properties']['post']['requestBody']>['content']['application/json'];
+
+type UpdatePropertyCommand =
+  NonNullable<LocaGuestPaths['/api/Properties/{id}']['put']['requestBody']>['content']['application/json'];
+
+type UpdatePropertyStatusCommand =
+  NonNullable<LocaGuestPaths['/api/Properties/{id}/status']['patch']['requestBody']>['content']['application/json'];
+
+type CreateContractCommand =
+  NonNullable<LocaGuestPaths['/api/Properties/{id}/assign-tenant']['post']['requestBody']>['content']['application/json'];
+
 export interface CreatePropertyDto {
   name: string;
   address: string;
@@ -240,7 +253,7 @@ export interface PaginatedResult<T> {
 @Injectable({ providedIn: 'root' })
 export class PropertiesApi {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/properties`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Properties`;
 
   getProperties(params?: {
     status?: string;
@@ -253,18 +266,17 @@ export class PropertiesApi {
     let httpParams = new HttpParams();
     if (params) {
       if (params.status) httpParams = httpParams.set('status', params.status);
-      if (params.city) httpParams = httpParams.set('city', params.city);
       if (params.search) httpParams = httpParams.set('search', params.search);
-      if (params.propertyUsageType) httpParams = httpParams.set('propertyUsageType', params.propertyUsageType);
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
+
+      if (params.city) httpParams = httpParams.set('city', params.city);
+      if (params.propertyUsageType) httpParams = httpParams.set('propertyUsageType', params.propertyUsageType);
     }
-    console.log('this.baseUrl',this.baseUrl)
     return this.http.get<PaginatedResult<PropertyListItem>>(this.baseUrl, { params: httpParams });
   }
 
   getProperty(id: string): Observable<PropertyDetail> {
-    console.log('Fetching property with ID:', id);
     return this.http.get<PropertyDetail>(`${this.baseUrl}/${id}`);
   }
 
@@ -284,19 +296,25 @@ export class PropertiesApi {
   }
 
   createProperty(dto: CreatePropertyDto): Observable<PropertyDetail> {
-    return this.http.post<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/properties`, dto);
+    return this.http.post<PropertyDetail>(this.baseUrl, dto as unknown as CreatePropertyCommand);
   }
 
   updateProperty(id: string, dto: UpdatePropertyDto): Observable<PropertyDetail> {
-    return this.http.put<PropertyDetail>(`${environment.BASE_LOCAGUEST_API}/api/properties/${id}`, { ...dto, id });
+    return this.http.put<PropertyDetail>(
+      `${this.baseUrl}/${id}`,
+      ({ ...dto, id } as unknown as UpdatePropertyCommand)
+    );
   }
 
   updatePropertyStatus(id: string, status: string): Observable<{ success: boolean }> {
-    return this.http.patch<{ success: boolean }>(`${this.baseUrl}/${id}/status`, { propertyId: id, status });
+    return this.http.patch<{ success: boolean }>(
+      `${this.baseUrl}/${id}/status`,
+      ({ propertyId: id, status } as unknown as UpdatePropertyStatusCommand)
+    );
   }
 
   deleteProperty(id: string): Observable<void> {
-    return this.http.delete<void>(`${environment.BASE_LOCAGUEST_API}/api/properties/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
   getAvailableTenants(propertyId: string): Observable<any[]> {
@@ -304,7 +322,10 @@ export class PropertiesApi {
   }
 
   assignTenant(propertyId: string, contractDto: CreateContractDto): Observable<Contract> {
-    return this.http.post<Contract>(`${this.baseUrl}/${propertyId}/assign-tenant`, contractDto);
+    return this.http.post<Contract>(
+      `${this.baseUrl}/${propertyId}/assign-tenant`,
+      contractDto as unknown as CreateContractCommand
+    );
   }
 
   dissociateTenant(propertyId: string, tenantId: string): Observable<void> {

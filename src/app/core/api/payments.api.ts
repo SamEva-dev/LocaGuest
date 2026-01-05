@@ -105,7 +105,7 @@ export type InvoiceStatus =
 })
 export class PaymentsApi {
   private http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/payments`;
+  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Payments`;
 
   /**
    * Create a new payment

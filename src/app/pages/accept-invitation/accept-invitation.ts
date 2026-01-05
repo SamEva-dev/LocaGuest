@@ -2,8 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environnements/environment';
+import { InvitationsApi } from '../../core/api/invitations.api';
 
 interface InvitationInfo {
   email: string;
@@ -126,7 +125,7 @@ interface InvitationInfo {
 export class AcceptInvitationComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private http = inject(HttpClient);
+  private invitationsApi = inject(InvitationsApi);
 
   token = '';
   invitation = signal<InvitationInfo | null>(null);
@@ -151,13 +150,13 @@ export class AcceptInvitationComponent implements OnInit {
   }
 
   loadInvitation() {
-    this.http.get<InvitationInfo>(`${environment.BASE_AUTH_API}/api/auth/invitation/${this.token}`)
+    this.invitationsApi.getInvitationByToken(this.token)
       .subscribe({
-        next: (info) => {
-          this.invitation.set(info);
+        next: (info: any) => {
+          this.invitation.set(info as InvitationInfo);
           this.isLoading.set(false);
         },
-        error: (err) => {
+        error: (err: any) => {
           this.error.set(err.error?.error || 'Invitation invalide ou expirée');
           this.isLoading.set(false);
         }
@@ -178,7 +177,7 @@ export class AcceptInvitationComponent implements OnInit {
     this.isSubmitting.set(true);
     this.submitError.set('');
 
-    this.http.post<any>(`${environment.BASE_AUTH_API}/api/auth/accept-invitation`, {
+    this.invitationsApi.acceptInvitation({
       token: this.token,
       password: this.password,
       firstName: this.firstName,

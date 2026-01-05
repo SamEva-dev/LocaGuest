@@ -38,7 +38,7 @@ export interface OccupancyDataPoint {
 @Injectable({ providedIn: 'root' })
 export class AnalyticsApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/analytics`;
+  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Analytics`;
 
   getOverview(period: string, propertyId?: string): Observable<AnalyticsResponse> {
     let url = `${this.baseUrl}?period=${encodeURIComponent(period)}`;

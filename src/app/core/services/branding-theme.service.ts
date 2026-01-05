@@ -2,6 +2,7 @@ import { Injectable, inject, signal, effect } from '@angular/core';
 import { OrganizationsService, Organization } from './organizations.service';
 import { ThemeService } from './theme.service';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environnements/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,6 @@ export class BrandingThemeService {
       
       if (org) {
         this.applyBranding(org, isDark);
-        console.log(`🎨 Branding re-applied for ${isDark ? 'dark' : 'light'} mode`);
       }
     });
   }
@@ -80,12 +80,6 @@ export class BrandingThemeService {
     // Apply accent color
     root.style.setProperty('--color-accent', accentColor);
     root.style.setProperty('--color-accent-rgb', this.hexToRgb(accentColor));
-
-    console.log(`✅ Branding colors applied (${isDark ? 'dark' : 'light'} mode):`, {
-      primary: primaryColor,
-      secondary: secondaryColor,
-      accent: accentColor
-    });
   }
 
   /**
@@ -102,8 +96,6 @@ export class BrandingThemeService {
     
     root.style.setProperty('--color-accent', this.defaultColors.accent);
     root.style.setProperty('--color-accent-rgb', this.hexToRgb(this.defaultColors.accent));
-
-    console.log('⚠️ Default branding colors applied');
   }
 
   /**
@@ -226,7 +218,7 @@ export class BrandingThemeService {
     
     // If URL is relative, prepend API base URL
     if (org.logoUrl.startsWith('/')) {
-      return `http://localhost:5001${org.logoUrl}`;
+      return `${environment.BASE_LOCAGUEST_API}${org.logoUrl}`;
     }
     
     return org.logoUrl;

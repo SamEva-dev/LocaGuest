@@ -52,7 +52,7 @@ export interface NotificationSettings {
 @Injectable({ providedIn: 'root' })
 export class UsersApi {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/users`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Users`;
 
   // Profile
   getUserProfile(): Observable<UserProfile> {

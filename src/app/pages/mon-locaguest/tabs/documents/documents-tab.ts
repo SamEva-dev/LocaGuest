@@ -118,7 +118,6 @@ export class DocumentsTab implements OnInit {
         
         this.allDocuments.set(enrichedDocs);
         this.isLoading.set(false);
-        console.log('✅ Loaded', enrichedDocs.length, 'documents');
       },
       error: (err) => {
         console.error('❌ Error loading documents:', err);
@@ -139,7 +138,6 @@ export class DocumentsTab implements OnInit {
         link.download = doc.fileName;
         link.click();
         window.URL.revokeObjectURL(url);
-        console.log('✅ Document downloaded:', doc.fileName);
       },
       error: (err) => {
         console.error('❌ Download error:', err);

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environnements/environment';
+import type { paths as LocaGuestPaths } from '../sdk/locaguest/openapi.types';
 
 export interface ContractStats {
   activeContracts: number;
@@ -109,6 +110,30 @@ export interface RenewContractRequest {
   attachedDocumentIds?: string[];
 }
 
+type CreateContractCommand =
+  NonNullable<LocaGuestPaths['/api/Contracts']['post']['requestBody']>['content']['application/json'];
+
+type RecordPaymentCommand =
+  NonNullable<LocaGuestPaths['/api/Contracts/{id}/payments']['post']['requestBody']>['content']['application/json'];
+
+type TerminateContractCommand =
+  NonNullable<LocaGuestPaths['/api/Contracts/{id}/terminate']['put']['requestBody']>['content']['application/json'];
+
+type MarkContractAsSignedCommand =
+  NonNullable<LocaGuestPaths['/api/Contracts/{id}/mark-signed']['put']['requestBody']>['content']['application/json'];
+
+type GiveNoticeCommand =
+  NonNullable<LocaGuestPaths['/api/Contracts/{id}/notice']['put']['requestBody']>['content']['application/json'];
+
+type RenewContractCommand =
+  NonNullable<LocaGuestPaths['/api/Contracts/{id}/renew']['post']['requestBody']>['content']['application/json'];
+
+type CreateAddendumCommand =
+  NonNullable<LocaGuestPaths['/api/Contracts/{id}/addendum']['post']['requestBody']>['content']['application/json'];
+
+type UpdateContractRequestBody =
+  NonNullable<LocaGuestPaths['/api/Contracts/{id}']['put']['requestBody']>['content']['application/json'];
+
 export interface PaginatedResponse<T> {
   total: number;
   page: number;
@@ -137,7 +162,7 @@ export interface OccupantChangesDto {
 @Injectable({ providedIn: 'root' })
 export class ContractsApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/contracts`;
+  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Contracts`;
 
   getStats(): Observable<ContractStats> {
     return this.http.get<ContractStats>(`${this.baseUrl}/stats`);
@@ -179,15 +204,24 @@ export class ContractsApi {
   }
 
   createContract(request: CreateContractRequest): Observable<{ id: string; propertyId: string; tenantId: string }> {
-    return this.http.post<{ id: string; propertyId: string; tenantId: string }>(this.baseUrl, request);
+    return this.http.post<{ id: string; propertyId: string; tenantId: string }>(
+      this.baseUrl,
+      request as unknown as CreateContractCommand
+    );
   }
 
   recordPayment(contractId: string, request: RecordPaymentRequest): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${contractId}/payments`, request);
+    return this.http.post(
+      `${this.baseUrl}/${contractId}/payments`,
+      request as unknown as RecordPaymentCommand
+    );
   }
 
   terminateContract(contractId: string, request: TerminateContractRequest): Observable<{ message: string; id: string }> {
-    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/terminate`, request);
+    return this.http.put<{ message: string; id: string }>(
+      `${this.baseUrl}/${contractId}/terminate`,
+      request as unknown as TerminateContractCommand
+    );
   }
 
   getTerminationEligibility(contractId: string): Observable<ContractTerminationEligibilityDto> {
@@ -195,11 +229,14 @@ export class ContractsApi {
   }
 
   cancelContract(contractId: string): Observable<{ message: string; id: string }> {
-    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/cancel`, {});
+    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/cancel`, undefined);
   }
 
   markAsSigned(contractId: string, request?: MarkAsSignedRequest): Observable<{ message: string; id: string }> {
-    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/mark-signed`, request || {});
+    return this.http.put<{ message: string; id: string }>(
+      `${this.baseUrl}/${contractId}/mark-signed`,
+      (request || {}) as unknown as MarkContractAsSignedCommand
+    );
   }
   
   deleteContract(contractId: string): Observable<{ message: string; id: string; deletedPayments: number; deletedDocuments: number }> {
@@ -207,23 +244,39 @@ export class ContractsApi {
   }
   
   updateContract(contractId: string, request: Partial<CreateContractRequest>): Observable<{ message: string; id: string }> {
-    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}`, request);
+    return this.http.put<{ message: string; id: string }>(
+      `${this.baseUrl}/${contractId}`,
+      request as unknown as UpdateContractRequestBody
+    );
   }
   
   renewContract(contractId: string, request: RenewContractRequest): Promise<{ message: string; newContractId: string }> {
-    return this.http.post<{ message: string; newContractId: string }>(`${this.baseUrl}/${contractId}/renew`, request).toPromise() as Promise<{ message: string; newContractId: string }>;
+    return this.http
+      .post<{ message: string; newContractId: string }>(
+        `${this.baseUrl}/${contractId}/renew`,
+        request as unknown as RenewContractCommand
+      )
+      .toPromise() as Promise<{ message: string; newContractId: string }>;
   }
   
   createAddendum(contractId: string, request: CreateAddendumRequest): Promise<{ message: string; addendumId: string }> {
-    return this.http.post<{ message: string; addendumId: string }>(`${this.baseUrl}/${contractId}/addendum`, request).toPromise() as Promise<{ message: string; addendumId: string }>;
+    return this.http
+      .post<{ message: string; addendumId: string }>(
+        `${this.baseUrl}/${contractId}/addendum`,
+        request as unknown as CreateAddendumCommand
+      )
+      .toPromise() as Promise<{ message: string; addendumId: string }>;
   }
 
   giveNotice(contractId: string, request: GiveNoticeRequest): Observable<{ message: string; id: string }> {
-    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/notice`, request);
+    return this.http.put<{ message: string; id: string }>(
+      `${this.baseUrl}/${contractId}/notice`,
+      request as unknown as GiveNoticeCommand
+    );
   }
 
   cancelNotice(contractId: string): Observable<{ message: string; id: string }> {
-    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/notice/cancel`, {});
+    return this.http.put<{ message: string; id: string }>(`${this.baseUrl}/${contractId}/notice/cancel`, undefined);
   }
 }
 

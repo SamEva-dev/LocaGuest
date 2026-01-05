@@ -30,7 +30,7 @@ export interface PaymentMethod {
 @Injectable({ providedIn: 'root' })
 export class BillingApi {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/billing`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Billing`;
 
   /**
    * Creates a Stripe Checkout session

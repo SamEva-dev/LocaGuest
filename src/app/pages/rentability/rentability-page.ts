@@ -237,8 +237,8 @@ export class RentabilityPage {
         indexation: 'irl',
         indexationRate: 2,
         vacancyRate,
-        seasonalityEnabled: property.propertyUsageType === 'airbnb',
-        highSeasonMultiplier: property.propertyUsageType === 'airbnb' ? 1.5 : undefined,
+        seasonalityEnabled: property.propertyUsageType === 'Airbnb',
+        highSeasonMultiplier: property.propertyUsageType === 'Airbnb' ? 1.5 : undefined,
         parkingRent: 0,
         storageRent: 0,
         otherRevenues: 0,
@@ -268,16 +268,16 @@ export class RentabilityPage {
   }
 
   private mapUsageTypeToStrategy(usage: string): any {
-    if (usage === 'colocation') return 'coliving';
-    if (usage === 'airbnb') return 'seasonal';
+    if (usage === 'Colocation') return 'coliving';
+    if (usage === 'Airbnb') return 'seasonal';
     return 'bare';
   }
 
   private deriveMonthlyRent(property: PropertyDetail): number {
-    if (property.propertyUsageType === 'colocation' && property.rooms?.length) {
+    if (property.propertyUsageType === 'Colocation' && property.rooms?.length) {
       return property.rooms.reduce((sum, r) => sum + Number(r.rent || 0), 0);
     }
-    if (property.propertyUsageType === 'airbnb') {
+    if (property.propertyUsageType === 'Airbnb') {
       // Minimal heuristic until occupancy inputs exist
       const minStay = Number(property.minimumStay || 0);
       const pricePerNight = Number(property.pricePerNight || 0);
@@ -295,7 +295,7 @@ export class RentabilityPage {
     if (Number.isFinite(fromProperty) && fromProperty >= 0 && fromProperty <= 100) {
       return fromProperty;
     }
-    return property.propertyUsageType === 'airbnb' ? 20 : 5;
+    return property.propertyUsageType === 'Airbnb' ? 20 : 5;
   }
 
   /**

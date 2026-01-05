@@ -163,13 +163,9 @@ export class ContractEditForm {
         deposit: f.deposit
       };
       
-      console.log('📤 Mise à jour contrat:', request);
-      
       await firstValueFrom(
         this.contractsApi.updateContract(this.contract().id, request as any)
       );
-      
-      console.log('✅ Contrat mis à jour');
       alert('✅ Contrat mis à jour avec succès!');
       this.success.emit();
       

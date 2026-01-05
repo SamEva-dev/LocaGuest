@@ -84,8 +84,6 @@ export class MarkSignedModal {
       
       // 1. Upload du PDF signé si fourni
       if (this.uploadedFile()) {
-        console.log('🔄 Upload du contrat signé...');
-        
         const uploadResponse = await firstValueFrom(
           this.documentsService.uploadDocument(
             this.uploadedFile()!,
@@ -97,21 +95,17 @@ export class MarkSignedModal {
             'Contrat signé'
           )
         );
-        
-        console.log('✅ Document uploadé:', uploadResponse.code);
+        void uploadResponse;
       }
       
       // 2. Marquer comme signé
-      console.log('🔄 Marquage du contrat comme signé...');
-      
       const response = await firstValueFrom(
         this.contractsApi.markAsSigned(this.contract().id, {
           signedDate: this.signedDate(),
           contractId:this.contract().id
         })
       );
-      
-      console.log('✅ Contrat signé avec succès:', response);
+      void response;
       
       // Success
       this.success.emit();

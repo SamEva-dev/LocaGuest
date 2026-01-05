@@ -162,11 +162,7 @@ export class DocumentsManagerComponent {
     // Debug tenant info and contracts
     effect(() => {
       const info = this.tenantInfo();
-      console.log('📊 TenantInfo updated:', {
-        tenant: info?.fullName,
-        contracts: info?.contracts?.length || 0,
-        hasActiveContract: this.hasActiveContract()
-      });
+      void info;
     });
   }
 
@@ -190,13 +186,12 @@ export class DocumentsManagerComponent {
           fileSize: doc.fileSizeBytes,
           uploadDate: new Date(doc.createdAt),
           expiryDate: doc.expiryDate ? new Date(doc.expiryDate) : undefined,
-          url: `/api/documents/download/${doc.id}`,
+          url: this.documentsApi.getDownloadUrl(doc.id),
           description: doc.description
         }));
         
         this.documents.set(converted);
         this.isLoading.set(false);
-        console.log('✅ Documents loaded:', converted.length);
       },
       error: (err) => {
         console.error('❌ Error loading documents:', err);
@@ -358,7 +353,7 @@ export class DocumentsManagerComponent {
 
     this.documentsApi.uploadDocument(formData).subscribe({
       next: (doc) => {
-        console.log('✅ Document uploaded:', doc);
+        void doc;
         this.uploading.set(false);
         this.uploadProgress.set(100);
         this.showUploadModal.set(false);
@@ -432,13 +427,6 @@ export class DocumentsManagerComponent {
 
   hasActiveContract(): boolean {
     const tenant = this.tenantInfo();
-    console.log("📊 Checking association:", {
-      tenant: tenant?.fullName,
-      propertyId: tenant?.propertyId,
-      propertyCode: tenant?.propertyCode,
-      hasAssociation: !!(tenant?.propertyId)
-    });
-    
     // ✅ Vérifier l'association Tenant ↔ Property au lieu du contrat
     return !!(tenant?.propertyId);
   }
@@ -572,8 +560,6 @@ export class DocumentsManagerComponent {
       };
     }
 
-    console.log('📄 Generating contract with full DTO:', dto);
-
     this.documentsApi.generateContract(dto).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
@@ -587,8 +573,6 @@ export class DocumentsManagerComponent {
 
         link.click();
         window.URL.revokeObjectURL(url);
-
-        console.log('✅ Contract generated successfully');
         this.toasts.successDirect('Contrat généré avec succès !');
         this.showContractModal.set(false);
         this.loadDocuments();
@@ -616,7 +600,6 @@ export class DocumentsManagerComponent {
         link.download = doc.fileName;
         link.click();
         window.URL.revokeObjectURL(url);
-        console.log('✅ Document downloaded:', doc.fileName);
       },
       error: (err) => {
         console.error('❌ Download error:', err);
@@ -641,7 +624,6 @@ Le document sera archivé mais pas supprimé définitivement.`
 
     this.documentsApi.dissociateDocument(doc.id).subscribe({
       next: () => {
-        console.log('✅ Document dissociated:', doc.fileName);
         this.loadDocuments(); // Refresh list
       },
       error: (err) => {
@@ -667,7 +649,6 @@ Le document sera archivé mais pas supprimé définitivement.`
         window.URL.revokeObjectURL(url);
         
         this.isLoading.set(false);
-        console.log('✅ Documents exported as ZIP');
       },
       error: (err) => {
         console.error('❌ Export ZIP error:', err);

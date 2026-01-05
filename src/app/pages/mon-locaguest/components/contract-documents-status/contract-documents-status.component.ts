@@ -193,7 +193,6 @@ export class ContractDocumentsStatusComponent {
       next: (status) => {
         this.status.set(status);
         this.isLoading.set(false);
-        console.log('✅ Contract documents status loaded:', status);
       },
       error: (err) => {
         console.error('❌ Error loading contract documents status:', err);
@@ -220,7 +219,6 @@ export class ContractDocumentsStatusComponent {
 
     this.documentsApi.markDocumentAsSigned(doc.documentInfo.id, request).subscribe({
       next: () => {
-        console.log('✅ Document marked as signed:', doc.documentInfo!.id);
         alert('✅ Document marqué comme signé avec succès !');
         // Reload status
         this.loadDocumentStatus();

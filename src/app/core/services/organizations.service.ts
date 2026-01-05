@@ -36,7 +36,7 @@ export interface UpdateOrganizationSettingsRequest {
 })
 export class OrganizationsService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/organizations`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Organizations`;
 
   getCurrentOrganization(): Observable<Organization> {
     return this.http.get<Organization>(`${this.baseUrl}/current`);

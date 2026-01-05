@@ -37,7 +37,6 @@ export class Dashboard {
   stats = computed(() => {
     const s = this.dashboard.summary();
     const p = this.paymentsDashboard();
-    console.log('Dashboard summary:', s); 
     return [
       { key: 'properties', label: 'DASHBOARD.STATS.PROPERTIES', value: s?.propertiesCount ?? 0, icon: 'ph-house', color: 'blue', delta: undefined, deltaPositive: true },
       { key: 'tenants', label: 'DASHBOARD.STATS.TENANTS', value: s?.activeTenants ?? 0, icon: 'ph-users-three', color: 'green', delta: undefined, deltaPositive: true },

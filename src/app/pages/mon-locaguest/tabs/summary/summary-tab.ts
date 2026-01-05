@@ -60,8 +60,6 @@ export class SummaryTab {
     const total = props?.length;
     const occupancy = total > 0 ? Math.round((occupied / total) * 100) : 0;
     const revenue = props?.reduce((sum, p) => sum + (p.rent || 0), 0);
-    console.log('tens', tens);
-    console.log('props', props);
     
     return [
       { key: 'properties', label: 'SUMMARY.STATS.PROPERTIES', value: total?.toString(), icon: 'ph-house', bgColor: '#38B2AC', delta: undefined, deltaPositive: true },
@@ -85,7 +83,6 @@ export class SummaryTab {
         takeUntil(this.destroy$)
       )
       .subscribe(query => {
-        console.log('Search queryx:', query);
         this.searchQuery.set(query);
         this.currentPage.set(1);
        
@@ -136,11 +133,9 @@ export class SummaryTab {
     
     this.propertiesApi.getProperties(params).subscribe({
       next: (result) => {
-        console.log('✅ result:', result);
         this.properties.set(result.items);
         this.totalItems.set(result.totalCount);
         this.isLoading.set(false);
-        console.log('✅ Properties loaded:', result.items?.length, '/', result.totalCount);
       },
       error: (err) => {
         console.error('❌ Error loading properties:', err);
@@ -169,7 +164,6 @@ export class SummaryTab {
         this.tenants.set(result.items);
         this.totalItems.set(result.totalCount);
         this.isLoading.set(false);
-        console.log('✅ Tenants loaded:', result.items?.length, '/', result.totalCount);
       },
       error: (err) => {
         console.error('❌ Error loading tenants:', err);
@@ -218,12 +212,10 @@ export class SummaryTab {
   }
 
   openProperty(property: PropertyListItem) {
-    console.log('property', property);
     this.tabManager.openProperty(property.id, property.name);
   }
 
   openTenant(tenant: TenantListItem) {
-    console.log('tenant', tenant);
     this.tabManager.openTenant(tenant.id, tenant.fullName);
   }
 
@@ -340,7 +332,6 @@ export class SummaryTab {
   }
 
   onPropertyCreated(property: any) {
-    console.log('Property created, reloading list...');
     this.loadProperties();
   }
 
@@ -353,25 +344,21 @@ export class SummaryTab {
   }
 
   onTenantCreated(tenant: any) {
-    console.log('Tenant created, reloading list...');
     this.loadTenants();
   }
 
   // Search & Filter handlers
   onSearchInput(query: string) {
-    console.log('Search query:', query);
     this.searchSubject$.next(query);
   }
 
   onStatusFilterChange(status: string) {
-    console.log('Status filter:', status);
     this.statusFilter.set(status);
     this.currentPage.set(1);
     this.reloadCurrentView();
   }
 
   onUsageTypeFilterChange(usageType: string) {
-    console.log('Usage type filter:', usageType);
     this.usageTypeFilter.set(usageType);
     this.currentPage.set(1);
     this.reloadCurrentView();

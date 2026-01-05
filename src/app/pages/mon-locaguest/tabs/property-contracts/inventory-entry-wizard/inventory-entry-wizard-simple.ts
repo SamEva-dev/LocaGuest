@@ -576,10 +576,7 @@ export class InventoryEntryWizardSimpleComponent {
         items: f.items,
         photoUrls: f.photoUrls
       };
-
-      console.log('📤 Création EDL entrée', request);
       const result = await this.inventoriesApi.createEntry(request).toPromise();
-      console.log('✅ EDL créé', result);
       
       this.createdInventoryId.set(result!.id);
       this.onClose.emit(result);

@@ -178,7 +178,7 @@ export class InviteDialogComponent {
       message: this.message || undefined
     }).subscribe({
       next: (response: any) => {
-        console.log('Invitation sent:', response);
+        void response;
         this.isSubmitting.set(false);
         this.invitationSent.emit();
         this.close();

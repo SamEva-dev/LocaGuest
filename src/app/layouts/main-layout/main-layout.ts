@@ -39,7 +39,6 @@ export class MainLayout {
 
   ngOnInit() {
     // Open fixed tabs
-    console.log("tabs",this.tabs());
     if (this.tabs().length === 0) {
       // Tab 1: Dashboard (fixed)
       this.tabManager.openTab({

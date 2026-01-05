@@ -218,8 +218,6 @@ export class PropertyContractsTab {
           expirationDays: 14
         })
       );
-
-      console.log('✅ Signature envoyée:', response);
       this.toasts.successDirect('Demande de signature envoyée');
       this.closeAddendumSignatureModal();
     } catch (err: any) {
@@ -406,7 +404,6 @@ export class PropertyContractsTab {
     
     // ✅ CORRECTION: Pour colocation, on peut créer si il reste des chambres disponibles
     if (isColocation) {
-      console.log("isColocation",isColocation)
       const totalRooms = prop.totalRooms || 0;
       const occupiedRooms = prop.occupiedRooms || 0;
       return occupiedRooms < totalRooms; // ✅ FIX: < au lieu de >
@@ -500,7 +497,6 @@ export class PropertyContractsTab {
   }
   
   viewContractDetail(contract: Contract) {
-    console.log('View contract detail:', contract.id);
     // TODO: Open contract detail view
   }
   
@@ -527,7 +523,6 @@ export class PropertyContractsTab {
     
     try {
       this.isGeneratingPdf.set(true);
-      console.log('🔄 Génération PDF pour contrat:', contract.id);
       
       // ✅ CORRECTION: Envoyer tous les champs obligatoires
       const request = {
@@ -542,8 +537,6 @@ export class PropertyContractsTab {
         charges: contract.charges || null
       };
       
-      console.log('📤 Requête PDF:', request);
-      
       const pdfBlob = await firstValueFrom(
         this.documentsService.generateContractPdf(request)
       );
@@ -557,8 +550,6 @@ export class PropertyContractsTab {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
-      console.log('✅ PDF généré et téléchargé avec succès');
       this.toasts.successDirect('PDF généré avec succès !');
       
     } catch (error) {
@@ -572,16 +563,12 @@ export class PropertyContractsTab {
   // Phase 2: Actions selon statut
   // ✅ NOUVEAU: Ouvrir la modal moderne pour signature
   async markAsSigned(contract: Contract) {
-    console.log('🔄 Mark as signed:', contract.id);
-    
     // Charger le tenant (depuis associatedTenants ou API)
     let tenant = this.getTenant(contract.tenantId);
     
     if (!tenant) {
-      console.log('⚠️ Tenant non trouvé dans associatedTenants, chargement depuis API...');
       try {
         tenant = await firstValueFrom(this.tenantsApi.getTenant(contract.tenantId));
-        console.log('✅ Tenant chargé:', tenant);
       } catch (error) {
         console.error('❌ Erreur chargement tenant:', error);
         this.toasts.errorDirect('Impossible de charger les informations du locataire.');
@@ -599,7 +586,6 @@ export class PropertyContractsTab {
     this.contractToSign.set(null);
     
     // Recharger les données
-    console.log('✅ Contrat signé avec succès - rechargement données');
     this.contractCreated.emit();
   }
   
@@ -632,7 +618,6 @@ Un email sera envoyé au locataire avec le lien de signature.`
     
     try {
       this.isSendingForSignature.set(true);
-      console.log('🔄 Envoi pour signature électronique:', contract.id);
       
       // 1. Générer le PDF si pas déjà fait
       const request = {
@@ -650,8 +635,6 @@ Un email sera envoyé au locataire avec le lien de signature.`
       const pdfBlob = await firstValueFrom(
         this.documentsService.generateContractPdf(request)
       );
-      
-      console.log('✅ PDF généré, taille:', pdfBlob.size);
       
       // 2. TODO: Upload et récupérer documentId
       // Pour l'instant, on simule avec un message
@@ -686,8 +669,6 @@ Un email sera envoyé au locataire avec le lien de signature.`
   }
   
   uploadSignedVersion(contract: Contract) {
-    console.log('Upload signed version:', contract.id);
-    
     // Créer un input file invisible
     const input = document.createElement('input');
     input.type = 'file';
@@ -703,8 +684,6 @@ Un email sera envoyé au locataire avec le lien de signature.`
       }
       
       try {
-        console.log('🔄 Upload du contrat signé:', file.name);
-        
         const response = await firstValueFrom(
           this.documentsService.uploadDocument(
             file,
@@ -716,8 +695,6 @@ Un email sera envoyé au locataire avec le lien de signature.`
             'Contrat signé uploadé'
           )
         );
-        
-        console.log('✅ Document uploadé:', response);
         this.toasts.successDirect(`Document uploadé avec succès !\nCode: ${response.code}`);
         
         // Demander si on veut marquer comme signé maintenant
@@ -741,17 +718,14 @@ Un email sera envoyé au locataire avec le lien de signature.`
   }
   
   viewInventoryEntry(contract: Contract) {
-    console.log('View entry inventory for contract:', contract.id);
     // TODO: Open inventory view
   }
   
   viewInventoryExit(contract: Contract) {
-    console.log('View exit inventory for contract:', contract.id);
     // TODO: Open inventory view
   }
   
   createInventoryEntry(contract: Contract) {
-    console.log('Create entry inventory for contract:', contract.id);
     // TODO: Open inventory creation
   }
   
@@ -778,7 +752,6 @@ Un email sera envoyé au locataire avec le lien de signature.`
           invMap.set(contract.id, inv);
         } catch (error) {
           // Pas d'EDL pour ce contrat - normal
-          console.log(`Pas d'EDL pour contrat ${contract.id}`);
         }
       }
       
@@ -817,11 +790,8 @@ Un email sera envoyé au locataire avec le lien de signature.`
     
     try {
       this.isFinalizingInventory.set(true);
-      console.log('🔒 Finalisation EDL:', data.inventory.id, 'Méthode:', signatureMethod);
       
       await firstValueFrom(this.inventoriesApi.finalizeEntry(data.inventory.id));
-      
-      console.log('✅ EDL finalisé avec succès');
       
       // Fermer le modal
       this.closeFinalizeInventoryModal();
@@ -871,11 +841,8 @@ Cette action est irréversible.`,
     
     try {
       this.isDeletingInventory.set(true);
-      console.log('🗑️ Suppression EDL:', inventory.id);
       
       await firstValueFrom(this.inventoriesApi.deleteEntry(inventory.id));
-      
-      console.log('✅ EDL supprimé avec succès');
       this.toasts.successDirect('État des lieux supprimé avec succès !');
       
       // Recharger les données (force=true pour rafraîchir)
@@ -903,7 +870,6 @@ Cette action est irréversible.`,
   }
   
   createInventoryExit(contract: Contract) {
-    console.log('Create exit inventory for contract:', contract.id);
     // TODO: Open inventory creation
   }
   
@@ -931,13 +897,10 @@ Cette action est irréversible et supprimera également tous les paiements et do
     
     try {
       this.isDeletingContract.set(true);
-      console.log('🗑️ Suppression contrat:', contract.id);
       
       const response = await firstValueFrom(
         this.contractsApi.deleteContract(contract.id)
       );
-      
-      console.log('✅ Contrat supprimé:', response);
       this.toasts.successDirect(
         `Contrat supprimé avec succès !\n\nDocuments supprimés : ${response.deletedDocuments}\nPaiements supprimés : ${response.deletedPayments}`
       );
@@ -998,7 +961,6 @@ Cette action est irréversible et supprimera également tous les paiements et do
     this.showWizard.set(false);
     this.selectedContract.set(null);
     // Notifier le parent de recharger les contrats
-    console.log('✅ Contrat créé avec succès - notification parent pour rechargement');
     this.contractCreated.emit();
   }
 }

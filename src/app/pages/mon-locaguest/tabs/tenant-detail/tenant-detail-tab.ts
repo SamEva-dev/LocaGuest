@@ -197,20 +197,15 @@ export class TenantDetailTab {
   constructor() {
     effect(() => {
       const tabData = this.data();
-      console.log('🔍 TenantDetailTab data:', tabData);
       if (tabData?.tenantId) {
-        console.log('✅ Loading tenant:', tabData.tenantId);
         this.loadTenant(tabData.tenantId);
         
         // ✅ NOUVEAU: Récupérer les infos du bien d'origine si présentes
         if (tabData.fromProperty) {
           this.fromProperty.set(tabData.fromProperty);
-          console.log('✅ Opened from property:', tabData.fromProperty.name);
         } else {
           this.fromProperty.set(null);
         }
-      } else {
-        console.warn('⚠️ No tenantId found in data');
       }
     });
   }
@@ -247,7 +242,6 @@ export class TenantDetailTab {
       next: (tenant) => {
         this.tenant.set(tenant);
         this.isLoading.set(false);
-        console.log('✅ Tenant :', tenant);
       },
       error: (err) => {
         console.error('❌ Error loading tenant:', err);
@@ -259,7 +253,6 @@ export class TenantDetailTab {
     this.tenantsService.getTenantPayments(id).subscribe({
       next: (payments) => {
         this.payments.set(payments);
-        console.log('✅ Tenant payments loaded:', payments.length);
       },
       error: (err) => console.error('❌ Error loading tenant payments:', err)
     });
@@ -274,7 +267,6 @@ export class TenantDetailTab {
     this.tenantsService.getPaymentStats(id).subscribe({
       next: (stats) => {
         this.paymentStats.set(stats);
-        console.log('✅ Payment stats loaded');
       },
       error: (err) => console.error('❌ Error loading payment stats:', err)
     });
@@ -322,7 +314,6 @@ export class TenantDetailTab {
     this.tenantsService.getTenantContracts(id).subscribe({
       next: (contracts) => {
         this.contracts.set(contracts);
-        console.log('✅ Tenant contracts loaded:', contracts.length);
 
         // ✅ Load addendums for tenant contracts
         void this.loadAllAddendumsForContracts();
@@ -583,7 +574,6 @@ export class TenantDetailTab {
    * Callback quand un contrat est créé via le wizard
    */
   onContractCreated() {
-    console.log('✅ Contract created');
     this.showContractWizard.set(false);
     // Refresh contracts list
     const t = this.tenant();

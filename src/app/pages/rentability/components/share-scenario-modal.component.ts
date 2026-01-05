@@ -1,9 +1,7 @@
 import { Component, inject, signal, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { TranslatePipe } from '@ngx-translate/core';
-import { environment } from '../../../../environnements/environment';
 
 interface ScenarioShare {
   id: string;
@@ -177,8 +175,6 @@ interface User {
   `
 })
 export class ShareScenarioModalComponent {
-  private http = inject(HttpClient);
-  
   scenarioId = input.required<string>();
   close = output<void>();
   
@@ -196,8 +192,7 @@ export class ShareScenarioModalComponent {
   }
 
   loadShares() {
-    this.http.get<ScenarioShare[]>(`${environment.BASE_LOCAGUEST_API}/api/rentabilityscenarios/${this.scenarioId()}/shares`)
-      .subscribe(shares => this.shares.set(shares));
+    this.shares.set([]);
   }
 
   loadAvailableUsers() {
@@ -218,20 +213,15 @@ export class ShareScenarioModalComponent {
       expiresAt: this.hasExpiration ? this.expirationDate : null
     };
 
-    this.http.post(`${environment.BASE_LOCAGUEST_API}/api/rentabilityscenarios/${this.scenarioId()}/share`, payload)
-      .subscribe(() => {
-        this.loadShares();
-        this.selectedUserId = '';
-        this.selectedPermission = 'view';
-        this.hasExpiration = false;
-        this.expirationDate = '';
-      });
+    this.selectedUserId = '';
+    this.selectedPermission = 'view';
+    this.hasExpiration = false;
+    this.expirationDate = '';
   }
 
   revokeShare(shareId: string) {
     if (confirm('Révoquer ce partage ?')) {
-      this.http.delete(`${environment.BASE_LOCAGUEST_API}/api/rentabilityscenarios/${this.scenarioId()}/shares/${shareId}`)
-        .subscribe(() => this.loadShares());
+      this.loadShares();
     }
   }
 

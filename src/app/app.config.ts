@@ -6,6 +6,7 @@ import { TRANSLATE_HTTP_LOADER_CONFIG, TranslateHttpLoader } from '@ngx-translat
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { idempotencyInterceptor } from './core/interceptors/idempotency.interceptor';
 import { errorInterceptor } from './core/api/error.interceptor';
 import { AuthService } from './core/auth/services/auth.service';
 
@@ -26,7 +27,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withInterceptorsFromDi(),
-      withInterceptors([authInterceptor, errorInterceptor])
+      withInterceptors([authInterceptor, idempotencyInterceptor, errorInterceptor])
     ),
     importProvidersFrom(
       TranslateModule.forRoot({

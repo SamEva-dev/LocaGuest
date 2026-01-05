@@ -189,7 +189,6 @@ export class SettingsTab implements OnInit {
         next: (profile) => {
           this.profileData.set(profile);
           this.uploadingPhoto = false;
-          console.log('Photo uploaded successfully');
         },
         error: (err) => {
           console.error('Error uploading photo:', err);
@@ -212,7 +211,6 @@ export class SettingsTab implements OnInit {
     }).subscribe({
       next: (updatedProfile) => {
         this.profileData.set(updatedProfile);
-        console.log('Profile saved successfully');
       },
       error: (err) => console.error('Error saving profile:', err)
     });
@@ -222,7 +220,6 @@ export class SettingsTab implements OnInit {
     this.usersApi.updateNotificationSettings(this.notifications()).subscribe({
       next: (updatedNotifications) => {
         this.notifications.set(updatedNotifications);
-        console.log('Notifications saved successfully');
       },
       error: (err) => console.error('Error saving notifications:', err)
     });
@@ -233,7 +230,6 @@ export class SettingsTab implements OnInit {
       next: (updatedPreferences) => {
         this.preferences.set(updatedPreferences);
         this.themeService.setDarkMode(updatedPreferences.darkMode);
-        console.log('Preferences saved successfully');
       },
       error: (err) => console.error('Error saving preferences:', err)
     });
@@ -284,7 +280,6 @@ export class SettingsTab implements OnInit {
 
   deleteAccount() {
     if (confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) {
-      console.log('Delete account');
     }
   }
 

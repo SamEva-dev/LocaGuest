@@ -23,7 +23,7 @@ export interface RentInvoiceDto {
 @Injectable({ providedIn: 'root' })
 export class InvoicesApi {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/invoices`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Invoices`;
 
   getInvoicesByTenant(tenantId: string): Observable<RentInvoiceDto[]> {
     return this.http.get<RentInvoiceDto[]>(`${this.baseUrl}/tenant/${tenantId}`);

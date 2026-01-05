@@ -46,7 +46,7 @@ export interface RevenueChartData {
 @Injectable({ providedIn: 'root' })
 export class DashboardApi {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/dashboard`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Dashboard`;
 
   getSummary(month?: number, year?: number): Observable<DashboardSummary> {
     let params = new HttpParams();

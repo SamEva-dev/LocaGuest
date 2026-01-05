@@ -21,7 +21,7 @@ export interface DocumentCategory {
 @Injectable({ providedIn: 'root' })
 export class DocumentsApi {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/documents`;
+  private baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Documents`;
 
   getAllDocuments(): Observable<DocumentDto[]> {
     return this.http.get<DocumentDto[]>(`${this.baseUrl}/all`);
@@ -43,6 +43,10 @@ export class DocumentsApi {
     return this.http.get(`${this.baseUrl}/download/${documentId}`, {
       responseType: 'blob'
     });
+  }
+
+  getDownloadUrl(documentId: string): string {
+    return `${this.baseUrl}/download/${documentId}`;
   }
 
   dissociateDocument(documentId: string): Observable<void> {

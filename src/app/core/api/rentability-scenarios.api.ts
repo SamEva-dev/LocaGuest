@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environnements/environment';
+import type { paths as LocaGuestPaths } from '../sdk/locaguest/openapi.types';
 
 // DTOs matching backend
 export interface RentabilityScenarioDto {
@@ -110,20 +111,43 @@ export interface SaveScenarioCommand {
   resultsJson?: string;
 }
 
+export type ScenarioVersion = {
+  id: string;
+  scenarioId: string;
+  versionNumber: number;
+  changeDescription: string;
+  snapshotJson: string;
+  createdAt: string;
+};
+
+type SaveRentabilityScenarioCommand =
+  NonNullable<LocaGuestPaths['/api/RentabilityScenarios']['post']['requestBody']>['content']['application/json'];
+
 @Injectable({ providedIn: 'root' })
 export class RentabilityScenariosApi {
   private http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/rentabilityscenarios`;
+  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/RentabilityScenarios`;
 
   getUserScenarios(): Observable<RentabilityScenarioDto[]> {
     return this.http.get<RentabilityScenarioDto[]>(this.baseUrl);
   }
 
   saveScenario(command: SaveScenarioCommand): Observable<RentabilityScenarioDto> {
-    return this.http.post<RentabilityScenarioDto>(this.baseUrl, command);
+    return this.http.post<RentabilityScenarioDto>(
+      this.baseUrl,
+      command as unknown as SaveRentabilityScenarioCommand
+    );
   }
 
   deleteScenario(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  getScenarioVersions(id: string): Observable<ScenarioVersion[]> {
+    return this.http.get<ScenarioVersion[]>(`${this.baseUrl}/${id}/versions`);
+  }
+
+  restoreScenarioVersion(scenarioId: string, versionId: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${scenarioId}/versions/${versionId}/restore`, undefined);
   }
 }

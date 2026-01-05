@@ -52,7 +52,7 @@ export interface UpdateUserSettingsRequest {
 @Injectable({ providedIn: 'root' })
 export class SettingsApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/settings`;
+  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Settings`;
 
   getUserSettings(): Observable<UserSettings> {
     return this.http.get<UserSettings>(this.baseUrl);

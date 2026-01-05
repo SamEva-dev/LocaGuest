@@ -119,8 +119,6 @@ export class Login {
       this.auth.setRememberMe(this.rememberMe());
       this.userEmail.set(email);
       
-      console.log('🔐 Login attempt:', email);
-      
       const deviceFingerprint = this.generateDeviceFingerprint();
       
       // Call login API directly to handle 2FA response
@@ -132,7 +130,6 @@ export class Login {
       
       // Check if 2FA is required
       if (result.requiresMfa && result.mfaToken) {
-        console.log('🔐 2FA required');
         this.mfaToken.set(result.mfaToken);
         this.show2FAInput.set(true);
         this.toast.info('AUTH.MFA.ENTER_CODE');
@@ -140,7 +137,6 @@ export class Login {
       }
       
       // No 2FA required, proceed with normal login
-      console.log('✅ Login successful (no 2FA)');
       this.completeLogin(result);
       
     } catch (error: any) {
@@ -168,7 +164,6 @@ export class Login {
 
     this.isLoading.set(true);
     try {
-      console.log('🔐 Verifying 2FA code...');
       const result = await firstValueFrom(
         this.authApi.verify2FA(
           this.mfaToken(), 
@@ -179,7 +174,6 @@ export class Login {
         )
       );
       
-      console.log('✅ 2FA verification successful');
       this.completeLogin(result);
       
     } catch (error: any) {
@@ -208,7 +202,6 @@ export class Login {
 
     this.isLoading.set(true);
     try {
-      console.log('🔐 Verifying recovery code...');
       const result = await firstValueFrom(
         this.authApi.verifyRecoveryCode(
           this.mfaToken(), 
@@ -219,7 +212,6 @@ export class Login {
         )
       );
       
-      console.log('✅ Recovery code verification successful');
       this.completeLogin(result);
       
     } catch (error: any) {
@@ -263,25 +255,18 @@ export class Login {
     
     this.toast.success('AUTH.LOGIN_SUCCESS');
     this.router.navigate(['/app']);
-    
-    console.log('✅ Login completed');
-    console.log('🎫 Token stored');
-    console.log('👤 User:', this.auth.user());
   }
 
   loginWithGoogle() {
-    console.log('Connexion avec Google');
     // TODO: Intégrer Firebase, Auth0, ou ton backend (OAuth2 Google)
   }
 
   loginWithFacebook() {
-    console.log('Connexion avec Facebook');
     // TODO: Intégrer Firebase, Auth0, ou ton backend (OAuth2 Facebook)
   }
 
   goToRegister() {
   // Navigation Angular
-  console.log('Naviguer vers /register'); 
   this.router.navigate(['/register']);
 }
 goToForgotPassword() {

@@ -30,7 +30,7 @@ export class AddPropertyForm {
       // Informations générales
       name: ['', [Validators.required, Validators.maxLength(200)]],
       type: ['', Validators.required],
-      propertyUsageType: ['complete', Validators.required],  // complete, colocation, airbnb
+      propertyUsageType: ['Complete', Validators.required],  // complete, colocation, airbnb
       
       // Adresse
       address: ['', [Validators.required, Validators.maxLength(300)]],
@@ -83,19 +83,19 @@ export class AddPropertyForm {
 
     // Keep financial values in sync with sub-forms
     this.rooms.valueChanges.subscribe(() => {
-      if (this.form.get('propertyUsageType')?.value === 'colocation') {
+      if (this.form.get('propertyUsageType')?.value === 'Colocation') {
         this.recomputeColocationTotals();
       }
     });
 
     this.form.get('minimumStay')?.valueChanges.subscribe(() => {
-      if (this.form.get('propertyUsageType')?.value === 'airbnb') {
+      if (this.form.get('propertyUsageType')?.value === 'Airbnb') {
         this.recomputeAirbnbRent();
       }
     });
 
     this.form.get('pricePerNight')?.valueChanges.subscribe(() => {
-      if (this.form.get('propertyUsageType')?.value === 'airbnb') {
+      if (this.form.get('propertyUsageType')?.value === 'Airbnb') {
         this.recomputeAirbnbRent();
       }
     });
@@ -111,7 +111,6 @@ export class AddPropertyForm {
   
   // ✅ NOUVEAU: Getter pour accéder au FormArray des chambres
   get rooms(): FormArray {
-    console.log('rooms',this.form.get('rooms'));
     return this.form.get('rooms') as FormArray;
   }
   
@@ -179,11 +178,11 @@ export class AddPropertyForm {
     minimumStay?.clearValidators();
     pricePerNight?.clearValidators();
     
-    if (usageType === 'colocation') {
+    if (usageType === 'Colocation') {
       // Pour colocation: totalRooms required, bedrooms non-required
       totalRooms?.setValidators([Validators.required, Validators.min(1)]);
       bedrooms?.setValidators([Validators.min(0)]);
-    } else if (usageType === 'airbnb') {
+    } else if (usageType === 'Airbnb') {
       // Pour Airbnb: minimumStay et pricePerNight required
       minimumStay?.setValidators([Validators.required, Validators.min(1)]);
       pricePerNight?.setValidators([Validators.required, Validators.min(0)]);
@@ -206,20 +205,20 @@ export class AddPropertyForm {
 
     if (!rent || !charges) return;
 
-    if (usageType === 'complete') {
+    if (usageType === 'Complete') {
       rent.enable({ emitEvent: false });
       charges.enable({ emitEvent: false });
       return;
     }
 
-    if (usageType === 'colocation') {
+    if (usageType === 'Colocation') {
       rent.disable({ emitEvent: false });
       charges.disable({ emitEvent: false });
       this.recomputeColocationTotals();
       return;
     }
 
-    if (usageType === 'airbnb') {
+    if (usageType === 'Airbnb') {
       rent.disable({ emitEvent: false });
       charges.disable({ emitEvent: false });
       charges.setValue(0, { emitEvent: false });
@@ -259,11 +258,6 @@ export class AddPropertyForm {
   }
 
   onSubmit() {
-    console.log('📝 Form submission attempt');
-    console.log('Form value:', this.form.value);
-    console.log('Form valid:', this.form.valid);
-    console.log('Form errors:', this.getFormValidationErrors());
-    
     if (this.form.invalid) {
       console.error('❌ Form is invalid, marking all as touched');
       this.form.markAllAsTouched();
@@ -303,18 +297,15 @@ export class AddPropertyForm {
       energyClass: formValue.energyClass,
       constructionYear: formValue.constructionYear,
       totalRooms: formValue.totalRooms,
-      rooms: formValue.propertyUsageType === 'colocation' ? formValue.rooms : undefined,  // ✅ NOUVEAU: Inclure les chambres si colocation
+      rooms: formValue.propertyUsageType === 'Colocation' ? formValue.rooms : undefined,  // ✅ NOUVEAU: Inclure les chambres si colocation
       minimumStay: formValue.minimumStay,
       maximumStay: formValue.maximumStay,
       pricePerNight: formValue.pricePerNight,
       nightsBookedPerMonth: formValue.nightsBookedPerMonth
     };
-    
-    console.log('📦 Creating property with DTO:', createPropertyDto);
 
     this.propertiesService.createProperty(createPropertyDto).subscribe({
       next: (property: PropertyDetail) => {
-        console.log('✅ Property created successfully:', property);
         this.isSubmitting.set(false);
         this.propertyCreated.emit(property);
         this.close();

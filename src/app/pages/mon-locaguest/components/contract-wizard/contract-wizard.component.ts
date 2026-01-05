@@ -459,11 +459,8 @@ export class ContractWizardComponent {
   }
 
   updateFormData(key: keyof ContractFormData, value: any) {
-    console.log(`📝 Updating ${key}:`, value);
     this.formData.update(data => {
       const newData = { ...data, [key]: value };
-      console.log('📋 New formData:', newData);
-      console.log('✅ canProceed:', this.canProceed());
       return newData;
     });
   }
@@ -507,16 +504,6 @@ export class ContractWizardComponent {
 
   createContract() {
     const data = this.formData();
-    console.log('🔍 Raw form data:', data);
-    console.log('🔍 Data types:', {
-      tenantId: typeof data.tenantId,
-      propertyId: typeof data.propertyId,
-      type: typeof data.type,
-      startDate: typeof data.startDate,
-      endDate: typeof data.endDate,
-      rent: typeof data.rent,
-      deposit: typeof data.deposit
-    });
     
     // Ensure proper types for backend
     // Convert dates from YYYY-MM-DD to ISO 8601 format
@@ -532,12 +519,9 @@ export class ContractWizardComponent {
       rent: Number(data.rent) || 0,
       deposit: Number(data.deposit) || 0
     };
-    
-    console.log('📤 Sending payload:', JSON.stringify(payload, null, 2));
-     console.log('🔍 Raw form data:', data);
+
     this.contractsApi.createContract(payload).subscribe({
       next: (response: any) => {
-        console.log('✅ Contract created:', response);
         this.createdContractId.set(response.id);
         this.createdContractCode.set(response.code || 'CTR-XXX');
         this.currentStep.set(2);
@@ -567,7 +551,6 @@ export class ContractWizardComponent {
       charges: data.charges
     }).subscribe({
       next: () => {
-        console.log('✅ Bail generated');
         this.generatedDocuments.update(docs => [...docs, { type: 'Bail', signed: false }]);
         
         // Generate État des lieux
@@ -581,7 +564,6 @@ export class ContractWizardComponent {
           rent: data.rent
         }).subscribe({
           next: () => {
-            console.log('✅ État des lieux generated');
             this.generatedDocuments.update(docs => [...docs, { type: 'État des lieux d\'entrée', signed: false }]);
             this.isGenerating.set(false);
           },
@@ -612,7 +594,6 @@ export class ContractWizardComponent {
   }
 
   finalizeContract() {
-    console.log('✅ Contract finalized');
     this.currentStep.set(4);
     this.contractCreated.emit(this.createdContractId());
   }

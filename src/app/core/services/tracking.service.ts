@@ -10,7 +10,7 @@ import { environment } from '../../../environnements/environment';
 @Injectable({ providedIn: 'root' })
 export class TrackingService {
   private http = inject(HttpClient);
-  private readonly apiUrl = `${environment.BASE_LOCAGUEST_API}/api/tracking`;
+  private readonly apiUrl = `${environment.BASE_LOCAGUEST_API}/api/Tracking`;
   
   // Queue for batching events (performance optimization)
   private eventQueue: TrackingEventDto[] = [];

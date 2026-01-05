@@ -18,7 +18,7 @@ export class ImagesService {
   uploadImages(propertyId: string, files: File[], category: string = 'other'): Observable<ImageUploadResponse> {
     return this.imagesApi.uploadImages(propertyId, files, category).pipe(
       tap(response => {
-        console.log(`✅ ${response.count} image(s) uploadée(s) pour propriété ${propertyId}`);
+        void response;
       })
     );
   }
@@ -36,7 +36,7 @@ export class ImagesService {
   getImageBlob(imageId: string): Observable<Blob> {
     return this.imagesApi.getImageBlob(imageId).pipe(
       tap(() => {
-        console.log(`✅ Image ${imageId} chargée en blob`);
+        void imageId;
       })
     );
   }
@@ -47,7 +47,7 @@ export class ImagesService {
   deleteImage(imageId: string): Observable<void> {
     return this.imagesApi.deleteImage(imageId).pipe(
       tap(() => {
-        console.log(`✅ Image ${imageId} supprimée`);
+        void imageId;
       })
     );
   }

@@ -14,9 +14,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = authService.getAccessToken();
 
   // Ne pas ajouter le token pour les endpoints d'authentification
-  const isAuthEndpoint = req.url.includes('/api/auth/login') || 
-                         req.url.includes('/api/auth/register') ||
-                         req.url.includes('/api/auth/refresh');
+  const isAuthEndpoint = req.url.includes('/api/Auth/login') || 
+                         req.url.includes('/api/Auth/register') ||
+                         req.url.includes('/api/Auth/refresh');
 
   // Clone request and add Authorization header if token exists
   let authReq = req;
@@ -31,7 +31,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
       // Si 401 Unauthorized et pas déjà sur refresh, essayer de rafraîchir le token
-      if (error.status === 401 && !req.url.includes('/api/auth/refresh')) {
+      if (error.status === 401 && !req.url.includes('/api/Auth/refresh')) {
         return from(authService.refreshIfNeeded()).pipe(
           switchMap(() => {
             // Retry original request with new token

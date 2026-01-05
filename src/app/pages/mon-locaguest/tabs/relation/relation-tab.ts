@@ -60,7 +60,6 @@ export class RelationTab {
     this.propertiesService.getProperty(propertyId).subscribe({
       next: (property) => {
         this.property.set(property);
-        console.log('✅ Property loaded:', property.name);
       },
       error: (err) => console.error('❌ Error loading property:', err)
     });
@@ -70,7 +69,6 @@ export class RelationTab {
       next: (tenant) => {
         this.tenant.set(tenant);
         this.isLoading.set(false);
-        console.log('✅ Tenant loaded:', tenant.fullName);
       },
       error: (err) => {
         console.error('❌ Error loading tenant:', err);
@@ -82,7 +80,6 @@ export class RelationTab {
     this.propertiesService.getPropertyPayments(propertyId).subscribe({
       next: (payments) => {
         this.payments.set(payments);
-        console.log('✅ Payments loaded:', payments.length);
       },
       error: (err) => console.error('❌ Error loading payments:', err)
     });
@@ -94,7 +91,6 @@ export class RelationTab {
         // Find active contract for this tenant
         const tenantContract = contracts.find(c => c.tenantId === tenantId);
         this.activeContract.set(tenantContract || null);
-        console.log('✅ Contracts loaded:', contracts.length);
       },
       error: (err) => console.error('❌ Error loading contracts:', err)
     });
@@ -103,7 +99,6 @@ export class RelationTab {
     this.propertiesService.getFinancialSummary(propertyId).subscribe({
       next: (summary) => {
         this.financialSummary.set(summary);
-        console.log('✅ Financial summary loaded');
       },
       error: (err) => console.error('❌ Error loading financial summary:', err)
     });
@@ -112,7 +107,6 @@ export class RelationTab {
     this.tenantsService.getPaymentStats(tenantId).subscribe({
       next: (stats) => {
         this.paymentStats.set(stats);
-        console.log('✅ Payment stats loaded');
       },
       error: (err) => console.error('❌ Error loading payment stats:', err)
     });

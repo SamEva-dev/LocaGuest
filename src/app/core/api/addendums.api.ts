@@ -41,7 +41,7 @@ export interface UpdateAddendumRequest {
 @Injectable({ providedIn: 'root' })
 export class AddendumsApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/addendums`;
+  private readonly baseUrl = `${environment.BASE_LOCAGUEST_API}/api/Addendums`;
 
   getAddendum(addendumId: string): Observable<AddendumDto> {
     return this.http.get<AddendumDto>(`${this.baseUrl}/${addendumId}`);
