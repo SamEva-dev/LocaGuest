@@ -1,8 +1,9 @@
 import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { HttpClient, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { TRANSLATE_HTTP_LOADER_CONFIG, TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { firstValueFrom } from 'rxjs';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
@@ -14,6 +15,15 @@ export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader();
 }
 
+export function initI18nFactory(translate: TranslateService) {
+  return () => {
+    const saved = localStorage.getItem('lang');
+    const initial = saved || translate.currentLang || 'fr';
+    translate.setDefaultLang('fr');
+    return firstValueFrom(translate.use(initial));
+  };
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -23,6 +33,12 @@ export const appConfig: ApplicationConfig = {
       multi: true,
       deps: [AuthService],
       useFactory: (authService: AuthService) => () => authService.bootstrapFromStorage(),
+    },
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      deps: [TranslateService],
+      useFactory: initI18nFactory,
     },
     provideRouter(routes),
     provideHttpClient(
