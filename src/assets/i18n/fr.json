@@ -432,7 +432,8 @@
     "ERROR": "An error occurred",
     "FIELD_REQUIRED": "Required field",
     "NETWORK_ERROR": "Network error",
-    "SERVER_ERROR": "Server error"
+    "SERVER_ERROR": "Server error",
+    "CONTINUE": "Continuer"
   },
   "PROPERTY_TENANTS": {
     "INVENTORY": {
@@ -631,6 +632,7 @@
     "STATUS": "Statut",
     "STATUS_ACTIVE": "Actif",
     "STATUS_INACTIVE": "Inactif",
+    "STATUS_RESERVED":"Réservé",
     "PROPERTY": "Bien",
     "RENT": "Loyer",
     "SINCE": "Depuis",

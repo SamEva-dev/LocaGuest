@@ -402,7 +402,7 @@ export class ContractWizardModal {
       // Mode property: vérifier le bien passé en input
       const prop = this.property();
       const usageType = prop?.propertyUsageType?.toLowerCase();
-      return usageType === 'Colocation';
+      return usageType === 'colocation';
     } else {
       // Mode tenant: vérifier le bien sélectionné dans le formulaire
       const propertyId = this.form().propertyId;
@@ -410,7 +410,7 @@ export class ContractWizardModal {
       
       const selectedProperty = this.availableProperties().find(p => p.id === propertyId);
       const usageType = selectedProperty?.propertyUsageType?.toLowerCase();
-      return usageType === 'Colocation';
+      return usageType === 'colocation';
     }
   });
   
@@ -419,14 +419,14 @@ export class ContractWizardModal {
     if (this.context() === 'property') {
       const prop = this.property();
       const usageType = prop?.propertyUsageType?.toLowerCase();
-      return usageType === 'Airbnb';
+      return usageType === 'airbnb';
     } else {
       const propertyId = this.form().propertyId;
       if (!propertyId) return false;
       
       const selectedProperty = this.availableProperties().find(p => p.id === propertyId);
       const usageType = selectedProperty?.propertyUsageType?.toLowerCase();
-      return usageType === 'Airbnb';
+      return usageType === 'airbnb';
     }
   });
   
