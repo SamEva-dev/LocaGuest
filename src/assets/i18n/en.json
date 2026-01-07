@@ -863,6 +863,40 @@
     "NOTIFICATIONS": {
       "TITLE": "Notification Preferences",
       "SUBTITLE": "Choose your notification channels",
+      "ITEMS": {
+        "PAYMENT_RECEIVED": {
+          "TITLE": "Payment received",
+          "DESC": "Get notified when a payment is received"
+        },
+        "PAYMENT_OVERDUE": {
+          "TITLE": "Payment overdue",
+          "DESC": "Alerts for late payments"
+        },
+        "PAYMENT_REMINDER": {
+          "TITLE": "Payment reminder",
+          "DESC": "Reminders before due date"
+        },
+        "CONTRACT_SIGNED": {
+          "TITLE": "Contract signed",
+          "DESC": "Notify me when a contract is signed"
+        },
+        "CONTRACT_EXPIRING": {
+          "TITLE": "Contract expiring",
+          "DESC": "Alert before a lease expires"
+        },
+        "NEW_TENANT_REQUEST": {
+          "TITLE": "New tenant request",
+          "DESC": "Notifications for new tenant requests"
+        },
+        "SYSTEM_UPDATES": {
+          "TITLE": "System updates",
+          "DESC": "New features and improvements"
+        },
+        "MARKETING_EMAILS": {
+          "TITLE": "Marketing emails",
+          "DESC": "Tips and special offers"
+        }
+      },
       "EMAIL_ALERTS": "Email Notifications",
       "EMAIL_ALERTS_DESC": "Receive important alerts by email",
       "SMS_ALERTS": "SMS Notifications",

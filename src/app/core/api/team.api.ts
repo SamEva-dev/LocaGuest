@@ -18,6 +18,7 @@ export interface TeamMemberDto {
 export interface InviteTeamMemberRequest {
   email: string;
   role: string;
+  message?: string;
 }
 
 export interface InviteTeamMemberResponse {

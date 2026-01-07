@@ -9,7 +9,7 @@ import { InvitationsApi } from '../../../core/api/invitations.api';
   imports: [CommonModule, FormsModule],
   template: `
     @if (visible()) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" (click)="onBackdropClick($event)">
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden" (click)="$event.stopPropagation()">
           <!-- Header -->
           <div class="bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-4">

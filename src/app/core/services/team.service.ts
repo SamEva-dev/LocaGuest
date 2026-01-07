@@ -31,7 +31,8 @@ export class TeamService {
     this.loading.set(true);
     return this.invitationsApi.inviteCollaborator({
       email: request.email,
-      role: request.role
+      role: request.role,
+      message: request.message
     }).pipe(
       tap(() => {
         this.loading.set(false);

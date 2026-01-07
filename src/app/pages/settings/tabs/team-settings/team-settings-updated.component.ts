@@ -171,7 +171,7 @@ import { TeamMemberDto } from '../../../../core/api/team.api';
 
     <!-- Invite Dialog -->
     @if (showInviteDialog()) {
-      <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" (click)="showInviteDialog.set(false)">
+      <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <div class="bg-white dark:bg-slate-800 rounded-xl p-6 w-full max-w-md" (click)="$event.stopPropagation()">
           <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-4">
             Inviter un collaborateur
@@ -201,6 +201,17 @@ import { TeamMemberDto } from '../../../../core/api/team.api';
                 <option value="Accountant">Comptable</option>
                 <option value="Viewer">Lecture seule</option>
               </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                Message (optionnel)
+              </label>
+              <textarea
+                [(ngModel)]="inviteMessage"
+                rows="3"
+                placeholder="Ajouter un message..."
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white"></textarea>
             </div>
           </div>
 
@@ -272,6 +283,7 @@ export class TeamSettingsComponent implements OnInit {
 
   inviteEmail = '';
   inviteRole = 'Viewer';
+  inviteMessage = '';
   newRole = '';
 
   ngOnInit() {
@@ -315,13 +327,15 @@ export class TeamSettingsComponent implements OnInit {
 
     this.teamService.inviteTeamMember({ 
       email: this.inviteEmail, 
-      role: this.inviteRole 
+      role: this.inviteRole,
+      message: this.inviteMessage || undefined
     }).subscribe({
       next: () => {
         alert('✅ Invitation envoyée avec succès');
         this.showInviteDialog.set(false);
         this.inviteEmail = '';
         this.inviteRole = 'Viewer';
+        this.inviteMessage = '';
       },
       error: (err) => {
         console.error('Failed to send invitation:', err);
