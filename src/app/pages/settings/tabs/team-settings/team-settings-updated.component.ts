@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TeamService } from '../../../../core/services/team.service';
 import { TeamMemberDto } from '../../../../core/api/team.api';
+import { AuthService } from '../../../../core/auth/services/auth.service';
+import { Permissions } from '../../../../core/auth/permissions';
 
 @Component({
   selector: 'team-settings',
@@ -18,12 +20,14 @@ import { TeamMemberDto } from '../../../../core/api/team.api';
             Gérez les membres de votre équipe et leurs permissions
           </p>
         </div>
-        <button 
-          (click)="showInviteDialog.set(true)"
-          class="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold hover:shadow-lg transition">
-          <i class="ph ph-plus mr-2"></i>
-          Inviter un collaborateur
-        </button>
+        @if (canInvite()) {
+          <button 
+            (click)="showInviteDialog.set(true)"
+            class="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold hover:shadow-lg transition">
+            <i class="ph ph-plus mr-2"></i>
+            Inviter un collaborateur
+          </button>
+        }
       </div>
 
       <!-- Stats Cards -->
@@ -122,7 +126,7 @@ import { TeamMemberDto } from '../../../../core/api/team.api';
                       }
 
                       <!-- Actions Dropdown -->
-                      @if (member.role !== 'Owner') {
+                      @if (member.role !== 'Owner' && (canAssignRoles() || canRemoveMembers())) {
                         <div class="relative">
                           <button 
                             (click)="toggleMemberMenu(member.id)"
@@ -132,18 +136,22 @@ import { TeamMemberDto } from '../../../../core/api/team.api';
 
                           @if (selectedMemberId() === member.id) {
                             <div class="absolute right-0 mt-2 w-48 rounded-lg bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700 z-10">
-                              <button
-                                (click)="openChangeRoleDialog(member)"
-                                class="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition">
-                                <i class="ph ph-shield mr-2"></i>
-                                Changer le rôle
-                              </button>
-                              <button
-                                (click)="removeMember(member)"
-                                class="w-full px-4 py-2 text-left text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition">
-                                <i class="ph ph-trash mr-2"></i>
-                                Retirer
-                              </button>
+                              @if (canAssignRoles()) {
+                                <button
+                                  (click)="openChangeRoleDialog(member)"
+                                  class="w-full px-4 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                                  <i class="ph ph-shield mr-2"></i>
+                                  Changer le rôle
+                                </button>
+                              }
+                              @if (canRemoveMembers()) {
+                                <button
+                                  (click)="removeMember(member)"
+                                  class="w-full px-4 py-2 text-left text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition">
+                                  <i class="ph ph-trash mr-2"></i>
+                                  Retirer
+                                </button>
+                              }
                             </div>
                           }
                         </div>
@@ -156,12 +164,14 @@ import { TeamMemberDto } from '../../../../core/api/team.api';
               <div class="text-center py-12">
                 <i class="ph ph-users-three text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
                 <p class="text-slate-600 dark:text-slate-400">Aucun membre dans l'équipe</p>
-                <button 
-                  (click)="showInviteDialog.set(true)"
-                  class="mt-4 px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition">
-                  <i class="ph ph-plus mr-2"></i>
-                  Inviter le premier membre
-                </button>
+                @if (canInvite()) {
+                  <button 
+                    (click)="showInviteDialog.set(true)"
+                    class="mt-4 px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition">
+                    <i class="ph ph-plus mr-2"></i>
+                    Inviter le premier membre
+                  </button>
+                }
               </div>
             }
           }
@@ -196,7 +206,9 @@ import { TeamMemberDto } from '../../../../core/api/team.api';
               <select
                 [(ngModel)]="inviteRole"
                 class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
-                <option value="Admin">Administrateur</option>
+                @if (canAssignRoles()) {
+                  <option value="Admin">Administrateur</option>
+                }
                 <option value="Manager">Gestionnaire</option>
                 <option value="Accountant">Comptable</option>
                 <option value="Viewer">Lecture seule</option>
@@ -275,6 +287,7 @@ import { TeamMemberDto } from '../../../../core/api/team.api';
 })
 export class TeamSettingsComponent implements OnInit {
   teamService = inject(TeamService);
+  private auth = inject(AuthService);
 
   showInviteDialog = signal(false);
   showChangeRoleDialog = signal(false);
@@ -285,6 +298,18 @@ export class TeamSettingsComponent implements OnInit {
   inviteRole = 'Viewer';
   inviteMessage = '';
   newRole = '';
+
+  canInvite(): boolean {
+    return this.auth.hasPermission(Permissions.UsersInvite);
+  }
+
+  canAssignRoles(): boolean {
+    return this.auth.hasPermission(Permissions.RolesAssign);
+  }
+
+  canRemoveMembers(): boolean {
+    return this.auth.hasPermission(Permissions.UsersDelete);
+  }
 
   ngOnInit() {
     this.teamService.loadTeamMembers().subscribe();
@@ -323,6 +348,10 @@ export class TeamSettingsComponent implements OnInit {
   }
 
   sendInvitation() {
+    if (!this.canInvite()) {
+      alert('❌ Accès refusé');
+      return;
+    }
     if (!this.inviteEmail) return;
 
     this.teamService.inviteTeamMember({ 
@@ -345,6 +374,10 @@ export class TeamSettingsComponent implements OnInit {
   }
 
   openChangeRoleDialog(member: TeamMemberDto) {
+    if (!this.canAssignRoles()) {
+      alert('❌ Accès refusé');
+      return;
+    }
     this.selectedMemberForRoleChange.set(member);
     this.newRole = member.role;
     this.showChangeRoleDialog.set(true);
@@ -352,6 +385,10 @@ export class TeamSettingsComponent implements OnInit {
   }
 
   updateRole() {
+    if (!this.canAssignRoles()) {
+      alert('❌ Accès refusé');
+      return;
+    }
     const member = this.selectedMemberForRoleChange();
     if (!member) return;
 
@@ -369,6 +406,10 @@ export class TeamSettingsComponent implements OnInit {
   }
 
   removeMember(member: TeamMemberDto) {
+    if (!this.canRemoveMembers()) {
+      alert('❌ Accès refusé');
+      return;
+    }
     if (!confirm(`Êtes-vous sûr de vouloir retirer ${member.userEmail} de l'équipe?`)) return;
 
     this.teamService.removeTeamMember(member.id).subscribe({

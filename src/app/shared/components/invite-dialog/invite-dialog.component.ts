@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, Output, signal, inject } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InvitationsApi } from '../../../core/api/invitations.api';
+import { AuthService } from '../../../core/auth/services/auth.service';
+import { Permissions } from '../../../core/auth/permissions';
 
 @Component({
   selector: 'invite-dialog',
@@ -55,7 +57,7 @@ import { InvitationsApi } from '../../../core/api/invitations.api';
                 class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 [disabled]="isSubmitting()">
                 <option value="">Sélectionner un rôle...</option>
-                @for (role of roles; track role.value) {
+                @for (role of availableRoles(); track role.value) {
                   <option [value]="role.value">{{ role.label }}</option>
                 }
               </select>
@@ -129,6 +131,7 @@ export class InviteDialogComponent {
   @Output() invitationSent = new EventEmitter<void>();
 
   private invitationsApi = inject(InvitationsApi);
+  private auth = inject(AuthService);
 
   email = '';
   selectedRole = '';
@@ -136,15 +139,28 @@ export class InviteDialogComponent {
   isSubmitting = signal(false);
   error = signal('');
 
-  roles = [
+  private allRoles = [
     { value: 'TenantAdmin', label: 'Administrateur', description: 'Accès complet, peut gérer l\'équipe' },
     { value: 'TenantManager', label: 'Manager', description: 'Peut créer et modifier des données' },
     { value: 'TenantUser', label: 'Utilisateur', description: 'Peut consulter et créer des données' },
     { value: 'ReadOnly', label: 'Lecture seule', description: 'Consultation uniquement' }
   ];
 
+  canInvite(): boolean {
+    return this.auth.hasPermission(Permissions.UsersInvite);
+  }
+
+  canAssignRoles(): boolean {
+    return this.auth.hasPermission(Permissions.RolesAssign);
+  }
+
+  availableRoles() {
+    if (this.canAssignRoles()) return this.allRoles;
+    return this.allRoles.filter(r => r.value !== 'TenantAdmin');
+  }
+
   getRoleDescription(role: string): string {
-    return this.roles.find(r => r.value === role)?.description || '';
+    return this.allRoles.find(r => r.value === role)?.description || '';
   }
 
   onBackdropClick(event: MouseEvent) {
@@ -168,6 +184,17 @@ export class InviteDialogComponent {
 
   onSubmit() {
     if (this.isSubmitting()) return;
+
+    if (!this.canInvite()) {
+      this.error.set('Accès refusé');
+      return;
+    }
+
+    if (!this.canAssignRoles() && this.selectedRole === 'TenantAdmin') {
+      this.selectedRole = '';
+      this.error.set('Accès refusé');
+      return;
+    }
 
     this.error.set('');
     this.isSubmitting.set(true);

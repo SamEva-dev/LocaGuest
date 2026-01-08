@@ -441,9 +441,50 @@
                   (click)="calculateDeposit()"
                   class="px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-900/30 transition whitespace-nowrap"
                 >
-                  = 1 mois
+                  = 2 mois
                 </button>
               </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Caution attendue (€)</label>
+              <div class="flex gap-2">
+                <input
+                  type="number"
+                  [(ngModel)]="form().depositAmountExpected"
+                  class="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+                  placeholder="1700"
+                  min="0"
+                  step="10"
+                />
+                <button
+                  (click)="calculateDeposit()"
+                  class="px-3 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition whitespace-nowrap"
+                >
+                  = 2×loyer
+                </button>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                Par défaut: 2×le loyer hors charges
+              </p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Date limite paiement caution</label>
+              <input
+                type="date"
+                [(ngModel)]="form().depositDueDate"
+                class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
+              />
+            </div>
+
+            <div class="flex items-center gap-2">
+              <input
+                type="checkbox"
+                [(ngModel)]="form().depositAllowInstallments"
+                class="rounded border-slate-300 dark:border-slate-600"
+              />
+              <span class="text-sm">Autoriser le paiement en plusieurs fois</span>
             </div>
             
             <div>

@@ -73,9 +73,9 @@
     <!-- Sub-tabs -->
     <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
       <div class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 px-4">
-        @for (tab of subTabs; track tab.id) {
+        @for (tab of visibleSubTabs; track tab.id) {
           <button
-            (click)="activeSubTab.set(tab.id)"
+            (click)="selectSubTab(tab.id)"
             [class.border-b-2]="activeSubTab() === tab.id"
             [class.border-emerald-500]="activeSubTab() === tab.id"
             [class.text-emerald-600]="activeSubTab() === tab.id"
@@ -118,9 +118,11 @@
             <div class="space-y-6">
               <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold">{{ 'PROPERTY.DOCUMENTS' | translate }}</h3>
-                <button class="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:shadow-lg transition">
-                  <i class="ph ph-upload-simple mr-2"></i>Ajouter un document
-                </button>
+                @if (canUploadDocuments()) {
+                  <button class="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:shadow-lg transition">
+                    <i class="ph ph-upload-simple mr-2"></i>Ajouter un document
+                  </button>
+                }
               </div>
 
               @if (documentCategories().length === 0) {
@@ -192,13 +194,15 @@
                             >
                               <i class="ph ph-download-simple text-lg"></i>
                             </button>
-                            <button
-                              (click)="deleteDocument(doc)"
-                              class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 transition"
-                              title="Dissocier"
-                            >
-                              <i class="ph ph-trash text-lg"></i>
-                            </button>
+                            @if (canDeleteDocuments()) {
+                              <button
+                                (click)="deleteDocument(doc)"
+                                class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 transition"
+                                title="Dissocier"
+                              >
+                                <i class="ph ph-trash text-lg"></i>
+                              </button>
+                            }
                           </div>
                         </div>
                       </div>

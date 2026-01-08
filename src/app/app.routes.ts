@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './core/auth/guards/auth.guard';
 import { GuestGuard } from './core/auth/guards/guest.guard';
+import { permissionGuard } from './core/auth/guards/permission.guard';
+import { Permissions } from './core/auth/permissions';
 
 export const routes: Routes = [
   {
@@ -22,8 +24,13 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/accept-invitation/accept-invitation').then(m => m.AcceptInvitationComponent)
   },
   {
+    path: 'forbidden',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./pages/forbidden/forbidden-page').then(m => m.ForbiddenPage)
+  },
+  {
     path: 'app',
-   canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     loadComponent: () => import('./layouts/main-layout/main-layout').then(m => m.MainLayout),
     children: [
       {
@@ -40,36 +47,28 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/mon-locaguest/mon-locaguest').then(m => m.MonLocaGuest)
       },
       {
-        path: 'property/:id',
-        loadComponent: () => import('./pages/property/property').then(m => m.Property)
-      },
-      {
-        path: 'tenant/:id',
-        loadComponent: () => import('./pages/tenant/tenant').then(m => m.Tenant)
-      },
-      {
         path: 'contracts',
+        canActivate: [permissionGuard(Permissions.ContractsRead)],
         loadComponent: () => import('./pages/mon-locaguest/tabs/contracts/contracts-tab').then(m => m.ContractsTab)
       },
       {
         path: 'documents',
+        canActivate: [permissionGuard(Permissions.DocumentsRead)],
         loadComponent: () => import('./pages/mon-locaguest/tabs/documents/documents-tab').then(m => m.DocumentsTab)
       },
       {
         path: 'profitability',
+        canActivate: [permissionGuard(Permissions.AnalyticsRead)],
         loadComponent: () => import('./pages/mon-locaguest/tabs/profitability/profitability-tab').then(m => m.ProfitabilityTab)
       },
       {
         path: 'rentability',
+        canActivate: [permissionGuard(Permissions.AnalyticsRead)],
         loadComponent: () => import('./pages/rentability/rentability-page').then(m => m.RentabilityPage)
       },
       {
         path: 'settings',
         loadComponent: () => import('./pages/settings/settings-tab').then(m => m.SettingsTab)
-      },
-      {
-        path: 'pricing',
-        loadComponent: () => import('./pages/pricing/pricing-page.component').then(m => m.PricingPageComponent)
       }
     ]
   },

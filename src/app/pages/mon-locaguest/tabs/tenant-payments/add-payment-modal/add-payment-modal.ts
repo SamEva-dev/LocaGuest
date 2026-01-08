@@ -72,6 +72,11 @@ export class AddPaymentModal implements OnInit {
     const contractId = this.form().contractId;
     return this.contracts().find(c => c.id === contractId);
   });
+
+  maxPayable = computed(() => {
+    const f = this.form();
+    return Math.max(0, Number(f.amountDue || 0));
+  });
   
   totalAmount = computed(() => {
     const contract = this.selectedContract();
@@ -84,6 +89,7 @@ export class AddPaymentModal implements OnInit {
     return (
       f.contractId &&
       f.amountPaid > 0 &&
+      f.amountPaid <= (f.amountDue || 0) &&
       f.paymentDate &&
       f.expectedDate &&
       !this.isSaving()
@@ -145,11 +151,63 @@ export class AddPaymentModal implements OnInit {
         amountPaid: f.amountDue
       }));
     }
+
+    this.refreshAmountDueFromEffectiveState();
   }
   
   onContractChange(event: Event) {
     const select = event.target as HTMLSelectElement;
     this.selectContract(select.value);
+  }
+
+  onExpectedDateChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.form.update(f => ({
+      ...f,
+      expectedDate: input.value
+    }));
+    this.refreshAmountDueFromEffectiveState();
+  }
+
+  onAmountPaidChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const raw = Number(input.value || 0);
+    const clamped = Math.min(Math.max(0, raw), this.maxPayable());
+    this.form.update(f => ({
+      ...f,
+      amountPaid: clamped
+    }));
+  }
+
+  private refreshAmountDueFromEffectiveState() {
+    const f = this.form();
+    if (!f.contractId || !f.expectedDate) return;
+
+    const dateUtc = new Date(f.expectedDate).toISOString();
+
+    this.contractsApi.getEffectiveState(f.contractId, dateUtc).subscribe({
+      next: (effective: any) => {
+        const rent = Number(effective?.rent ?? 0);
+        const charges = Number(effective?.charges ?? 0);
+        const due = Math.max(0, rent + charges);
+
+        this.form.update(cur => {
+          const next = {
+            ...cur,
+            amountDue: due
+          };
+
+          if ((next.amountPaid ?? 0) > due) {
+            next.amountPaid = due;
+          }
+
+          return next;
+        });
+      },
+      error: () => {
+        // Fallback: keep current amountDue (raw contract rent+charges)
+      }
+    });
   }
   
   fillFullAmount() {

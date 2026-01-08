@@ -67,6 +67,9 @@ export interface CreateContractRequest {
   rent: number;
   charges?: number;             // ✅ NOUVEAU - Charges mensuelles
   deposit?: number;
+  depositAmountExpected?: number;
+  depositDueDate?: string;
+  depositAllowInstallments?: boolean;
   paymentDueDay?: number;       // ✅ NOUVEAU - Jour limite de paiement (1-31)
   roomId?: string;              // ✅ NOUVEAU - Pour colocation individuelle
   notes?: string;
@@ -201,6 +204,13 @@ export class ContractsApi {
 
   getContractsByTenant(tenantId: string): Observable<ContractDto[]> {
     return this.http.get<ContractDto[]>(`${this.baseUrl}/tenant/${tenantId}`);
+  }
+
+  getEffectiveState(contractId: string, dateUtc?: string): Observable<any> {
+    let params = new HttpParams();
+    if (dateUtc) params = params.set('dateUtc', dateUtc);
+
+    return this.http.get<any>(`${this.baseUrl}/${contractId}/effective-state`, { params });
   }
 
   createContract(request: CreateContractRequest): Observable<{ id: string; propertyId: string; tenantId: string }> {

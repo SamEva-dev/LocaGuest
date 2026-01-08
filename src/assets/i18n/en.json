@@ -465,6 +465,7 @@
     }
   },
   "PAYMENTS": {
+    
     "ADD": {
       "TITLE": "Add a payment",
       "FOR_TENANT": "For {{name}}",
@@ -496,6 +497,39 @@
     "ERRORS": {
       "LOAD_CONTRACTS": "Error loading contracts",
       "CREATE": "Error saving payment"
+    }
+  },
+  "DEPOSITS": {
+    "PAY": {
+      "TITLE": "Pay the deposit",
+      "CONTRACT": "Contract",
+      "LOADING_CONTRACTS": "Loading contracts...",
+      "SELECT_CONTRACT": "Select a contract",
+      "OUTSTANDING": "Remaining to pay",
+      "EXPECTED": "Expected",
+      "RECEIVED": "Received",
+      "STATUS": "Status",
+      "AMOUNT": "Amount",
+      "DATE": "Date",
+      "REFERENCE": "Reference (optional)",
+      "REFERENCE_PLACEHOLDER": "e.g. Bank transfer 2026-01",
+      "SAVE": "Save",
+      "ERRORS": {
+        "LOAD_CONTRACTS": "Error loading contracts",
+        "LOAD_DEPOSIT": "Error loading deposit",
+        "RECORD": "Error recording deposit"
+      }
+    },
+    "BADGE": {
+      "UNPAID": "Deposit not paid",
+      "REMAINING": "Caution remaining: {{amount}}",
+      "PAID": "Deposit paid"
+    },
+    "HISTORY": {
+      "TITLE": "Deposit",
+      "DUE_DATE": "Due date",
+      "SUMMARY": "Expected: {{expected}} · Paid: {{received}} · Remaining: {{remaining}}",
+      "DOWNLOAD_RECEIPT": "Download deposit receipt"
     }
   },
   "AUTH": {

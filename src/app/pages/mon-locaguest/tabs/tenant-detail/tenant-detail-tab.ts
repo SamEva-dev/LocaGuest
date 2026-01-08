@@ -22,6 +22,9 @@ import { ContractAddendumData, ContractAddendumWizard } from '../property-contra
 import { ContractNoticeData, ContractNoticeWizard } from '../property-contracts/contract-notice-wizard/contract-notice-wizard';
 import { AddendumsApi, AddendumDto } from '../../../../core/api/addendums.api';
 import { InvoicesApi, RentInvoiceDto } from '../../../../core/api/invoices.api';
+import { AuthService } from '../../../../core/auth/services/auth.service';
+import { Permissions } from '../../../../core/auth/permissions';
+import { DepositsApi, DepositDto } from '../../../../core/api/deposits.api';
 
 @Component({
   selector: 'tenant-detail-tab',
@@ -52,6 +55,8 @@ export class TenantDetailTab {
   private documentsApi = inject(DocumentsApi);
   private addendumsApi = inject(AddendumsApi);
   private invoicesApi = inject(InvoicesApi);
+  private auth = inject(AuthService);
+  private depositsApi = inject(DepositsApi);
 
   activeSubTab = signal('contracts');
   isLoading = signal(false);
@@ -97,6 +102,29 @@ export class TenantDetailTab {
   });
 
   hasSignedAddendums = computed(() => this.signedAddendumsCount() > 0);
+
+  downloadingDepositReceipt = signal(false);
+
+  async downloadDepositReceiptPdf() {
+    const occ = this.currentOccupancy();
+    if (!occ?.contractId) return;
+
+    this.downloadingDepositReceipt.set(true);
+    try {
+      const blob = await firstValueFrom(this.depositsApi.getReceiptPdfByContract(occ.contractId));
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Recu_Caution_${occ.contractId}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('❌ Error downloading deposit receipt PDF:', err);
+      this.toasts.errorDirect('Erreur lors du téléchargement du reçu de caution');
+    } finally {
+      this.downloadingDepositReceipt.set(false);
+    }
+  }
   
   // Pour gérer l'expansion des documents de contrat
   expandedContractId = signal<string | null>(null);
@@ -146,35 +174,46 @@ export class TenantDetailTab {
     deposit: number;
   } | null>(null);
 
-  depositBadge = computed<{ label: string; color: string } | null>(() => {
+  depositInfo = signal<DepositDto | null>(null);
+
+  depositBadge = computed<{ labelKey: string; labelParams?: any; color: string; icon: string } | null>(() => {
     const occ = this.currentOccupancy();
+    
     if (!occ) return null;
 
+  
     const startDate = occ.moveInDate;
     const today = new Date();
-    if (startDate && today < startDate) return null;
 
-    const deposit = occ.deposit || 0;
-    if (deposit <= 0) return null;
+    const d = this.depositInfo();
+    if (!d) return null;
 
-    const payments = this.payments() ?? [];
-    const paidDeposit = payments
-      .filter(p => (p as any)?.paymentType === 'Deposit')
-      .reduce((sum, p) => sum + ((p as any)?.amountPaid ?? (p as any)?.amount ?? 0), 0);
+    if ((d.amountExpected ?? 0) <= 0) return null;
 
-    const remaining = Math.max(0, deposit - paidDeposit);
-    if (remaining <= 0) return null;
+    const status = (d.status || '').toLowerCase();
 
-    if (paidDeposit <= 0) {
+    const remaining = Math.max(0, d.outstanding ?? 0);
+    if (remaining <= 0 || status === 'held' || status === 'closed') {
       return {
-        label: 'Caution non payée',
-        color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+        labelKey: 'DEPOSITS.BADGE.PAID',
+        color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+        icon: 'ph-check-circle'
+      };
+    }
+
+    if (status === 'expected' || (d.totalReceived ?? 0) <= 0) {
+      return {
+        labelKey: 'DEPOSITS.BADGE.UNPAID',
+        color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+        icon: 'ph-warning-circle'
       };
     }
 
     return {
-      label: `Reste caution: ${this.formatCurrency(remaining)}`,
-      color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+      labelKey: 'DEPOSITS.BADGE.REMAINING',
+      labelParams: { amount: this.formatCurrency(remaining) },
+      color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+      icon: 'ph-hourglass-medium'
     };
   });
   
@@ -194,7 +233,17 @@ export class TenantDetailTab {
     { id: 'documents', label: 'TENANT.SUB_TABS.DOCUMENTS', icon: 'ph-folder' },
   ];
 
+  get visibleSubTabs() {
+    return this.subTabs.filter(t => this.canAccessSubTab(t.id));
+  }
+
   constructor() {
+    effect(() => {
+      if (!this.canAccessSubTab(this.activeSubTab())) {
+        this.activeSubTab.set('contracts');
+      }
+    });
+
     effect(() => {
       const tabData = this.data();
       if (tabData?.tenantId) {
@@ -210,7 +259,32 @@ export class TenantDetailTab {
     });
   }
 
+  private canAccessSubTab(tabId: string): boolean {
+    switch (tabId) {
+      case 'contracts':
+        return this.auth.hasPermission(Permissions.ContractsRead);
+      case 'payments':
+      case 'payment-history':
+        return this.auth.hasPermission(Permissions.AnalyticsRead);
+      case 'documents':
+        return this.auth.hasPermission(Permissions.DocumentsRead);
+      default:
+        return true;
+    }
+  }
+
+  selectSubTab(tabId: string) {
+    if (!this.canAccessSubTab(tabId)) {
+      return;
+    }
+    this.activeSubTab.set(tabId);
+  }
+
   async printTenantSheet() {
+    if (!this.auth.hasPermission(Permissions.DocumentsGenerate) && !this.auth.hasPermission(Permissions.DocumentsRead)) {
+      this.toasts.errorDirect('Accès refusé');
+      return;
+    }
     const t = this.tenant();
     if (!t?.id) {
       this.toasts.errorDirect('Locataire introuvable');
@@ -321,11 +395,33 @@ export class TenantDetailTab {
         // ✅ Calculer occupation actuelle depuis contrat actif
         this.calculateCurrentOccupancy(contracts);
 
+        // ✅ Charger la caution (module Deposit) du contrat actif
+        void this.loadDepositForActiveContract(contracts);
+
         // ✅ Calculer statut financier depuis paiements
         this.calculateFinancialStatus(id);
       },
       error: (err) => console.error('❌ Error loading tenant contracts:', err)
     });
+  }
+
+  private async loadDepositForActiveContract(contracts: Contract[]) {
+    const activeContract = contracts.find(c => {
+      const status = c.status?.toLowerCase() || '';
+      return status === 'active' || status === 'signed';
+    });
+
+    if (!activeContract?.id) {
+      this.depositInfo.set(null);
+      return;
+    }
+
+    try {
+      const d = await firstValueFrom(this.depositsApi.getByContract(activeContract.id));
+      this.depositInfo.set(d);
+    } catch {
+      this.depositInfo.set(null);
+    }
   }
 
   async loadAllAddendumsForContracts() {
@@ -355,6 +451,28 @@ export class TenantDetailTab {
   getSignedAddendums(contractId: string): AddendumDto[] {
     const adds = this.addendumsByContract().get(contractId) ?? [];
     return adds.filter(a => (a.signatureStatus || '').toLowerCase() === 'signed');
+  }
+
+  getNextSignedFutureAddendum(contractId: string): AddendumDto | null {
+    const now = new Date();
+    const signed = this.getSignedAddendums(contractId);
+
+    const future = signed
+      .filter(a => {
+        const d = a.effectiveDate ? new Date(a.effectiveDate) : null;
+        return !!d && d.getTime() > now.getTime();
+      })
+      .sort((a, b) => (a.effectiveDate || '').localeCompare(b.effectiveDate || ''));
+
+    return future[0] ?? null;
+  }
+
+  getAddendumFutureSummary(addendum: AddendumDto): string {
+    const parts: string[] = [];
+    if (addendum.newRent != null) parts.push(`Loyer: ${this.formatCurrency(addendum.newRent)}`);
+    if (addendum.newCharges != null) parts.push(`Charges: ${this.formatCurrency(addendum.newCharges)}`);
+    if (addendum.newEndDate) parts.push(`Fin: ${new Date(addendum.newEndDate).toLocaleDateString('fr-FR')}`);
+    return parts.join(' · ');
   }
 
   async downloadAddendumPdf(addendum: AddendumDto, event?: Event) {

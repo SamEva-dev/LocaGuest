@@ -25,7 +25,7 @@
                 <input #email type="email" required
                       class="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate"
-                      value="demo1@locaguest.com">
+                      value="admin@authgate.com">
               </div>
             </div>
 
@@ -58,7 +58,7 @@
                 <i class="ph ph-lock-key absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 <input #password [type]="showPassword() ? 'text' : 'password'" required
                       class="w-full p-2 pl-10 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      value="Demo@123">
+                      value="Admin@123">
                 <button type="button" (click)="showPassword.set(!showPassword())"
                         class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
                   <i [class]="showPassword() ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>

@@ -78,9 +78,9 @@
     <!-- Sub-tabs -->
     <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
       <div class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 px-4">
-        @for (tab of subTabs; track tab.id) {
+        @for (tab of visibleSubTabs; track tab.id) {
           <button
-            (click)="activeSubTab.set(tab.id)"
+            (click)="selectSubTab(tab.id)"
             [class.border-b-2]="activeSubTab() === tab.id"
             [class.border-blue-500]="activeSubTab() === tab.id"
             [class.text-blue-600]="activeSubTab() === tab.id"

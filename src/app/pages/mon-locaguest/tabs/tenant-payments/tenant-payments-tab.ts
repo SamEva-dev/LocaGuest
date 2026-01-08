@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaymentsApi, Payment, PaymentStats } from '../../../../core/api/payments.api';
 import { AddPaymentModal } from './add-payment-modal/add-payment-modal';
+import { AddDepositModal } from './add-deposit-modal/add-deposit-modal';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'tenant-payments-tab',
   standalone: true,
-  imports: [CommonModule, FormsModule, AddPaymentModal],
+  imports: [CommonModule, FormsModule, AddPaymentModal, AddDepositModal],
   templateUrl: './tenant-payments-tab.html'
 })
 export class TenantPaymentsTab implements OnInit {
@@ -27,6 +28,7 @@ export class TenantPaymentsTab implements OnInit {
   stats = signal<PaymentStats | null>(null);
   isLoading = signal(false);
   showAddModal = signal(false);
+  showDepositModal = signal(false);
 
   downloadingQuittancePaymentId = signal<string | null>(null);
   
@@ -99,15 +101,29 @@ export class TenantPaymentsTab implements OnInit {
   openAddPaymentModal() {
     this.showAddModal.set(true);
   }
+
+  openAddDepositModal() {
+    this.showDepositModal.set(true);
+  }
   
   handlePaymentCreated() {
     this.showAddModal.set(false);
     this.loadPayments();
     this.loadStats();
   }
+
+  handleDepositRecorded() {
+    this.showDepositModal.set(false);
+    this.loadPayments();
+    this.loadStats();
+  }
   
   handleModalClose() {
     this.showAddModal.set(false);
+  }
+
+  handleDepositModalClose() {
+    this.showDepositModal.set(false);
   }
   
   getStatusBadgeClass(status: string): string {

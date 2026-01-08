@@ -454,7 +454,10 @@ export class ContractsTab implements OnInit {
       startDate: formValue.startDate!,
       endDate: formValue.endDate!,
       rent: formValue.rent!,
-      deposit: formValue.deposit || 0
+      deposit: formValue.deposit || 0,
+      depositAmountExpected: formValue.deposit || 0,
+      depositDueDate: formValue.startDate!,
+      depositAllowInstallments: false
     };
 
     this.contractsApi.createContract(request).subscribe({

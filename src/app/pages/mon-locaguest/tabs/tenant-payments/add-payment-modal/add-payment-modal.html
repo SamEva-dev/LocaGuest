@@ -85,6 +85,7 @@
                   name="amountDue"
                   step="0.01"
                   min="0"
+                  readonly
                   required
                   class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   [placeholder]="'PAYMENTS.ADD.AMOUNT_PLACEHOLDER' | translate">
@@ -107,7 +108,9 @@
                   name="amountPaid"
                   step="0.01"
                   min="0"
+                  [max]="maxPayable()"
                   required
+                  (input)="onAmountPaidChange($event)"
                   class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   [placeholder]="'PAYMENTS.ADD.AMOUNT_PLACEHOLDER' | translate">
               </div>
@@ -137,6 +140,7 @@
                 [(ngModel)]="form().expectedDate"
                 name="expectedDate"
                 required
+                (change)="onExpectedDateChange($event)"
                 class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
             </div>
 

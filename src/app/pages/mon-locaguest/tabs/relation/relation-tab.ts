@@ -7,6 +7,8 @@ import { PropertyDetail, FinancialSummary, Payment, Contract } from '../../../..
 import { TenantDetail, TenantPaymentStats } from '../../../../core/api/tenants.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { TenantsService } from '../../../../core/services/tenants.service';
+import { AuthService } from '../../../../core/auth/services/auth.service';
+import { Permissions } from '../../../../core/auth/permissions';
 
 @Component({
   selector: 'relation-tab',
@@ -18,6 +20,7 @@ export class RelationTab {
   data = input<any>();
   private propertiesService = inject(PropertiesService);
   private tenantsService = inject(TenantsService);
+  private auth = inject(AuthService);
 
   activeSubTab = signal('overview');
   isLoading = signal(false);
@@ -37,6 +40,10 @@ export class RelationTab {
     { id: 'performance', label: 'RELATION.SUB_TABS.PERFORMANCE', icon: 'ph-chart-line-up' },
   ];
 
+  get visibleSubTabs() {
+    return this.subTabs.filter(t => this.canAccessSubTab(t.id));
+  }
+
   paymentProgress = computed(() => {
     const total = this.payments().length;
     if (total === 0) return 0;
@@ -46,11 +53,36 @@ export class RelationTab {
 
   constructor() {
     effect(() => {
+      if (!this.canAccessSubTab(this.activeSubTab())) {
+        this.activeSubTab.set('overview');
+      }
+    });
+
+    effect(() => {
       const tabData = this.data();
       if (tabData?.propertyId && tabData?.tenantId) {
         this.loadRelation(tabData.propertyId, tabData.tenantId);
       }
     });
+  }
+
+  private canAccessSubTab(tabId: string): boolean {
+    switch (tabId) {
+      case 'overview':
+        return this.auth.hasPermission(Permissions.PropertiesRead) && this.auth.hasPermission(Permissions.TenantsRead);
+      case 'documents':
+        return this.auth.hasPermission(Permissions.DocumentsRead);
+      case 'payments':
+      case 'performance':
+        return this.auth.hasPermission(Permissions.AnalyticsRead);
+      default:
+        return true;
+    }
+  }
+
+  selectSubTab(tabId: string) {
+    if (!this.canAccessSubTab(tabId)) return;
+    this.activeSubTab.set(tabId);
   }
 
   private loadRelation(propertyId: string, tenantId: string) {

@@ -1,0 +1,121 @@
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+
+    <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+      <div>
+        <h3 class="text-xl font-bold">{{ 'DEPOSITS.PAY.TITLE' | translate }}</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400">{{ tenantName() }}</p>
+      </div>
+      <button (click)="closeModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center justify-center">
+        <i class="ph ph-x text-xl"></i>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-4 overflow-y-auto" style="max-height: calc(90vh - 160px);">
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ 'DEPOSITS.PAY.CONTRACT' | translate }}</label>
+        @if (isLoadingContracts()) {
+          <div class="text-sm text-slate-500">{{ 'DEPOSITS.PAY.LOADING_CONTRACTS' | translate }}</div>
+        } @else {
+          <select
+            class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+            [ngModel]="form().contractId"
+            (ngModelChange)="selectContract($event)"
+            name="contractId"
+          >
+            <option value="">{{ 'DEPOSITS.PAY.SELECT_CONTRACT' | translate }}</option>
+            @for (c of contracts(); track c.id) {
+              <option [value]="c.id">{{ c.propertyName }} ({{ c.startDate | date:'dd/MM/yyyy' }})</option>
+            }
+          </select>
+        }
+      </div>
+
+      <div class="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">{{ 'DEPOSITS.PAY.OUTSTANDING' | translate }}</div>
+            <div class="text-2xl font-bold">{{ outstanding() | number:'1.2-2' }} €</div>
+          </div>
+          @if (isLoadingDeposit()) {
+            <i class="ph ph-spinner-gap animate-spin text-2xl text-slate-400"></i>
+          } @else {
+            <i class="ph ph-shield-check text-3xl text-emerald-600 dark:text-emerald-400"></i>
+          }
+        </div>
+        @if (deposit(); as d) {
+          <div class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            {{ 'DEPOSITS.PAY.EXPECTED' | translate }}: <span class="font-semibold">{{ d.amountExpected | number:'1.2-2' }} €</span>
+            — {{ 'DEPOSITS.PAY.RECEIVED' | translate }}: <span class="font-semibold">{{ d.totalReceived | number:'1.2-2' }} €</span>
+            — {{ 'DEPOSITS.PAY.STATUS' | translate }}: <span class="font-semibold">{{ d.status }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">{{ 'DEPOSITS.PAY.AMOUNT' | translate }}</label>
+          <input
+            type="number"
+            class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+            [ngModel]="form().amount"
+            (ngModelChange)="setAmount($event)"
+            name="amount"
+            min="0"
+            step="0.01"
+             required
+            [max]="maxPayableAmount()"
+          />
+          @if (maxPayableAmount() > 0) {
+            <div class="text-xs text-slate-500 mt-1">
+              Max: {{ maxPayableAmount() | number:'1.2-2' }} €
+            </div>
+          }
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">{{ 'DEPOSITS.PAY.DATE' | translate }}</label>
+          <input
+            type="date"
+            class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+            [ngModel]="form().dateUtc"
+            (ngModelChange)="setDateUtc($event)"
+            name="dateUtc"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ 'DEPOSITS.PAY.REFERENCE' | translate }}</label>
+        <input
+          type="text"
+          class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          [ngModel]="form().reference"
+          (ngModelChange)="setReference($event)"
+          name="reference"
+          [placeholder]="'DEPOSITS.PAY.REFERENCE_PLACEHOLDER' | translate"
+        />
+      </div>
+
+      <div class="flex items-center justify-end gap-2">
+        <button
+          (click)="closeModal()"
+          class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition"
+        >
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+
+        <button
+          (click)="submit()"
+          [disabled]="!canSubmit()"
+          class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (isSaving()) {
+            <i class="ph ph-spinner-gap animate-spin mr-2"></i>
+          }
+          {{ 'DEPOSITS.PAY.SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

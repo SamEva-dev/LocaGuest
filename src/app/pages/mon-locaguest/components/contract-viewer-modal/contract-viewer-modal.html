@@ -61,12 +61,20 @@
                   <div class="font-medium mt-0.5">{{ data()!.contract.type }}</div>
                 </div>
                 <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-700">
-                  <div class="text-xs text-slate-500">Loyer</div>
-                  <div class="font-semibold mt-0.5 text-emerald-700 dark:text-emerald-400">{{ data()!.contract.rent }} €</div>
+                  <div class="text-xs text-slate-500">Loyer (en vigueur)</div>
+                  <div class="font-semibold mt-0.5 text-emerald-700 dark:text-emerald-400">
+                    {{ (data()!.effective?.rent ?? data()!.contract.rent) }} €
+                  </div>
+                  @if (data()!.effective && (data()!.effective!.rent !== data()!.contract.rent)) {
+                    <div class="text-xs text-slate-500 mt-1">Initial : {{ data()!.contract.rent }} €</div>
+                  }
                 </div>
                 <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-700">
-                  <div class="text-xs text-slate-500">Charges</div>
-                  <div class="font-semibold mt-0.5">{{ data()!.contract.charges || 0 }} €</div>
+                  <div class="text-xs text-slate-500">Charges (en vigueur)</div>
+                  <div class="font-semibold mt-0.5">{{ (data()!.effective?.charges ?? (data()!.contract.charges || 0)) }} €</div>
+                  @if (data()!.effective && (data()!.effective!.charges !== (data()!.contract.charges || 0))) {
+                    <div class="text-xs text-slate-500 mt-1">Initial : {{ data()!.contract.charges || 0 }} €</div>
+                  }
                 </div>
                 <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-700">
                   <div class="text-xs text-slate-500">Dépôt</div>
@@ -77,6 +85,34 @@
                   <div class="font-medium mt-0.5">{{ data()!.contract.status }}</div>
                 </div>
               </div>
+
+              @if (data()!.nextSignedChange) {
+                <div class="mt-4 p-4 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/60 dark:bg-indigo-900/20">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="font-semibold text-indigo-900 dark:text-indigo-200">Changement à venir</div>
+                      <div class="text-sm text-indigo-800 dark:text-indigo-200 mt-1">
+                        À partir du {{ data()!.nextSignedChange!.effectiveDate | date:'dd/MM/yyyy' }}
+                      </div>
+                      <div class="text-sm text-slate-700 dark:text-slate-200 mt-2">
+                        <div>Type : <span class="font-medium">{{ data()!.nextSignedChange!.type }}</span></div>
+                        @if (data()!.nextSignedChange!.newRent != null) {
+                          <div>Nouveau loyer : <span class="font-semibold">{{ data()!.nextSignedChange!.newRent }} €</span></div>
+                        }
+                        @if (data()!.nextSignedChange!.newCharges != null) {
+                          <div>Nouvelles charges : <span class="font-semibold">{{ data()!.nextSignedChange!.newCharges }} €</span></div>
+                        }
+                        @if (data()!.nextSignedChange!.newEndDate != null) {
+                          <div>Nouvelle fin : <span class="font-semibold">{{ data()!.nextSignedChange!.newEndDate | date:'dd/MM/yyyy' }}</span></div>
+                        }
+                      </div>
+                    </div>
+                    <div class="shrink-0 text-indigo-700 dark:text-indigo-300">
+                      <i class="ph ph-clock-countdown text-2xl"></i>
+                    </div>
+                  </div>
+                </div>
+              }
             </div>
 
             <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
@@ -100,14 +136,14 @@
           <div class="mt-5 p-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
             <div class="flex items-center justify-between mb-4">
               <h4 class="font-semibold">Documents requis</h4>
-              @if (data()!.documentsStatus?.allRequiredSigned) {
+              @if (data()!.documentsStatus.allRequiredSigned) {
                 <span class="text-xs px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 font-semibold">
                   Tous signés
                 </span>
               }
             </div>
 
-            @if (data()?.documentsStatus && (data()!.documentsStatus.requiredDocuments.length > 0)) {
+            @if (data()!.documentsStatus.requiredDocuments.length > 0) {
               <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                 @for (doc of data()!.documentsStatus.requiredDocuments; track doc.type) {
                   <div class="flex items-center justify-between text-sm p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">

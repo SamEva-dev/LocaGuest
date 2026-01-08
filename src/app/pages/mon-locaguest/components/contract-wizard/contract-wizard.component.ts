@@ -159,7 +159,11 @@ export class ContractWizardComponent {
       startDate: startDateISO,
       endDate: endDateISO,
       rent: Number(data.rent) || 0,
-      deposit: Number(data.deposit) || 0
+      charges: Number(data.charges) || 0,
+      deposit: Number(data.deposit) || 0,
+      depositAmountExpected: Number(data.deposit) || 0,
+      depositDueDate: startDateISO,
+      depositAllowInstallments: false
     };
 
     this.contractsApi.createContract(payload).subscribe({

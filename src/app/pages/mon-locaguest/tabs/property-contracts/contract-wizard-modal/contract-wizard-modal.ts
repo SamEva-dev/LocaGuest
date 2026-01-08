@@ -50,6 +50,9 @@ interface ContractForm {
   rent: number;
   charges: number;
   deposit: number;
+  depositAmountExpected?: number;
+  depositDueDate?: string;
+  depositAllowInstallments?: boolean;
   paymentDueDay: number; // Jour limite de paiement (1-31)
   
   // Type et options
@@ -108,18 +111,24 @@ export class ContractWizardModal {
   });
   
   // Form data - Initialiser avec valeurs par défaut du bien
-  form = signal<Partial<ContractForm>>({
+  form = signal<ContractForm>({
+    tenantId: '',
+    startDate: '',
+    endDate: '',
+    isRenewable: true,
     type: 'Non meublé',
     isPaper: false,
     rent: 0,
     charges: 0,
     deposit: 0,
+    depositAmountExpected: undefined,
+    depositDueDate: '',
+    depositAllowInstallments: false,
     paymentDueDay: 5, // Par défaut: 5 du mois
     duration: 12,
     autoRenewal: true,
     indexationIRL: true,
     paymentMethod: 'Virement',
-    isRenewable: true,
     inventoryOption: 'schedule_later'
   });
   
@@ -251,11 +260,16 @@ export class ContractWizardModal {
 
         if (shouldUpdate) {
           untracked(() => {
+            const defaultDeposit = (prop.rent || 0) * 2;
+            const shouldUpdateDeposit = (current.deposit || 0) === 0;
+            const shouldUpdateDepositExpected = (current.depositAmountExpected ?? 0) <= 0;
+
             this.form.update(f => ({
               ...f,
               rent: prop.rent || 0,
               charges: prop.charges || 0,
-              deposit: current.deposit === 0 ? (prop.rent || 0) : current.deposit,
+              deposit: shouldUpdateDeposit ? defaultDeposit : current.deposit,
+              depositAmountExpected: shouldUpdateDepositExpected ? defaultDeposit : current.depositAmountExpected,
               type: prop.isFurnished ? 'Meublé' : 'Non meublé'
             }));
           });
@@ -289,11 +303,16 @@ export class ContractWizardModal {
 
       if (shouldUpdate) {
         untracked(() => {
+          const defaultDeposit = (room.rent || 0) * 2;
+          const shouldUpdateDeposit = (current.deposit || 0) === 0;
+          const shouldUpdateDepositExpected = (current.depositAmountExpected ?? 0) <= 0;
+
           this.form.update(f => ({
             ...f,
             rent: room.rent || 0,
             charges: room.charges || 0,
-            deposit: current.deposit === 0 ? (room.rent || 0) : current.deposit,
+            deposit: shouldUpdateDeposit ? defaultDeposit : current.deposit,
+            depositAmountExpected: shouldUpdateDepositExpected ? defaultDeposit : current.depositAmountExpected,
             room: room.name
           }));
         });
@@ -687,7 +706,8 @@ export class ContractWizardModal {
   
   calculateDeposit() {
     const rent = this.form().rent || 0;
-    this.form.update(f => ({ ...f, deposit: rent * 2 }));
+    const amount = rent * 2;
+    this.form.update(f => ({ ...f, deposit: amount, depositAmountExpected: amount }));
   }
   
   submitContract() {
@@ -729,6 +749,9 @@ export class ContractWizardModal {
       rent: f.rent || 0,
       charges: f.charges || 0,
       deposit: f.deposit,
+      depositAmountExpected: (f.depositAmountExpected && f.depositAmountExpected > 0) ? f.depositAmountExpected : (f.deposit || 0),
+      depositDueDate: (f.depositDueDate && f.depositDueDate.length > 0) ? f.depositDueDate : f.startDate,
+      depositAllowInstallments: f.depositAllowInstallments ?? false,
       paymentDueDay: f.paymentDueDay || 5, // Date limite de paiement
       roomId: f.roomId, // ✅ FIX #4: Include roomId for colocation
       notes: this.buildContractNotes(f)

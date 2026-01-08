@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { catchError, switchMap, throwError, from } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
+import { environment } from '../../../environnements/environment';
 
 /**
  * Intercepteur HTTP pour ajouter le token JWT aux requêtes
@@ -13,6 +14,29 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const token = authService.getAccessToken();
 
+  const allowedOrigins = [environment.BASE_AUTH_API, environment.BASE_LOCAGUEST_API]
+    .filter(Boolean)
+    .map((baseUrl) => {
+      try {
+        return new URL(baseUrl).origin;
+      } catch {
+        return null;
+      }
+    })
+    .filter((x): x is string => !!x);
+
+  const isAllowedTarget = (url: string): boolean => {
+    // URL relative -> same-origin -> autorisée
+    if (!/^https?:\/\//i.test(url)) return true;
+
+    try {
+      const targetOrigin = new URL(url).origin;
+      return allowedOrigins.includes(targetOrigin);
+    } catch {
+      return false;
+    }
+  };
+
   // Ne pas ajouter le token pour les endpoints d'authentification
   const isAuthEndpoint = req.url.includes('/api/Auth/login') || 
                          req.url.includes('/api/Auth/register') ||
@@ -20,7 +44,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   // Clone request and add Authorization header if token exists
   let authReq = req;
-  if (token && !isAuthEndpoint) {
+  if (token && !isAuthEndpoint && isAllowedTarget(req.url)) {
     authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,

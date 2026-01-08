@@ -10,7 +10,17 @@ export interface AddendumDto {
   effectiveDate: string;
   reason: string;
   description: string;
+  oldRent?: number | null;
+  newRent?: number | null;
+  oldCharges?: number | null;
+  newCharges?: number | null;
+  oldEndDate?: string | null;
+  newEndDate?: string | null;
   occupantChanges?: string | null;
+  oldRoomId?: string | null;
+  newRoomId?: string | null;
+  oldClauses?: string | null;
+  newClauses?: string | null;
   attachedDocumentIds: string[];
   signatureStatus: string;
   signedDate?: string | null;

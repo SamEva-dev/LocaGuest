@@ -344,8 +344,8 @@
             @if (depositBadge()) {
               <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
                 <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg font-medium" [class]="depositBadge()!.color">
-                  <i class="ph ph-warning-circle"></i>
-                  <span>{{ depositBadge()!.label }}</span>
+                  <i class="ph" [class]="depositBadge()!.icon"></i>
+                  <span>{{ depositBadge()!.labelKey | translate: depositBadge()!.labelParams }}</span>
                 </span>
               </div>
             }
@@ -402,9 +402,9 @@
     <!-- Sub-tabs -->
     <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
       <div class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 px-4">
-        @for (tab of subTabs; track tab.id) {
+        @for (tab of visibleSubTabs; track tab.id) {
           <button
-            (click)="activeSubTab.set(tab.id)"
+            (click)="selectSubTab(tab.id)"
             [class.border-b-2]="activeSubTab() === tab.id"
             [class.border-orange-500]="activeSubTab() === tab.id"
             [class.text-orange-600]="activeSubTab() === tab.id"
@@ -470,6 +470,17 @@
                             </div>
                             <p class="text-sm text-slate-500">{{ contract.startDate | date:'dd/MM/yyyy' }} - {{ contract.endDate | date:'dd/MM/yyyy' }}</p>
                             <p class="text-sm font-medium mt-1">{{ formatCurrency(contract.rent) }}/mois</p>
+
+                            @if (getNextSignedFutureAddendum(contract.id); as nextAdd) {
+                              <div class="mt-2 inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-800 dark:text-indigo-200">
+                                <i class="ph ph-clock-countdown"></i>
+                                <span class="font-semibold">À venir</span>
+                                <span>({{ nextAdd.effectiveDate | date:'dd/MM/yyyy' }})</span>
+                                @if (getAddendumFutureSummary(nextAdd)) {
+                                  <span class="text-indigo-700/90 dark:text-indigo-200/90">· {{ getAddendumFutureSummary(nextAdd) }}</span>
+                                }
+                              </div>
+                            }
                           </div>
                           
                           <div class="flex items-center gap-2">
@@ -724,6 +735,47 @@
                   <i class="ph ph-receipt text-slate-600"></i>
                   <span>Échéances</span>
                 </h4>
+
+                @if (depositInfo() && currentOccupancy() && (depositInfo()!.amountExpected ?? 0) > 0) {
+                  <div class="mb-4 flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                        <i class="ph ph-shield-check text-purple-600"></i>
+                      </div>
+                      <div>
+                        <p class="font-medium text-slate-800 dark:text-white">{{ 'DEPOSITS.HISTORY.TITLE' | translate }}</p>
+                        <p class="text-xs text-slate-500">
+                          {{ 'DEPOSITS.HISTORY.DUE_DATE' | translate }}: {{ depositInfo()!.dueDate | date:'dd/MM/yyyy' }}
+                        </p>
+                        <p class="text-xs text-slate-400">
+                          {{ 'DEPOSITS.HISTORY.SUMMARY' | translate:{ expected: formatCurrency(depositInfo()!.amountExpected), received: formatCurrency(depositInfo()!.totalReceived), remaining: formatCurrency(depositInfo()!.outstanding) } }}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                      <div class="text-right">
+                        <p class="font-semibold text-lg text-slate-800 dark:text-white">{{ formatCurrency(depositInfo()!.amountExpected) }}</p>
+                        @if (depositBadge()) {
+                          <span class="text-xs px-2 py-0.5 rounded-full" [class]="depositBadge()!.color">
+                            {{ depositBadge()!.labelKey | translate: depositBadge()!.labelParams }}
+                          </span>
+                        }
+                      </div>
+                      <button
+                        (click)="downloadDepositReceiptPdf()"
+                        class="p-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        [disabled]="downloadingDepositReceipt()"
+                        [title]="'DEPOSITS.HISTORY.DOWNLOAD_RECEIPT' | translate">
+                        @if (downloadingDepositReceipt()) {
+                          <i class="ph ph-spinner-gap animate-spin"></i>
+                        } @else {
+                          <i class="ph ph-download"></i>
+                        }
+                      </button>
+                    </div>
+                  </div>
+                }
 
                 @if (isLoadingInvoices()) {
                   <div class="flex items-center justify-center p-6">

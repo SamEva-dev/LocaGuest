@@ -5,13 +5,42 @@ import { TokenService } from '../services/token/token.service';
 import { from, throwError } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../../../environnements/environment';
 
 export const ApiInterceptor: HttpInterceptorFn = (req, next) => {
   const tokens = inject(TokenService);
   const auth = inject(AuthService);
   const access = tokens.accessToken;
-  const isApiCall = req.url.startsWith('http'); 
-  if (!access || !isApiCall) return next(req);
+
+  const allowedOrigins = [environment.BASE_AUTH_API, environment.BASE_LOCAGUEST_API]
+    .filter(Boolean)
+    .map((baseUrl) => {
+      try {
+        return new URL(baseUrl).origin;
+      } catch {
+        return null;
+      }
+    })
+    .filter((x): x is string => !!x);
+
+  const isAllowedTarget = (url: string): boolean => {
+    // URL relative -> same-origin -> autorisée
+    if (!/^https?:\/\//i.test(url)) return true;
+
+    try {
+      const targetOrigin = new URL(url).origin;
+      return allowedOrigins.includes(targetOrigin);
+    } catch {
+      return false;
+    }
+  };
+
+  const isAuthEndpoint = req.url.includes('/api/Auth/login') ||
+                         req.url.includes('/api/Auth/register') ||
+                         req.url.includes('/api/Auth/refresh');
+
+  if (!access || isAuthEndpoint || !isAllowedTarget(req.url)) return next(req);
+
   const cloned = req.clone({ setHeaders: { Authorization: `Bearer ${access}` } });
 
   return next(cloned).pipe(

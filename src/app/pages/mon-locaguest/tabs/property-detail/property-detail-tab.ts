@@ -15,6 +15,8 @@ import { PropertyInfoTab } from '../property-info/property-info-tab';
 import { PropertyTenantsTab } from '../property-tenants/property-tenants-tab';
 import { PropertyContractsTab } from '../property-contracts/property-contracts-tab';
 import { PropertyPaymentsTab } from '../property-payments/property-payments-tab';
+import { AuthService } from '../../../../core/auth/services/auth.service';
+import { Permissions } from '../../../../core/auth/permissions';
 
 @Component({
   selector: 'property-detail-tab',
@@ -27,6 +29,7 @@ export class PropertyDetailTab {
   private tabManager = inject(InternalTabManagerService);
   private propertiesService = inject(PropertiesService);
   private documentsApi = inject(DocumentsApi);
+  private auth = inject(AuthService);
   
   // ✅ Services UI
   private toasts = inject(ToastService);
@@ -78,7 +81,17 @@ export class PropertyDetailTab {
     { id: 'projection', label: 'PROPERTY.SUB_TABS.PROJECTION', icon: 'ph-chart-line-up' },
   ];
 
+  get visibleSubTabs() {
+    return this.subTabs.filter(t => this.canAccessSubTab(t.id));
+  }
+
   constructor() {
+    effect(() => {
+      if (!this.canAccessSubTab(this.activeSubTab())) {
+        this.activeSubTab.set('informations');
+      }
+    });
+
     effect(() => {
       const tabData = this.data();
       if (tabData?.propertyId) {
@@ -114,6 +127,40 @@ export class PropertyDetailTab {
         contractsTabRef.initializeInventories();
       }
     });
+  }
+
+  private canAccessSubTab(tabId: string): boolean {
+    switch (tabId) {
+      case 'informations':
+        return this.auth.hasPermission(Permissions.PropertiesRead);
+      case 'tenants':
+        return this.auth.hasPermission(Permissions.TenantsRead);
+      case 'contracts':
+        return this.auth.hasPermission(Permissions.ContractsRead);
+      case 'documents':
+        return this.auth.hasPermission(Permissions.DocumentsRead);
+      case 'payments':
+      case 'projection':
+        return this.auth.hasPermission(Permissions.AnalyticsRead);
+      default:
+        return true;
+    }
+  }
+
+  selectSubTab(tabId: string) {
+    if (!this.canAccessSubTab(tabId)) {
+      this.toasts.errorDirect('Accès refusé');
+      return;
+    }
+    this.activeSubTab.set(tabId);
+  }
+
+  canUploadDocuments(): boolean {
+    return this.auth.hasPermission(Permissions.DocumentsUpload);
+  }
+
+  canDeleteDocuments(): boolean {
+    return this.auth.hasPermission(Permissions.DocumentsDelete);
   }
 
   reloadProperty() {
@@ -380,6 +427,10 @@ export class PropertyDetailTab {
   }
 
   async deleteDocument(doc: DocumentDto) {
+    if (!this.canDeleteDocuments()) {
+      this.toasts.errorDirect('Accès refusé');
+      return;
+    }
     const propertyId = this.data()?.propertyId;
     if (!propertyId) return;
 

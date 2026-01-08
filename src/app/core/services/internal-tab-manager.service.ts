@@ -1,4 +1,7 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../auth/services/auth.service';
+import { Permissions } from '../auth/permissions';
 
 export type InternalTabType = 'summary' | 'property' | 'tenant' | 'relation';
 
@@ -15,6 +18,8 @@ export interface InternalTab {
 @Injectable({ providedIn: 'root' })
 export class InternalTabManagerService {
   private static readonly STORAGE_KEY = 'lg.internal.activeTab';
+  private router = inject(Router);
+  private auth = inject(AuthService);
   private readonly _tabs = signal<InternalTab[]>([
     {
       id: 'summary',
@@ -34,6 +39,25 @@ export class InternalTabManagerService {
     return this._tabs().find((t) => t.id === id);
   });
 
+  private denyAccess(): void {
+    this.router.navigate(['/forbidden']);
+  }
+
+  private canOpenProperty(): boolean {
+    return this.auth.hasPermission(Permissions.PropertiesRead);
+  }
+
+  private canOpenTenant(): boolean {
+    return this.auth.hasPermission(Permissions.TenantsRead);
+  }
+
+  private canOpenRelation(): boolean {
+    return (
+      this.auth.hasPermission(Permissions.PropertiesRead) &&
+      this.auth.hasPermission(Permissions.TenantsRead)
+    );
+  }
+
   constructor() {
     // Restore active tab from storage if exists and is valid
     const savedId = localStorage.getItem(InternalTabManagerService.STORAGE_KEY);
@@ -52,6 +76,10 @@ export class InternalTabManagerService {
   }
 
   openProperty(propertyId: string, propertyName: string, data?: any): void {
+    if (!this.canOpenProperty()) {
+      this.denyAccess();
+      return;
+    }
     const tabId = `property-${propertyId}`;
     const existingTab = this._tabs().find((t) => t.id === tabId);
 
@@ -82,6 +110,10 @@ export class InternalTabManagerService {
   }
 
   openTenant(tenantId: string, tenantName: string, data?: any): void {
+    if (!this.canOpenTenant()) {
+      this.denyAccess();
+      return;
+    }
     const tabId = `tenant-${tenantId}`;
     const existingTab = this._tabs().find((t) => t.id === tabId);
 
@@ -117,6 +149,10 @@ export class InternalTabManagerService {
     title: string,
     data?: any
   ): void {
+    if (!this.canOpenRelation()) {
+      this.denyAccess();
+      return;
+    }
     const tabId = `relation-${propertyId}-${tenantId}`;
     const existingTab = this._tabs().find((t) => t.id === tabId);
 

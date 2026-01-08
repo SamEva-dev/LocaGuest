@@ -7,6 +7,8 @@ import { ThemeService } from '../../core/services/theme.service';
 import { UsersApi, UserProfile, NotificationSettings, UserPreferences } from '../../core/api/users.api';
 import { BillingApi, BillingInvoice } from '../../core/api/billing.api';
 import { SubscriptionService } from '../../core/services/subscription.service';
+import { AuthService } from '../../core/auth/services/auth.service';
+import { Permissions } from '../../core/auth/permissions';
 import { TeamSettingsComponent } from './tabs/team-settings/team-settings-updated.component';
 import { TwoFactorSettingsComponent } from './tabs/two-factor-settings/two-factor-settings.component';
 import { OrganizationSettingsComponent } from './tabs/organization-settings/organization-settings.component';
@@ -24,6 +26,7 @@ export class SettingsTab implements OnInit {
   private themeService = inject(ThemeService);
   private translate = inject(TranslateService);
   private router = inject(Router);
+  private auth = inject(AuthService);
   
   activeSubTab = signal('profile');
 
@@ -106,8 +109,30 @@ export class SettingsTab implements OnInit {
     { id: 'interface', label: 'SETTINGS.TABS.INTERFACE', icon: 'ph-layout' }
   ];
 
+  get visibleSubTabs() {
+    return this.subTabs.filter(t => this.canAccessSubTab(t.id));
+  }
+
   ngOnInit() {
+    // Ensure active tab is allowed for current user
+    if (!this.canAccessSubTab(this.activeSubTab())) {
+      this.activeSubTab.set('profile');
+    }
     this.loadSettings();
+  }
+
+  private canAccessSubTab(tabId: string): boolean {
+    switch (tabId) {
+      case 'organization':
+        return this.auth.hasPermission(Permissions.TenantSettingsRead);
+      case 'team':
+        // Allow read access to the team page; actions inside are gated separately
+        return this.auth.hasPermission(Permissions.UsersRead);
+      case 'billing':
+        return this.auth.hasPermission(Permissions.BillingRead);
+      default:
+        return true;
+    }
   }
 
   loadSettings() {
@@ -148,6 +173,10 @@ export class SettingsTab implements OnInit {
   }
 
   selectSubTab(tabId: string) {
+    if (!this.canAccessSubTab(tabId)) {
+      this.router.navigate(['/forbidden']);
+      return;
+    }
     this.activeSubTab.set(tabId);
   }
 

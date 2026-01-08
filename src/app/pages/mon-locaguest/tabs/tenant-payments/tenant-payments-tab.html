@@ -85,6 +85,13 @@
         <i class="ph ph-plus-circle"></i>
         Ajouter un paiement
       </button>
+
+      <button 
+        (click)="openAddDepositModal()"
+        class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors">
+        <i class="ph ph-shield-check"></i>
+        Caution
+      </button>
     </div>
   </div>
 
@@ -224,5 +231,15 @@
     [tenantName]="tenantName()"
     (paymentCreated)="handlePaymentCreated()"
     (close)="handleModalClose()"
+  />
+}
+
+<!-- Add Deposit Modal -->
+@if (showDepositModal()) {
+  <add-deposit-modal
+    [tenantId]="tenantId()"
+    [tenantName]="tenantName()"
+    (depositRecorded)="handleDepositRecorded()"
+    (close)="handleDepositModalClose()"
   />
 }

@@ -15,6 +15,33 @@ export interface ContractViewerDto {
     terminationReason?: string | null;
     createdAt?: string | null;
   };
+  effective?: {
+    contractId: string;
+    dateUtc: string;
+    rent: number;
+    charges: number;
+    startDate: string;
+    endDate: string;
+    roomId?: string | null;
+    customClauses?: string | null;
+    participants: Array<{
+      renterTenantId: string;
+      shareType: string;
+      shareValue: number;
+      startDate: string;
+      endDate?: string | null;
+    }>;
+    appliedAddendumIds: string[];
+  } | null;
+  nextSignedChange?: {
+    id: string;
+    type: string;
+    effectiveDate: string;
+    newRent?: number | null;
+    newCharges?: number | null;
+    newEndDate?: string | null;
+    newRoomId?: string | null;
+  } | null;
   tenant: {
     id: string;
     code?: string;

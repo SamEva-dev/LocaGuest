@@ -467,6 +467,7 @@
     }
   },
   "PAYMENTS": {
+    
     "ADD": {
       "TITLE": "Ajouter un paiement",
       "FOR_TENANT": "Pour {{name}}",
@@ -498,6 +499,40 @@
     "ERRORS": {
       "LOAD_CONTRACTS": "Erreur lors du chargement des contrats",
       "CREATE": "Erreur lors de l'enregistrement du paiement"
+    }
+  },
+  "DEPOSITS": {
+    "Caution":"Caution",
+    "PAY": {
+      "TITLE": "Payer la caution",
+      "CONTRACT": "Contrat",
+      "LOADING_CONTRACTS": "Chargement des contrats...",
+      "SELECT_CONTRACT": "Sélectionner un contrat",
+      "OUTSTANDING": "Reste à verser",
+      "EXPECTED": "Attendu",
+      "RECEIVED": "Reçu",
+      "STATUS": "Statut",
+      "AMOUNT": "Montant",
+      "DATE": "Date",
+      "REFERENCE": "Référence (optionnel)",
+      "REFERENCE_PLACEHOLDER": "Ex: Virement 2026-01",
+      "SAVE": "Enregistrer",
+      "ERRORS": {
+        "LOAD_CONTRACTS": "Erreur lors du chargement des contrats",
+        "LOAD_DEPOSIT": "Erreur lors du chargement de la caution",
+        "RECORD": "Erreur lors de l'enregistrement de la caution"
+      }
+    },
+    "BADGE": {
+      "UNPAID": "Caution non payée",
+      "REMAINING": "Caution: Reste {{amount}}",
+      "PAID": "Caution payée"
+    },
+    "HISTORY": {
+      "TITLE": "Caution",
+      "DUE_DATE": "Échéance",
+      "SUMMARY": "Attendu: {{expected}} · Versé: {{received}} · Reste: {{remaining}}",
+      "DOWNLOAD_RECEIPT": "Télécharger le reçu de caution"
     }
   },
   "AUTH": {
