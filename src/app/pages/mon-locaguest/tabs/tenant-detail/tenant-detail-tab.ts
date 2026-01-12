@@ -16,6 +16,7 @@ import { PropertiesService } from '../../../../core/services/properties.service'
 import { ContractsApi } from '../../../../core/api/contracts.api';
 import { firstValueFrom } from 'rxjs';
 import { InventoriesApiService } from '../../../../core/api/inventories.api';
+import { InventoryEntryWizardData, InventoryEntryWizardSimpleComponent } from '../property-contracts/inventory-entry-wizard/inventory-entry-wizard-simple';
 import { InventoryExitWizardData, InventoryExitWizardSimpleComponent } from '../property-contracts/inventory-exit-wizard/inventory-exit-wizard-simple';
 import { ContractViewerModal } from '../../components/contract-viewer-modal/contract-viewer-modal';
 import { ContractAddendumData, ContractAddendumWizard } from '../property-contracts/contract-addendum-wizard/contract-addendum-wizard';
@@ -25,6 +26,7 @@ import { InvoicesApi, RentInvoiceDto } from '../../../../core/api/invoices.api';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { Permissions } from '../../../../core/auth/permissions';
 import { DepositsApi, DepositDto } from '../../../../core/api/deposits.api';
+import { ContractRenewalData, ContractRenewalWizard } from '../property-contracts/contract-renewal-wizard/contract-renewal-wizard';
 
 @Component({
   selector: 'tenant-detail-tab',
@@ -36,9 +38,11 @@ import { DepositsApi, DepositDto } from '../../../../core/api/deposits.api';
     ContractDocumentsStatusComponent,
     ContractWizardModal,
     TenantPaymentsTab,
+    InventoryEntryWizardSimpleComponent,
     InventoryExitWizardSimpleComponent,
     ContractViewerModal,
     ContractAddendumWizard,
+    ContractRenewalWizard,
     ContractNoticeWizard
   ],
   templateUrl: './tenant-detail-tab.html'
@@ -132,8 +136,14 @@ export class TenantDetailTab {
   showContractViewer = signal(false);
   viewerContractId = signal<string | null>(null);
 
+  showInventoryEntryWizard = signal(false);
+  inventoryEntryData = signal<InventoryEntryWizardData | null>(null);
+
   showInventoryExitWizard = signal(false);
   inventoryExitData = signal<InventoryExitWizardData | null>(null);
+
+  showRenewalWizard = signal(false);
+  renewalWizardData = signal<ContractRenewalData | null>(null);
 
   isPrintingSheet = signal(false);
   
@@ -763,9 +773,44 @@ export class TenantDetailTab {
    * Renouveler un contrat
    */
   renewContract(contract: Contract) {
-    this.toasts.infoDirect('Ouverture du wizard de renouvellement...');
-    // TODO: Ouvrir le wizard de renouvellement
-    // Devrait passer contract comme paramètre
+    const t = this.tenant();
+    if (!t) {
+      this.toasts.errorDirect('Locataire introuvable');
+      return;
+    }
+
+    const propertyId = (contract as any)?.propertyId || t.propertyId;
+    if (!propertyId) {
+      this.toasts.errorDirect('Bien introuvable pour ce contrat');
+      return;
+    }
+
+    this.propertiesService.getProperty(propertyId).subscribe({
+      next: (prop) => {
+        const data: ContractRenewalData = {
+          contract,
+          propertyName: prop.name,
+          tenantName: t.fullName,
+          roomName: (contract as any)?.roomName
+        };
+
+        this.renewalWizardData.set(data);
+        this.showRenewalWizard.set(true);
+      },
+      error: () => this.toasts.errorDirect('Erreur lors du chargement du bien')
+    });
+  }
+
+  onRenewalCompleted(_: string) {
+    this.showRenewalWizard.set(false);
+    this.renewalWizardData.set(null);
+    const t = this.tenant();
+    if (t?.id) this.loadContracts(t.id);
+  }
+
+  onRenewalCancelled() {
+    this.showRenewalWizard.set(false);
+    this.renewalWizardData.set(null);
   }
   
   /**
@@ -871,8 +916,41 @@ export class TenantDetailTab {
    * Créer EDL entrée
    */
   createEntryInventory(contract: Contract) {
-    this.toasts.infoDirect('Ouverture du wizard EDL entrée...');
-    // TODO: Ouvrir le wizard EDL entrée
+    const t = this.tenant();
+    if (!t) {
+      this.toasts.errorDirect('Locataire introuvable');
+      return;
+    }
+
+    const propertyId = (contract as any)?.propertyId || t.propertyId;
+    if (!propertyId) {
+      this.toasts.errorDirect('Bien introuvable pour ce contrat');
+      return;
+    }
+
+    this.propertiesService.getProperty(propertyId).subscribe({
+      next: (prop) => {
+        const data: InventoryEntryWizardData = {
+          contractId: contract.id,
+          propertyId,
+          propertyName: prop.name,
+          roomId: contract.roomId || undefined,
+          roomName: (contract as any)?.roomName,
+          tenantName: t.fullName
+        };
+
+        this.inventoryEntryData.set(data);
+        this.showInventoryEntryWizard.set(true);
+      },
+      error: () => this.toasts.errorDirect('Erreur lors du chargement du bien')
+    });
+  }
+
+  closeInventoryEntryWizard() {
+    this.showInventoryEntryWizard.set(false);
+    this.inventoryEntryData.set(null);
+    const t = this.tenant();
+    if (t?.id) this.loadContracts(t.id);
   }
   
   /**

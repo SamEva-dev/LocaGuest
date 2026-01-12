@@ -5,7 +5,7 @@ import { TokenExpirationService } from './token/token-expiration.service';
 import { DeviceStore } from '../store/device.store';
 import { ToastService } from '../../ui/toast.service';
 import { HubConnectionBuilder } from '@microsoft/signalr';
-import { environment } from '../../../../environnements/environment';
+import { environment } from '../../../../environnements/environment.dev';
 
 @Injectable({ providedIn: 'root' })
 export class SessionMonitorService {

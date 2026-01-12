@@ -1,5 +1,5 @@
 export const environment = {
-    BASE_AUTH_API:"http://localhost:8080",
-    BASE_LOCAGUEST_API:"http://localhost:5000",
-    production: false
+    BASE_AUTH_API:"https://auth.locaguest.com",
+    BASE_LOCAGUEST_API:"https://api.locaguest.com",
+    production: true
   };

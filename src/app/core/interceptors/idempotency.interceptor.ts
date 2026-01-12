@@ -1,5 +1,5 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { environment } from '../../../environnements/environment';
+import { environment } from '../../../environnements/environment.dev';
 
 const writeMethods = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 

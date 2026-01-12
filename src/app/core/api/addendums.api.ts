@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../../environnements/environment';
+import { environment } from '../../../environnements/environment.dev';
 
 export interface AddendumDto {
   id: string;

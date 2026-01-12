@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environnements/environment';
+import { environment } from '../../../environnements/environment.dev';
 import { PaginatedResult, Payment, Contract } from './properties.api';
 
 export interface TenantListItem {

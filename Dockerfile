@@ -2,19 +2,26 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies
 RUN npm ci
 
-# Copy source code
 COPY . .
 
-# Build Angular app for production
-RUN npm run build -- --configuration production
+# Build configuration: production | preprod | staging
+ARG BUILD_CONFIGURATION=production
+RUN npm run build -- --configuration $BUILD_CONFIGURATION
 
-# Runtime stage - nginx to serve static files
+# Normalize output into /app/out (handles both dist/locaGuest/browser and dist/locaGuest)
+RUN mkdir -p /app/out && \
+    if [ -d "dist/locaGuest/browser" ]; then \
+      cp -a dist/locaGuest/browser/. /app/out/; \
+    elif [ -d "dist/locaGuest" ]; then \
+      cp -a dist/locaGuest/. /app/out/; \
+    else \
+      echo "Angular build output not found. dist content:" && ls -la dist && exit 1; \
+    fi
+
+# Runtime stage
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 
@@ -22,11 +29,10 @@ WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 
 # Copy built Angular app
-COPY --from=build /app/dist/locaGuest/browser .
+COPY --from=build /app/out/ .
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy nginx vhost config (recommended location)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]

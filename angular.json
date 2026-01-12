@@ -37,7 +37,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environnements/environment.ts",
-                  "with": "src/environnements/environment.prod.ts"
+                  "with": "src/environnements/environment.ts"
                 }
               ],
               "budgets": [
@@ -58,12 +58,53 @@
               "fileReplacements": [
                 {
                   "replace": "src/environnements/environment.ts",
-                  "with": "src/environnements/environment.ts"
+                  "with": "src/environnements/environment.dev.ts"
                 }
               ],
               "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true
+              "extractLicenses": false
+              },
+            "preprod": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environnements/environment.ts",
+                  "with": "src/environnements/environment.preprod.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2MB",
+                  "maximumError": "6MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environnements/environment.ts",
+                  "with": "src/environnements/environment.staging.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2MB",
+                  "maximumError": "6MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -76,6 +117,12 @@
             },
             "development": {
               "buildTarget": "locaGuest:build:development"
+            },
+            "preprod": {
+              "buildTarget": "locaGuest:build:preprod"
+            },
+            "staging": {
+              "buildTarget": "locaGuest:build:staging"
             }
           },
           "defaultConfiguration": "development"

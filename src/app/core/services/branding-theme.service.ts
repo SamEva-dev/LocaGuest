@@ -2,7 +2,7 @@ import { Injectable, inject, signal, effect } from '@angular/core';
 import { OrganizationsService, Organization } from './organizations.service';
 import { ThemeService } from './theme.service';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../../../environnements/environment';
+import { environment } from '../../../environnements/environment.dev';
 
 @Injectable({
   providedIn: 'root'

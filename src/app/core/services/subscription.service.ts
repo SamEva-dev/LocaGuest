@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, catchError, of, map } from 'rxjs';
-import { environment } from '../../../environnements/environment';
+import { environment } from '../../../environnements/environment.dev';
 
 export interface Plan {
   id: string;

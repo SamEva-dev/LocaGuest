@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environnements/environment';
+import { environment } from '../../../environnements/environment.dev';
 import { AnalyticsOverview, AnalyticsPropertyPerformance, AnalyticsOptimization, AnalyticsResponse } from '../../models/analytics.models';
 
 export interface ProfitabilityStats {
