@@ -25,7 +25,7 @@
                 "glob": "**/*",
                 "input": "public"
               },
-                "src/assets"
+              "src/assets"
             ],
             "styles": [
               "node_modules/phosphor-icons/src/css/icons.css",
@@ -37,9 +37,14 @@
               "fileReplacements": [
                 {
                   "replace": "src/environnements/environment.ts",
-                  "with": "src/environnements/environment.ts"
+                  "with": "src/environnements/environment.prod.ts"
                 }
               ],
+              "optimization": {
+                "styles": {
+                  "inlineCritical": false
+                }
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -63,7 +68,7 @@
               ],
               "optimization": false,
               "extractLicenses": false
-              },
+            },
             "preprod": {
               "fileReplacements": [
                 {
@@ -71,6 +76,11 @@
                   "with": "src/environnements/environment.preprod.ts"
                 }
               ],
+              "optimization": {
+                "styles": {
+                  "inlineCritical": false
+                }
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -92,6 +102,11 @@
                   "with": "src/environnements/environment.staging.ts"
                 }
               ],
+              "optimization": {
+                "styles": {
+                  "inlineCritical": false
+                }
+              },
               "budgets": [
                 {
                   "type": "initial",
