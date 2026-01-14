@@ -10,6 +10,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/landing-page/landing-page').then(m => m.LandingPage)
   },
   {
+    path: 'forgot-password',
+    canActivate: [GuestGuard],
+    loadComponent: () => import('./pages/forgot-password/forgot-password').then(m => m.ForgotPassword)
+  },
+  {
     path: 'login',
     canActivate: [GuestGuard],
     loadComponent: () => import('./pages/login/login').then(m => m.Login)
@@ -69,6 +74,10 @@ export const routes: Routes = [
       {
         path: 'settings',
         loadComponent: () => import('./pages/settings/settings-tab').then(m => m.SettingsTab)
+      },
+      {
+        path: 'pricing',
+        loadComponent: () => import('./pages/pricing/pricing-page.component').then(m => m.PricingPageComponent)
       }
     ]
   },

@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ThemeService } from '../../core/services/theme.service';
 import { UsersApi, UserProfile, NotificationSettings, UserPreferences } from '../../core/api/users.api';
@@ -26,6 +26,7 @@ export class SettingsTab implements OnInit {
   private themeService = inject(ThemeService);
   private translate = inject(TranslateService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private auth = inject(AuthService);
   
   activeSubTab = signal('profile');
@@ -118,6 +119,16 @@ export class SettingsTab implements OnInit {
     if (!this.canAccessSubTab(this.activeSubTab())) {
       this.activeSubTab.set('profile');
     }
+
+    try {
+      const tab = (this.route as any).snapshot?.queryParamMap?.get('tab');
+      if (tab && this.canAccessSubTab(tab)) {
+        this.activeSubTab.set(tab);
+      }
+    } catch {
+      // ignore
+    }
+
     this.loadSettings();
   }
 

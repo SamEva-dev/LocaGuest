@@ -247,6 +247,13 @@ export class Login {
     this.rememberDevice2FA.set(false);
   }
 
+  backToPrelogin() {
+    this.loginStep.set('email');
+    this.loginEmail.set('');
+    this.userEmail.set('');
+    this.errorMessage = '';
+  }
+
   private completeLogin(result: any) {
     // Store tokens via AuthService
     this.auth.setRememberMe(this.rememberMe());

@@ -148,7 +148,7 @@ export class MainLayout {
 
   goToPricing() {
     this.showUserMenu.set(false);
-    this.router.navigate(['/pricing']);
+    this.router.navigate(['/app/settings'], { queryParams: { tab: 'billing' } });
   }
 
   @HostListener('document:click', ['$event'])
