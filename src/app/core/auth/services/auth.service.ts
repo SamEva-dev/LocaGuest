@@ -171,8 +171,6 @@ export class AuthService {
     this.state.tokens.set(null);
     this.state.user.set(null);
     this.mfaPendingUser.set(null);
-    localStorage.clear();
-   // this.router.navigate(['/login']);
     this.toast.info('AUTH.LOGOUT_SUCCESS');
   }
 

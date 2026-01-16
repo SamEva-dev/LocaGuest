@@ -9,5 +9,5 @@ export class AuthState {
 
   readonly user = signal<UserDto | null>(null);
   readonly tokens = signal<AuthTokens | null>(null);
-  readonly isAuthenticated = computed(() => !!this.tokens()?.accessToken);
+  readonly isAuthenticated = computed(() => !!this.tokens()?.accessToken && !!this.user());
 }
