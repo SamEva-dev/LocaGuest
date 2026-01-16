@@ -63,26 +63,31 @@ jobs:
             set -euo pipefail
 
             IMAGE_TAG="${{ needs.build_push.outputs.image_tag_base }}-staging"
-            cd /opt/locaguest
+            ROOT="/opt/locaguest"
+            ENV_FILE="${ROOT}/env/.env"
+            COMPOSE_FILE="${ROOT}/config/docker-compose.yml"
+            mkdir -p "${ROOT}/env"
+            touch "${ENV_FILE}"
+            cd "${ROOT}"
 
-            docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
             upsert_env () {
               local key="$1"
               local value="$2"
-              if grep -qE "^${key}=" .env; then
-                sed -i "s|^${key}=.*|${key}=${value}|" .env
+              if grep -qE "^${key}=" "${ENV_FILE}"; then
+                sed -i "s|^${key}=.*|${key}=${value}|" "${ENV_FILE}"
               else
-                echo "${key}=${value}" >> .env
+                echo "${key}=${value}" >> "${ENV_FILE}"
               fi
             }
 
             upsert_env "LOCAGUEST_FRONT_TAG_STAGING" "${IMAGE_TAG}"
 
-            docker compose up -d caddy
-            docker compose --profile staging pull locaguest-front-staging
-            docker compose --profile staging up -d locaguest-front-staging
-            docker compose --profile staging ps
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" up -d caddy
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" --profile staging pull locaguest-front-staging
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" --profile staging up -d locaguest-front-staging
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" --profile staging ps
 
   deploy_preprod:
     runs-on: ubuntu-latest
@@ -99,26 +104,31 @@ jobs:
             set -euo pipefail
 
             IMAGE_TAG="sha-${{ github.sha }}-preprod"
-            cd /opt/locaguest
+            ROOT="/opt/locaguest"
+            ENV_FILE="${ROOT}/env/.env"
+            COMPOSE_FILE="${ROOT}/config/docker-compose.yml"
+            mkdir -p "${ROOT}/env"
+            touch "${ENV_FILE}"
+            cd "${ROOT}"
 
-            docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
             upsert_env () {
               local key="$1"
               local value="$2"
-              if grep -qE "^${key}=" .env; then
-                sed -i "s|^${key}=.*|${key}=${value}|" .env
+              if grep -qE "^${key}=" "${ENV_FILE}"; then
+                sed -i "s|^${key}=.*|${key}=${value}|" "${ENV_FILE}"
               else
-                echo "${key}=${value}" >> .env
+                echo "${key}=${value}" >> "${ENV_FILE}"
               fi
             }
 
             upsert_env "LOCAGUEST_FRONT_TAG_PREPROD" "${IMAGE_TAG}"
 
-            docker compose up -d caddy
-            docker compose --profile preprod pull locaguest-front-preprod
-            docker compose --profile preprod up -d locaguest-front-preprod
-            docker compose --profile preprod ps
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" up -d caddy
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" --profile preprod pull locaguest-front-preprod
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" --profile preprod up -d locaguest-front-preprod
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" --profile preprod ps
 
   deploy_prod:
     runs-on: ubuntu-latest
@@ -135,23 +145,28 @@ jobs:
             set -euo pipefail
 
             IMAGE_TAG="sha-${{ github.sha }}-prod"
-            cd /opt/locaguest
+            ROOT="/opt/locaguest"
+            ENV_FILE="${ROOT}/env/.env"
+            COMPOSE_FILE="${ROOT}/config/docker-compose.yml"
+            mkdir -p "${ROOT}/env"
+            touch "${ENV_FILE}"
+            cd "${ROOT}"
 
-            docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
             upsert_env () {
               local key="$1"
               local value="$2"
-              if grep -qE "^${key}=" .env; then
-                sed -i "s|^${key}=.*|${key}=${value}|" .env
+              if grep -qE "^${key}=" "${ENV_FILE}"; then
+                sed -i "s|^${key}=.*|${key}=${value}|" "${ENV_FILE}"
               else
-                echo "${key}=${value}" >> .env
+                echo "${key}=${value}" >> "${ENV_FILE}"
               fi
             }
 
             upsert_env "LOCAGUEST_FRONT_TAG_PROD" "${IMAGE_TAG}"
 
-            docker compose up -d caddy
-            docker compose --profile prod pull locaguest-front-prod
-            docker compose --profile prod up -d locaguest-front-prod
-            docker compose --profile prod ps
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" up -d caddy
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" --profile prod pull locaguest-front-prod
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" --profile prod up -d locaguest-front-prod
+            docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" --profile prod ps
