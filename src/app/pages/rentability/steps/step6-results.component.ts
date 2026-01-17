@@ -1,12 +1,23 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { RentabilityResult } from '../../../core/models/rentability.models';
+import { RentabilityResult, RentabilityInput } from '../../../core/models/rentability.models';
+import { CashflowChartComponent } from '../components/charts/cashflow-chart.component';
+import { InvestmentBreakdownComponent } from '../components/charts/investment-breakdown.component';
+import { RentabilityGaugeComponent } from '../components/charts/rentability-gauge.component';
+import { YearlyBreakdownComponent } from '../components/charts/yearly-breakdown.component';
 
 @Component({
   selector: 'app-step6-results',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [
+    CommonModule, 
+    TranslatePipe,
+    CashflowChartComponent,
+    InvestmentBreakdownComponent,
+    RentabilityGaugeComponent,
+    YearlyBreakdownComponent
+  ],
   template: `
     <div class="max-w-6xl">
       <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">
@@ -48,6 +59,19 @@ import { RentabilityResult } from '../../../core/models/rentability.models';
             <div class="text-3xl font-bold">{{ result.kpis.npv | number:'1.0-0' }} €</div>
             <div class="text-xs opacity-75 mt-1">{{ 'RENTABILITY.KPI.NET_PRESENT_VALUE' | translate }}</div>
           </div>
+        </div>
+
+        <!-- Score de rentabilité + Répartition investissement -->
+        <div class="grid grid-cols-3 gap-6 mb-6">
+          <app-rentability-gauge [kpis]="result.kpis"></app-rentability-gauge>
+          <div class="col-span-2">
+            <app-investment-breakdown [input]="input" [kpis]="result.kpis"></app-investment-breakdown>
+          </div>
+        </div>
+
+        <!-- Graphique évolution cashflow -->
+        <div class="mb-6">
+          <app-cashflow-chart [yearlyResults]="result.yearlyResults"></app-cashflow-chart>
         </div>
 
         <!-- Ratios financiers -->
@@ -194,4 +218,5 @@ import { RentabilityResult } from '../../../core/models/rentability.models';
 })
 export class Step6ResultsComponent {
   @Input() result: RentabilityResult | null = null;
+  @Input() input?: Partial<RentabilityInput>;
 }

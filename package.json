@@ -28,6 +28,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^21.1.0",
     "@angular/cdk": "20.2.14",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
@@ -38,6 +39,7 @@
     "@microsoft/signalr": "^9.0.6",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
+    "@swimlane/ngx-charts": "^23.1.0",
     "@tailwindcss/postcss": "^4.1.13",
     "apexcharts": "^5.3.6",
     "chart.js": "^4.5.1",
@@ -59,7 +61,6 @@
     "@angular/cli": "^20.3.2",
     "@angular/compiler-cli": "^20.3.0",
     "@types/jasmine": "~5.1.0",
-    "openapi-typescript": "^7.9.1",
     "baseline-browser-mapping": "^2.8.32",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
@@ -67,6 +68,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "openapi-typescript": "^7.9.1",
     "typescript": "~5.9.2"
   }
 }
