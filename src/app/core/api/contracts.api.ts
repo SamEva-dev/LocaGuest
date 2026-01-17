@@ -214,9 +214,14 @@ export class ContractsApi {
   }
 
   createContract(request: CreateContractRequest): Observable<{ id: string; propertyId: string; tenantId: string }> {
+    // Map tenantId to OccupantId for backend compatibility
+    const payload = {
+      ...request,
+      occupantId: request.tenantId,
+    };
     return this.http.post<{ id: string; propertyId: string; tenantId: string }>(
       this.baseUrl,
-      request as unknown as CreateContractCommand
+      payload as unknown as CreateContractCommand
     );
   }
 

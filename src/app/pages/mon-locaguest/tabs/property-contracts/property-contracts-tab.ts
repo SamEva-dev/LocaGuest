@@ -50,6 +50,8 @@ export class PropertyContractsTab {
   // ✅ Addendums (Avenants)
   addendumsByContract = signal<Map<string, AddendumDto[]>>(new Map());
   isLoadingAddendums = signal(false);
+  hasLoadedAddendums = signal(false);
+  private lastLoadedContractIds = signal<string>('');
   isMarkingAddendumAsSigned = signal(false);
   isDeletingAddendum = signal(false);
   showEditAddendumModal = signal(false);
@@ -305,6 +307,12 @@ export class PropertyContractsTab {
   effectLoadAddendums = effect(() => {
     const cs = this.contracts();
     if (!cs || cs.length === 0) return;
+    
+    // Prevent infinite loop by checking if contracts have changed
+    const contractIds = cs.map(c => c.id).sort().join(',');
+    if (contractIds === this.lastLoadedContractIds()) return;
+    
+    this.lastLoadedContractIds.set(contractIds);
     void this.loadAllAddendums();
   });
   

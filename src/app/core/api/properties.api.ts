@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environnements/environment.dev';
 import { TenantListItem } from './tenants.api';
 import type { paths as LocaGuestPaths } from '../sdk/locaguest/openapi.types';
@@ -133,8 +134,10 @@ export interface Payment {
 export interface Contract {
   id: string;
   code: string;  // T0001-CTR0001
-  tenantId: string;
-  tenantName?: string;
+  occupantId: string;
+  tenantId: string;  // Alias for occupantId (mapped in frontend)
+  occupantName?: string;
+  tenantName?: string;  // Alias for occupantName
   type: string;
   startDate: Date;
   endDate: Date;
@@ -288,7 +291,13 @@ export class PropertiesApi {
   }
 
   getPropertyContracts(id: string): Observable<Contract[]> {
-    return this.http.get<Contract[]>(`${this.baseUrl}/${id}/contracts`);
+    return this.http.get<Contract[]>(`${this.baseUrl}/${id}/contracts`).pipe(
+      map(contracts => contracts.map(c => ({
+        ...c,
+        tenantId: c.occupantId || c.tenantId,
+        tenantName: c.occupantName || c.tenantName
+      })))
+    );
   }
 
   getFinancialSummary(id: string): Observable<FinancialSummary> {
@@ -333,6 +342,6 @@ export class PropertiesApi {
   }
 
   getAssociatedTenants(propertyId: string): Observable<TenantListItem[]> {
-    return this.http.get<TenantListItem[]>(`${this.baseUrl}/${propertyId}/associated-tenants`);
+    return this.http.get<TenantListItem[]>(`${this.baseUrl}/${propertyId}/associated-occupants`);
   }
 }
