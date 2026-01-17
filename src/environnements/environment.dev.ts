@@ -26,8 +26,8 @@ const resolveEnv = () => {
   }
 
   return {
-    BASE_AUTH_API: 'http://localhost:8080',
-    BASE_LOCAGUEST_API: 'http://localhost:5000',
+    BASE_AUTH_API: 'https://localhost:8081',
+    BASE_LOCAGUEST_API: 'https://localhost:5001',
     production: false,
   };
 };

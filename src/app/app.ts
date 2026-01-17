@@ -1,7 +1,8 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, effect } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SubscriptionService } from './core/services/subscription.service';
 import { BrandingThemeService } from './core/services/branding-theme.service';
+import { AuthService } from './core/auth/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -13,14 +14,19 @@ export class App implements OnInit {
   protected readonly title = signal('locaGuest');
   private subscriptionService = inject(SubscriptionService);
   private brandingThemeService = inject(BrandingThemeService);
+  private authService = inject(AuthService);
 
   constructor() {
-    // Initialiser le service d'abonnement au démarrage
-    this.subscriptionService.initialize();
+    // Initialiser les services authentifiés quand l'utilisateur se connecte
+    effect(() => {
+      if (this.authService.isAuthenticated()) {
+        this.subscriptionService.initialize();
+        this.brandingThemeService.loadBranding();
+      }
+    });
   }
 
   ngOnInit() {
-    // Load branding theme on app startup
-    this.brandingThemeService.loadBranding();
+    // Nothing to do here - initialization handled by effect when authenticated
   }
 }
