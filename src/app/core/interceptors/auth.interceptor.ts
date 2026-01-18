@@ -52,10 +52,24 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
+  // Public endpoints that should not trigger login redirect on 401
+  const isPublicEndpoint = req.url.includes('/api/PublicStats') ||
+                           req.url.includes('/api/Subscriptions/plans');
+
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
+      // Don't redirect for public endpoints - just let error propagate
+      if (isPublicEndpoint) {
+        return throwError(() => error);
+      }
+
       // Si 401 Unauthorized et pas déjà sur refresh, essayer de rafraîchir le token
       if (error.status === 401 && !req.url.includes('/api/Auth/refresh')) {
+        // Only try refresh if user was authenticated
+        if (!token) {
+          return throwError(() => error);
+        }
+
         return from(authService.refreshIfNeeded()).pipe(
           switchMap(() => {
             // Retry original request with new token

@@ -29,6 +29,30 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/accept-invitation/accept-invitation').then(m => m.AcceptInvitationComponent)
   },
   {
+    path: 'privacy',
+    loadComponent: () => import('./pages/legal/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./pages/legal/terms-of-service/terms-of-service.component').then(m => m.TermsOfServiceComponent)
+  },
+  {
+    path: 'imprint',
+    loadComponent: () => import('./pages/legal/imprint/imprint.component').then(m => m.ImprintComponent)
+  },
+  {
+    path: 'features',
+    loadComponent: () => import('./pages/features/features.component').then(m => m.FeaturesComponent)
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent)
+  },
+  {
+    path: 'help',
+    loadComponent: () => import('./pages/help/help.component').then(m => m.HelpComponent)
+  },
+  {
     path: 'forbidden',
     canActivate: [AuthGuard],
     loadComponent: () => import('./pages/forbidden/forbidden-page').then(m => m.ForbiddenPage)

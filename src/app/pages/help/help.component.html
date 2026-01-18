@@ -1,0 +1,128 @@
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900">
+  <!-- Header -->
+  <nav class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <a routerLink="/" class="flex items-center gap-2">
+        <i class="ph ph-buildings text-blue-600 text-2xl"></i>
+        <span class="font-bold text-xl text-slate-900 dark:text-white">{{ 'APP.TITLE' | translate }}</span>
+      </a>
+      <a routerLink="/" class="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2">
+        <i class="ph ph-arrow-left"></i>
+        {{ 'COMMON.BACK' | translate }}
+      </a>
+    </div>
+  </nav>
+
+  <main class="container mx-auto px-6 py-12">
+    <!-- Hero -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-slate-900 dark:text-white mb-4">
+        {{ 'HELP_PAGE.TITLE' | translate }}
+      </h1>
+      <p class="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+        {{ 'HELP_PAGE.SUBTITLE' | translate }}
+      </p>
+    </div>
+
+    <!-- Search -->
+    <div class="max-w-2xl mx-auto mb-12">
+      <div class="relative">
+        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl"></i>
+        <input
+          type="text"
+          class="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          [placeholder]="'HELP_PAGE.SEARCH_PLACEHOLDER' | translate"
+        />
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid md:grid-cols-3 gap-6 mb-16">
+      <a routerLink="/contact" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6 hover:shadow-md transition flex items-center gap-4">
+        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+          <i class="ph ph-envelope text-xl text-blue-600"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-900 dark:text-white">{{ 'HELP_PAGE.QUICK_ACTIONS.CONTACT.TITLE' | translate }}</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'HELP_PAGE.QUICK_ACTIONS.CONTACT.DESC' | translate }}</p>
+        </div>
+      </a>
+
+      <a routerLink="/features" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6 hover:shadow-md transition flex items-center gap-4">
+        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+          <i class="ph ph-book-open text-xl text-green-600"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-900 dark:text-white">{{ 'HELP_PAGE.QUICK_ACTIONS.DOCS.TITLE' | translate }}</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'HELP_PAGE.QUICK_ACTIONS.DOCS.DESC' | translate }}</p>
+        </div>
+      </a>
+
+      <a href="#faq" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6 hover:shadow-md transition flex items-center gap-4">
+        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+          <i class="ph ph-question text-xl text-purple-600"></i>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-900 dark:text-white">{{ 'HELP_PAGE.QUICK_ACTIONS.FAQ.TITLE' | translate }}</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'HELP_PAGE.QUICK_ACTIONS.FAQ.DESC' | translate }}</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- FAQ Section -->
+    <div id="faq" class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-8 text-center">
+        {{ 'HELP_PAGE.FAQ.TITLE' | translate }}
+      </h2>
+
+      @for (category of faqCategories; track category.key; let catIdx = $index) {
+        <div class="mb-8">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+              <i class="ph {{category.icon}} text-xl text-slate-600 dark:text-slate-300"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
+              {{ 'HELP_PAGE.FAQ.CATEGORIES.' + category.key + '.TITLE' | translate }}
+            </h3>
+          </div>
+
+          <div class="space-y-2">
+            @for (q of category.questions; track q; let qIdx = $index) {
+              <div class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <button
+                  (click)="toggleQuestion(catIdx, qIdx)"
+                  class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-700/50 transition"
+                >
+                  <span class="font-medium text-slate-900 dark:text-white">
+                    {{ 'HELP_PAGE.FAQ.CATEGORIES.' + category.key + '.QUESTIONS.' + q + '.Q' | translate }}
+                  </span>
+                  <i class="ph" [class.ph-caret-down]="!isExpanded(catIdx, qIdx)" [class.ph-caret-up]="isExpanded(catIdx, qIdx)"></i>
+                </button>
+                @if (isExpanded(catIdx, qIdx)) {
+                  <div class="px-5 pb-4 text-slate-600 dark:text-slate-300">
+                    {{ 'HELP_PAGE.FAQ.CATEGORIES.' + category.key + '.QUESTIONS.' + q + '.A' | translate }}
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Still need help -->
+    <div class="max-w-2xl mx-auto mt-16 text-center bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-8">
+      <i class="ph ph-lifebuoy text-4xl text-blue-600 mb-4"></i>
+      <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+        {{ 'HELP_PAGE.STILL_NEED_HELP.TITLE' | translate }}
+      </h3>
+      <p class="text-slate-600 dark:text-slate-300 mb-6">
+        {{ 'HELP_PAGE.STILL_NEED_HELP.DESC' | translate }}
+      </p>
+      <a routerLink="/contact" class="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium">
+        <i class="ph ph-chat-circle"></i>
+        {{ 'HELP_PAGE.STILL_NEED_HELP.BUTTON' | translate }}
+      </a>
+    </div>
+  </main>
+</div>

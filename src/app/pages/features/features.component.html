@@ -1,0 +1,87 @@
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900">
+  <!-- Header -->
+  <nav class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <a routerLink="/" class="flex items-center gap-2">
+        <i class="ph ph-buildings text-blue-600 text-2xl"></i>
+        <span class="font-bold text-xl text-slate-900 dark:text-white">{{ 'APP.TITLE' | translate }}</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a routerLink="/login" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 font-medium">
+          {{ 'AUTH.LOGIN' | translate }}
+        </a>
+        <a routerLink="/register" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium">
+          {{ 'AUTH.REGISTER' | translate }}
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="py-16 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
+    <div class="container mx-auto px-6 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-6">
+        {{ 'FEATURES_PAGE.HERO.TITLE' | translate }}
+      </h1>
+      <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+        {{ 'FEATURES_PAGE.HERO.SUBTITLE' | translate }}
+      </p>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="py-20">
+    <div class="container mx-auto px-6">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        @for (feature of features; track feature.key) {
+          <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+            <div class="w-16 h-16 rounded-xl bg-{{feature.color}}-100 dark:bg-{{feature.color}}-900/30 flex items-center justify-center mb-6">
+              <i class="ph {{feature.icon}} text-3xl text-{{feature.color}}-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-3">
+              {{ 'FEATURES_PAGE.ITEMS.' + feature.key + '.TITLE' | translate }}
+            </h3>
+            <p class="text-slate-600 dark:text-slate-300 mb-4">
+              {{ 'FEATURES_PAGE.ITEMS.' + feature.key + '.DESCRIPTION' | translate }}
+            </p>
+            <ul class="space-y-2">
+              @for (i of [1, 2, 3]; track i) {
+                <li class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                  <i class="ph ph-check-circle text-green-500"></i>
+                  {{ 'FEATURES_PAGE.ITEMS.' + feature.key + '.POINTS.P' + i | translate }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-16 bg-slate-100 dark:bg-slate-800">
+    <div class="container mx-auto px-6 text-center">
+      <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+        {{ 'FEATURES_PAGE.CTA.TITLE' | translate }}
+      </h2>
+      <p class="text-slate-600 dark:text-slate-300 mb-8 max-w-2xl mx-auto">
+        {{ 'FEATURES_PAGE.CTA.SUBTITLE' | translate }}
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a routerLink="/register" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-semibold">
+          {{ 'FEATURES_PAGE.CTA.START_FREE' | translate }}
+        </a>
+        <a routerLink="/contact" class="bg-white dark:bg-slate-700 text-slate-900 dark:text-white px-8 py-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition font-semibold border border-slate-200 dark:border-slate-600">
+          {{ 'FEATURES_PAGE.CTA.CONTACT_US' | translate }}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-8">
+    <div class="container mx-auto px-6 text-center">
+      <p>&copy; 2025 {{ 'APP.TITLE' | translate }}. {{ 'FOOTER.COPYRIGHT' | translate }}</p>
+    </div>
+  </footer>
+</div>

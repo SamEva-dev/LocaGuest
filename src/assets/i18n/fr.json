@@ -54,6 +54,10 @@
       "ACCOUNTING": {
         "TITLE": "Comptabilité",
         "DESCRIPTION": "Suivi des loyers, charges, dépôts de garantie et export comptable."
+      },
+      "RENTABILITY": {
+        "TITLE": "Calcul de rentabilité",
+        "DESCRIPTION": "Simulez et analysez la rentabilité de vos investissements immobiliers."
       }
     }
   },
@@ -93,54 +97,6 @@
       "DOWN": "En baisse"
     }
   },
-  "SETTINGS": {
-    "TABS": {
-      "PROFILE": "Profil",
-      "ORGANIZATION": "Organisation",
-      "TEAM": "Équipe",
-      "SECURITY": "Sécurité",
-      "NOTIFICATIONS": "Notifications",
-      "BILLING": "Facturation",
-      "PREFERENCES": "Préférences",
-      "INTERFACE": "Interface"
-    },
-    "NOTIFICATIONS": {
-      "ITEMS": {
-        "PAYMENT_RECEIVED": {
-          "TITLE": "Paiement reçu",
-          "DESC": "Recevoir une notification lors de la réception d'un paiement"
-        },
-        "PAYMENT_OVERDUE": {
-          "TITLE": "Paiement en retard",
-          "DESC": "Alertes pour les paiements en retard"
-        },
-        "PAYMENT_REMINDER": {
-          "TITLE": "Rappel de paiement",
-          "DESC": "Rappels avant échéance"
-        },
-        "CONTRACT_SIGNED": {
-          "TITLE": "Contrat signé",
-          "DESC": "Notification lors de la signature d'un contrat"
-        },
-        "CONTRACT_EXPIRING": {
-          "TITLE": "Contrat expirant",
-          "DESC": "Alerte avant expiration du bail"
-        },
-        "NEW_TENANT_REQUEST": {
-          "TITLE": "Nouvelle demande locataire",
-          "DESC": "Notification pour les nouvelles demandes"
-        },
-        "SYSTEM_UPDATES": {
-          "TITLE": "Mises à jour système",
-          "DESC": "Nouvelles fonctionnalités et améliorations"
-        },
-        "MARKETING_EMAILS": {
-          "TITLE": "Emails marketing",
-          "DESC": "Conseils et offres spéciales"
-        }
-      }
-    }
-  },
   "NOTIFICATIONS": {
     "TITLE": "Notifications",
     "EMPTY": "Aucune notification",
@@ -153,16 +109,12 @@
     "STATUS": "Statut",
     "RENT": "Loyer",
     "SURFACE": "Surface",
+    "STATUS_VACANT": "Vacant",
+    "STATUS_OCCUPIED": "Occupé",
     "STATUS_PARTIALLY_OCCUPIED": "Partiellement occupé",
     "STATUS_RESERVED": "Réservé",
     "STATUS_UNDER_MAINTENANCE": "En travaux",
-     "INFO": {
-      "ACTIONS": {
-        "EDIT": "Modifier",
-        "CANCEL": "Annuler",
-        "SAVE": "Enregistrer",
-        "SAVING": "Enregistrement..."
-      },
+    "INFO": {
       "SECTIONS": {
         "GENERAL": "Informations générales",
         "DETAILS": "Détails du bien",
@@ -304,8 +256,6 @@
     "YEAR": "Année",
     "NO_TENANTS": "Aucun locataire",
     "NO_DOCUMENTS": "Aucun document",
-    "STATUS_OCCUPIED": "Occupé",
-    "STATUS_VACANT": "Vacant",
     "FINANCIAL_ANALYSIS": "Analyse financière",
     "RECENT_PAYMENTS": "Paiements récents",
     "OVERVIEW": "Aperçu",
@@ -423,10 +373,281 @@
     },
     "COPYRIGHT": "Tous droits réservés."
   },
+  "LEGAL": {
+    "PRIVACY": {
+      "TITLE": "Politique de confidentialité",
+      "LAST_UPDATE": "Dernière mise à jour",
+      "UPDATE_DATE": "18 janvier 2025",
+      "SECTIONS": {
+        "INTRO": {
+          "TITLE": "Introduction",
+          "CONTENT": "LocaGuest s'engage à protéger la confidentialité de vos données personnelles. Cette politique décrit comment nous collectons, utilisons et protégeons vos informations."
+        },
+        "DATA_COLLECTED": {
+          "TITLE": "Données collectées",
+          "CONTENT": "Nous collectons les informations que vous nous fournissez lors de votre inscription (nom, email, téléphone), ainsi que les données liées à votre utilisation de notre service (biens immobiliers, locataires, contrats, paiements)."
+        },
+        "DATA_USE": {
+          "TITLE": "Utilisation des données",
+          "CONTENT": "Vos données sont utilisées pour fournir et améliorer nos services, vous envoyer des notifications importantes, et assurer la sécurité de votre compte."
+        },
+        "DATA_PROTECTION": {
+          "TITLE": "Protection des données",
+          "CONTENT": "Nous utilisons des mesures de sécurité techniques et organisationnelles pour protéger vos données contre tout accès non autorisé, modification ou destruction."
+        },
+        "RIGHTS": {
+          "TITLE": "Vos droits",
+          "CONTENT": "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. Vous pouvez exercer ces droits en nous contactant."
+        },
+        "CONTACT": {
+          "TITLE": "Contact",
+          "CONTENT": "Pour toute question concernant cette politique, contactez-nous à : contact@locaguest.com"
+        }
+      }
+    },
+    "TERMS": {
+      "TITLE": "Conditions générales d'utilisation",
+      "LAST_UPDATE": "Dernière mise à jour",
+      "UPDATE_DATE": "18 janvier 2025",
+      "SECTIONS": {
+        "ACCEPTANCE": {
+          "TITLE": "Acceptation des conditions",
+          "CONTENT": "En utilisant LocaGuest, vous acceptez les présentes conditions générales d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre service."
+        },
+        "SERVICE": {
+          "TITLE": "Description du service",
+          "CONTENT": "LocaGuest est une plateforme de gestion locative permettant aux propriétaires et gestionnaires de suivre leurs biens immobiliers, locataires, contrats et paiements."
+        },
+        "ACCOUNT": {
+          "TITLE": "Compte utilisateur",
+          "CONTENT": "Vous êtes responsable de la confidentialité de vos identifiants de connexion et de toutes les activités effectuées sous votre compte."
+        },
+        "PRICING": {
+          "TITLE": "Tarification",
+          "CONTENT": "Les tarifs de nos différents plans sont disponibles sur notre page de tarification. Nous nous réservons le droit de modifier nos tarifs avec un préavis de 30 jours."
+        },
+        "LIMITATION": {
+          "TITLE": "Limitation de responsabilité",
+          "CONTENT": "LocaGuest ne peut être tenu responsable des dommages indirects résultant de l'utilisation de notre service. Notre responsabilité est limitée au montant des frais payés pour le service."
+        }
+      }
+    },
+    "IMPRINT": {
+      "TITLE": "Mentions légales",
+      "SECTIONS": {
+        "COMPANY": {
+          "TITLE": "Éditeur du site",
+          "NAME": "Raison sociale",
+          "ADDRESS": "Adresse",
+          "SIRET": "SIRET",
+          "CAPITAL": "Capital social"
+        },
+        "DIRECTOR": {
+          "TITLE": "Directeur de publication"
+        },
+        "HOSTING": {
+          "TITLE": "Hébergement",
+          "PROVIDER": "Hébergeur"
+        },
+        "CONTACT": {
+          "TITLE": "Contact"
+        }
+      }
+    }
+  },
+  "FEATURES_PAGE": {
+    "HERO": {
+      "TITLE": "Toutes les fonctionnalités pour gérer vos biens",
+      "SUBTITLE": "Découvrez comment LocaGuest simplifie la gestion locative avec des outils puissants et intuitifs."
+    },
+    "ITEMS": {
+      "PROPERTY_MANAGEMENT": {
+        "TITLE": "Gestion des biens",
+        "DESCRIPTION": "Centralisez toutes les informations de vos propriétés en un seul endroit.",
+        "POINTS": {
+          "P1": "Fiches détaillées avec photos",
+          "P2": "Suivi des équipements et diagnostics",
+          "P3": "Historique complet des interventions"
+        }
+      },
+      "TENANT_MANAGEMENT": {
+        "TITLE": "Gestion des locataires",
+        "DESCRIPTION": "Suivez vos locataires et leur historique de location.",
+        "POINTS": {
+          "P1": "Profils locataires complets",
+          "P2": "Historique des paiements",
+          "P3": "Communication intégrée"
+        }
+      },
+      "CONTRACTS": {
+        "TITLE": "Contrats de location",
+        "DESCRIPTION": "Créez et gérez vos baux en quelques clics.",
+        "POINTS": {
+          "P1": "Génération automatique de baux",
+          "P2": "Alertes de renouvellement",
+          "P3": "Signatures électroniques"
+        }
+      },
+      "PAYMENTS": {
+        "TITLE": "Suivi des paiements",
+        "DESCRIPTION": "Gardez un œil sur tous vos encaissements.",
+        "POINTS": {
+          "P1": "Tableau de bord des loyers",
+          "P2": "Alertes impayés automatiques",
+          "P3": "Quittances générées"
+        }
+      },
+      "DOCUMENTS": {
+        "TITLE": "Gestion documentaire",
+        "DESCRIPTION": "Stockez et organisez tous vos documents.",
+        "POINTS": {
+          "P1": "Stockage cloud sécurisé",
+          "P2": "Organisation par catégories",
+          "P3": "Partage facile avec locataires"
+        }
+      },
+      "RENTABILITY": {
+        "TITLE": "Calcul de rentabilité",
+        "DESCRIPTION": "Analysez la performance de vos investissements.",
+        "POINTS": {
+          "P1": "Simulations personnalisées",
+          "P2": "Comparaison de scénarios",
+          "P3": "Rapports détaillés"
+        }
+      },
+      "DASHBOARD": {
+        "TITLE": "Tableau de bord",
+        "DESCRIPTION": "Vue d'ensemble de votre patrimoine immobilier.",
+        "POINTS": {
+          "P1": "KPIs en temps réel",
+          "P2": "Graphiques interactifs",
+          "P3": "Alertes personnalisables"
+        }
+      },
+      "NOTIFICATIONS": {
+        "TITLE": "Notifications",
+        "DESCRIPTION": "Ne manquez jamais une échéance importante.",
+        "POINTS": {
+          "P1": "Alertes par email",
+          "P2": "Rappels automatiques",
+          "P3": "Centre de notifications"
+        }
+      }
+    },
+    "CTA": {
+      "TITLE": "Prêt à simplifier votre gestion locative ?",
+      "SUBTITLE": "Rejoignez des milliers de propriétaires qui font confiance à LocaGuest.",
+      "START_FREE": "Commencer gratuitement",
+      "CONTACT_US": "Nous contacter"
+    }
+  },
+  "CONTACT_PAGE": {
+    "TITLE": "Contactez-nous",
+    "SUBTITLE": "Une question, une suggestion ? Notre équipe est là pour vous aider.",
+    "INFO": {
+      "EMAIL": { "TITLE": "Email" },
+      "HOURS": { "TITLE": "Horaires", "VALUE": "Lun-Ven, 9h-18h" },
+      "RESPONSE": { "TITLE": "Temps de réponse", "VALUE": "Sous 24h" }
+    },
+    "FORM": {
+      "NAME": "Nom complet",
+      "NAME_PLACEHOLDER": "Votre nom",
+      "EMAIL": "Email",
+      "EMAIL_PLACEHOLDER": "votre@email.com",
+      "SUBJECT": "Sujet",
+      "SELECT_SUBJECT": "Sélectionnez un sujet",
+      "MESSAGE": "Message",
+      "MESSAGE_PLACEHOLDER": "Décrivez votre demande...",
+      "SEND": "Envoyer le message",
+      "SENDING": "Envoi en cours..."
+    },
+    "SUBJECTS": {
+      "GENERAL": "Question générale",
+      "SUPPORT": "Support technique",
+      "SALES": "Commercial / Tarification",
+      "PARTNERSHIP": "Partenariat"
+    },
+    "SUCCESS": {
+      "TITLE": "Message envoyé !",
+      "MESSAGE": "Nous avons bien reçu votre message et vous répondrons dans les plus brefs délais.",
+      "SEND_ANOTHER": "Envoyer un autre message"
+    },
+    "ERROR": {
+      "REQUIRED_FIELDS": "Veuillez remplir tous les champs obligatoires.",
+      "SEND_FAILED": "Erreur lors de l'envoi du message. Veuillez réessayer."
+    }
+  },
+  "HELP_PAGE": {
+    "TITLE": "Centre d'aide",
+    "SUBTITLE": "Trouvez rapidement les réponses à vos questions",
+    "SEARCH_PLACEHOLDER": "Rechercher dans l'aide...",
+    "QUICK_ACTIONS": {
+      "CONTACT": { "TITLE": "Nous contacter", "DESC": "Envoyez-nous un message" },
+      "DOCS": { "TITLE": "Documentation", "DESC": "Guides et tutoriels" },
+      "FAQ": { "TITLE": "FAQ", "DESC": "Questions fréquentes" }
+    },
+    "FAQ": {
+      "TITLE": "Questions fréquentes",
+      "CATEGORIES": {
+        "GETTING_STARTED": {
+          "TITLE": "Premiers pas",
+          "QUESTIONS": {
+            "Q1": { "Q": "Comment créer mon premier bien immobilier ?", "A": "Depuis le tableau de bord, cliquez sur 'Ajouter un bien' et remplissez les informations demandées. Vous pouvez ajouter des photos, des détails financiers et des diagnostics." },
+            "Q2": { "Q": "Comment inviter des membres de mon équipe ?", "A": "Allez dans Paramètres > Équipe, puis cliquez sur 'Inviter un membre'. Entrez l'email et sélectionnez le rôle approprié." },
+            "Q3": { "Q": "Quels sont les différents plans disponibles ?", "A": "Nous proposons un plan Gratuit pour débuter, un plan Pro pour les propriétaires actifs, et un plan Entreprise pour les gestionnaires professionnels." }
+          }
+        },
+        "PROPERTIES": {
+          "TITLE": "Gestion des biens",
+          "QUESTIONS": {
+            "Q1": { "Q": "Comment modifier les informations d'un bien ?", "A": "Cliquez sur le bien concerné, puis sur l'onglet 'Informations'. Cliquez sur 'Modifier' pour mettre à jour les détails." },
+            "Q2": { "Q": "Comment ajouter des photos à un bien ?", "A": "Dans la fiche du bien, utilisez la section 'Photos' pour télécharger vos images. Vous pouvez les organiser par catégorie." },
+            "Q3": { "Q": "Comment gérer plusieurs biens ?", "A": "Tous vos biens sont listés dans la section 'Mon LocaGuest'. Vous pouvez filtrer et rechercher facilement." }
+          }
+        },
+        "TENANTS": {
+          "TITLE": "Locataires",
+          "QUESTIONS": {
+            "Q1": { "Q": "Comment ajouter un nouveau locataire ?", "A": "Dans la fiche d'un bien, allez à l'onglet 'Locataires' et cliquez sur 'Ajouter un locataire'. Remplissez ses coordonnées et informations." },
+            "Q2": { "Q": "Comment suivre les paiements d'un locataire ?", "A": "L'historique des paiements est visible dans la fiche du locataire et dans l'onglet 'Paiements' du bien concerné." }
+          }
+        },
+        "PAYMENTS": {
+          "TITLE": "Paiements",
+          "QUESTIONS": {
+            "Q1": { "Q": "Comment enregistrer un paiement reçu ?", "A": "Dans l'onglet 'Paiements' du bien, cliquez sur 'Ajouter un paiement' et saisissez les détails (montant, date, type)." },
+            "Q2": { "Q": "Comment générer une quittance de loyer ?", "A": "Dans la fiche du paiement concerné, cliquez sur 'Générer quittance'. Le document PDF sera automatiquement créé." },
+            "Q3": { "Q": "Comment être alerté des impayés ?", "A": "Activez les notifications de paiement dans Paramètres > Notifications. Vous recevrez des alertes automatiques." }
+          }
+        },
+        "DOCUMENTS": {
+          "TITLE": "Documents",
+          "QUESTIONS": {
+            "Q1": { "Q": "Quels types de documents puis-je stocker ?", "A": "Vous pouvez stocker tout type de document : baux, diagnostics, factures, photos, attestations, etc." },
+            "Q2": { "Q": "Comment partager un document avec un locataire ?", "A": "Dans la section Documents, sélectionnez le fichier et cliquez sur 'Partager'. Vous pouvez envoyer un lien sécurisé." }
+          }
+        },
+        "ACCOUNT": {
+          "TITLE": "Compte et sécurité",
+          "QUESTIONS": {
+            "Q1": { "Q": "Comment changer mon mot de passe ?", "A": "Allez dans Paramètres > Sécurité, puis cliquez sur 'Changer le mot de passe'. Entrez votre ancien et nouveau mot de passe." },
+            "Q2": { "Q": "Comment activer l'authentification à deux facteurs ?", "A": "Dans Paramètres > Sécurité, activez '2FA'. Scannez le QR code avec votre application d'authentification." },
+            "Q3": { "Q": "Comment supprimer mon compte ?", "A": "Dans Paramètres > Préférences, descendez jusqu'à 'Zone de danger' et cliquez sur 'Supprimer mon compte'. Cette action est irréversible." }
+          }
+        }
+      }
+    },
+    "STILL_NEED_HELP": {
+      "TITLE": "Vous n'avez pas trouvé votre réponse ?",
+      "DESC": "Notre équipe est disponible pour vous aider personnellement.",
+      "BUTTON": "Contacter le support"
+    }
+  },
   "THEME": {
     "TOGGLE": "Changer de thème"
   },
   "COMMON": {
+    "BACK": "Retour",
     "VIEW": "Voir",
     "EDIT": "Modifier",
     "DELETE": "Supprimer",

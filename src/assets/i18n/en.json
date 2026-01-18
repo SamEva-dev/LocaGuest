@@ -54,6 +54,10 @@
       "ACCOUNTING": {
         "TITLE": "Accounting",
         "DESCRIPTION": "Track rents, charges, deposits and accounting export."
+      },
+      "RENTABILITY": {
+        "TITLE": "Profitability Calculator",
+        "DESCRIPTION": "Simulate and analyze the profitability of your real estate investments."
       }
     }
   },
@@ -153,6 +157,8 @@
     "STATUS": "Status",
     "RENT": "Rent",
     "SURFACE": "Area",
+    "STATUS_VACANT": "Vacant",
+    "STATUS_OCCUPIED": "Occupied",
     "STATUS_PARTIALLY_OCCUPIED": "Partially occupied",
     "STATUS_RESERVED": "Reserved",
     "STATUS_UNDER_MAINTENANCE": "Under maintenance",
@@ -405,10 +411,281 @@
     },
     "COPYRIGHT": "All rights reserved."
   },
+  "LEGAL": {
+    "PRIVACY": {
+      "TITLE": "Privacy Policy",
+      "LAST_UPDATE": "Last updated",
+      "UPDATE_DATE": "January 18, 2025",
+      "SECTIONS": {
+        "INTRO": {
+          "TITLE": "Introduction",
+          "CONTENT": "LocaGuest is committed to protecting the privacy of your personal data. This policy describes how we collect, use and protect your information."
+        },
+        "DATA_COLLECTED": {
+          "TITLE": "Data Collected",
+          "CONTENT": "We collect information you provide during registration (name, email, phone), as well as data related to your use of our service (properties, tenants, contracts, payments)."
+        },
+        "DATA_USE": {
+          "TITLE": "Data Use",
+          "CONTENT": "Your data is used to provide and improve our services, send you important notifications, and ensure the security of your account."
+        },
+        "DATA_PROTECTION": {
+          "TITLE": "Data Protection",
+          "CONTENT": "We use technical and organizational security measures to protect your data against unauthorized access, modification or destruction."
+        },
+        "RIGHTS": {
+          "TITLE": "Your Rights",
+          "CONTENT": "Under GDPR, you have the right to access, rectify, delete and port your data. You can exercise these rights by contacting us."
+        },
+        "CONTACT": {
+          "TITLE": "Contact",
+          "CONTENT": "For any questions regarding this policy, contact us at: contact@locaguest.com"
+        }
+      }
+    },
+    "TERMS": {
+      "TITLE": "Terms of Service",
+      "LAST_UPDATE": "Last updated",
+      "UPDATE_DATE": "January 18, 2025",
+      "SECTIONS": {
+        "ACCEPTANCE": {
+          "TITLE": "Acceptance of Terms",
+          "CONTENT": "By using LocaGuest, you accept these terms of service. If you do not accept these terms, please do not use our service."
+        },
+        "SERVICE": {
+          "TITLE": "Service Description",
+          "CONTENT": "LocaGuest is a rental management platform that allows owners and managers to track their properties, tenants, contracts and payments."
+        },
+        "ACCOUNT": {
+          "TITLE": "User Account",
+          "CONTENT": "You are responsible for the confidentiality of your login credentials and all activities performed under your account."
+        },
+        "PRICING": {
+          "TITLE": "Pricing",
+          "CONTENT": "Pricing for our different plans is available on our pricing page. We reserve the right to change our prices with 30 days notice."
+        },
+        "LIMITATION": {
+          "TITLE": "Limitation of Liability",
+          "CONTENT": "LocaGuest cannot be held responsible for indirect damages resulting from the use of our service. Our liability is limited to the amount of fees paid for the service."
+        }
+      }
+    },
+    "IMPRINT": {
+      "TITLE": "Legal Notice",
+      "SECTIONS": {
+        "COMPANY": {
+          "TITLE": "Site Publisher",
+          "NAME": "Company name",
+          "ADDRESS": "Address",
+          "SIRET": "Registration number",
+          "CAPITAL": "Share capital"
+        },
+        "DIRECTOR": {
+          "TITLE": "Publication Director"
+        },
+        "HOSTING": {
+          "TITLE": "Hosting",
+          "PROVIDER": "Host provider"
+        },
+        "CONTACT": {
+          "TITLE": "Contact"
+        }
+      }
+    }
+  },
+  "FEATURES_PAGE": {
+    "HERO": {
+      "TITLE": "All the features to manage your properties",
+      "SUBTITLE": "Discover how LocaGuest simplifies rental management with powerful and intuitive tools."
+    },
+    "ITEMS": {
+      "PROPERTY_MANAGEMENT": {
+        "TITLE": "Property Management",
+        "DESCRIPTION": "Centralize all your property information in one place.",
+        "POINTS": {
+          "P1": "Detailed listings with photos",
+          "P2": "Equipment and diagnostics tracking",
+          "P3": "Complete intervention history"
+        }
+      },
+      "TENANT_MANAGEMENT": {
+        "TITLE": "Tenant Management",
+        "DESCRIPTION": "Track your tenants and their rental history.",
+        "POINTS": {
+          "P1": "Complete tenant profiles",
+          "P2": "Payment history",
+          "P3": "Integrated communication"
+        }
+      },
+      "CONTRACTS": {
+        "TITLE": "Lease Contracts",
+        "DESCRIPTION": "Create and manage your leases in a few clicks.",
+        "POINTS": {
+          "P1": "Automatic lease generation",
+          "P2": "Renewal alerts",
+          "P3": "Electronic signatures"
+        }
+      },
+      "PAYMENTS": {
+        "TITLE": "Payment Tracking",
+        "DESCRIPTION": "Keep an eye on all your collections.",
+        "POINTS": {
+          "P1": "Rent dashboard",
+          "P2": "Automatic late payment alerts",
+          "P3": "Generated receipts"
+        }
+      },
+      "DOCUMENTS": {
+        "TITLE": "Document Management",
+        "DESCRIPTION": "Store and organize all your documents.",
+        "POINTS": {
+          "P1": "Secure cloud storage",
+          "P2": "Category organization",
+          "P3": "Easy sharing with tenants"
+        }
+      },
+      "RENTABILITY": {
+        "TITLE": "Profitability Calculator",
+        "DESCRIPTION": "Analyze the performance of your investments.",
+        "POINTS": {
+          "P1": "Custom simulations",
+          "P2": "Scenario comparison",
+          "P3": "Detailed reports"
+        }
+      },
+      "DASHBOARD": {
+        "TITLE": "Dashboard",
+        "DESCRIPTION": "Overview of your real estate portfolio.",
+        "POINTS": {
+          "P1": "Real-time KPIs",
+          "P2": "Interactive charts",
+          "P3": "Customizable alerts"
+        }
+      },
+      "NOTIFICATIONS": {
+        "TITLE": "Notifications",
+        "DESCRIPTION": "Never miss an important deadline.",
+        "POINTS": {
+          "P1": "Email alerts",
+          "P2": "Automatic reminders",
+          "P3": "Notification center"
+        }
+      }
+    },
+    "CTA": {
+      "TITLE": "Ready to simplify your rental management?",
+      "SUBTITLE": "Join thousands of property owners who trust LocaGuest.",
+      "START_FREE": "Start for free",
+      "CONTACT_US": "Contact us"
+    }
+  },
+  "CONTACT_PAGE": {
+    "TITLE": "Contact Us",
+    "SUBTITLE": "A question, a suggestion? Our team is here to help.",
+    "INFO": {
+      "EMAIL": { "TITLE": "Email" },
+      "HOURS": { "TITLE": "Hours", "VALUE": "Mon-Fri, 9am-6pm" },
+      "RESPONSE": { "TITLE": "Response time", "VALUE": "Within 24h" }
+    },
+    "FORM": {
+      "NAME": "Full name",
+      "NAME_PLACEHOLDER": "Your name",
+      "EMAIL": "Email",
+      "EMAIL_PLACEHOLDER": "your@email.com",
+      "SUBJECT": "Subject",
+      "SELECT_SUBJECT": "Select a subject",
+      "MESSAGE": "Message",
+      "MESSAGE_PLACEHOLDER": "Describe your request...",
+      "SEND": "Send message",
+      "SENDING": "Sending..."
+    },
+    "SUBJECTS": {
+      "GENERAL": "General question",
+      "SUPPORT": "Technical support",
+      "SALES": "Sales / Pricing",
+      "PARTNERSHIP": "Partnership"
+    },
+    "SUCCESS": {
+      "TITLE": "Message sent!",
+      "MESSAGE": "We have received your message and will respond as soon as possible.",
+      "SEND_ANOTHER": "Send another message"
+    },
+    "ERROR": {
+      "REQUIRED_FIELDS": "Please fill in all required fields.",
+      "SEND_FAILED": "Failed to send message. Please try again."
+    }
+  },
+  "HELP_PAGE": {
+    "TITLE": "Help Center",
+    "SUBTITLE": "Find answers to your questions quickly",
+    "SEARCH_PLACEHOLDER": "Search help...",
+    "QUICK_ACTIONS": {
+      "CONTACT": { "TITLE": "Contact Us", "DESC": "Send us a message" },
+      "DOCS": { "TITLE": "Documentation", "DESC": "Guides and tutorials" },
+      "FAQ": { "TITLE": "FAQ", "DESC": "Frequently asked questions" }
+    },
+    "FAQ": {
+      "TITLE": "Frequently Asked Questions",
+      "CATEGORIES": {
+        "GETTING_STARTED": {
+          "TITLE": "Getting Started",
+          "QUESTIONS": {
+            "Q1": { "Q": "How do I create my first property?", "A": "From the dashboard, click 'Add Property' and fill in the required information. You can add photos, financial details, and diagnostics." },
+            "Q2": { "Q": "How do I invite team members?", "A": "Go to Settings > Team, then click 'Invite Member'. Enter the email and select the appropriate role." },
+            "Q3": { "Q": "What plans are available?", "A": "We offer a Free plan to get started, a Pro plan for active owners, and an Enterprise plan for professional managers." }
+          }
+        },
+        "PROPERTIES": {
+          "TITLE": "Property Management",
+          "QUESTIONS": {
+            "Q1": { "Q": "How do I edit property information?", "A": "Click on the property, then go to the 'Information' tab. Click 'Edit' to update the details." },
+            "Q2": { "Q": "How do I add photos to a property?", "A": "In the property details, use the 'Photos' section to upload your images. You can organize them by category." },
+            "Q3": { "Q": "How do I manage multiple properties?", "A": "All your properties are listed in 'My LocaGuest'. You can easily filter and search." }
+          }
+        },
+        "TENANTS": {
+          "TITLE": "Tenants",
+          "QUESTIONS": {
+            "Q1": { "Q": "How do I add a new tenant?", "A": "In a property's details, go to the 'Tenants' tab and click 'Add Tenant'. Fill in their contact and personal information." },
+            "Q2": { "Q": "How do I track a tenant's payments?", "A": "Payment history is visible in the tenant's profile and in the 'Payments' tab of the relevant property." }
+          }
+        },
+        "PAYMENTS": {
+          "TITLE": "Payments",
+          "QUESTIONS": {
+            "Q1": { "Q": "How do I record a received payment?", "A": "In the property's 'Payments' tab, click 'Add Payment' and enter the details (amount, date, type)." },
+            "Q2": { "Q": "How do I generate a rent receipt?", "A": "In the relevant payment's details, click 'Generate Receipt'. The PDF document will be automatically created." },
+            "Q3": { "Q": "How do I get notified of late payments?", "A": "Enable payment notifications in Settings > Notifications. You will receive automatic alerts." }
+          }
+        },
+        "DOCUMENTS": {
+          "TITLE": "Documents",
+          "QUESTIONS": {
+            "Q1": { "Q": "What types of documents can I store?", "A": "You can store any type of document: leases, diagnostics, invoices, photos, certificates, etc." },
+            "Q2": { "Q": "How do I share a document with a tenant?", "A": "In the Documents section, select the file and click 'Share'. You can send a secure link." }
+          }
+        },
+        "ACCOUNT": {
+          "TITLE": "Account & Security",
+          "QUESTIONS": {
+            "Q1": { "Q": "How do I change my password?", "A": "Go to Settings > Security, then click 'Change Password'. Enter your old and new password." },
+            "Q2": { "Q": "How do I enable two-factor authentication?", "A": "In Settings > Security, enable '2FA'. Scan the QR code with your authenticator app." },
+            "Q3": { "Q": "How do I delete my account?", "A": "In Settings > Preferences, scroll down to 'Danger Zone' and click 'Delete My Account'. This action is irreversible." }
+          }
+        }
+      }
+    },
+    "STILL_NEED_HELP": {
+      "TITLE": "Didn't find your answer?",
+      "DESC": "Our team is available to help you personally.",
+      "BUTTON": "Contact Support"
+    }
+  },
   "THEME": {
     "TOGGLE": "Toggle theme"
   },
   "COMMON": {
+    "BACK": "Back",
     "CANCEL": "Cancel",
     "CLOSE": "Close",
     "VIEW": "View",

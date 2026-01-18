@@ -4,6 +4,7 @@ import { LanguageSwitch } from '../../components/language-switch/language-switch
 import { RouterLink, Router } from '@angular/router';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { SubscriptionService, Plan } from '../../core/services/subscription.service';
+import { PublicStatsApi } from '../../core/api/public-stats.api';
 
 @Component({
   selector: 'landing-page',
@@ -16,12 +17,18 @@ export class LandingPage implements OnInit {
   private translate = inject(TranslateService);
   private platformId = inject(PLATFORM_ID);
   private subscriptionService = inject(SubscriptionService);
+  private publicStatsApi = inject(PublicStatsApi);
   private router = inject(Router);
 
-  // Animated counters
+  // Stats from API (with fallback values)
   propertiesCount = signal(0);
   usersCount = signal(0);
   satisfactionCount = signal(0);
+  
+  // Target values for animation (fetched from API)
+  private targetProperties = 0;
+  private targetUsers = 0;
+  private targetSatisfaction = 98;
 
   // Pricing plans
   plans = signal<Plan[]>([]);
@@ -33,13 +40,29 @@ export class LandingPage implements OnInit {
     { icon: 'ph ph-file-text', title: 'FEATURES.ITEMS.DOCUMENTS.TITLE', description: 'FEATURES.ITEMS.DOCUMENTS.DESCRIPTION' },
     { icon: 'ph ph-chart-line-up', title: 'FEATURES.ITEMS.ANALYTICS.TITLE', description: 'FEATURES.ITEMS.ANALYTICS.DESCRIPTION' },
     { icon: 'ph ph-shield-check', title: 'FEATURES.ITEMS.LEGAL.TITLE', description: 'FEATURES.ITEMS.LEGAL.DESCRIPTION' },
-    { icon: 'ph ph-gear-six', title: 'FEATURES.ITEMS.ACCOUNTING.TITLE', description: 'FEATURES.ITEMS.ACCOUNTING.DESCRIPTION' }
+    { icon: 'ph ph-gear-six', title: 'FEATURES.ITEMS.ACCOUNTING.TITLE', description: 'FEATURES.ITEMS.ACCOUNTING.DESCRIPTION' },
+    { icon: 'ph ph-calculator', title: 'FEATURES.ITEMS.RENTABILITY.TITLE', description: 'FEATURES.ITEMS.RENTABILITY.DESCRIPTION' }
   ];
 
   ngOnInit() {
     this.subscriptionService.loadPlans().subscribe(
       plans => this.plans.set(plans)
     );
+    
+    // Fetch real stats from API
+    this.publicStatsApi.getStats().subscribe({
+      next: (stats) => {
+        this.targetProperties = stats.propertiesCount || 100;
+        this.targetUsers = stats.usersCount || 50;
+        this.targetSatisfaction = stats.satisfactionRate || 98;
+      },
+      error: () => {
+        // Fallback values if API fails
+        this.targetProperties = 100;
+        this.targetUsers = 50;
+        this.targetSatisfaction = 98;
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -76,9 +99,12 @@ export class LandingPage implements OnInit {
   }
 
   private animateCounters() {
-    this.animateValue(this.propertiesCount, 5000, 2000);
-    this.animateValue(this.usersCount, 12000, 2500);
-    this.animateValue(this.satisfactionCount, 98, 2000);
+    // Wait a bit for API to return, then animate with real or fallback values
+    setTimeout(() => {
+      this.animateValue(this.propertiesCount, this.targetProperties || 100, 2000);
+      this.animateValue(this.usersCount, this.targetUsers || 50, 2500);
+      this.animateValue(this.satisfactionCount, this.targetSatisfaction || 98, 2000);
+    }, 500);
   }
 
   private animateValue(signal: any, target: number, duration: number) {
