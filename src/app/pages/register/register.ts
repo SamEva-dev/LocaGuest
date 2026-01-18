@@ -83,7 +83,7 @@ export class Register implements OnDestroy {
         return;
       }
       
-      await this.auth.register({ 
+      const result = await this.auth.register({ 
         email, 
         password,
         organizationName,
@@ -91,11 +91,22 @@ export class Register implements OnDestroy {
         lastName,
         phone
       });
-      this.toast.successDirect('Inscription réussie. Vous serez redirigé vers la page de login dans 5s.');
-      this.succesMessage = 'Inscription réussie. Vous serez redirigé vers la page de login dans 5s.';
-      this.redirectTimeoutId = window.setTimeout(() => {
-        this.router.navigate(['/login']);
-      }, 5000);
+      
+      // Check if this is a reactivated account (welcome back)
+      if (result && result.status === 'reactivated') {
+        this.toast.successDirect(result.message || 'Heureux de vous revoir! Votre compte a été réactivé.');
+        this.succesMessage = result.message || 'Heureux de vous revoir! Votre compte a été réactivé.';
+        // For reactivated accounts, redirect to app directly since they're already logged in
+        this.redirectTimeoutId = window.setTimeout(() => {
+          this.router.navigate(['/app']);
+        }, 2000);
+      } else {
+        this.toast.successDirect('Inscription réussie. Vous serez redirigé vers la page de login dans 5s.');
+        this.succesMessage = 'Inscription réussie. Vous serez redirigé vers la page de login dans 5s.';
+        this.redirectTimeoutId = window.setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 5000);
+      }
     
     } catch (error: any) {
       console.error('❌ Erreur register:', error);

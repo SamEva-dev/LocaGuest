@@ -103,11 +103,22 @@ export class AuthService {
     }
   }
 
-  async register(request: RegisterRequest): Promise<void> {
+  async register(request: RegisterRequest): Promise<RegisterResponse> {
     try {
       const res = await this.api.register(request).toPromise();
       if (!res) throw new Error('No response from API');
-      void res;
+      
+      // If account was reactivated, apply the login tokens
+      if (res.status === 'reactivated' && res.accessToken && res.refreshToken) {
+        this.applyLogin({
+          accessToken: res.accessToken,
+          refreshToken: res.refreshToken,
+          expiresIn: 900,
+          requiresMfa: false
+        });
+      }
+      
+      return res;
     } catch (err: any) {
       console.error('❌ Register error:', err);
       const backendMessage = this.getBackendErrorMessage(err);

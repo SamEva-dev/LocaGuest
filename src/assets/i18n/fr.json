@@ -991,7 +991,9 @@
       "PAYMENT_REMINDERS": "Rappels de Paiement",
       "PAYMENT_REMINDERS_DESC": "Rappels automatiques pour les échéances",
       "MONTHLY_REPORTS": "Rapports Mensuels",
-      "MONTHLY_REPORTS_DESC": "Rapport de performance mensuel"
+      "MONTHLY_REPORTS_DESC": "Rapport de performance mensuel",
+      "SAVE_SUCCESS": "Préférences de notification enregistrées",
+      "RESET_SUCCESS": "Préférences de notification réinitialisées"
     },
     "SECURITY": {
       "TITLE": "Sécurité",
@@ -1008,7 +1010,11 @@
       "ENABLE_2FA": "Activer 2FA",
       "ACTIVE_SESSIONS": "Sessions Actives",
       "CURRENT": "Actuel",
-      "DISCONNECT": "Déconnecter"
+      "DISCONNECT": "Déconnecter",
+      "PASSWORD_REQUIRED": "Veuillez remplir tous les champs de mot de passe",
+      "PASSWORDS_NOT_MATCH": "Les mots de passe ne correspondent pas",
+      "PASSWORD_CHANGED": "Mot de passe modifié avec succès",
+      "PASSWORD_CHANGE_ERROR": "Erreur lors du changement de mot de passe"
     },
     "BILLING": {
       "TITLE": "Facturation et Abonnement",
@@ -1039,7 +1045,22 @@
       "CURRENCY": "Devise",
       "DANGER_ZONE": "Zone de Danger",
       "DELETE_ACCOUNT": "Supprimer le compte",
-      "DELETE_ACCOUNT_DESC": "Cette action est irréversible et supprimera toutes vos données"
+      "DELETE_ACCOUNT_DESC": "Cette action est irréversible et supprimera toutes vos données",
+      "SAVE_SUCCESS": "Préférences enregistrées",
+      "RESET_SUCCESS": "Préférences réinitialisées",
+      "DELETE_ACCOUNT_MODAL": {
+        "TITLE": "Supprimer votre compte",
+        "SUBTITLE": "Cette action est définitive et ne peut pas être annulée.",
+        "WARNING_TITLE": "Attention, vous allez perdre :",
+        "WARNING_1": "Tous vos biens immobiliers et leurs données",
+        "WARNING_2": "L'historique de tous vos locataires",
+        "WARNING_3": "Tous vos contrats et documents",
+        "WARNING_4": "L'historique de vos paiements et factures",
+        "CONFIRM_LABEL": "Pour confirmer, tapez SUPPRIMER ci-dessous :",
+        "CONFIRM_HINT": "Tapez SUPPRIMER pour confirmer",
+        "CANCEL": "Annuler",
+        "CONFIRM_BUTTON": "Supprimer définitivement"
+      }
     },
     "INTERFACE": {
       "TITLE": "Configuration de l'Interface",

@@ -12,6 +12,9 @@ import { Permissions } from '../../core/auth/permissions';
 import { TeamSettingsComponent } from './tabs/team-settings/team-settings-updated.component';
 import { TwoFactorSettingsComponent } from './tabs/two-factor-settings/two-factor-settings.component';
 import { OrganizationSettingsComponent } from './tabs/organization-settings/organization-settings.component';
+import { ToastService } from '../../core/ui/toast.service';
+import { AuthApi } from '../../core/api/auth.api';
+import { environment } from '../../../environnements/environment.dev';
 
 @Component({
   selector: 'settings-tab',
@@ -28,8 +31,33 @@ export class SettingsTab implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private auth = inject(AuthService);
+  private toast = inject(ToastService);
+  private authApi = inject(AuthApi);
   
   activeSubTab = signal('profile');
+  
+  // Loading states
+  isSavingProfile = signal(false);
+  isSavingNotifications = signal(false);
+  isSavingPreferences = signal(false);
+  isChangingPassword = signal(false);
+  isDeletingAccount = signal(false);
+  
+  // Delete account modal
+  showDeleteAccountModal = signal(false);
+  deleteConfirmText = '';
+  
+  // Password change
+  currentPassword = '';
+  newPassword = '';
+  confirmPassword = '';
+  
+  // Password error states
+  passwordErrors = signal<{current: boolean; new: boolean; confirm: boolean}>({
+    current: false,
+    new: false,
+    confirm: false
+  });
 
   // Profile settings
   profileData = signal<Partial<UserProfile>>({
@@ -240,6 +268,7 @@ export class SettingsTab implements OnInit {
   }
 
   saveProfile() {
+    this.isSavingProfile.set(true);
     const profile = this.profileData();
     this.usersApi.updateUserProfile({
       firstName: profile.firstName || '',
@@ -251,28 +280,63 @@ export class SettingsTab implements OnInit {
     }).subscribe({
       next: (updatedProfile) => {
         this.profileData.set(updatedProfile);
+        this.toast.success('SETTINGS.PROFILE.SAVE_SUCCESS');
+        this.isSavingProfile.set(false);
       },
-      error: (err) => console.error('Error saving profile:', err)
+      error: (err) => {
+        console.error('Error saving profile:', err);
+        this.toast.error('SETTINGS.PROFILE.SAVE_ERROR');
+        this.isSavingProfile.set(false);
+      }
     });
+  }
+  
+  resetProfile() {
+    this.loadSettings();
+    this.toast.info('SETTINGS.PROFILE.RESET_SUCCESS');
   }
 
   saveNotifications() {
+    this.isSavingNotifications.set(true);
     this.usersApi.updateNotificationSettings(this.notifications()).subscribe({
       next: (updatedNotifications) => {
         this.notifications.set(updatedNotifications);
+        this.toast.success('SETTINGS.NOTIFICATIONS.SAVE_SUCCESS');
+        this.isSavingNotifications.set(false);
       },
-      error: (err) => console.error('Error saving notifications:', err)
+      error: (err) => {
+        console.error('Error saving notifications:', err);
+        this.toast.error('SETTINGS.NOTIFICATIONS.SAVE_ERROR');
+        this.isSavingNotifications.set(false);
+      }
     });
+  }
+  
+  resetNotifications() {
+    this.loadSettings();
+    this.toast.info('SETTINGS.NOTIFICATIONS.RESET_SUCCESS');
   }
 
   savePreferences() {
+    this.isSavingPreferences.set(true);
     this.usersApi.updateUserPreferences(this.preferences()).subscribe({
       next: (updatedPreferences) => {
         this.preferences.set(updatedPreferences);
         this.themeService.setDarkMode(updatedPreferences.darkMode);
+        this.toast.success('SETTINGS.PREFERENCES.SAVE_SUCCESS');
+        this.isSavingPreferences.set(false);
       },
-      error: (err) => console.error('Error saving preferences:', err)
+      error: (err) => {
+        console.error('Error saving preferences:', err);
+        this.toast.error('SETTINGS.PREFERENCES.SAVE_ERROR');
+        this.isSavingPreferences.set(false);
+      }
     });
+  }
+  
+  resetPreferences() {
+    this.loadSettings();
+    this.toast.info('SETTINGS.PREFERENCES.RESET_SUCCESS');
   }
 
   changePlan() {
@@ -318,9 +382,89 @@ export class SettingsTab implements OnInit {
     }
   }
 
+  openDeleteAccountModal() {
+    this.showDeleteAccountModal.set(true);
+    this.deleteConfirmText = '';
+  }
+  
+  closeDeleteAccountModal() {
+    this.showDeleteAccountModal.set(false);
+    this.deleteConfirmText = '';
+  }
+  
   deleteAccount() {
-    if (confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) {
+    if (this.deleteConfirmText !== 'SUPPRIMER') {
+      this.toast.error('SETTINGS.PREFERENCES.DELETE_CONFIRM_MISMATCH');
+      return;
     }
+    
+    this.isDeletingAccount.set(true);
+    this.authApi.deactivateAccount().subscribe({
+      next: () => {
+        this.toast.success('SETTINGS.PREFERENCES.DELETE_SUCCESS');
+        this.isDeletingAccount.set(false);
+        this.closeDeleteAccountModal();
+        this.auth.logout();
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Error deleting account:', err);
+        this.toast.error('SETTINGS.PREFERENCES.DELETE_ERROR');
+        this.isDeletingAccount.set(false);
+      }
+    });
+  }
+  
+  changePassword() {
+    // Reset errors
+    this.passwordErrors.set({ current: false, new: false, confirm: false });
+    
+    if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
+      this.passwordErrors.set({
+        current: !this.currentPassword,
+        new: !this.newPassword,
+        confirm: !this.confirmPassword
+      });
+      this.toast.error('SETTINGS.SECURITY.PASSWORD_REQUIRED');
+      return;
+    }
+    
+    if (this.newPassword !== this.confirmPassword) {
+      this.passwordErrors.set({ current: false, new: true, confirm: true });
+      this.toast.error('SETTINGS.SECURITY.PASSWORDS_NOT_MATCH');
+      return;
+    }
+    
+    if (this.newPassword.length < 8) {
+      this.passwordErrors.set({ current: false, new: true, confirm: false });
+      this.toast.error('SETTINGS.SECURITY.PASSWORD_TOO_SHORT');
+      return;
+    }
+    
+    this.isChangingPassword.set(true);
+    this.authApi.changePassword(this.currentPassword, this.newPassword).subscribe({
+      next: () => {
+        this.toast.success('SETTINGS.SECURITY.PASSWORD_CHANGED');
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+        this.passwordErrors.set({ current: false, new: false, confirm: false });
+        this.isChangingPassword.set(false);
+      },
+      error: (err) => {
+        console.error('Error changing password:', err);
+        const errorMsg = err.error?.error || err.error?.message || 'SETTINGS.SECURITY.PASSWORD_CHANGE_ERROR';
+        this.toast.errorDirect(errorMsg);
+        this.isChangingPassword.set(false);
+      }
+    });
+  }
+  
+  getProfilePhotoUrl(): string | null {
+    const photoUrl = this.profileData().photoUrl;
+    if (!photoUrl) return null;
+    if (photoUrl.startsWith('http')) return photoUrl;
+    return `${environment.BASE_LOCAGUEST_API}${photoUrl}`;
   }
 
   toggleDarkMode() {

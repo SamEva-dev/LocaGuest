@@ -940,7 +940,9 @@
       "PAYMENT_REMINDERS": "Payment Reminders",
       "PAYMENT_REMINDERS_DESC": "Automatic reminders for deadlines",
       "MONTHLY_REPORTS": "Monthly Reports",
-      "MONTHLY_REPORTS_DESC": "Monthly performance report"
+      "MONTHLY_REPORTS_DESC": "Monthly performance report",
+      "SAVE_SUCCESS": "Notification preferences saved",
+      "RESET_SUCCESS": "Notification preferences reset"
     },
     "SECURITY": {
       "TITLE": "Security",
@@ -957,7 +959,11 @@
       "ENABLE_2FA": "Enable 2FA",
       "ACTIVE_SESSIONS": "Active Sessions",
       "CURRENT": "Current",
-      "DISCONNECT": "Disconnect"
+      "DISCONNECT": "Disconnect",
+      "PASSWORD_REQUIRED": "Please fill in all password fields",
+      "PASSWORDS_NOT_MATCH": "Passwords do not match",
+      "PASSWORD_CHANGED": "Password changed successfully",
+      "PASSWORD_CHANGE_ERROR": "Error changing password"
     },
     "BILLING": {
       "TITLE": "Billing and Subscription",
@@ -988,7 +994,22 @@
       "CURRENCY": "Currency",
       "DANGER_ZONE": "Danger Zone",
       "DELETE_ACCOUNT": "Delete account",
-      "DELETE_ACCOUNT_DESC": "This action is irreversible and will delete all your data"
+      "DELETE_ACCOUNT_DESC": "This action is irreversible and will delete all your data",
+      "SAVE_SUCCESS": "Preferences saved",
+      "RESET_SUCCESS": "Preferences reset",
+      "DELETE_ACCOUNT_MODAL": {
+        "TITLE": "Delete your account",
+        "SUBTITLE": "This action is permanent and cannot be undone.",
+        "WARNING_TITLE": "Warning, you will lose:",
+        "WARNING_1": "All your properties and their data",
+        "WARNING_2": "The history of all your tenants",
+        "WARNING_3": "All your contracts and documents",
+        "WARNING_4": "The history of your payments and invoices",
+        "CONFIRM_LABEL": "To confirm, type DELETE below:",
+        "CONFIRM_HINT": "Type DELETE to confirm",
+        "CANCEL": "Cancel",
+        "CONFIRM_BUTTON": "Delete permanently"
+      }
     },
     "INTERFACE": {
       "TITLE": "Interface Configuration",

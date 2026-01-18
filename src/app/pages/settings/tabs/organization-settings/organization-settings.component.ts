@@ -5,6 +5,7 @@ import { OrganizationsService, Organization } from '../../../../core/services/or
 import { BrandingThemeService } from '../../../../core/services/branding-theme.service';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { environment } from '../../../../../environnements/environment.dev';
 
 interface OrganizationSettings {
   id: string;
@@ -178,5 +179,12 @@ export class OrganizationSettingsComponent implements OnInit {
       secondaryColor: '#10B981',
       accentColor: '#F59E0B'
     });
+  }
+
+  getLogoUrl(): string | null {
+    const logoUrl = this.organization().logoUrl;
+    if (!logoUrl) return null;
+    if (logoUrl.startsWith('http')) return logoUrl;
+    return `${environment.BASE_LOCAGUEST_API}${logoUrl}`;
   }
 }

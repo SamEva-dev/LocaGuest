@@ -37,6 +37,9 @@ export interface RegisterResponse {
   userId: string;
   email: string;
   message?: string;
+  status?: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export interface MfaLoginRequest {

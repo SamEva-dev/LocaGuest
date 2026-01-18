@@ -75,4 +75,12 @@ export class AuthApi {
   revokeAllDevices() {
     return this.http.delete<void>(`${this.base}/Auth/devices`);
   }
+
+  changePassword(currentPassword: string, newPassword: string) {
+    return this.http.post<void>(`${this.base}/Auth/change-password`, { currentPassword, newPassword });
+  }
+
+  deactivateAccount() {
+    return this.http.post<void>(`${this.base}/Auth/deactivate`, {});
+  }
 }
