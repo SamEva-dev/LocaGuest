@@ -97,54 +97,6 @@
       "DOWN": "Down"
     }
   },
-  "SETTINGS": {
-    "TABS": {
-      "PROFILE": "Profile",
-      "ORGANIZATION": "Organization",
-      "TEAM": "Team",
-      "SECURITY": "Security",
-      "NOTIFICATIONS": "Notifications",
-      "BILLING": "Billing",
-      "PREFERENCES": "Preferences",
-      "INTERFACE": "Interface"
-    },
-    "NOTIFICATIONS": {
-      "ITEMS": {
-        "PAYMENT_RECEIVED": {
-          "TITLE": "Payment received",
-          "DESC": "Get notified when a payment is received"
-        },
-        "PAYMENT_OVERDUE": {
-          "TITLE": "Payment overdue",
-          "DESC": "Alerts for late payments"
-        },
-        "PAYMENT_REMINDER": {
-          "TITLE": "Payment reminder",
-          "DESC": "Reminders before due date"
-        },
-        "CONTRACT_SIGNED": {
-          "TITLE": "Contract signed",
-          "DESC": "Notify me when a contract is signed"
-        },
-        "CONTRACT_EXPIRING": {
-          "TITLE": "Contract expiring",
-          "DESC": "Alert before a lease expires"
-        },
-        "NEW_TENANT_REQUEST": {
-          "TITLE": "New tenant request",
-          "DESC": "Notifications for new tenant requests"
-        },
-        "SYSTEM_UPDATES": {
-          "TITLE": "System updates",
-          "DESC": "New features and improvements"
-        },
-        "MARKETING_EMAILS": {
-          "TITLE": "Marketing emails",
-          "DESC": "Tips and special offers"
-        }
-      }
-    }
-  },
   "NOTIFICATIONS": {
     "TITLE": "Notifications",
     "EMPTY": "No notifications",
@@ -292,8 +244,6 @@
     "YEAR": "Year",
     "NO_TENANTS": "No tenants",
     "NO_DOCUMENTS": "No documents",
-    "STATUS_OCCUPIED": "Occupied",
-    "STATUS_VACANT": "Vacant",
     "FINANCIAL_ANALYSIS": "Financial Analysis",
     "RECENT_PAYMENTS": "Recent Payments",
     "OVERVIEW": "Overview",
@@ -613,6 +563,73 @@
     "ERROR": {
       "REQUIRED_FIELDS": "Please fill in all required fields.",
       "SEND_FAILED": "Failed to send message. Please try again."
+    }
+  },
+  "TRUST": {
+    "TITLE": "Trusted by",
+    "COMPANIES": "Companies",
+    "SATISFACTION": "Satisfaction",
+    "SECURE": "100% Secure"
+  },
+  "SURVEY": {
+    "NOTIFICATION": {
+      "TITLE": "Share your feedback",
+      "DESC": "Help us improve LocaGuest (30 seconds)"
+    },
+    "TITLE": "Satisfaction survey",
+    "SUBTITLE": "Your feedback helps us improve the product",
+    "RATING_LABEL": "How satisfied are you overall?",
+    "RATING_HINT": "1 = very dissatisfied, 5 = excellent",
+    "COMMENT_LABEL": "A comment (optional)",
+    "COMMENT_PLACEHOLDER": "Tell us what you'd like to improve...",
+    "SEND": "Send",
+    "SENDING": "Sending...",
+    "SUCCESS": "Thanks for your feedback!",
+    "ERROR": {
+      "RATING_REQUIRED": "Please select a rating.",
+      "SEND_FAILED": "Failed to send your feedback. Please try again."
+    }
+  },
+  "LANDING": {
+    "PRICING": {
+      "TITLE": "Choose the plan that fits you",
+      "SUBTITLE": "Simple and transparent pricing. Change plans anytime.",
+      "TOGGLE": {
+        "MONTHLY": "Monthly",
+        "ANNUAL": "Annual",
+        "SAVING": "-20%"
+      },
+      "BADGE": {
+        "POPULAR": "⭐ Popular"
+      },
+      "PRICE": {
+        "QUOTE": "Custom quote",
+        "FREE": "Free",
+        "PER_MONTH": "/month",
+        "BILLED_ANNUALLY": "€{{price}} billed annually"
+      },
+      "CTA": {
+        "CONTACT_SALES": "Contact us",
+        "START_FREE": "🚀 Start for free",
+        "CHOOSE_PLAN": "Choose this plan"
+      },
+      "UNLIMITED": "Unlimited",
+      "FEATURES": {
+        "SCENARIOS": "scenarios",
+        "EXPORTS_PER_MONTH": "exports/month",
+        "VERSIONS": "versions",
+        "AI_SUGGESTIONS_PER_MONTH": "AI suggestions/month",
+        "SHARING_WITH": "Sharing with",
+        "USERS": "users",
+        "PRIVATE_TEMPLATES": "Private templates",
+        "ADVANCED_COMPARISON": "Advanced comparison",
+        "API": "API",
+        "PRIORITY_SUPPORT": "Priority support"
+      },
+      "API": {
+        "READ": "Read",
+        "READ_WRITE": "R+W"
+      }
     }
   },
   "HELP_PAGE": {

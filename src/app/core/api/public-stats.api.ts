@@ -7,6 +7,8 @@ export interface PublicStats {
   propertiesCount: number;
   usersCount: number;
   satisfactionRate: number;
+  organizationsCount: number;
+  averageRating: number;
 }
 
 @Injectable({ providedIn: 'root' })

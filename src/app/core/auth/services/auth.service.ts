@@ -17,6 +17,8 @@ export class AuthService {
   user = this.state.user.asReadonly();
   isAuthenticated = this.state.isAuthenticated;
 
+  private readonly satisfactionSurveyStorageKey = 'satisfactionSurvey.submitted.session.v1';
+
   private getBackendErrorMessage(err: any): string | null {
     const body = err?.error;
     if (!body) return null;
@@ -89,6 +91,9 @@ export class AuthService {
       throw new Error('MFA required');
     } else {
       this.applyLogin(res);
+      try {
+        sessionStorage.removeItem(this.satisfactionSurveyStorageKey);
+      } catch {}
     }
       this.toast.success('AUTH.LOGIN_SUCCESS');
     } catch (err: any) {
@@ -182,6 +187,9 @@ export class AuthService {
     this.state.tokens.set(null);
     this.state.user.set(null);
     this.mfaPendingUser.set(null);
+    try {
+      sessionStorage.removeItem(this.satisfactionSurveyStorageKey);
+    } catch {}
     this.toast.info('AUTH.LOGOUT_SUCCESS');
   }
 

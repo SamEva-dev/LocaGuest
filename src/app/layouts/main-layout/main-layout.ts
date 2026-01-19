@@ -9,10 +9,11 @@ import { ToastService } from '../../core/ui/toast.service';
 import { ConfirmService } from '../../core/ui/confirm.service';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 import { BrandingThemeService } from '../../core/services/branding-theme.service';
+import { SatisfactionSurveyModal } from '../../shared/components/satisfaction-survey-modal/satisfaction-survey-modal';
 
 @Component({
   selector: 'main-layout',
-  imports: [CommonModule, RouterOutlet, TranslatePipe, ConfirmModal],
+  imports: [CommonModule, RouterOutlet, TranslatePipe, ConfirmModal, SatisfactionSurveyModal],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
@@ -32,6 +33,9 @@ export class MainLayout {
   activeTabId = this.tabManager.activeTabId;
   showUserMenu = signal(false);
   showNotificationsMenu = signal(false);
+
+  showSatisfactionSurveyModal = signal(false);
+  private readonly satisfactionSurveyStorageKey = 'satisfactionSurvey.submitted.session.v1';
   
   // ✅ Getters pour template
   toastItems = this.toasts.items;
@@ -111,6 +115,33 @@ export class MainLayout {
       });
 
       this.tabManager.setActiveTab('dashboard');
+    }
+  }
+
+  hasSubmittedSatisfactionSurvey(): boolean {
+    try {
+      return sessionStorage.getItem(this.satisfactionSurveyStorageKey) === 'true';
+    } catch {
+      return false;
+    }
+  }
+
+  openSatisfactionSurvey() {
+    this.showNotificationsMenu.set(false);
+    this.showSatisfactionSurveyModal.set(true);
+  }
+
+  closeSatisfactionSurvey() {
+    this.showSatisfactionSurveyModal.set(false);
+  }
+
+  onSatisfactionSurveySubmitted() {
+    try {
+      sessionStorage.setItem(this.satisfactionSurveyStorageKey, 'true');
+    } catch {}
+    this.showSatisfactionSurveyModal.set(false);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('satisfactionSurvey.submitted'));
     }
   }
 

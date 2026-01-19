@@ -577,6 +577,73 @@
       "SEND_FAILED": "Erreur lors de l'envoi du message. Veuillez réessayer."
     }
   },
+  "TRUST": {
+    "TITLE": "Ils nous font confiance",
+    "COMPANIES": "Entreprises",
+    "SATISFACTION": "Satisfaction",
+    "SECURE": "100% Sécurisé"
+  },
+  "SURVEY": {
+    "NOTIFICATION": {
+      "TITLE": "Donnez votre avis",
+      "DESC": "Aidez-nous à améliorer LocaGuest (30 secondes)"
+    },
+    "TITLE": "Sondage de satisfaction",
+    "SUBTITLE": "Votre retour nous aide à améliorer le produit",
+    "RATING_LABEL": "Quelle est votre satisfaction globale ?",
+    "RATING_HINT": "1 = très insatisfait, 5 = excellent",
+    "COMMENT_LABEL": "Un commentaire (optionnel)",
+    "COMMENT_PLACEHOLDER": "Dites-nous ce que vous aimeriez améliorer...",
+    "SEND": "Envoyer",
+    "SENDING": "Envoi...",
+    "SUCCESS": "Merci pour votre retour !",
+    "ERROR": {
+      "RATING_REQUIRED": "Veuillez sélectionner une note.",
+      "SEND_FAILED": "Impossible d'envoyer votre avis. Veuillez réessayer."
+    }
+  },
+  "LANDING": {
+    "PRICING": {
+      "TITLE": "Choisissez le plan qui vous convient",
+      "SUBTITLE": "Tarifs simples et transparents. Changez de plan à tout moment.",
+      "TOGGLE": {
+        "MONTHLY": "Mensuel",
+        "ANNUAL": "Annuel",
+        "SAVING": "-20%"
+      },
+      "BADGE": {
+        "POPULAR": "⭐ Populaire"
+      },
+      "PRICE": {
+        "QUOTE": "Sur devis",
+        "FREE": "Gratuit",
+        "PER_MONTH": "/mois",
+        "BILLED_ANNUALLY": "{{price}}€ facturé annuellement"
+      },
+      "CTA": {
+        "CONTACT_SALES": "Nous contacter",
+        "START_FREE": "🚀 Commencer gratuitement",
+        "CHOOSE_PLAN": "Choisir ce plan"
+      },
+      "UNLIMITED": "Illimité",
+      "FEATURES": {
+        "SCENARIOS": "scénarios",
+        "EXPORTS_PER_MONTH": "exports/mois",
+        "VERSIONS": "versions",
+        "AI_SUGGESTIONS_PER_MONTH": "suggestions IA/mois",
+        "SHARING_WITH": "Partage avec",
+        "USERS": "utilisateurs",
+        "PRIVATE_TEMPLATES": "Templates privés",
+        "ADVANCED_COMPARISON": "Comparaison avancée",
+        "API": "API",
+        "PRIORITY_SUPPORT": "Support prioritaire"
+      },
+      "API": {
+        "READ": "Read",
+        "READ_WRITE": "R+W"
+      }
+    }
+  },
   "HELP_PAGE": {
     "TITLE": "Centre d'aide",
     "SUBTITLE": "Trouvez rapidement les réponses à vos questions",

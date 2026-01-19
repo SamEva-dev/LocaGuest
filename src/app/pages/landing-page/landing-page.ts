@@ -24,11 +24,16 @@ export class LandingPage implements OnInit {
   propertiesCount = signal(0);
   usersCount = signal(0);
   satisfactionCount = signal(0);
+
+  organizationsCount = signal(0);
+  averageRating = signal(0);
   
   // Target values for animation (fetched from API)
   private targetProperties = 0;
   private targetUsers = 0;
   private targetSatisfaction = 98;
+  private targetOrganizations = 0;
+  private targetAverageRating = 4.8;
 
   // Pricing plans
   plans = signal<Plan[]>([]);
@@ -48,19 +53,46 @@ export class LandingPage implements OnInit {
     this.subscriptionService.loadPlans().subscribe(
       plans => this.plans.set(plans)
     );
-    
+
     // Fetch real stats from API
+    this.loadPublicStats();
+
+    // Refresh stats after a survey submission (emitted from main layout)
+    if (isPlatformBrowser(this.platformId)) {
+      window.addEventListener('satisfactionSurvey.submitted', this.onSurveySubmitted);
+    }
+  }
+
+  private onSurveySubmitted = () => {
+    this.loadPublicStats(true);
+  };
+
+  private loadPublicStats(animate = false) {
     this.publicStatsApi.getStats().subscribe({
       next: (stats) => {
         this.targetProperties = stats.propertiesCount || 100;
         this.targetUsers = stats.usersCount || 50;
         this.targetSatisfaction = stats.satisfactionRate || 98;
+
+        this.targetOrganizations = stats.organizationsCount || 100;
+        this.targetAverageRating = stats.averageRating || 4.8;
+
+        if (animate && isPlatformBrowser(this.platformId)) {
+          this.animateCounters();
+        }
       },
       error: () => {
         // Fallback values if API fails
         this.targetProperties = 100;
         this.targetUsers = 50;
         this.targetSatisfaction = 98;
+
+        this.targetOrganizations = 100;
+        this.targetAverageRating = 4.8;
+
+        if (animate && isPlatformBrowser(this.platformId)) {
+          this.animateCounters();
+        }
       }
     });
   }
@@ -104,6 +136,9 @@ export class LandingPage implements OnInit {
       this.animateValue(this.propertiesCount, this.targetProperties || 100, 2000);
       this.animateValue(this.usersCount, this.targetUsers || 50, 2500);
       this.animateValue(this.satisfactionCount, this.targetSatisfaction || 98, 2000);
+
+      this.animateValue(this.organizationsCount, this.targetOrganizations || 100, 2200);
+      this.animateDecimal(this.averageRating, this.targetAverageRating || 4.8, 1200);
     }, 500);
   }
 
@@ -119,6 +154,22 @@ export class LandingPage implements OnInit {
         clearInterval(timer);
       } else {
         signal.set(Math.floor(current));
+      }
+    }, 16);
+  }
+
+  private animateDecimal(signal: any, target: number, duration: number) {
+    const start = 0;
+    const increment = target / (duration / 16);
+    let current = start;
+
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        signal.set(Number(target.toFixed(1)));
+        clearInterval(timer);
+      } else {
+        signal.set(Number(current.toFixed(1)));
       }
     }, 16);
   }
