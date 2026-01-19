@@ -1,19 +1,23 @@
 import { Component, inject, signal, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 import { AnalyticsService } from '../../../../core/services/analytics.service';
 import { ProfitabilityStats, RevenueEvolution, PropertyPerformance } from '../../../../core/api/analytics.api';
+import { ProfitabilityTourService } from './profitability-tour.service';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'profitability-tab',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './profitability-tab.html'
 })
 export class ProfitabilityTab implements OnInit, AfterViewInit {
   private analyticsService = inject(AnalyticsService);
+  private translate = inject(TranslateService);
+  private tour = inject(ProfitabilityTourService);
   
   @ViewChild('revenueChart') revenueChartRef!: ElementRef<HTMLCanvasElement>;
   
@@ -37,6 +41,10 @@ export class ProfitabilityTab implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     // Le graphique sera créé après le chargement des données
+  }
+
+  startTour() {
+    this.tour.start();
   }
 
   loadStats() {
@@ -93,7 +101,7 @@ export class ProfitabilityTab implements OnInit, AfterViewInit {
         labels: data.map(d => d.month),
         datasets: [
           {
-            label: 'Revenus',
+            label: this.translate.instant('PROFITABILITY.CHART.REVENUE'),
             data: data.map(d => d.revenue),
             borderColor: 'rgb(16, 185, 129)',
             backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -101,7 +109,7 @@ export class ProfitabilityTab implements OnInit, AfterViewInit {
             tension: 0.4
           },
           {
-            label: 'Charges',
+            label: this.translate.instant('PROFITABILITY.CHART.EXPENSES'),
             data: data.map(d => d.expenses),
             borderColor: 'rgb(239, 68, 68)',
             backgroundColor: 'rgba(239, 68, 68, 0.1)',

@@ -1,20 +1,31 @@
 <div class="p-6 space-y-6">
   <!-- Header -->
-  <div class="flex items-center justify-between">
+  <div data-tour="profitability.header" class="flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold">Comptabilité & Projections</h1>
-      <p class="text-slate-500 text-sm">Analysez vos performances financières</p>
+      <h1 class="text-2xl font-bold">{{ 'PROFITABILITY.HEADER.TITLE' | translate }}</h1>
+      <p class="text-slate-500 text-sm">{{ 'PROFITABILITY.HEADER.SUBTITLE' | translate }}</p>
     </div>
-    <div class="flex gap-3">
+    <div data-tour="profitability.filters" class="flex gap-3">
+      <button
+        data-tour="profitability.tour-start"
+        (click)="startTour()"
+        class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition inline-flex items-center gap-2"
+        type="button"
+      >
+        <i class="ph ph-question"></i>
+        <span>{{ 'TOUR.PROFITABILITY.START' | translate }}</span>
+      </button>
       <select 
+        data-tour="profitability.filters.period"
         (change)="onPeriodChange($event)"
         [value]="selectedPeriod()"
         class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700">
         @for (period of periods; track period) {
-          <option [value]="period">{{ period }} mois</option>
+          <option [value]="period">{{ period }} {{ 'PROFITABILITY.FILTERS.MONTHS' | translate }}</option>
         }
       </select>
       <select 
+        data-tour="profitability.filters.year"
         (change)="onYearChange($event)"
         [value]="selectedYear()"
         class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700">
@@ -26,10 +37,10 @@
   </div>
 
   <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+  <div data-tour="profitability.stats" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div data-tour="profitability.stats.revenue" class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-sm text-slate-500">Revenus mensuels</p>
+        <p class="text-sm text-slate-500">{{ 'PROFITABILITY.STATS.MONTHLY_REVENUE' | translate }}</p>
         <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
           <i class="ph ph-currency-eur text-xl text-emerald-600"></i>
         </div>
@@ -40,13 +51,13 @@
         <span [ngClass]="getChangeColor(stats()?.revenueChangePercent ?? 0)">
           {{ (stats()?.revenueChangePercent ?? 0) >= 0 ? '+' : '' }}{{ (stats()?.revenueChangePercent ?? 0).toFixed(1) }}%
         </span>
-        <span class="text-slate-400">vs mois dernier</span>
+        <span class="text-slate-400">{{ 'PROFITABILITY.STATS.VS_LAST_MONTH' | translate }}</span>
       </div>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+    <div data-tour="profitability.stats.expenses" class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-sm text-slate-500">Charges mensuelles</p>
+        <p class="text-sm text-slate-500">{{ 'PROFITABILITY.STATS.MONTHLY_EXPENSES' | translate }}</p>
         <div class="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
           <i class="ph ph-arrow-down text-xl text-red-600"></i>
         </div>
@@ -57,13 +68,13 @@
         <span [ngClass]="getChangeColor(stats()?.expensesChangePercent ?? 0)">
           {{ (stats()?.expensesChangePercent ?? 0) >= 0 ? '+' : '' }}{{ (stats()?.expensesChangePercent ?? 0).toFixed(1) }}%
         </span>
-        <span class="text-slate-400">vs mois dernier</span>
+        <span class="text-slate-400">{{ 'PROFITABILITY.STATS.VS_LAST_MONTH' | translate }}</span>
       </div>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+    <div data-tour="profitability.stats.net-profit" class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-sm text-slate-500">Bénéfice net</p>
+        <p class="text-sm text-slate-500">{{ 'PROFITABILITY.STATS.NET_PROFIT' | translate }}</p>
         <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
           <i class="ph ph-calculator text-xl text-blue-600"></i>
         </div>
@@ -74,44 +85,44 @@
         <span [ngClass]="getChangeColor(stats()?.profitChangePercent ?? 0)">
           {{ (stats()?.profitChangePercent ?? 0) >= 0 ? '+' : '' }}{{ (stats()?.profitChangePercent ?? 0).toFixed(1) }}%
         </span>
-        <span class="text-slate-400">vs mois dernier</span>
+        <span class="text-slate-400">{{ 'PROFITABILITY.STATS.VS_LAST_MONTH' | translate }}</span>
       </div>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+    <div data-tour="profitability.stats.rate" class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-sm text-slate-500">Taux de rentabilité</p>
+        <p class="text-sm text-slate-500">{{ 'PROFITABILITY.STATS.PROFITABILITY_RATE' | translate }}</p>
         <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
           <i class="ph ph-chart-pie text-xl text-purple-600"></i>
         </div>
       </div>
       <p class="text-2xl font-bold">{{ (stats()?.profitabilityRate ?? 0).toFixed(1) }}%</p>
       <p class="text-sm text-slate-400 mt-1">
-        <i class="ph ph-target text-emerald-500"></i> Objectif {{ stats()?.targetRate }}%
+        <i class="ph ph-target text-emerald-500"></i> {{ 'PROFITABILITY.STATS.TARGET' | translate }} {{ stats()?.targetRate }}%
       </p>
     </div>
   </div>
 
   <!-- Revenue Evolution Chart -->
-  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+  <div data-tour="profitability.chart" class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
     <h2 class="text-lg font-semibold mb-4">
       <i class="ph ph-chart-line text-emerald-600 mr-2"></i>
-      Évolution des revenus
+      {{ 'PROFITABILITY.REVENUE_EVOLUTION.TITLE' | translate }}
     </h2>
-    <p class="text-sm text-slate-500 mb-4">Comparaison revenus vs charges ({{ selectedPeriod() }} derniers mois)</p>
+    <p class="text-sm text-slate-500 mb-4">{{ 'PROFITABILITY.REVENUE_EVOLUTION.SUBTITLE' | translate:{ period: selectedPeriod() } }}</p>
     <div class="h-64">
       <canvas #revenueChart></canvas>
     </div>
   </div>
 
   <!-- Property Performance Table -->
-  <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+  <div data-tour="profitability.performance" class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
     <div class="p-6 border-b border-slate-200 dark:border-slate-700">
       <h2 class="text-lg font-semibold">
         <i class="ph ph-buildings text-blue-600 mr-2"></i>
-        Performance par bien
+        {{ 'PROFITABILITY.PERFORMANCE.TITLE' | translate }}
       </h2>
-      <p class="text-sm text-slate-500 mt-1">Analyse comparative de la rentabilité de chaque bien</p>
+      <p class="text-sm text-slate-500 mt-1">{{ 'PROFITABILITY.PERFORMANCE.SUBTITLE' | translate }}</p>
     </div>
     <div class="divide-y divide-slate-200 dark:divide-slate-700">
       @if (isLoading()) {
@@ -121,7 +132,7 @@
       } @else if (performance().length === 0) {
         <div class="p-12 text-center text-slate-500">
           <i class="ph ph-buildings text-4xl mb-2"></i>
-          <p>Aucune donnée de performance disponible</p>
+          <p>{{ 'PROFITABILITY.PERFORMANCE.EMPTY' | translate }}</p>
         </div>
       } @else {
         @for (prop of performance(); track prop.propertyId) {
@@ -130,9 +141,9 @@
               <div class="flex-1">
                 <h3 class="font-medium">{{ prop.propertyName }}</h3>
                 <div class="flex items-center gap-4 mt-1 text-sm text-slate-500">
-                  <span>Revenus: <span class="text-emerald-600 font-medium">{{ prop.revenue.toLocaleString() }}€</span></span>
+                  <span>{{ 'PROFITABILITY.PERFORMANCE.REVENUE' | translate }}: <span class="text-emerald-600 font-medium">{{ prop.revenue.toLocaleString() }}€</span></span>
                   <span class="text-slate-300">|</span>
-                  <span>Charges: <span class="text-red-600 font-medium">{{ prop.expenses.toLocaleString() }}€</span></span>
+                  <span>{{ 'PROFITABILITY.PERFORMANCE.EXPENSES' | translate }}: <span class="text-red-600 font-medium">{{ prop.expenses.toLocaleString() }}€</span></span>
                 </div>
               </div>
               <div class="text-right">
@@ -141,9 +152,9 @@
                   'bg-orange-100 text-orange-700 dark:bg-orange-900/30': prop.roi >= 5 && prop.roi < 8,
                   'bg-red-100 text-red-700 dark:bg-red-900/30': prop.roi < 5
                 }">
-                  <span class="font-semibold">{{ prop.roi }}%</span> rendement
+                  <span class="font-semibold">{{ prop.roi }}%</span> {{ 'PROFITABILITY.PERFORMANCE.ROI_SUFFIX' | translate }}
                 </div>
-                <p class="text-xs text-slate-400 mt-1">Bénéfice: {{ prop.netProfit.toLocaleString() }}€</p>
+                <p class="text-xs text-slate-400 mt-1">{{ 'PROFITABILITY.PERFORMANCE.NET_PROFIT' | translate }}: {{ prop.netProfit.toLocaleString() }}€</p>
               </div>
             </div>
           </div>

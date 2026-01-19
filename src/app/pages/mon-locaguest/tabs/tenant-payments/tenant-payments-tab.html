@@ -1,7 +1,7 @@
-<div class="p-6">
+<div data-tour="tenant.payments.root" class="p-6">
   <!-- 📊 Statistics Cards -->
   @if (stats()) {
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div data-tour="tenant.payments.stats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
         <div class="flex items-center justify-between">
           <div>
@@ -54,10 +54,11 @@
 
   <!-- 🔧 Toolbar -->
   <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
-    <div class="flex flex-wrap items-center justify-between gap-4 p-4">
+    <div data-tour="tenant.payments.toolbar" class="flex flex-wrap items-center justify-between gap-4 p-4">
       <div class="flex items-center gap-3">
         <!-- Year Filter -->
         <select 
+          data-tour="tenant.payments.filter-year"
           [(ngModel)]="filterYear" 
           (change)="loadStats()"
           class="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
@@ -69,6 +70,7 @@
 
         <!-- Status Filter -->
         <select 
+          data-tour="tenant.payments.filter-status"
           [(ngModel)]="filterStatus"
           class="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
           <option value="all">Tous les statuts</option>
@@ -80,6 +82,7 @@
       </div>
 
       <button 
+        data-tour="tenant.payments.add-payment"
         (click)="openAddPaymentModal()"
         class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
         <i class="ph ph-plus-circle"></i>
@@ -87,6 +90,7 @@
       </button>
 
       <button 
+        data-tour="tenant.payments.add-deposit"
         (click)="openAddDepositModal()"
         class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors">
         <i class="ph ph-shield-check"></i>
@@ -107,7 +111,7 @@
         <p class="text-slate-500 dark:text-slate-400">Aucun paiement trouvé</p>
       </div>
     } @else {
-      <div class="overflow-x-auto">
+      <div data-tour="tenant.payments.table" class="overflow-x-auto">
         <table class="w-full">
           <thead class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
             <tr>

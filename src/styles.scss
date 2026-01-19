@@ -1,9 +1,10 @@
 @use "styles/themes";
 @import "tailwindcss";
+@import "driver.js/dist/driver.css";
 
 /* ========================================
-   BRANDING THEME VARIABLES
-   ======================================== */
+  BRANDING THEME VARIABLES
+  ======================================== */
 :root {
   /* Primary Brand Color (set dynamically by BrandingThemeService) */
   --color-primary: #3B82F6;

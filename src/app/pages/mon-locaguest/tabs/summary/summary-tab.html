@@ -2,7 +2,7 @@
   <!-- Header with Add Property button -->
   <div class="flex items-center justify-between">
     <h2 class="text-2xl font-bold">{{ 'SUMMARY.TITLE' | translate }}</h2>
-    <div class="flex items-center gap-3">
+    <div data-tour="summary.actions" class="flex items-center gap-3">
       <button 
         (click)="openAddTenantForm()"
         class="px-4 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:shadow-lg transition">
@@ -48,7 +48,7 @@
       <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div class="flex items-center gap-2 flex-1">
           <!-- Toggle Properties/Tenants -->
-          <div class="flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1">
+          <div data-tour="summary.view-switch" class="flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1">
             <button
               (click)="viewMode.set('properties'); currentPage.set(1); reloadCurrentView();"
               [class.bg-white]="viewMode() === 'properties'"
@@ -70,7 +70,7 @@
           </div>
 
           <!-- Search Bar -->
-          <div class="relative flex-1 max-w-md">
+          <div data-tour="summary.search" class="relative flex-1 max-w-md">
             <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
             <input
               type="text"
@@ -147,7 +147,7 @@
         </div>
       } @else if (viewMode() === 'properties') {
         @if (displayMode() === 'card') {
-          <div class="grid md:grid-cols-2 gap-4">
+          <div data-tour="summary.list" class="grid md:grid-cols-2 gap-4">
             @for (property of properties(); track property.id) {
               <div 
                 (click)="openProperty(property)"
@@ -450,7 +450,7 @@
     <!-- Right Column -->
     <div class="space-y-6">
       <!-- Notifications -->
-      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
+      <div data-tour="summary.notifications" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
         <h3 class="text-lg font-semibold mb-4">{{ 'SUMMARY.NOTIFICATIONS' | translate }}</h3>
         <div class="max-h-[400px] overflow-y-auto space-y-3 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
           @for (notif of notifications(); track notif.id) {
@@ -466,7 +466,7 @@
       </div>
 
       <!-- Upcoming Deadlines -->
-      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
+      <div data-tour="summary.deadlines" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5">
         <h3 class="text-lg font-semibold mb-4">{{ 'SUMMARY.DEADLINES' | translate }}</h3>
         <div class="space-y-2">
           @for (deadline of deadlines(); track deadline.id) {

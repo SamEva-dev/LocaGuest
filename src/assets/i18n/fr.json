@@ -1688,7 +1688,331 @@
     "SHARE_TITLE": "Partager le scénario",
     "VIEW_ONLY": "Lecture seule"
   },
+  "TOUR": {
+    "COMMON": {
+      "NEXT": "Suivant",
+      "PREV": "Précédent",
+      "DONE": "Terminer"
+    },
+    "PROFITABILITY": {
+      "START": "Visite guidée",
+      "ROOT": {
+        "STEP_1": {
+          "TITLE": "Comptabilité & Projections — Étape 1/5 : En-tête",
+          "DESC": "Cette page vous donne une vision globale de vos performances : revenus, charges, bénéfice et rentabilité."
+        },
+        "STEP_2": {
+          "TITLE": "Comptabilité & Projections — Étape 2/5 : Filtres",
+          "DESC": "Ajustez la période et l’année pour recalculer les analyses et le graphique."
+        }
+      },
+      "FILTERS": {
+        "STEP_1": {
+          "TITLE": "Filtres — Étape 3/5 : Période",
+          "DESC": "Choisissez le nombre de mois à afficher dans l’évolution (3, 6, 9 ou 12)."
+        },
+        "STEP_2": {
+          "TITLE": "Filtres — Étape 4/5 : Année",
+          "DESC": "Sélectionnez l’année pour analyser vos données sur la période choisie."
+        }
+      },
+      "STATS": {
+        "STEP_1": {
+          "TITLE": "Statistiques — Vue d’ensemble",
+          "DESC": "Ces cartes résument vos indicateurs clés (revenus, charges, bénéfice net, taux de rentabilité)."
+        },
+        "STEP_2": {
+          "TITLE": "Statistiques — Revenus mensuels",
+          "DESC": "Total des revenus mensuels, avec l’évolution par rapport au mois précédent."
+        },
+        "STEP_3": {
+          "TITLE": "Statistiques — Charges mensuelles",
+          "DESC": "Total des charges mensuelles, avec l’évolution par rapport au mois précédent."
+        },
+        "STEP_4": {
+          "TITLE": "Statistiques — Bénéfice net",
+          "DESC": "Différence entre revenus et charges. Un indicateur clé de performance."
+        },
+        "STEP_5": {
+          "TITLE": "Statistiques — Taux de rentabilité",
+          "DESC": "Suivez votre taux de rentabilité et comparez-le à l’objectif."
+        }
+      },
+      "CHART": {
+        "STEP_1": {
+          "TITLE": "Graphique — Évolution",
+          "DESC": "Comparez l’évolution des revenus et des charges sur la période sélectionnée."
+        }
+      },
+      "PERFORMANCE": {
+        "STEP_1": {
+          "TITLE": "Performance par bien",
+          "DESC": "Analysez la rentabilité de chaque bien (revenus, charges, bénéfice et rendement)."
+        }
+      }
+    },
+    "MON_LOCAGUEST": {
+      "START": "Visite guidée",
+      "STEP_1": {
+        "TITLE": "Étape 1/8 — Barre d’onglets (navigation)",
+        "DESC": "Cette barre vous permet de naviguer entre vos espaces (Résumé, fiches Bien, fiches Locataire, Relation). Cliquez sur un onglet pour changer de vue."
+      },
+      "STEP_2": {
+        "TITLE": "Étape 2/8 — Onglet Résumé (point de départ)",
+        "DESC": "L’onglet Résumé est votre vue principale. C’est ici que vous retrouvez vos biens/locataires, les actions rapides, et un aperçu des alertes."
+      },
+      "STEP_3": {
+        "TITLE": "Étape 3/8 — Actions rapides", 
+        "DESC": "Utilisez ces boutons pour créer rapidement un nouveau locataire ou un nouveau bien. Après création, vos listes se mettent à jour."
+      },
+      "STEP_4": {
+        "TITLE": "Étape 4/8 — Basculer Biens / Locataires",
+        "DESC": "Ici, vous choisissez ce que vous affichez: la liste des Biens ou la liste des Locataires. Cela change aussi la recherche et les filtres."
+      },
+      "STEP_5": {
+        "TITLE": "Étape 5/8 — Rechercher rapidement",
+        "DESC": "Tapez ici pour filtrer la liste. La recherche est appliquée automatiquement après un court délai (pour éviter les rechargements inutiles)."
+      },
+      "STEP_6": {
+        "TITLE": "Étape 6/8 — Liste cliquable (ouvrir une fiche)",
+        "DESC": "Cliquez sur un élément pour ouvrir sa fiche détaillée dans un nouvel onglet interne. Exemple: cliquer sur un bien ouvre la fiche Bien, cliquer sur un locataire ouvre la fiche Locataire."
+      },
+      "STEP_7": {
+        "TITLE": "Étape 7/8 — Notifications",
+        "DESC": "Cette zone affiche les dernières activités et notifications importantes. Elle vous aide à ne rien manquer (événements, rappels, actions à faire)."
+      },
+      "STEP_8": {
+        "TITLE": "Étape 8/8 — Échéances à venir",
+        "DESC": "Retrouvez ici les échéances importantes (par exemple des dates clés liées à vos contrats). Pensez à les consulter régulièrement."
+      }
+    },
+    "PROPERTY_DETAIL": {
+      "ROOT": {
+        "STEP_1": {
+          "TITLE": "Fiche Bien — Étape 1/2 : navigation",
+          "DESC": "Vous êtes sur la fiche d’un Bien. La visite guidée s’adapte automatiquement à la sous-tab visible (Informations / Locataires / Contrats)."
+        },
+        "STEP_2": {
+          "TITLE": "Fiche Bien — Étape 2/2 : sous-onglets",
+          "DESC": "Utilisez ces sous-onglets pour passer d’une section à l’autre : Informations (édition + photos), Locataires (occupation), Contrats (création & actions)."
+        }
+      },
+      "INFO": {
+        "STEP_1": {
+          "TITLE": "Bien > Informations — Étape 1/4 : Modifier",
+          "DESC": "Cliquez sur “Modifier” pour passer en mode édition et mettre à jour les informations du bien (adresse, caractéristiques, etc.)."
+        },
+        "STEP_2": {
+          "TITLE": "Bien > Informations — Étape 2/4 : Imprimer la fiche",
+          "DESC": "Générez la fiche PDF du bien pour l’archivage, l’envoi ou l’impression."
+        },
+        "STEP_3": {
+          "TITLE": "Bien > Informations — Étape 3/4 : Ajouter des photos",
+          "DESC": "Ajoutez des photos au bien (ex: extérieur, cuisine, chambre). Elles apparaissent dans le carrousel pour un aperçu rapide."
+        },
+        "STEP_4": {
+          "TITLE": "Bien > Informations — Étape 4/4 : Supprimer une photo",
+          "DESC": "Supprimez la photo actuellement affichée dans le carrousel. Attention : la suppression est immédiate."
+        }
+      },
+      "TENANTS": {
+        "STEP_1": {
+          "TITLE": "Bien > Locataires — Étape 1/4 : Mode d’affichage",
+          "DESC": "Basculez entre l’affichage en cartes et en liste pour mieux lire l’occupation selon votre besoin."
+        },
+        "STEP_2": {
+          "TITLE": "Bien > Locataires — Étape 2/4 : Liste d’occupation",
+          "DESC": "Cette zone affiche les locataires associés au bien et l’état de leur dossier (paiements, documents, statut)."
+        },
+        "STEP_3": {
+          "TITLE": "Bien > Locataires — Étape 3/4 : Ouvrir la fiche locataire",
+          "DESC": "Cliquez sur l’avatar/nom pour ouvrir la fiche du locataire dans un nouvel onglet interne."
+        },
+        "STEP_4": {
+          "TITLE": "Bien > Locataires — Étape 4/4 : Dissocier du bien",
+          "DESC": "Utilisez l’action de dissociation pour retirer l’association locataire/bien (soumis à des règles : contrats actifs/signés)."
+        }
+        ,
+        "STEP_5": {
+          "TITLE": "Bien > Locataires — Étape 5/8 : Profil",
+          "DESC": "Ouvrez rapidement la fiche du locataire (coordonnées, statut, paiements, documents)."
+        },
+        "STEP_6": {
+          "TITLE": "Bien > Locataires — Étape 6/8 : Contrat",
+          "DESC": "Accédez au contrat du locataire lié à ce bien pour consulter les détails et actions disponibles."
+        },
+        "STEP_7": {
+          "TITLE": "Bien > Locataires — Étape 7/8 : Avenant",
+          "DESC": "Créez un avenant pour modifier certaines clauses du bail (loyer, dates, conditions…)."
+        },
+        "STEP_8": {
+          "TITLE": "Bien > Locataires — Étape 8/8 : Renouveler",
+          "DESC": "Lancez le renouvellement du bail (souvent disponible proche de l’échéance)."
+        }
+      },
+      "CONTRACTS": {
+        "STEP_1": {
+          "TITLE": "Bien > Contrats — Étape 1/4 : Nouveau contrat",
+          "DESC": "Créez un nouveau contrat (bail) pour ce bien. Le bouton peut être désactivé si le bien est déjà occupé."
+        },
+        "STEP_2": {
+          "TITLE": "Bien > Contrats — Étape 2/4 : Contrat papier",
+          "DESC": "Démarrez un contrat “papier” si vous gérez la signature hors application."
+        },
+        "STEP_3": {
+          "TITLE": "Bien > Contrats — Étape 3/4 : État des lieux",
+          "DESC": "Ajoutez / gérez les états des lieux (entrée/sortie) associés au contrat."
+        },
+        "STEP_4": {
+          "TITLE": "Bien > Contrats — Étape 4/4 : Actions sur un contrat",
+          "DESC": "Ces actions dépendent du statut : renouveler, avenant, préavis, EDL, voir, PDF, historique…"
+        }
+      }
+    },
+    "TENANT_DETAIL": {
+      "ROOT": {
+        "STEP_1": {
+          "TITLE": "Fiche Locataire — Étape 1/6 : contexte",
+          "DESC": "Vous êtes sur la fiche d’un Locataire. La visite guidée s’adapte automatiquement à la sous-tab visible."
+        },
+        "STEP_2": {
+          "TITLE": "Fiche Locataire — Étape 2/6 : identité",
+          "DESC": "Retrouvez les informations principales (nom, code, email/téléphone) et le bien associé si disponible."
+        },
+        "STEP_3": {
+          "TITLE": "Fiche Locataire — Étape 3/6 : imprimer",
+          "DESC": "Générez et téléchargez la fiche PDF du locataire (utile pour dossier/archivage)."
+        },
+        "STEP_4": {
+          "TITLE": "Fiche Locataire — Étape 4/6 : statut locatif",
+          "DESC": "Suivez l’occupation, les dates clés du bail et les indicateurs financiers (solde, retards, dernier paiement)."
+        },
+        "STEP_5": {
+          "TITLE": "Fiche Locataire — Étape 5/6 : actions globales",
+          "DESC": "Selon le contexte, des actions globales apparaissent (ex: dissocier du bien). Certaines actions peuvent être bloquées."
+        },
+        "STEP_6": {
+          "TITLE": "Fiche Locataire — Étape 6/6 : sous-onglets",
+          "DESC": "Naviguez entre Contrats, Paiements, Historique des paiements et Documents pour gérer le dossier complet."
+        }
+      },
+      "CONTRACTS": {
+        "STEP_1": {
+          "TITLE": "Locataire > Contrats — Étape 1/5 : Nouveau contrat",
+          "DESC": "Créez un contrat pour le locataire (selon règles/permissions)."
+        },
+        "STEP_2": {
+          "TITLE": "Locataire > Contrats — Étape 2/5 : Liste des contrats",
+          "DESC": "Consultez les contrats existants et leur statut (signé, actif, préavis, avenants)."
+        },
+        "STEP_3": {
+          "TITLE": "Locataire > Contrats — Étape 3/5 : Ouvrir le bien associé",
+          "DESC": "Cliquez sur un contrat pour ouvrir la fiche du bien associé dans un nouvel onglet interne."
+        },
+        "STEP_4": {
+          "TITLE": "Locataire > Contrats — Étape 4/5 : Documents du contrat",
+          "DESC": "Ouvrez/fermez le panneau Documents pour suivre l’état des documents contractuels."
+        },
+        "STEP_5": {
+          "TITLE": "Locataire > Contrats — Étape 5/5 : Actions",
+          "DESC": "Accédez aux actions disponibles selon le statut : renouveler, avenant, préavis, EDL, PDF, etc."
+        },
+        "STEP_6": {
+          "TITLE": "Locataire > Contrats — Étape 6/12 : Renouveler",
+          "DESC": "Renouvelez le bail quand cela est autorisé (souvent à l’approche de la fin de contrat)."
+        },
+        "STEP_7": {
+          "TITLE": "Locataire > Contrats — Étape 7/12 : Avenant",
+          "DESC": "Créez un avenant pour modifier le contrat en cours (ex: loyer, dates, clauses)."
+        },
+        "STEP_8": {
+          "TITLE": "Locataire > Contrats — Étape 8/12 : Préavis",
+          "DESC": "Déclenchez un préavis / rupture de contrat selon le contexte et les permissions."
+        },
+        "STEP_9": {
+          "TITLE": "Locataire > Contrats — Étape 9/12 : Voir",
+          "DESC": "Visualisez le contrat (document) pour contrôler son contenu ou le partager."
+        },
+        "STEP_10": {
+          "TITLE": "Locataire > Contrats — Étape 10/12 : EDL Sortie",
+          "DESC": "Créez l’état des lieux de sortie lorsque le locataire quitte le logement (si disponible)."
+        },
+        "STEP_11": {
+          "TITLE": "Locataire > Contrats — Étape 11/12 : PDF",
+          "DESC": "Téléchargez le PDF du contrat (et éventuellement du PDF d’avenant si disponible)."
+        },
+        "STEP_12": {
+          "TITLE": "Locataire > Contrats — Étape 12/12 : Historique",
+          "DESC": "Consultez l’historique des actions/événements du contrat pour tracer le dossier."
+        }
+      },
+      "PAYMENTS": {
+        "STEP_1": {
+          "TITLE": "Locataire > Paiements — Étape 1/4 : Statistiques",
+          "DESC": "Visualisez rapidement le total payé, le restant dû et les paiements en retard."
+        },
+        "STEP_2": {
+          "TITLE": "Locataire > Paiements — Étape 2/4 : Ajouter un paiement",
+          "DESC": "Enregistrez un paiement (mois/année, montant, méthode, date) pour mettre à jour la situation."
+        },
+        "STEP_3": {
+          "TITLE": "Locataire > Paiements — Étape 3/4 : Caution",
+          "DESC": "Enregistrez la caution/dépôt de garantie liée au locataire."
+        },
+        "STEP_4": {
+          "TITLE": "Locataire > Paiements — Étape 4/4 : Tableau des paiements",
+          "DESC": "Consultez l’historique des échéances et utilisez les actions (ex: télécharger une quittance pour un paiement payé)."
+        }
+      },
+      "PAYMENT_HISTORY": {
+        "STEP_1": {
+          "TITLE": "Locataire > Historique — Étape 1/1 : résumé",
+          "DESC": "Retrouvez une synthèse financière (total payé, montants dus, retards) pour analyser la situation dans le temps."
+        }
+      },
+      "DOCUMENTS": {
+        "STEP_1": {
+          "TITLE": "Locataire > Documents — Étape 1/1 : gestionnaire de documents",
+          "DESC": "Gérez les documents du locataire (ajout, consultation, validation) selon vos permissions."
+        }
+      }
+    }
+  },
   "USER": {
     "MENU": "Menu utilisateur"
+  },
+  "PROFITABILITY": {
+    "HEADER": {
+      "TITLE": "Comptabilité & Projections",
+      "SUBTITLE": "Analysez vos performances financières"
+    },
+    "FILTERS": {
+      "MONTHS": "mois"
+    },
+    "STATS": {
+      "MONTHLY_REVENUE": "Revenus mensuels",
+      "MONTHLY_EXPENSES": "Charges mensuelles",
+      "NET_PROFIT": "Bénéfice net",
+      "PROFITABILITY_RATE": "Taux de rentabilité",
+      "VS_LAST_MONTH": "vs mois dernier",
+      "TARGET": "Objectif"
+    },
+    "REVENUE_EVOLUTION": {
+      "TITLE": "Évolution des revenus",
+      "SUBTITLE": "Comparaison revenus vs charges ({{period}} derniers mois)"
+    },
+    "PERFORMANCE": {
+      "TITLE": "Performance par bien",
+      "SUBTITLE": "Analyse comparative de la rentabilité de chaque bien",
+      "EMPTY": "Aucune donnée de performance disponible",
+      "REVENUE": "Revenus",
+      "EXPENSES": "Charges",
+      "ROI_SUFFIX": "rendement",
+      "NET_PROFIT": "Bénéfice"
+    },
+    "CHART": {
+      "REVENUE": "Revenus",
+      "EXPENSES": "Charges"
+    }
   }
 }

@@ -82,6 +82,7 @@
       <!-- ✅ Bouton EDL (si contrat Signé) -->
       @if (shouldShowInventoryButton()) {
         <button
+          data-tour="property.contracts.add-inventory"
           (click)="createInventoryEntry(contracts()[0])"
           class="px-4 py-2 rounded-lg bg-orange-500 text-white font-medium hover:bg-orange-600 transition inline-flex items-center gap-2"
         >
@@ -92,6 +93,7 @@
       
       <!-- ✅ Boutons grisés si bien occupé -->
       <button
+        data-tour="property.contracts.paper"
         [disabled]="!canCreateContract()"
         (click)="openPaperContractWizard()"
         class="px-4 py-2 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-500"
@@ -102,6 +104,7 @@
       </button>
       
       <button
+        data-tour="property.contracts.new"
         [disabled]="!canCreateContract()"
         (click)="openCreateContractWizard()"
         class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-500"
@@ -469,6 +472,7 @@
                     [disabled]="isFinalizingInventory()"
                     class="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600 transition inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Finaliser et verrouiller l'EDL"
+                    data-tour="property.contracts.inventory"
                   >
                     <i class="ph ph-check-circle"></i>
                     Finaliser l'EDL
@@ -620,6 +624,7 @@
           <button
             (click)="viewContractDetail(activeContract()!)"
             class="px-4 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition inline-flex items-center gap-2"
+            data-tour="property.contracts.view"
           >
             <i class="ph ph-file-text"></i>
             Voir le contrat
@@ -628,6 +633,7 @@
           <button
             (click)="generateContractPDF(activeContract()!)"
             class="px-4 py-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 font-medium hover:bg-purple-100 dark:hover:bg-purple-900/30 transition inline-flex items-center gap-2"
+            data-tour="property.contracts.paper"
           >
             <i class="ph ph-file-pdf"></i>
             Générer PDF
@@ -640,6 +646,7 @@
             <button
               (click)="createInventoryEntry(activeContract()!)"
               class="px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-900/30 transition inline-flex items-center gap-1.5"
+              data-tour="property.contracts.inventory"
             >
               <i class="ph ph-clipboard-text"></i>
               EDL Entrée
@@ -648,6 +655,7 @@
             <button
               (click)="createInventoryExit(activeContract()!)"
               class="px-3 py-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm font-medium hover:bg-orange-100 dark:hover:bg-orange-900/30 transition inline-flex items-center gap-1.5"
+              data-tour="property.contracts.inventory"
             >
               <i class="ph ph-clipboard-text"></i>
               EDL Sortie
@@ -669,6 +677,7 @@
           <button
             (click)="openCreateContractWizard()"
             class="px-4 py-2 rounded-lg bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition inline-flex items-center gap-2"
+            data-tour="property.contracts.new"
           >
             <i class="ph ph-plus-circle"></i>
             <span>Créer un contrat</span>
@@ -713,6 +722,13 @@
                   >
                     {{ getContractStatusLabel(contract.status) }}
                   </span>
+                  
+                  @if (contract.noticeEndDate) {
+                    <span class="px-3 py-1 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-sm font-medium inline-flex items-center gap-1.5">
+                      <i class="ph ph-sign-out"></i>
+                      En préavis · {{ contract.noticeEndDate | date:'dd/MM/yyyy' }}
+                    </span>
+                  }
                 </div>
                 
                 <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
@@ -730,6 +746,7 @@
                   (click)="viewContractDetail(contract)"
                   class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-600 transition"
                   title="Voir le contrat"
+                  data-tour="property.contracts.view"
                 >
                   <i class="ph ph-file-text"></i>
                 </button>
@@ -738,6 +755,7 @@
                   (click)="viewInventoryEntry(contract)"
                   class="px-2.5 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 text-xs hover:bg-blue-100 dark:hover:bg-blue-900/30 transition"
                   title="EDL Entrée"
+                  data-tour="property.contracts.inventory"
                 >
                   <i class="ph ph-sign-in"></i>
                 </button>

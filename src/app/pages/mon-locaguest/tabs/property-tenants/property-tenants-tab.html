@@ -12,6 +12,7 @@
     
     <!-- Toggle Cards/Liste à droite -->
     <button
+      data-tour="property.tenants.view-toggle"
       (click)="toggleViewMode()"
       class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition inline-flex items-center gap-2"
       [title]="viewMode() === 'cards' ? 'Afficher en liste' : 'Afficher en cards'"
@@ -21,7 +22,7 @@
   </div>
 
   <!-- Content -->
-  <div class="flex-1 overflow-auto">
+  <div data-tour="property.tenants.list" class="flex-1 overflow-auto">
     @if (hasActiveTenants()) {
       <!-- Mode Cards -->
       @if (viewMode() === 'cards') {
@@ -33,6 +34,7 @@
                 <div class="flex items-start gap-4">
                   <!-- Avatar cliquable -->
                   <div 
+                    data-tour="property.tenants.open-tenant"
                     (click)="openTenantDetail(item.tenant)"
                     class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-xl cursor-pointer hover:shadow-xl hover:scale-105 transition-all flex-shrink-0"
                   >
@@ -115,6 +117,7 @@
                   <!-- Actions Rapides -->
                   <div class="flex flex-col gap-2">
                     <button
+                      data-tour="property.tenants.dissociate"
                       (click)="dissociateTenant(item, property().id)"
                       [disabled]="!canDissociate(item.contract)"
                       [class]="canDissociate(item.contract) 
@@ -254,6 +257,7 @@
               <!-- Card Footer - Actions -->
               <div class="p-4 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-200 dark:border-slate-700 flex items-center gap-2 flex-wrap">
                 <button
+                  data-tour="property.tenants.profile"
                   (click)="openTenantDetail(item.tenant)"
                   class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
                 >
@@ -262,6 +266,7 @@
                 </button>
                 
                 <button
+                  data-tour="property.tenants.contract"
                   (click)="openContractDetail(item.contract)"
                   class="px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-200 text-sm font-medium transition inline-flex items-center gap-2"
                 >
@@ -313,6 +318,7 @@
                 
                 <!-- ✅ NOUVEAUX BOUTONS -->
                 <button
+                  data-tour="property.tenants.addendum"
                   (click)="createAddendum(item.contract)"
                   class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
                   title="Créer un avenant au contrat"
@@ -322,6 +328,7 @@
                 </button>
                 
                 <button
+                  data-tour="property.tenants.renew"
                   (click)="renewContract(item.contract)"
                   class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium transition inline-flex items-center gap-2"
                   title="Renouveler le bail"
@@ -436,6 +443,7 @@
                   <td class="px-4 py-3">
                     <div class="flex items-center gap-1">
                       <button
+                        data-tour="property.tenants.profile"
                         (click)="openTenantDetail(item.tenant)"
                         class="p-2 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 transition"
                         title="Profil"
@@ -443,6 +451,7 @@
                         <i class="ph ph-user"></i>
                       </button>
                       <button
+                        data-tour="property.tenants.contract"
                         (click)="openContractDetail(item.contract)"
                         class="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition"
                         title="Contrat"

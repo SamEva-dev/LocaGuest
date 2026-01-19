@@ -1,6 +1,14 @@
     <div class="h-full flex flex-col bg-slate-50 dark:bg-slate-900">
       <!-- Internal Tab Bar -->
-      <div class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-2 flex items-center gap-1 overflow-x-auto scrollbar-thin">
+      <div data-tour="mlg.tabs" class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-2 flex items-center gap-1 overflow-x-auto scrollbar-thin">
+        <button
+          data-tour="mlg.tour-start"
+          (click)="startTour()"
+          class="ml-1 mr-2 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-sm font-medium text-slate-700 dark:text-slate-200 transition whitespace-nowrap"
+          type="button"
+        >
+          <i class="ph ph-question mr-1"></i>{{ 'TOUR.MON_LOCAGUEST.START' | translate }}
+        </button>
         @for (tab of tabManager.tabs(); track tab.id) {
           <div
             (click)="selectTab(tab.id)"
@@ -20,6 +28,7 @@
               [class.dark:text-white]="tabManager.activeTabId() === tab.id"
               [class.text-slate-600]="tabManager.activeTabId() !== tab.id"
               [class.dark:text-slate-300]="tabManager.activeTabId() !== tab.id"
+              [attr.data-tour]="tab.id === 'summary' ? 'mlg.tab.summary' : null"
             >
               {{ tab.title | translate }}
             </span>

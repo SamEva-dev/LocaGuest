@@ -1,4 +1,4 @@
-<div class="h-[calc(100vh-12rem)] overflow-y-auto p-6 space-y-6">
+<div data-tour="property.root" class="h-[calc(100vh-12rem)] overflow-y-auto p-6 space-y-6">
   @if (isLoading()) {
     <div class="flex items-center justify-center py-12">
       <i class="ph ph-spinner text-4xl animate-spin text-slate-400"></i>
@@ -72,7 +72,7 @@
     </div> -->
     <!-- Sub-tabs -->
     <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
-      <div class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 px-4">
+      <div data-tour="property.subtabs" class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 px-4">
         @for (tab of visibleSubTabs; track tab.id) {
           <button
             (click)="selectSubTab(tab.id)"
@@ -86,7 +86,7 @@
         }
       </div>
 
-      <div class="p-6">
+      <div data-tour="property.content" class="p-6">
         @switch (activeSubTab()) {
           @case ('informations') {
             @if (property()) {

@@ -1561,7 +1561,331 @@
     "SHARE_TITLE": "SCENARIOS.SHARE_TITLE",
     "VIEW_ONLY": "SCENARIOS.VIEW_ONLY"
   },
+  "TOUR": {
+    "COMMON": {
+      "NEXT": "Next",
+      "PREV": "Previous",
+      "DONE": "Finish"
+    },
+    "PROFITABILITY": {
+      "START": "Guided tour",
+      "ROOT": {
+        "STEP_1": {
+          "TITLE": "Accounting & Projections — Step 1/5: Header",
+          "DESC": "This page provides an overview of your performance: revenue, expenses, net profit and profitability."
+        },
+        "STEP_2": {
+          "TITLE": "Accounting & Projections — Step 2/5: Filters",
+          "DESC": "Adjust the period and year to refresh the analysis and the chart."
+        }
+      },
+      "FILTERS": {
+        "STEP_1": {
+          "TITLE": "Filters — Step 3/5: Period",
+          "DESC": "Choose how many months to display in the evolution chart (3, 6, 9 or 12)."
+        },
+        "STEP_2": {
+          "TITLE": "Filters — Step 4/5: Year",
+          "DESC": "Select the year to analyze your data for the chosen period."
+        }
+      },
+      "STATS": {
+        "STEP_1": {
+          "TITLE": "Statistics — Overview",
+          "DESC": "These cards summarize key indicators (revenue, expenses, net profit, profitability rate)."
+        },
+        "STEP_2": {
+          "TITLE": "Statistics — Monthly revenue",
+          "DESC": "Total monthly revenue, with change compared to last month."
+        },
+        "STEP_3": {
+          "TITLE": "Statistics — Monthly expenses",
+          "DESC": "Total monthly expenses, with change compared to last month."
+        },
+        "STEP_4": {
+          "TITLE": "Statistics — Net profit",
+          "DESC": "Difference between revenue and expenses. A key performance indicator."
+        },
+        "STEP_5": {
+          "TITLE": "Statistics — Profitability rate",
+          "DESC": "Track your profitability rate and compare it to the target."
+        }
+      },
+      "CHART": {
+        "STEP_1": {
+          "TITLE": "Chart — Evolution",
+          "DESC": "Compare revenue and expenses over the selected period."
+        }
+      },
+      "PERFORMANCE": {
+        "STEP_1": {
+          "TITLE": "Performance by property",
+          "DESC": "Analyze profitability per property (revenue, expenses, profit and ROI)."
+        }
+      }
+    },
+    "MON_LOCAGUEST": {
+      "START": "Guided tour",
+      "STEP_1": {
+        "TITLE": "Step 1/8 — Tabs bar (navigation)",
+        "DESC": "Use this bar to navigate between your internal tabs (Summary, Property details, Tenant details, Relation). Click a tab to switch views."
+      },
+      "STEP_2": {
+        "TITLE": "Step 2/8 — Summary tab (starting point)",
+        "DESC": "The Summary tab is your main overview. You’ll find your properties/tenants list, quick actions, and a snapshot of alerts."
+      },
+      "STEP_3": {
+        "TITLE": "Step 3/8 — Quick actions",
+        "DESC": "Use these buttons to quickly create a new tenant or a new property. After creation, the lists refresh automatically."
+      },
+      "STEP_4": {
+        "TITLE": "Step 4/8 — Switch Properties / Tenants",
+        "DESC": "Choose what you want to see: the Properties list or the Tenants list. This also updates the search and filters accordingly."
+      },
+      "STEP_5": {
+        "TITLE": "Step 5/8 — Fast search",
+        "DESC": "Type here to filter the list. The search is applied automatically after a short delay to avoid unnecessary reloads."
+      },
+      "STEP_6": {
+        "TITLE": "Step 6/8 — Clickable list (open a detail tab)",
+        "DESC": "Click an item to open its detail view in a new internal tab. Example: clicking a property opens the Property tab; clicking a tenant opens the Tenant tab."
+      },
+      "STEP_7": {
+        "TITLE": "Step 7/8 — Notifications",
+        "DESC": "This area shows recent activities and important notifications. It helps you keep track of events, reminders and pending actions."
+      },
+      "STEP_8": {
+        "TITLE": "Step 8/8 — Upcoming deadlines",
+        "DESC": "Here you can see upcoming important dates (for example contract-related milestones). Check it regularly to stay on track."
+      }
+    },
+    "PROPERTY_DETAIL": {
+      "ROOT": {
+        "STEP_1": {
+          "TITLE": "Property detail — Step 1/2: navigation",
+          "DESC": "You are on a Property detail. The tour adapts automatically to the currently visible sub-tab (Information / Tenants / Contracts)."
+        },
+        "STEP_2": {
+          "TITLE": "Property detail — Step 2/2: sub-tabs",
+          "DESC": "Use these sub-tabs to switch sections: Information (edit + photos), Tenants (occupancy), Contracts (create & actions)."
+        }
+      },
+      "INFO": {
+        "STEP_1": {
+          "TITLE": "Property > Information — Step 1/4: Edit",
+          "DESC": "Click “Edit” to enter edit mode and update the property information (address, details, etc.)."
+        },
+        "STEP_2": {
+          "TITLE": "Property > Information — Step 2/4: Print sheet",
+          "DESC": "Generate the property PDF sheet for archiving, sending or printing."
+        },
+        "STEP_3": {
+          "TITLE": "Property > Information — Step 3/4: Add photos",
+          "DESC": "Add photos to the property (e.g. exterior, kitchen, bedroom). They appear in the carousel for quick preview."
+        },
+        "STEP_4": {
+          "TITLE": "Property > Information — Step 4/4: Delete photo",
+          "DESC": "Delete the currently displayed photo from the carousel. Warning: deletion is immediate."
+        }
+      },
+      "TENANTS": {
+        "STEP_1": {
+          "TITLE": "Property > Tenants — Step 1/4: Display mode",
+          "DESC": "Switch between card view and list view to better read occupancy information."
+        },
+        "STEP_2": {
+          "TITLE": "Property > Tenants — Step 2/4: Occupancy list",
+          "DESC": "This area shows tenants associated with the property and the status of their file (payments, documents, status)."
+        },
+        "STEP_3": {
+          "TITLE": "Property > Tenants — Step 3/4: Open tenant detail",
+          "DESC": "Click the avatar/name to open the tenant detail in a new internal tab."
+        },
+        "STEP_4": {
+          "TITLE": "Property > Tenants — Step 4/4: Dissociate",
+          "DESC": "Use dissociation to remove the tenant/property association (subject to rules: active/signed contracts)."
+        }
+        ,
+        "STEP_5": {
+          "TITLE": "Property > Tenants — Step 5/8: Profile",
+          "DESC": "Quickly open the tenant detail (contacts, status, payments, documents)."
+        },
+        "STEP_6": {
+          "TITLE": "Property > Tenants — Step 6/8: Contract",
+          "DESC": "Open the tenant contract linked to this property to review details and available actions."
+        },
+        "STEP_7": {
+          "TITLE": "Property > Tenants — Step 7/8: Addendum",
+          "DESC": "Create an addendum to update some lease terms (rent, dates, conditions…)."
+        },
+        "STEP_8": {
+          "TITLE": "Property > Tenants — Step 8/8: Renew",
+          "DESC": "Start the lease renewal process (often available near the contract end date)."
+        }
+      },
+      "CONTRACTS": {
+        "STEP_1": {
+          "TITLE": "Property > Contracts — Step 1/4: New contract",
+          "DESC": "Create a new lease contract for this property. The button can be disabled when the property is already occupied."
+        },
+        "STEP_2": {
+          "TITLE": "Property > Contracts — Step 2/4: Paper contract",
+          "DESC": "Start a “paper” contract if you manage signature outside the application."
+        },
+        "STEP_3": {
+          "TITLE": "Property > Contracts — Step 3/4: Inventory",
+          "DESC": "Add/manage inventories (entry/exit) linked to the contract."
+        },
+        "STEP_4": {
+          "TITLE": "Property > Contracts — Step 4/4: Contract actions",
+          "DESC": "Actions depend on status: renew, addendum, notice, inventories, view, PDF, history…"
+        }
+      }
+    },
+    "TENANT_DETAIL": {
+      "ROOT": {
+        "STEP_1": {
+          "TITLE": "Tenant detail — Step 1/6: context",
+          "DESC": "You are on a Tenant detail. The tour adapts automatically to the currently visible sub-tab."
+        },
+        "STEP_2": {
+          "TITLE": "Tenant detail — Step 2/6: identity",
+          "DESC": "Find key information (name, code, email/phone) and the associated property when available."
+        },
+        "STEP_3": {
+          "TITLE": "Tenant detail — Step 3/6: print",
+          "DESC": "Generate and download the tenant PDF sheet (useful for file/archiving)."
+        },
+        "STEP_4": {
+          "TITLE": "Tenant detail — Step 4/6: rental status",
+          "DESC": "Track occupancy, lease dates and financial indicators (balance, arrears, last payment)."
+        },
+        "STEP_5": {
+          "TITLE": "Tenant detail — Step 5/6: global actions",
+          "DESC": "Depending on context, global actions may appear (e.g. dissociate from property). Some actions can be blocked."
+        },
+        "STEP_6": {
+          "TITLE": "Tenant detail — Step 6/6: sub-tabs",
+          "DESC": "Navigate between Contracts, Payments, Payment history and Documents to manage the full tenant file."
+        }
+      },
+      "CONTRACTS": {
+        "STEP_1": {
+          "TITLE": "Tenant > Contracts — Step 1/5: New contract",
+          "DESC": "Create a contract for the tenant (depending on rules/permissions)."
+        },
+        "STEP_2": {
+          "TITLE": "Tenant > Contracts — Step 2/5: Contracts list",
+          "DESC": "Review existing contracts and their status (signed, active, notice, addendums)."
+        },
+        "STEP_3": {
+          "TITLE": "Tenant > Contracts — Step 3/5: Open related property",
+          "DESC": "Click a contract to open the related property detail in a new internal tab."
+        },
+        "STEP_4": {
+          "TITLE": "Tenant > Contracts — Step 4/5: Contract documents",
+          "DESC": "Open/close the Documents panel to track the status of contract documents."
+        },
+        "STEP_5": {
+          "TITLE": "Tenant > Contracts — Step 5/5: Actions",
+          "DESC": "Access available actions depending on status: renew, addendum, notice, inventories, PDF, etc."
+        },
+        "STEP_6": {
+          "TITLE": "Tenant > Contracts — Step 6/12: Renew",
+          "DESC": "Renew the lease when allowed (often close to the contract end date)."
+        },
+        "STEP_7": {
+          "TITLE": "Tenant > Contracts — Step 7/12: Addendum",
+          "DESC": "Create an addendum to update the current contract (e.g. rent, dates, clauses)."
+        },
+        "STEP_8": {
+          "TITLE": "Tenant > Contracts — Step 8/12: Notice",
+          "DESC": "Trigger a notice / contract termination depending on context and permissions."
+        },
+        "STEP_9": {
+          "TITLE": "Tenant > Contracts — Step 9/12: View",
+          "DESC": "View the contract document to verify its content or share it."
+        },
+        "STEP_10": {
+          "TITLE": "Tenant > Contracts — Step 10/12: Exit inventory",
+          "DESC": "Create the exit inventory when the tenant leaves the property (when available)."
+        },
+        "STEP_11": {
+          "TITLE": "Tenant > Contracts — Step 11/12: PDF",
+          "DESC": "Download the contract PDF (and the addendum PDF when available)."
+        },
+        "STEP_12": {
+          "TITLE": "Tenant > Contracts — Step 12/12: History",
+          "DESC": "Open the contract history to track events and actions over time."
+        }
+      },
+      "PAYMENTS": {
+        "STEP_1": {
+          "TITLE": "Tenant > Payments — Step 1/4: Statistics",
+          "DESC": "Quickly see total paid, remaining amount and late payments."
+        },
+        "STEP_2": {
+          "TITLE": "Tenant > Payments — Step 2/4: Add payment",
+          "DESC": "Record a payment (month/year, amount, method, date) to update the situation."
+        },
+        "STEP_3": {
+          "TITLE": "Tenant > Payments — Step 3/4: Deposit",
+          "DESC": "Record the security deposit linked to the tenant."
+        },
+        "STEP_4": {
+          "TITLE": "Tenant > Payments — Step 4/4: Payments table",
+          "DESC": "Review due dates and use actions (e.g. download a receipt for a paid payment)."
+        }
+      },
+      "PAYMENT_HISTORY": {
+        "STEP_1": {
+          "TITLE": "Tenant > History — Step 1/1: summary",
+          "DESC": "See a financial summary (total paid, due amounts, arrears) to analyze the situation over time."
+        }
+      },
+      "DOCUMENTS": {
+        "STEP_1": {
+          "TITLE": "Tenant > Documents — Step 1/1: documents manager",
+          "DESC": "Manage tenant documents (upload, view, validate) depending on your permissions."
+        }
+      }
+    }
+  },
   "USER": {
     "MENU": "USER.MENU"
+  },
+  "PROFITABILITY": {
+    "HEADER": {
+      "TITLE": "Accounting & Projections",
+      "SUBTITLE": "Analyze your financial performance"
+    },
+    "FILTERS": {
+      "MONTHS": "months"
+    },
+    "STATS": {
+      "MONTHLY_REVENUE": "Monthly revenue",
+      "MONTHLY_EXPENSES": "Monthly expenses",
+      "NET_PROFIT": "Net profit",
+      "PROFITABILITY_RATE": "Profitability rate",
+      "VS_LAST_MONTH": "vs last month",
+      "TARGET": "Target"
+    },
+    "REVENUE_EVOLUTION": {
+      "TITLE": "Revenue evolution",
+      "SUBTITLE": "Revenue vs expenses comparison (last {{period}} months)"
+    },
+    "PERFORMANCE": {
+      "TITLE": "Performance by property",
+      "SUBTITLE": "Comparative analysis of profitability for each property",
+      "EMPTY": "No performance data available",
+      "REVENUE": "Revenue",
+      "EXPENSES": "Expenses",
+      "ROI_SUFFIX": "ROI",
+      "NET_PROFIT": "Profit"
+    },
+    "CHART": {
+      "REVENUE": "Revenue",
+      "EXPENSES": "Expenses"
+    }
   }
 }
