@@ -28,6 +28,9 @@ const resolveEnv = () => {
   return {
     BASE_AUTH_API: 'https://localhost:8081',
     BASE_LOCAGUEST_API: 'https://localhost:5001',
+    CHATBOT_AI_BASE_URL: 'http://localhost:11434',
+    CHATBOT_AI_MODEL: 'llama3.1',
+    CHATBOT_AI_ENABLED: false,
     production: false,
   };
 };

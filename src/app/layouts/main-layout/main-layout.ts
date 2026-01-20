@@ -11,10 +11,31 @@ import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-moda
 import { BrandingThemeService } from '../../core/services/branding-theme.service';
 import { SatisfactionSurveyModal } from '../../shared/components/satisfaction-survey-modal/satisfaction-survey-modal';
 import { MainLayoutTourService } from './main-layout-tour.service';
+import { ChatbotWidget } from '../../shared/chatbot/chatbot-widget';
+import { CHATBOT_CONFIG } from '../../shared/chatbot/chatbot.tokens';
+import { environment } from '../../../environnements/environment.dev';
 
 @Component({
   selector: 'main-layout',
-  imports: [CommonModule, RouterOutlet, TranslatePipe, ConfirmModal, SatisfactionSurveyModal],
+  imports: [CommonModule, RouterOutlet, TranslatePipe, ConfirmModal, SatisfactionSurveyModal, ChatbotWidget],
+  providers: [
+    {
+      provide: CHATBOT_CONFIG,
+      useValue: {
+        appName: 'LocaGuest',
+        docs: [
+          { url: '/docs/PRODUCT_DOC_LOCAGUEST-A.md', name: 'PRODUCT_DOC_LOCAGUEST-A' },
+          { url: '/docs/PRODUCT_DOC_LOCAGUEST-B.md', name: 'PRODUCT_DOC_LOCAGUEST-B' }
+        ],
+        maxSources: 5,
+        ai: {
+          baseUrl: environment.CHATBOT_AI_BASE_URL,
+          model: environment.CHATBOT_AI_MODEL,
+          enabled: environment.CHATBOT_AI_ENABLED
+        }
+      },
+    }
+  ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'
 })
