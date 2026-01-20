@@ -127,6 +127,15 @@
       "FIELDS": {
         "STATUS": "Statut",
         "OCCUPANCY": "Occupation",
+        "NAME": "Nom / Libellé",
+        "TYPE": "Type de bien",
+        "ADDRESS": "Adresse complète",
+        "CITY": "Ville",
+        "POSTAL_CODE": "Code postal",
+        "SURFACE": "Superficie",
+        "FLOOR": "Étage",
+        "BEDROOMS": "Chambres",
+        "BATHROOMS": "Salles de bain",
         "USAGE_TYPE": "Type d'utilisation",
         "CHARGES": "Charges récupérables",
         "DEPOSIT": "Dépôt de garantie",
@@ -145,7 +154,8 @@
         "FURNISHED": "Meublé",
         "LOT_NUMBER": "Numéro de lot",
         "TOTAL_WORKS_AMOUNT": "Montant total travaux réalisés",
-        "CADASTRAL_REFERENCE": "Référence cadastrale"
+        "CADASTRAL_REFERENCE": "Référence cadastrale",
+        "NOTES": "Notes"
       },
       "ACTIONS": {
         "EDIT": "Modifier",
@@ -184,6 +194,9 @@
         "UPLOAD_IMAGES": "Erreur lors de l'upload des photos",
         "DELETE_IMAGE": "Erreur lors de la suppression de la photo",
         "NO_IMAGES_UPLOADED": "Aucune image uploadée"
+      },
+      "TOAST": {
+        "SHEET_GENERATION_ERROR": "Erreur lors de la génération de la fiche"
       },
       "DELETE_CONFIRM": {
         "TITLE": "Supprimer la photo",
@@ -1022,8 +1035,88 @@
     },
     "SUB_TABS": {
       "CONTRACTS": "Contrats",
+      "PAYMENTS": "Paiements",
       "PAYMENT_HISTORY": "Historique des paiements",
       "DOCUMENTS": "Documents"
+    },
+    "ACTIONS": {
+      "PRINT_SHEET": "Imprimer la fiche",
+      "GENERATING": "Génération…"
+    },
+    "BADGES": {
+      "ASSOCIATED_TO": "Associé à"
+    },
+    "GENERAL": {
+      "ACTIVE_CONTRACTS": "Contrats actifs",
+      "MOVE_IN_DATE": "Date d'entrée"
+    },
+    "SECTIONS": {
+      "IDENTITY": "Identité & Nationalité",
+      "ADDRESS": "Adresse",
+      "PROFESSIONAL": "Situation Professionnelle",
+      "EMERGENCY": "Contact d'Urgence"
+    },
+    "IDENTITY": {
+      "BIRTH_DATE": "Date de naissance",
+      "YEARS": "ans",
+      "NATIONALITY": "Nationalité",
+      "ID_NUMBER": "Numéro de pièce d'identité"
+    },
+    "PROFESSIONAL": {
+      "OCCUPATION": "Profession",
+      "MONTHLY_INCOME": "Revenus mensuels"
+    },
+    "FILE_STATUS": {
+      "COMPLETE": "Complet",
+      "VALIDATED": "Validé",
+      "PENDING": "En attente",
+      "INCOMPLETE": "Incomplet"
+    },
+    "ID_CARD_TYPE": {
+      "CNI": "Carte Nationale d'Identité",
+      "Passport": "Passeport",
+      "TitreSejour": "Titre de Séjour",
+      "PermisConduire": "Permis de Conduire"
+    },
+    "NOTICE": {
+      "EXISTING": {
+        "TITLE": "Préavis existant",
+        "MESSAGE": "{{details}}\n\nSouhaitez-vous annuler ce préavis ?",
+        "CONFIRM": "Annuler le préavis",
+        "DETAILS": {
+          "NOTIFIED_ON": "Date de notification : {{date}}",
+          "ENDS_ON": "Fin de préavis : {{date}}",
+          "REASON": "Motif : {{reason}}"
+        }
+      }
+    },
+    "DISSOCIATE": {
+      "CONFIRM": {
+        "TITLE": "Dissocier le locataire",
+        "MESSAGE": "Êtes-vous sûr de vouloir dissocier {{name}} du bien ?\n\nCette action va:\n• Mettre le statut du locataire à \"Departed\"\n• Libérer le bien/chambre\n• Historiser la dissociation\n\nCette action est irréversible."
+      }
+    },
+    "TOAST": {
+      "NOT_FOUND": "Locataire introuvable",
+      "SHEET_GENERATION_ERROR": "Erreur lors de la génération de la fiche",
+      "DEPOSIT_RECEIPT_DOWNLOAD_ERROR": "Erreur lors du téléchargement du reçu de caution",
+      "INVOICE_DOWNLOAD_ERROR": "Erreur lors du téléchargement de la facture",
+      "PDF_DOWNLOAD_ERROR": "Erreur lors du téléchargement du PDF",
+      "ADDENDUM_PDF_NOT_FOUND": "Aucun PDF d'avenant trouvé",
+      "OPEN_PROPERTY_MISSING_ID": "Impossible d'ouvrir le bien: identifiant manquant",
+      "OPEN_CONTRACT_MISSING_ID": "Impossible d'ouvrir le contrat: identifiant manquant",
+      "PROPERTY_NOT_FOUND_FOR_CONTRACT": "Bien introuvable pour ce contrat",
+      "PROPERTY_LOAD_ERROR": "Erreur lors du chargement du bien",
+      "INVENTORY_ENTRY_MISSING": "EDL entrée manquant pour ce contrat",
+      "INVENTORY_CHECK_ERROR": "Erreur lors de la vérification des EDL",
+      "GENERATE_PDF_MISSING_DATA": "Impossible de générer le PDF: données manquantes",
+      "PDF_GENERATION_ERROR": "Erreur lors de la génération du PDF",
+      "NO_ASSOCIATED_PROPERTY": "Impossible: aucun bien associé à ce locataire.",
+      "NOTICE_CANCELLED": "Préavis annulé",
+      "NOTICE_CANCEL_ERROR": "Erreur lors de l'annulation du préavis",
+      "DISSOCIATE_NOT_ALLOWED": "Dissociation impossible: Le locataire a encore des contrats actifs ou signés. Vous devez d'abord terminer ou annuler tous les contrats.",
+      "DISSOCIATE_SUCCESS": "Locataire dissocié: {{name}} a été dissocié du bien avec succès.",
+      "DISSOCIATE_ERROR": "Erreur: Impossible de dissocier le locataire"
     },
     "CONTRACTS": "Contrats",
     "PAYMENT_HISTORY": "Historique des paiements",
@@ -1047,8 +1140,18 @@
     "TYPE": "Type de contrat",
     "TYPE_FURNISHED": "Meublé",
     "TYPE_UNFURNISHED": "Non meublé",
+    "TYPE_LEASE": "Bail",
     "CREATE": "Créer le contrat",
-    "CREATED": "Contrat créé"
+    "CREATED": "Contrat créé",
+    "STATUS": {
+      "DRAFT": "Brouillon",
+      "PENDING": "En attente",
+      "SIGNED": "Signé",
+      "ACTIVE": "Actif",
+      "TERMINATED": "Résilié",
+      "EXPIRED": "Expiré",
+      "RENEWED": "Renouvelé"
+    }
   },
   "CONTRACTS": {
     "TITLE": "Gestion des Contrats",
@@ -1601,7 +1704,7 @@
       "NO_SHARES": "Aucun partage actif",
       "EXPIRES": "Expire le",
       "NO_EXPIRATION": "Pas d'expiration",
-      "MODIFIED": "RENTABILITY.SCENARIOS.MODIFIED"
+      "MODIFIED": "Modifié"
     },
     "PRICING": {
       "TITLE": "Tarifs Simples et Transparents",

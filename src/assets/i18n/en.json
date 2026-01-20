@@ -133,9 +133,19 @@
       "FIELDS": {
         "STATUS": "Status",
         "OCCUPANCY": "Occupancy",
+        "NAME": "Name",
+        "TYPE": "Property type",
+        "ADDRESS": "Full address",
+        "CITY": "City",
+        "POSTAL_CODE": "Postal code",
+        "SURFACE": "Area",
+        "FLOOR": "Floor",
+        "BEDROOMS": "Bedrooms",
+        "BATHROOMS": "Bathrooms",
         "USAGE_TYPE": "Usage type",
         "CHARGES": "Recoverable charges",
         "DEPOSIT": "Security deposit",
+        "RENT": "Monthly rent",
         "PURCHASE_PRICE": "Purchase price",
         "PURCHASE_DATE": "Purchase date",
         "PROPERTY_TAX": "Property tax (annual)",
@@ -144,7 +154,14 @@
         "MANAGEMENT_FEES_RATE": "Management fees (%)",
         "MAINTENANCE_RATE": "Maintenance (%)",
         "VACANCY_RATE": "Vacancy (%)",
-        "NIGHTS_BOOKED_PER_MONTH": "Booked nights / month"
+        "NIGHTS_BOOKED_PER_MONTH": "Booked nights / month",
+        "ELEVATOR": "Elevator",
+        "PARKING": "Parking",
+        "FURNISHED": "Furnished",
+        "LOT_NUMBER": "Lot number",
+        "TOTAL_WORKS_AMOUNT": "Total works amount",
+        "CADASTRAL_REFERENCE": "Cadastral reference",
+        "NOTES": "Notes"
       },
       "USAGE_TYPE": {
         "COMPLETE": "Complete rental",
@@ -177,6 +194,9 @@
         "DELETE_IMAGE": "Error deleting photo",
         "NO_IMAGES_UPLOADED": "No images uploaded"
       },
+      "TOAST": {
+        "SHEET_GENERATION_ERROR": "Error generating the sheet"
+      },
       "DELETE_CONFIRM": {
         "TITLE": "Delete photo",
         "MESSAGE": "Do you really want to delete this photo?",
@@ -204,10 +224,14 @@
         "DPE": "Energy performance diagnosis (DPE)",
         "GES": "Greenhouse gas emissions (GES)",
         "GAS": "Gas diagnosis",
+        "ELECTRIC": "Electricity diagnosis",
+        "ASBESTOS": "Asbestos",
+        "ERP": "ERP (Risks status)",
         "DPE_VALUE_PLACEHOLDER": "kWh/m²/year",
         "EXPIRY_DATE_PLACEHOLDER": "Expiry date",
         "DONE_ON": "Done on:",
-        "EXPIRES_ON": "Expires on:"
+        "EXPIRES_ON": "Expires on:",
+        "DIAGNOSTIC_DATE": "Diagnosis"
       },
       "COLOCATION": {
         "TOTAL_ROOMS": "Total rooms",
@@ -719,10 +743,13 @@
     "NA": "N/A",
     "NOT_PROVIDED": "Not provided",
     "NOT_PROVIDED_FEM": "Not provided",
+    "ABSENT": "Absent",
+    "PRESENT": "Present",
     "ATTENTION": "Attention",
     "UNKNOWN_PROPERTY": "Unknown property",
     "UNKNOWN": "Unknown",
     "ROOM": "Room {{number}}",
+    "VIEW_ONLY": "View only",
     "CREATE": "Create",
     "SAVE": "Save",
     "CONTINUE": "Continue"
@@ -1004,8 +1031,88 @@
     },
     "SUB_TABS": {
       "CONTRACTS": "Contracts",
+      "PAYMENTS": "Payments",
       "PAYMENT_HISTORY": "Payment history",
       "DOCUMENTS": "Documents"
+    },
+    "ACTIONS": {
+      "PRINT_SHEET": "Print sheet",
+      "GENERATING": "Generating…"
+    },
+    "BADGES": {
+      "ASSOCIATED_TO": "Associated to"
+    },
+    "GENERAL": {
+      "ACTIVE_CONTRACTS": "Active contracts",
+      "MOVE_IN_DATE": "Move-in date"
+    },
+    "SECTIONS": {
+      "IDENTITY": "Identity & Nationality",
+      "ADDRESS": "Address",
+      "PROFESSIONAL": "Professional situation",
+      "EMERGENCY": "Emergency contact"
+    },
+    "IDENTITY": {
+      "BIRTH_DATE": "Date of birth",
+      "YEARS": "years",
+      "NATIONALITY": "Nationality",
+      "ID_NUMBER": "ID number"
+    },
+    "PROFESSIONAL": {
+      "OCCUPATION": "Occupation",
+      "MONTHLY_INCOME": "Monthly income"
+    },
+    "FILE_STATUS": {
+      "COMPLETE": "Complete",
+      "VALIDATED": "Validated",
+      "PENDING": "Pending",
+      "INCOMPLETE": "Incomplete"
+    },
+    "ID_CARD_TYPE": {
+      "CNI": "National ID card",
+      "Passport": "Passport",
+      "TitreSejour": "Residence permit",
+      "PermisConduire": "Driving license"
+    },
+    "NOTICE": {
+      "EXISTING": {
+        "TITLE": "Existing notice",
+        "MESSAGE": "{{details}}\n\nDo you want to cancel this notice?",
+        "CONFIRM": "Cancel notice",
+        "DETAILS": {
+          "NOTIFIED_ON": "Notification date: {{date}}",
+          "ENDS_ON": "Notice ends: {{date}}",
+          "REASON": "Reason: {{reason}}"
+        }
+      }
+    },
+    "DISSOCIATE": {
+      "CONFIRM": {
+        "TITLE": "Dissociate tenant",
+        "MESSAGE": "Are you sure you want to dissociate {{name}} from the property?\n\nThis action will:\n• Set the tenant status to \"Departed\"\n• Release the property/room\n• Archive the dissociation\n\nThis action is irreversible."
+      }
+    },
+    "TOAST": {
+      "NOT_FOUND": "Tenant not found",
+      "SHEET_GENERATION_ERROR": "Error generating the sheet",
+      "DEPOSIT_RECEIPT_DOWNLOAD_ERROR": "Error downloading the deposit receipt",
+      "INVOICE_DOWNLOAD_ERROR": "Error downloading the invoice",
+      "PDF_DOWNLOAD_ERROR": "Error downloading the PDF",
+      "ADDENDUM_PDF_NOT_FOUND": "No addendum PDF found",
+      "OPEN_PROPERTY_MISSING_ID": "Cannot open the property: missing identifier",
+      "OPEN_CONTRACT_MISSING_ID": "Cannot open the contract: missing identifier",
+      "PROPERTY_NOT_FOUND_FOR_CONTRACT": "Property not found for this contract",
+      "PROPERTY_LOAD_ERROR": "Error loading the property",
+      "INVENTORY_ENTRY_MISSING": "Entry inventory is missing for this contract",
+      "INVENTORY_CHECK_ERROR": "Error checking inventories",
+      "GENERATE_PDF_MISSING_DATA": "Cannot generate PDF: missing data",
+      "PDF_GENERATION_ERROR": "Error generating the PDF",
+      "NO_ASSOCIATED_PROPERTY": "Cannot proceed: no property associated to this tenant.",
+      "NOTICE_CANCELLED": "Notice cancelled",
+      "NOTICE_CANCEL_ERROR": "Error cancelling the notice",
+      "DISSOCIATE_NOT_ALLOWED": "Dissociation not allowed: the tenant still has active or signed contracts. You must terminate or cancel all contracts first.",
+      "DISSOCIATE_SUCCESS": "Tenant dissociated: {{name}} has been dissociated successfully.",
+      "DISSOCIATE_ERROR": "Error: unable to dissociate the tenant"
     },
     "CONTRACTS": "Contracts",
     "PAYMENT_HISTORY": "Payment history",
@@ -1029,8 +1136,18 @@
     "TYPE": "Contract type",
     "TYPE_FURNISHED": "Furnished",
     "TYPE_UNFURNISHED": "Unfurnished",
+    "TYPE_LEASE": "Lease",
     "CREATE": "Create contract",
-    "CREATED": "Contract created"
+    "CREATED": "Contract created",
+    "STATUS": {
+      "DRAFT": "Draft",
+      "PENDING": "Pending",
+      "SIGNED": "Signed",
+      "ACTIVE": "Active",
+      "TERMINATED": "Terminated",
+      "EXPIRED": "Expired",
+      "RENEWED": "Renewed"
+    }
   },
   "CONTRACTS": {
     "TITLE": "Contract Management",

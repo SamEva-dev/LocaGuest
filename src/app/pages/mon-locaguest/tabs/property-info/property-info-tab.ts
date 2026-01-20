@@ -5,6 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PropertyDetail, PropertyImage, PropertyImageCategory } from '../../../../core/api/properties.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { ImagesService } from '../../../../core/services/images.service';
+import { AvatarStorageService } from '../../../../core/services/avatar-storage.service';
 import { DocumentsApi } from '../../../../core/api/documents.api';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
@@ -21,6 +22,7 @@ export class PropertyInfoTab implements OnDestroy {
   propertyUpdated = output<void>();
   private propertiesService = inject(PropertiesService);
   private imagesService = inject(ImagesService);
+  private avatarStorage = inject(AvatarStorageService);
   private documentsApi = inject(DocumentsApi);
   
   // Services UI
@@ -56,7 +58,7 @@ export class PropertyInfoTab implements OnDestroy {
   propertyTypes = ['APARTMENT', 'HOUSE', 'STUDIO', 'VILLA', 'DUPLEX', 'LOFT'];
   
   getPropertyTypeLabel(type: string): string {
-    return this.translate.instant(`PROPERTY.INFO.PROPERTY_TYPES.${type.toUpperCase()}`);
+    return `PROPERTY.INFO.PROPERTY_TYPES.${type.toUpperCase()}`;
   }
   
   imageCategories: {value: PropertyImageCategory, label: string, icon: string}[] = [
@@ -127,7 +129,7 @@ export class PropertyInfoTab implements OnDestroy {
   async printPropertySheet() {
     const prop = this.property();
     if (!prop?.id) {
-      this.toasts.errorDirect('Bien introuvable');
+      this.toasts.error('PROPERTY.NOT_FOUND');
       return;
     }
 
@@ -142,7 +144,7 @@ export class PropertyInfoTab implements OnDestroy {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('❌ Error printing property sheet:', err);
-      this.toasts.errorDirect('Erreur lors de la génération de la fiche');
+      this.toasts.error('PROPERTY.INFO.TOAST.SHEET_GENERATION_ERROR');
     } finally {
       this.isPrintingSheet.set(false);
     }
@@ -166,7 +168,7 @@ export class PropertyInfoTab implements OnDestroy {
 
     const usageType = prop.propertyUsageType?.toLowerCase();
     
-    if (usageType === 'Colocation') {
+    if (usageType === 'colocation') {
       return {
         type: this.translate.instant('PROPERTY.INFO.USAGE_TYPE.COLOCATION'),
         occupied: prop.occupiedRooms || 0,
@@ -268,9 +270,10 @@ export class PropertyInfoTab implements OnDestroy {
     }
 
     const statusLabel = this.availableStatuses.find(s => s.value === status)?.label;
+    const translatedStatusLabel = statusLabel ? this.translate.instant(statusLabel) : status;
     const confirmed = await this.confirmService.warning(
       this.translate.instant('PROPERTY.INFO.CONFIRM.CHANGE_STATUS_TITLE'),
-      this.translate.instant('PROPERTY.INFO.CONFIRM.CHANGE_STATUS_MESSAGE', { status: statusLabel })
+      this.translate.instant('PROPERTY.INFO.CONFIRM.CHANGE_STATUS_MESSAGE', { status: translatedStatusLabel })
     );
     if (!confirmed) {
       this.showStatusDropdown.set(false);
@@ -381,19 +384,33 @@ export class PropertyInfoTab implements OnDestroy {
     this.isUploadingImages.set(true);
 
     try {
-      // 1. Upload des fichiers via le service (met à jour la propriété automatiquement en backend)
-      const files = pending.map(img => img.file);
-      const uploadResult = await this.imagesService.uploadImages(prop.id, files, 'other').toPromise();
-      
-      if (!uploadResult || uploadResult.images.length === 0) {
+      const byCategory = pending.reduce((acc, img) => {
+        const key = img.category ?? 'other';
+        acc[key] = acc[key] ?? [];
+        acc[key].push(img.file);
+        return acc;
+      }, {} as Record<PropertyImageCategory, File[]>);
+
+      const categories = Object.keys(byCategory) as PropertyImageCategory[];
+      const results = await Promise.all(
+        categories.map((category) => firstValueFrom(this.imagesService.uploadImages(prop.id, byCategory[category], category)))
+      );
+
+      const livingRoomImageId = results
+        .flatMap(r => r?.images ?? [])
+        .find(img => (img.category || '').toLowerCase() === 'living_room')
+        ?.id;
+      if (livingRoomImageId) {
+        this.avatarStorage.setPropertyAvatarImageId(prop.id, livingRoomImageId);
+      }
+
+      const totalUploaded = results.reduce((sum, r) => sum + (r?.images?.length ?? 0), 0);
+      if (totalUploaded === 0) {
         throw new Error(this.translate.instant('PROPERTY.INFO.ERROR_MESSAGES.NO_IMAGES_UPLOADED'));
       }
 
-      // 2. Succès - le backend a déjà mis à jour property.imageUrls
-      
-      // Vider le cache pour forcer le rechargement des nouvelles images
       this.clearImageCache();
-      
+
       const currentImages = this.property().imageUrls || [];
       if (currentImages.length === 0) {
         this.currentImageIndex.set(0);
@@ -401,17 +418,17 @@ export class PropertyInfoTab implements OnDestroy {
       this.isUploadingImages.set(false);
       this.showImageUploadModal.set(false);
       this.pendingImages.set([]);
-      this.propertyUpdated.emit(); // Recharger la propriété depuis le backend
-      this.toasts.successDirect(this.translate.instant('PROPERTY.INFO.SUCCESS.IMAGES_UPLOADED', { count: uploadResult.images.length }));
+      this.propertyUpdated.emit();
+      this.toasts.success('PROPERTY.INFO.SUCCESS.IMAGES_UPLOADED');
     } catch (err) {
       console.error('❌ Error uploading images:', err);
-      this.toasts.errorDirect(this.translate.instant('PROPERTY.INFO.ERROR_MESSAGES.UPLOAD_IMAGES'));
+      this.toasts.error('PROPERTY.INFO.ERROR_MESSAGES.UPLOAD_IMAGES');
       this.isUploadingImages.set(false);
     }
   }
 
   getCategoryLabel(category: PropertyImageCategory): string {
-    return this.translate.instant(this.imageCategories.find(c => c.value === category)?.label || 'PROPERTY.INFO.IMAGE_CATEGORIES.OTHER');
+    return this.imageCategories.find(c => c.value === category)?.label || 'PROPERTY.INFO.IMAGE_CATEGORIES.OTHER';
   }
 
   async deleteImage(index: number) {
@@ -430,7 +447,12 @@ export class PropertyInfoTab implements OnDestroy {
     
     try {
       // 1. Supprimer le fichier via le service (met à jour la propriété automatiquement en backend)
-      await this.imagesService.deleteImage(imageIdToDelete).toPromise();
+      await firstValueFrom(this.imagesService.deleteImage(imageIdToDelete));
+
+      const currentAvatarId = this.avatarStorage.getPropertyAvatarImageId(prop.id);
+      if (currentAvatarId && currentAvatarId === imageIdToDelete) {
+        this.avatarStorage.setPropertyAvatarImageId(prop.id, null);
+      }
 
       // 2. Succès - le backend a déjà mis à jour property.imageUrls
       
@@ -455,10 +477,10 @@ export class PropertyInfoTab implements OnDestroy {
         this.currentImageIndex.set(0);
       }
       this.propertyUpdated.emit(); // Recharger la propriété depuis le backend
-      this.toasts.successDirect(this.translate.instant('PROPERTY.INFO.SUCCESS.IMAGE_DELETED'));
+      this.toasts.success('PROPERTY.INFO.SUCCESS.IMAGE_DELETED');
     } catch (err) {
       console.error('❌ Error deleting image:', err);
-      this.toasts.errorDirect(this.translate.instant('PROPERTY.INFO.ERROR_MESSAGES.DELETE_IMAGE'));
+      this.toasts.error('PROPERTY.INFO.ERROR_MESSAGES.DELETE_IMAGE');
     }
   }
 
@@ -495,9 +517,9 @@ export class PropertyInfoTab implements OnDestroy {
 
   getUsageTypeColor(type?: string): string {
     switch(type?.toLowerCase()) {
-      case 'Complete': return 'emerald';
-      case 'Colocation': return 'blue';
-      case 'Airbnb': return 'purple';
+      case 'complete': return 'emerald';
+      case 'colocation': return 'blue';
+      case 'airbnb': return 'purple';
       default: return 'slate';
     }
   }
@@ -505,7 +527,7 @@ export class PropertyInfoTab implements OnDestroy {
   // Colocation helpers
   isColocation = computed(() => {
     const usageType = this.property()?.propertyUsageType?.toLowerCase();
-    return usageType === 'Colocation' || usageType === 'colocationindividual' || usageType === 'colocationsolidaire';
+    return usageType === 'colocation' || usageType === 'colocationindividual' || usageType === 'colocationsolidaire';
   });
 
   getOccupancyRate(): number {

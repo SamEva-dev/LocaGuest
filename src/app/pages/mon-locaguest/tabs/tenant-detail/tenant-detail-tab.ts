@@ -1,6 +1,6 @@
 import { Component, input, signal, inject, effect, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
 import { TenantDetail, TenantPayment, TenantPaymentStats } from '../../../../core/api/tenants.api';
 import { TenantsService } from '../../../../core/services/tenants.service';
@@ -27,6 +27,7 @@ import { AuthService } from '../../../../core/auth/services/auth.service';
 import { Permissions } from '../../../../core/auth/permissions';
 import { DepositsApi, DepositDto } from '../../../../core/api/deposits.api';
 import { ContractRenewalData, ContractRenewalWizard } from '../property-contracts/contract-renewal-wizard/contract-renewal-wizard';
+import { AvatarStorageService } from '../../../../core/services/avatar-storage.service';
 
 @Component({
   selector: 'tenant-detail-tab',
@@ -61,11 +62,14 @@ export class TenantDetailTab {
   private invoicesApi = inject(InvoicesApi);
   private auth = inject(AuthService);
   private depositsApi = inject(DepositsApi);
+  private avatarStorage = inject(AvatarStorageService);
+  private translate = inject(TranslateService);
 
   activeSubTab = signal('contracts');
   isLoading = signal(false);
   
   tenant = signal<TenantDetail | null>(null);
+  tenantAvatarDataUrl = signal<string | null>(null);
   payments = signal<TenantPayment[]>([]);
   contracts = signal<Contract[]>([]);
   paymentStats = signal<TenantPaymentStats | null>(null);
@@ -94,6 +98,31 @@ export class TenantDetailTab {
       name: ''
     };
   });
+
+  triggerTenantAvatarUpload() {
+    const t = this.tenant();
+    if (!t?.id) return;
+
+    const inputEl = document.createElement('input');
+    inputEl.type = 'file';
+    inputEl.accept = 'image/*';
+
+    inputEl.onchange = (e: any) => {
+      const file: File | undefined = e?.target?.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev: any) => {
+        const dataUrl = ev?.target?.result as string | undefined;
+        if (!dataUrl) return;
+        this.avatarStorage.setTenantAvatarDataUrl(t.id, dataUrl);
+        this.tenantAvatarDataUrl.set(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    };
+
+    inputEl.click();
+  }
 
   signedAddendumsCount = computed(() => {
     let count = 0;
@@ -124,7 +153,7 @@ export class TenantDetailTab {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('❌ Error downloading deposit receipt PDF:', err);
-      this.toasts.errorDirect('Erreur lors du téléchargement du reçu de caution');
+      this.toasts.error('TENANT.TOAST.DEPOSIT_RECEIPT_DOWNLOAD_ERROR');
     } finally {
       this.downloadingDepositReceipt.set(false);
     }
@@ -238,7 +267,7 @@ export class TenantDetailTab {
 
   subTabs = [
     { id: 'contracts', label: 'TENANT.SUB_TABS.CONTRACTS', icon: 'ph-file-text' },
-    { id: 'payments', label: 'Paiements', icon: 'ph-wallet' },
+    { id: 'payments', label: 'TENANT.SUB_TABS.PAYMENTS', icon: 'ph-wallet' },
     { id: 'payment-history', label: 'TENANT.SUB_TABS.PAYMENT_HISTORY', icon: 'ph-currency-eur' },
     { id: 'documents', label: 'TENANT.SUB_TABS.DOCUMENTS', icon: 'ph-folder' },
   ];
@@ -248,6 +277,15 @@ export class TenantDetailTab {
   }
 
   constructor() {
+    effect(() => {
+      const t = this.tenant();
+      if (!t?.id) {
+        this.tenantAvatarDataUrl.set(null);
+        return;
+      }
+      this.tenantAvatarDataUrl.set(this.avatarStorage.getTenantAvatarDataUrl(t.id));
+    });
+
     effect(() => {
       if (!this.canAccessSubTab(this.activeSubTab())) {
         this.activeSubTab.set('contracts');
@@ -292,12 +330,12 @@ export class TenantDetailTab {
 
   async printTenantSheet() {
     if (!this.auth.hasPermission(Permissions.DocumentsGenerate) && !this.auth.hasPermission(Permissions.DocumentsRead)) {
-      this.toasts.errorDirect('Accès refusé');
+      this.toasts.error('COMMON.ACCESS_DENIED');
       return;
     }
     const t = this.tenant();
     if (!t?.id) {
-      this.toasts.errorDirect('Locataire introuvable');
+      this.toasts.error('TENANT.TOAST.NOT_FOUND');
       return;
     }
 
@@ -312,7 +350,7 @@ export class TenantDetailTab {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('❌ Error printing tenant sheet:', err);
-      this.toasts.errorDirect('Erreur lors de la génération de la fiche');
+      this.toasts.error('TENANT.TOAST.SHEET_GENERATION_ERROR');
     } finally {
       this.isPrintingSheet.set(false);
     }
@@ -389,7 +427,7 @@ export class TenantDetailTab {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('❌ Error downloading invoice PDF:', err);
-      this.toasts.errorDirect('Erreur lors du téléchargement de la facture');
+      this.toasts.error('TENANT.TOAST.INVOICE_DOWNLOAD_ERROR');
     } finally {
       this.downloadingInvoiceId.set(null);
     }
@@ -489,7 +527,7 @@ export class TenantDetailTab {
     event?.stopPropagation();
     const docId = addendum.attachedDocumentIds?.[0];
     if (!docId) {
-      this.toasts.warningDirect('Aucun PDF d\'avenant trouvé');
+      this.toasts.warning('TENANT.TOAST.ADDENDUM_PDF_NOT_FOUND');
       return;
     }
 
@@ -503,7 +541,7 @@ export class TenantDetailTab {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('❌ Error downloading addendum pdf:', err);
-      this.toasts.errorDirect('Erreur lors du téléchargement du PDF');
+      this.toasts.error('TENANT.TOAST.PDF_DOWNLOAD_ERROR');
     }
   }
   
@@ -588,7 +626,7 @@ export class TenantDetailTab {
     const propertyId = (contract as any)?.propertyId || tenant?.propertyId;
 
     if (!propertyId) {
-      this.toasts.errorDirect('Impossible d\'ouvrir le bien: identifiant manquant');
+      this.toasts.error('TENANT.TOAST.OPEN_PROPERTY_MISSING_ID');
       return;
     }
 
@@ -611,7 +649,7 @@ export class TenantDetailTab {
     event?.stopPropagation();
 
     if (!contract?.id) {
-      this.toasts.errorDirect('Impossible d\'ouvrir le contrat: identifiant manquant');
+      this.toasts.error('TENANT.TOAST.OPEN_CONTRACT_MISSING_ID');
       return;
     }
 
@@ -775,13 +813,13 @@ export class TenantDetailTab {
   renewContract(contract: Contract) {
     const t = this.tenant();
     if (!t) {
-      this.toasts.errorDirect('Locataire introuvable');
+      this.toasts.error('TENANT.TOAST.NOT_FOUND');
       return;
     }
 
     const propertyId = (contract as any)?.propertyId || t.propertyId;
     if (!propertyId) {
-      this.toasts.errorDirect('Bien introuvable pour ce contrat');
+      this.toasts.error('TENANT.TOAST.PROPERTY_NOT_FOUND_FOR_CONTRACT');
       return;
     }
 
@@ -797,7 +835,7 @@ export class TenantDetailTab {
         this.renewalWizardData.set(data);
         this.showRenewalWizard.set(true);
       },
-      error: () => this.toasts.errorDirect('Erreur lors du chargement du bien')
+      error: () => this.toasts.error('TENANT.TOAST.PROPERTY_LOAD_ERROR')
     });
   }
 
@@ -819,13 +857,13 @@ export class TenantDetailTab {
   createAddendum(contract: Contract) {
     const t = this.tenant();
     if (!t) {
-      this.toasts.errorDirect('Locataire introuvable');
+      this.toasts.error('TENANT.TOAST.NOT_FOUND');
       return;
     }
 
     const propertyId = (contract as any)?.propertyId || t.propertyId;
     if (!propertyId) {
-      this.toasts.errorDirect('Bien introuvable pour ce contrat');
+      this.toasts.error('TENANT.TOAST.PROPERTY_NOT_FOUND_FOR_CONTRACT');
       return;
     }
 
@@ -842,7 +880,7 @@ export class TenantDetailTab {
         this.addendumWizardData.set(data);
         this.showAddendumWizard.set(true);
       },
-      error: () => this.toasts.errorDirect('Erreur lors du chargement du bien')
+      error: () => this.toasts.error('TENANT.TOAST.PROPERTY_LOAD_ERROR')
     });
   }
 
@@ -882,27 +920,27 @@ export class TenantDetailTab {
       const end = new Date(noticeEndDate);
       const start = noticeDate ? new Date(noticeDate) : null;
       const details = [
-        start ? `Date de notification : ${start.toLocaleDateString()}` : null,
-        `Fin de préavis : ${end.toLocaleDateString()}`,
-        noticeReason ? `Motif : ${noticeReason}` : null
+        start ? this.translate.instant('TENANT.NOTICE.EXISTING.DETAILS.NOTIFIED_ON', { date: start.toLocaleDateString() }) : null,
+        this.translate.instant('TENANT.NOTICE.EXISTING.DETAILS.ENDS_ON', { date: end.toLocaleDateString() }),
+        noticeReason ? this.translate.instant('TENANT.NOTICE.EXISTING.DETAILS.REASON', { reason: noticeReason }) : null
       ].filter(Boolean).join('\n');
 
       this.confirmService.ask({
-        title: 'Préavis existant',
-        message: `${details}\n\nSouhaitez-vous annuler ce préavis ?`,
+        title: this.translate.instant('TENANT.NOTICE.EXISTING.TITLE'),
+        message: this.translate.instant('TENANT.NOTICE.EXISTING.MESSAGE', { details }),
         type: 'warning',
-        confirmText: 'Annuler le préavis',
-        cancelText: 'Fermer',
+        confirmText: this.translate.instant('TENANT.NOTICE.EXISTING.CONFIRM'),
+        cancelText: this.translate.instant('COMMON.CLOSE'),
         showCancel: true
       }).then(async (confirmed) => {
         if (!confirmed) return;
         try {
           await firstValueFrom(this.contractsApi.cancelNotice(contract.id));
-          this.toasts.successDirect('Préavis annulé');
+          this.toasts.success('TENANT.TOAST.NOTICE_CANCELLED');
           const t = this.tenant();
           if (t?.id) this.loadContracts(t.id);
         } catch (err: any) {
-          this.toasts.errorDirect(err?.error?.message || 'Erreur lors de l\'annulation du préavis');
+          this.toasts.errorDirect(err?.error?.message || this.translate.instant('TENANT.TOAST.NOTICE_CANCEL_ERROR'));
         }
       });
       return;
@@ -918,13 +956,13 @@ export class TenantDetailTab {
   createEntryInventory(contract: Contract) {
     const t = this.tenant();
     if (!t) {
-      this.toasts.errorDirect('Locataire introuvable');
+      this.toasts.error('TENANT.TOAST.NOT_FOUND');
       return;
     }
 
     const propertyId = (contract as any)?.propertyId || t.propertyId;
     if (!propertyId) {
-      this.toasts.errorDirect('Bien introuvable pour ce contrat');
+      this.toasts.error('TENANT.TOAST.PROPERTY_NOT_FOUND_FOR_CONTRACT');
       return;
     }
 
@@ -942,7 +980,7 @@ export class TenantDetailTab {
         this.inventoryEntryData.set(data);
         this.showInventoryEntryWizard.set(true);
       },
-      error: () => this.toasts.errorDirect('Erreur lors du chargement du bien')
+      error: () => this.toasts.error('TENANT.TOAST.PROPERTY_LOAD_ERROR')
     });
   }
 
@@ -961,29 +999,29 @@ export class TenantDetailTab {
       next: (inv) => {
         const entryId = inv?.entry?.id;
         if (!entryId) {
-          this.toasts.errorDirect('EDL entrée manquant pour ce contrat');
+          this.toasts.error('TENANT.TOAST.INVENTORY_ENTRY_MISSING');
           return;
         }
 
         const propertyId = (contract as any)?.propertyId || this.tenant()?.propertyId;
         if (!propertyId) {
-          this.toasts.errorDirect('Bien introuvable pour ce contrat');
+          this.toasts.error('TENANT.TOAST.PROPERTY_NOT_FOUND_FOR_CONTRACT');
           return;
         }
 
         const data: InventoryExitWizardData = {
           contractId: contract.id,
           propertyId,
-          propertyName: (contract as any)?.propertyName || this.tenant()?.propertyCode || 'Bien',
+          propertyName: (contract as any)?.propertyName || this.tenant()?.propertyCode || this.translate.instant('COMMON.PROPERTY'),
           roomId: contract.roomId,
-          tenantName: this.tenant()?.fullName || 'Locataire',
+          tenantName: this.tenant()?.fullName || this.translate.instant('COMMON.TENANT'),
           inventoryEntryId: entryId
         };
 
         this.inventoryExitData.set(data);
         this.showInventoryExitWizard.set(true);
       },
-      error: () => this.toasts.errorDirect('Erreur lors de la vérification des EDL')
+      error: () => this.toasts.error('TENANT.TOAST.INVENTORY_CHECK_ERROR')
     });
   }
   
@@ -995,7 +1033,7 @@ export class TenantDetailTab {
       const tenant = this.tenant();
       const propertyId = (contract as any)?.propertyId || tenant?.propertyId;
       if (!tenant?.id || !propertyId) {
-        this.toasts.errorDirect('Impossible de générer le PDF: données manquantes');
+        this.toasts.error('TENANT.TOAST.GENERATE_PDF_MISSING_DATA');
         return;
       }
 
@@ -1003,7 +1041,7 @@ export class TenantDetailTab {
         contractId: contract.id,
         tenantId: tenant.id,
         propertyId,
-        contractType: 'Bail',
+        contractType: this.translate.instant('CONTRACT.TYPE_LEASE'),
         startDate: new Date(contract.startDate).toISOString().split('T')[0],
         endDate: new Date(contract.endDate).toISOString().split('T')[0],
         rent: contract.rent,
@@ -1023,7 +1061,7 @@ export class TenantDetailTab {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('❌ Error generating contract PDF:', error);
-      this.toasts.errorDirect('Erreur lors de la génération du PDF');
+      this.toasts.error('TENANT.TOAST.PDF_GENERATION_ERROR');
     }
   }
 
@@ -1064,29 +1102,21 @@ export class TenantDetailTab {
 
     const assoc = this.associatedProperty();
     if (!assoc?.id) {
-      this.toasts.errorDirect('Impossible: aucun bien associé à ce locataire.');
+      this.toasts.error('TENANT.TOAST.NO_ASSOCIATED_PROPERTY');
       return;
     }
     
     // Vérification des contrats actifs
     if (!this.canDissociateTenant()) {
-      this.toasts.errorDirect(
-        'Dissociation impossible: Le locataire a encore des contrats actifs ou signés. ' +
-        'Vous devez d\'abord terminer ou annuler tous les contrats.'
-      );
+      this.toasts.error('TENANT.TOAST.DISSOCIATE_NOT_ALLOWED');
       return;
     }
     
     // Vérifier si EDL sortie validé (TODO: à implémenter)
     
     const confirmed = await this.confirmService.warning(
-      'Dissocier le locataire',
-      `Êtes-vous sûr de vouloir dissocier ${tenant.fullName} du bien ?\n\n` +
-      'Cette action va:\n' +
-      '• Mettre le statut du locataire à "Departed"\n' +
-      '• Libérer le bien/chambre\n' +
-      '• Historiser la dissociation\n\n' +
-      'Cette action est irréversible.'
+      this.translate.instant('TENANT.DISSOCIATE.CONFIRM.TITLE'),
+      this.translate.instant('TENANT.DISSOCIATE.CONFIRM.MESSAGE', { name: tenant.fullName })
     );
     
     if (!confirmed) return;
@@ -1094,16 +1124,12 @@ export class TenantDetailTab {
     try {
       await firstValueFrom(this.propertiesService.dissociateTenant(assoc.id, tenant.id));
       
-      this.toasts.successDirect(
-        `Locataire dissocié: ${tenant.fullName} a été dissocié du bien avec succès.`
-      );
+      this.toasts.successDirect(this.translate.instant('TENANT.TOAST.DISSOCIATE_SUCCESS', { name: tenant.fullName }));
       
       // Recharger les données
       this.loadTenant(tenant.id);
     } catch (error: any) {
-      this.toasts.errorDirect(
-        error.error?.message || 'Erreur: Impossible de dissocier le locataire'
-      );
+      this.toasts.errorDirect(error.error?.message || this.translate.instant('TENANT.TOAST.DISSOCIATE_ERROR'));
     }
   }
   
@@ -1143,13 +1169,13 @@ export class TenantDetailTab {
   getContractStatusBadge(status: string): { label: string; color: string } {
     const s = status?.toLowerCase() || '';
     
-    if (s === 'draft') return { label: 'Brouillon', color: 'bg-slate-100 text-slate-700' };
-    if (s === 'pending') return { label: 'En attente', color: 'bg-yellow-100 text-yellow-700' };
-    if (s === 'signed') return { label: 'Signé', color: 'bg-blue-100 text-blue-700' };
-    if (s === 'active') return { label: 'Actif', color: 'bg-emerald-100 text-emerald-700' };
-    if (s === 'terminated') return { label: 'Résilié', color: 'bg-red-100 text-red-700' };
-    if (s === 'expired') return { label: 'Expiré', color: 'bg-gray-100 text-gray-700' };
-    if (s === 'renewed') return { label: 'Renouvelé', color: 'bg-purple-100 text-purple-700' };
+    if (s === 'draft') return { label: this.translate.instant('CONTRACT.STATUS.DRAFT'), color: 'bg-slate-100 text-slate-700' };
+    if (s === 'pending') return { label: this.translate.instant('CONTRACT.STATUS.PENDING'), color: 'bg-yellow-100 text-yellow-700' };
+    if (s === 'signed') return { label: this.translate.instant('CONTRACT.STATUS.SIGNED'), color: 'bg-blue-100 text-blue-700' };
+    if (s === 'active') return { label: this.translate.instant('CONTRACT.STATUS.ACTIVE'), color: 'bg-emerald-100 text-emerald-700' };
+    if (s === 'terminated') return { label: this.translate.instant('CONTRACT.STATUS.TERMINATED'), color: 'bg-red-100 text-red-700' };
+    if (s === 'expired') return { label: this.translate.instant('CONTRACT.STATUS.EXPIRED'), color: 'bg-gray-100 text-gray-700' };
+    if (s === 'renewed') return { label: this.translate.instant('CONTRACT.STATUS.RENEWED'), color: 'bg-purple-100 text-purple-700' };
     
     return { label: status, color: 'bg-slate-100 text-slate-700' };
   }
@@ -1174,13 +1200,9 @@ export class TenantDetailTab {
    * Obtenir le label du type de pièce d'identité
    */
   getIdCardTypeLabel(type: string): string {
-    const labels: Record<string, string> = {
-      'CNI': 'Carte Nationale d\'Identité',
-      'Passport': 'Passeport',
-      'TitreSejour': 'Titre de Séjour',
-      'PermisConduire': 'Permis de Conduire'
-    };
-    return labels[type] || type;
+    const key = `TENANT.ID_CARD_TYPE.${type}`;
+    const translated = this.translate.instant(key);
+    return translated && translated !== key ? translated : type;
   }
   
   /**
@@ -1188,22 +1210,22 @@ export class TenantDetailTab {
    */
   getFileStatusBadge(status: string): { label: string; color: string; icon: string } {
     if (status === 'Complete') return { 
-      label: 'Complet', 
+      label: this.translate.instant('TENANT.FILE_STATUS.COMPLETE'), 
       color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30', 
       icon: 'ph-check-circle' 
     };
     if (status === 'Validated') return { 
-      label: 'Validé', 
+      label: this.translate.instant('TENANT.FILE_STATUS.VALIDATED'), 
       color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30', 
       icon: 'ph-seal-check' 
     };
     if (status === 'Pending') return { 
-      label: 'En attente', 
+      label: this.translate.instant('TENANT.FILE_STATUS.PENDING'), 
       color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30', 
       icon: 'ph-clock' 
     };
     return { 
-      label: 'Incomplet', 
+      label: this.translate.instant('TENANT.FILE_STATUS.INCOMPLETE'), 
       color: 'bg-red-100 text-red-700 dark:bg-red-900/30', 
       icon: 'ph-warning' 
     };

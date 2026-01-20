@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed, effect } from '@angular/core';
 import { NgClass } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
@@ -13,6 +13,8 @@ import { AddPropertyForm } from '../../forms/add-property/add-property-form';
 import { AddTenantForm } from '../../forms/add-tenant/add-tenant-form';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { ToastService } from '../../../../core/ui/toast.service';
+import { ImagesService } from '../../../../core/services/images.service';
+import { AvatarStorageService } from '../../../../core/services/avatar-storage.service';
 
 @Component({
   selector: 'summary-tab',
@@ -27,6 +29,9 @@ export class SummaryTab {
   private dashboardApi = inject(DashboardApi);
   private confirmService = inject(ConfirmService);
   private toasts = inject(ToastService);
+  private translate = inject(TranslateService);
+  private imagesService = inject(ImagesService);
+  private avatarStorage = inject(AvatarStorageService);
 
   viewMode = signal<'properties' | 'tenants'>('properties');
   displayMode = signal<'card' | 'table'>('card');
@@ -375,10 +380,14 @@ export class SummaryTab {
 
   getUsageTypeLabel(usageType: string): string {
     switch(usageType) {
-      case 'complete': return 'Location complète';
-      case 'colocation': return 'Colocation';
-      case 'airbnb': return 'Airbnb';
-      default: return 'Non défini';
+      case 'complete':
+        return this.translate.instant('PROPERTY.INFO.USAGE_TYPE.COMPLETE');
+      case 'colocation':
+        return this.translate.instant('PROPERTY.INFO.USAGE_TYPE.COLOCATION');
+      case 'airbnb':
+        return this.translate.instant('PROPERTY.INFO.USAGE_TYPE.AIRBNB');
+      default:
+        return this.translate.instant('PROPERTY.INFO.USAGE_TYPE.UNDEFINED');
     }
   }
 
@@ -402,11 +411,47 @@ export class SummaryTab {
 
   getStatusLabel(status: string): string {
     switch(status) {
-      case 'Vacant': return 'Vacant';
-      case 'Occupied': return 'Occupé';
-      case 'PartiallyOccupied': return 'Partiellement occupé';
+      case 'Vacant':
+        return this.translate.instant('PROPERTY.STATUS_VACANT');
+      case 'Occupied':
+        return this.translate.instant('PROPERTY.STATUS_OCCUPIED');
+      case 'PartiallyOccupied':
+        return this.translate.instant('PROPERTY.STATUS_PARTIALLY_OCCUPIED');
+      case 'Reserve':
+      case 'Reserved':
+        return this.translate.instant('PROPERTY.STATUS_RESERVED');
+      case 'UnderMaintenance':
+        return this.translate.instant('PROPERTY.STATUS_UNDER_MAINTENANCE');
       default: return status;
     }
+  }
+
+  getPropertyAvatarUrl(property: PropertyListItem): string | null {
+    const v = (property as any)?.imageUrl as string | undefined;
+    if (!v) return null;
+
+    const trimmed = v.trim();
+    if (trimmed.length === 0) return null;
+
+    if (/^https?:\/\//i.test(trimmed) || /^blob:/i.test(trimmed) || /^data:/i.test(trimmed)) {
+      return trimmed;
+    }
+
+    return this.imagesService.getImageUrl(trimmed);
+  }
+
+  getEffectivePropertyAvatarUrl(property: PropertyListItem): string | null {
+    const apiAvatar = this.getPropertyAvatarUrl(property);
+    if (apiAvatar) return apiAvatar;
+
+    const localId = this.avatarStorage.getPropertyAvatarImageId(property.id);
+    if (!localId) return null;
+    return this.imagesService.getImageUrl(localId);
+  }
+
+  getTenantAvatarDataUrl(tenant: TenantListItem): string | null {
+    if (!tenant?.id) return null;
+    return this.avatarStorage.getTenantAvatarDataUrl(tenant.id);
   }
 
   reloadCurrentView() {

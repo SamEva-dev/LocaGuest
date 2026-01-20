@@ -15,20 +15,20 @@
         <button 
           data-tour="property.info.edit"
           (click)="startEditing()"
-          class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition flex items-center gap-2">
+          class="cursor-pointer px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition flex items-center gap-2">
           <i class="ph ph-pencil-simple"></i>
-          Modifier
+          {{ 'PROPERTY.INFO.ACTIONS.EDIT' | translate }}
         </button>
 
         <button
           data-tour="property.info.print"
           (click)="printPropertySheet()"
           [disabled]="isPrintingSheet()"
-          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Imprimer la fiche"
+          class="cursor-pointer px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          [title]="'PROPERTY.INFO.ACTIONS.PRINT_SHEET' | translate"
         >
           <i class="ph" [class.ph-printer]="!isPrintingSheet()" [class.ph-circle-notch]="isPrintingSheet()" [class.animate-spin]="isPrintingSheet()"></i>
-          <span>{{ isPrintingSheet() ? 'Génération...' : 'Imprimer la fiche' }}</span>
+          <span>{{ isPrintingSheet() ? ('COMMON.GENERATING' | translate) : ('PROPERTY.INFO.ACTIONS.PRINT_SHEET' | translate) }}</span>
         </button>
       </div>
     } @else {
@@ -36,15 +36,15 @@
         <button 
           (click)="cancelEditing()"
           [disabled]="isSaving()"
-          class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition">
-          Annuler
+          class="cursor-pointer px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg font-medium transition">
+          {{ 'PROPERTY.INFO.ACTIONS.CANCEL' | translate }}
         </button>
         <button 
           (click)="saveChanges()"
           [disabled]="isSaving()"
-          class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition flex items-center gap-2">
+          class="cursor-pointer px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition flex items-center gap-2">
           <i class="ph ph-check" [class.ph-spinner]="isSaving()" [class.animate-spin]="isSaving()"></i>
-          {{ isSaving() ? 'Enregistrement...' : 'Enregistrer' }}
+          {{ isSaving() ? ('PROPERTY.INFO.ACTIONS.SAVING' | translate) : ('PROPERTY.INFO.ACTIONS.SAVE' | translate) }}
         </button>
       </div>
     }
@@ -66,12 +66,12 @@
             @if (totalImages() > 1) {
               <button 
                 (click)="previousImage()"
-                class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition">
+                class="cursor-pointer absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition">
                 <i class="ph ph-caret-left text-xl"></i>
               </button>
               <button 
                 (click)="nextImage()"
-                class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition">
+                class="cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition">
                 <i class="ph ph-caret-right text-xl"></i>
               </button>
 
@@ -82,7 +82,7 @@
                     (click)="goToImage(i)"
                     [class.bg-white]="i === currentImageIndex()"
                     [class.bg-white/50]="i !== currentImageIndex()"
-                    class="w-2 h-2 rounded-full transition"></button>
+                    class="cursor-pointer w-2 h-2 rounded-full transition"></button>
                 }
               </div>
             }
@@ -96,7 +96,7 @@
             <button 
               data-tour="property.info.photos.delete"
               (click)="deleteImage(currentImageIndex())"
-              class="absolute top-3 left-3 w-10 h-10 bg-red-500/80 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition"
+              class="cursor-pointer absolute top-3 left-3 w-10 h-10 bg-red-500/80 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition"
               [title]="'PROPERTY.INFO.PHOTOS.DELETE_CURRENT' | translate">
               <i class="ph ph-trash text-lg"></i>
             </button>
@@ -112,7 +112,7 @@
             data-tour="property.info.photos.add"
             (click)="triggerImageUpload()"
             [disabled]="isUploadingImages()"
-            class="absolute bottom-3 left-3 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:shadow-lg text-white rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="cursor-pointer absolute bottom-3 left-3 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:shadow-lg text-white rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             [title]="'PROPERTY.INFO.PHOTOS.ADD' | translate">
             @if (isUploadingImages()) {
               <i class="ph ph-circle-notch animate-spin"></i>
@@ -134,7 +134,7 @@
             <button 
               (click)="showStatusDropdown.set(!showStatusDropdown())"
               [disabled]="isEditing()"
-              class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-between transition"
+              class="cursor-pointer w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-between transition"
               [class.opacity-50]="isEditing()"
               [class.cursor-not-allowed]="isEditing()">
               <span class="flex items-center gap-2">
@@ -151,7 +151,7 @@
                 @for (status of availableStatuses; track status.value) {
                   <button 
                     (click)="changeStatus(status.value)"
-                    class="w-full px-3 py-2 flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition text-left"
+                    class="cursor-pointer w-full px-3 py-2 flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition text-left"
                     [class.bg-slate-50]="status.value === property().status"
                     [class.dark:bg-slate-700]="status.value === property().status">
                     <span [class]="'w-2 h-2 rounded-full bg-' + status.color + '-500'"></span>
@@ -202,7 +202,7 @@
           <!-- Name -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Nom / Libellé
+              {{ 'PROPERTY.INFO.FIELDS.NAME' | translate }}
             </label>
             @if (isEditing()) {
               <input 
@@ -217,25 +217,25 @@
           <!-- Type -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Type de bien
+              {{ 'PROPERTY.INFO.FIELDS.TYPE' | translate }}
             </label>
             @if (isEditing()) {
               <select 
                 [(ngModel)]="editForm()!.type"
                 class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none">
                 @for (type of propertyTypes; track type) {
-                  <option [value]="type">{{ getPropertyTypeLabel(type) }}</option>
+                  <option [value]="type">{{ getPropertyTypeLabel(type) | translate }}</option>
                 }
               </select>
             } @else {
-              <p class="text-slate-900 dark:text-white">{{ getPropertyTypeLabel(property().type) }}</p>
+              <p class="text-slate-900 dark:text-white">{{ getPropertyTypeLabel(property().type) | translate }}</p>
             }
           </div>
 
           <!-- Address (Full width) -->
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Adresse complète
+              {{ 'PROPERTY.INFO.FIELDS.ADDRESS' | translate }}
             </label>
             @if (isEditing()) {
               <input 
@@ -259,7 +259,7 @@
           <!-- City -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Ville
+              {{ 'PROPERTY.INFO.FIELDS.CITY' | translate }}
             </label>
             @if (isEditing()) {
               <input 
@@ -267,14 +267,14 @@
                 [(ngModel)]="editForm()!.city"
                 class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
             } @else {
-              <p class="text-slate-900 dark:text-white">{{ property().city || '—' }}</p>
+              <p class="text-slate-900 dark:text-white">{{ property().city || ('COMMON.NA' | translate) }}</p>
             }
           </div>
 
           <!-- Postal Code -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Code postal
+              {{ 'PROPERTY.INFO.FIELDS.POSTAL_CODE' | translate }}
             </label>
             @if (isEditing()) {
               <input 
@@ -282,14 +282,14 @@
                 [(ngModel)]="editForm()!.postalCode"
                 class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none" />
             } @else {
-              <p class="text-slate-900 dark:text-white">{{ property().postalCode || '—' }}</p>
+              <p class="text-slate-900 dark:text-white">{{ property().postalCode || ('COMMON.NA' | translate) }}</p>
             }
           </div>
 
           <!-- Surface -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Superficie
+              {{ 'PROPERTY.INFO.FIELDS.SURFACE' | translate }}
             </label>
             @if (isEditing()) {
               <input 
@@ -453,7 +453,7 @@
             } @else {
               <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ property().bedrooms || 0 }}</p>
             }
-            <p class="text-sm text-slate-500">Chambres</p>
+            <p class="text-sm text-slate-500">{{ 'PROPERTY.INFO.FIELDS.BEDROOMS' | translate }}</p>
           </div>
 
           <!-- Bathrooms -->
@@ -467,7 +467,7 @@
             } @else {
               <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ property().bathrooms || 0 }}</p>
             }
-            <p class="text-sm text-slate-500">Salles de bain</p>
+            <p class="text-sm text-slate-500">{{ 'PROPERTY.INFO.FIELDS.BATHROOMS' | translate }}</p>
           </div>
 
           <!-- Floor -->
@@ -481,7 +481,7 @@
             } @else {
               <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ property().floor ?? '—' }}</p>
             }
-            <p class="text-sm text-slate-500">Étage</p>
+            <p class="text-sm text-slate-500">{{ 'PROPERTY.INFO.FIELDS.FLOOR' | translate }}</p>
           </div>
 
           <!-- Elevator -->
@@ -496,10 +496,10 @@
               </label>
             } @else {
               <p class="text-2xl font-bold" [class.text-emerald-500]="property().hasElevator" [class.text-slate-400]="!property().hasElevator">
-                {{ property().hasElevator ? 'Oui' : 'Non' }}
+                {{ property().hasElevator ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}
               </p>
             }
-            <p class="text-sm text-slate-500">Ascenseur</p>
+            <p class="text-sm text-slate-500">{{ 'PROPERTY.INFO.FIELDS.ELEVATOR' | translate }}</p>
           </div>
 
           <!-- Parking -->
@@ -514,10 +514,10 @@
               </label>
             } @else {
               <p class="text-2xl font-bold" [class.text-emerald-500]="property().hasParking" [class.text-slate-400]="!property().hasParking">
-                {{ property().hasParking ? 'Oui' : 'Non' }}
+                {{ property().hasParking ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}
               </p>
             }
-            <p class="text-sm text-slate-500">Parking</p>
+            <p class="text-sm text-slate-500">{{ 'PROPERTY.INFO.FIELDS.PARKING' | translate }}</p>
           </div>
 
           <!-- Furnished -->
@@ -532,10 +532,10 @@
               </label>
             } @else {
               <p class="text-2xl font-bold" [class.text-emerald-500]="property().isFurnished" [class.text-slate-400]="!property().isFurnished">
-                {{ property().isFurnished ? 'Oui' : 'Non' }}
+                {{ property().isFurnished ? ('COMMON.YES' | translate) : ('COMMON.NO' | translate) }}
               </p>
             }
-            <p class="text-sm text-slate-500">Meublé</p>
+            <p class="text-sm text-slate-500">{{ 'PROPERTY.INFO.FIELDS.FURNISHED' | translate }}</p>
           </div>
         </div>
       </div>
@@ -544,14 +544,14 @@
       <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
         <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
           <i class="ph ph-currency-eur text-amber-500"></i>
-          Informations financières
+          {{ 'PROPERTY.INFO.SECTIONS.FINANCIAL' | translate }}
         </h3>
 
         <div class="grid md:grid-cols-3 gap-4">
           <!-- Rent -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Loyer de référence
+              {{ 'PROPERTY.INFO.FIELDS.RENT' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -792,7 +792,7 @@
           <!-- Electric Diagnostic -->
           <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Diagnostic Électricité
+              {{ 'PROPERTY.INFO.DIAGNOSTICS.ELECTRIC' | translate }}
             </label>
             @if (isEditing()) {
               <div class="space-y-2">
@@ -857,7 +857,7 @@
                 </div>
               } @else {
                 <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
-                  Non renseigné
+                  {{ 'COMMON.NOT_PROVIDED' | translate }}
                 </div>
               }
             }
@@ -866,22 +866,22 @@
           <!-- Asbestos -->
           <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Amiante
+              {{ 'PROPERTY.INFO.DIAGNOSTICS.ASBESTOS' | translate }}
             </label>
             @if (isEditing()) {
               <div class="space-y-2">
                 <select 
                   [(ngModel)]="editForm()!.hasAsbestos"
                   class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm">
-                  <option [ngValue]="null">Non renseigné</option>
-                  <option [ngValue]="false">Absent</option>
-                  <option [ngValue]="true">Présent</option>
+                  <option [ngValue]="null">{{ 'COMMON.NOT_PROVIDED' | translate }}</option>
+                  <option [ngValue]="false">{{ 'COMMON.ABSENT' | translate }}</option>
+                  <option [ngValue]="true">{{ 'COMMON.PRESENT' | translate }}</option>
                 </select>
                 @if (editForm()!.hasAsbestos) {
                   <input 
                     type="date"
                     [(ngModel)]="editForm()!.asbestosDiagnosticDate"
-                    placeholder="Date diagnostic"
+                    [placeholder]="'PROPERTY.INFO.DIAGNOSTICS.DIAGNOSTIC_DATE' | translate"
                     class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
                 }
               </div>
@@ -891,23 +891,23 @@
                   @if (property().hasAsbestos) {
                     <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
                       <i class="ph ph-warning-circle mr-1"></i>
-                      Présent
+                      {{ 'COMMON.PRESENT' | translate }}
                     </span>
                   } @else {
                     <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
                       <i class="ph ph-check-circle mr-1"></i>
-                      Absent
+                      {{ 'COMMON.ABSENT' | translate }}
                     </span>
                   }
                 </div>
                 @if (property().hasAsbestos && property().asbestosDiagnosticDate) {
                   <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                    Diagnostic: {{ property().asbestosDiagnosticDate | date:'dd/MM/yyyy' }}
+                    {{ 'PROPERTY.INFO.DIAGNOSTICS.DIAGNOSTIC_DATE' | translate }}: {{ property().asbestosDiagnosticDate | date:'dd/MM/yyyy' }}
                   </p>
                 }
               } @else {
                 <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
-                  Non renseigné
+                  {{ 'COMMON.NOT_PROVIDED' | translate }}
                 </div>
               }
             }
@@ -916,20 +916,20 @@
           <!-- ERP -->
           <div class="p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              ERP (État des Risques)
+              {{ 'PROPERTY.INFO.DIAGNOSTICS.ERP' | translate }}
             </label>
             @if (isEditing()) {
               <input 
                 type="text"
                 [(ngModel)]="editForm()!.erpZone"
-                placeholder="Zone de risques"
+                [placeholder]="'PROPERTY.INFO.DIAGNOSTICS.ERP' | translate"
                 class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none text-sm" />
             } @else {
               @if (property().erpZone) {
                 <p class="text-sm font-medium text-slate-900 dark:text-white">{{ property().erpZone }}</p>
               } @else {
                 <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded text-sm text-slate-500">
-                  Non renseigné
+                  {{ 'COMMON.NOT_PROVIDED' | translate }}
                 </div>
               }
             }
@@ -942,7 +942,7 @@
         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
           <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
             <i class="ph ph-users-three text-amber-500"></i>
-            Informations colocation
+            {{ 'PROPERTY.INFO.SECTIONS.COLOCATION' | translate }}
           </h3>
 
           <div class="grid md:grid-cols-2 gap-6">
@@ -953,15 +953,15 @@
                 <span class="text-2xl font-bold text-blue-600">{{ property().totalRooms || 0 }}</span>
               </div>
               <div class="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres occupées</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ 'PROPERTY.INFO.COLOCATION.OCCUPIED_ROOMS' | translate }}</span>
                 <span class="text-2xl font-bold text-emerald-600">{{ property().occupiedRooms || 0 }}</span>
               </div>
               <div class="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres réservées</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ 'PROPERTY.INFO.COLOCATION.RESERVED_ROOMS' | translate }}</span>
                 <span class="text-2xl font-bold text-amber-600">{{ property().reservedRooms || 0 }}</span>
               </div>
               <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Chambres disponibles</span>
+                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ 'PROPERTY.INFO.COLOCATION.AVAILABLE_ROOMS' | translate }}</span>
                 <span class="text-2xl font-bold text-slate-600">{{ (property().totalRooms || 0) - (property().occupiedRooms || 0) - (property().reservedRooms || 0) }}</span>
               </div>
             </div>
@@ -982,11 +982,11 @@
               </div>
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">
                 @if (getOccupancyRate() === 100) {
-                  Colocation complètement occupée
+                  {{ 'PROPERTY.INFO.COLOCATION.FULLY_OCCUPIED' | translate }}
                 } @else if (getOccupancyRate() === 0) {
-                  Aucune chambre occupée
+                  {{ 'PROPERTY.INFO.COLOCATION.NONE_OCCUPIED' | translate }}
                 } @else {
-                  {{ property().occupiedRooms }} sur {{ property().totalRooms }} chambres occupées
+                  {{ 'PROPERTY.INFO.COLOCATION.OCCUPIED_OF_TOTAL' | translate:{occupied: property().occupiedRooms, total: property().totalRooms} }}
                 }
               </p>
             </div>
@@ -996,7 +996,7 @@
             <div class="mt-4 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
               <p class="text-sm text-orange-800 dark:text-orange-200">
                 <i class="ph ph-warning mr-1"></i>
-                <strong>Attention:</strong> Le nombre total de chambres n'est pas renseigné. Veuillez compléter cette information.
+                <strong>{{ 'COMMON.ATTENTION' | translate }}:</strong> {{ 'PROPERTY.INFO.COLOCATION.TOTAL_ROOMS_MISSING' | translate }}
               </p>
             </div>
           }
@@ -1007,14 +1007,14 @@
       <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
         <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
           <i class="ph ph-file-text text-amber-500"></i>
-          Informations administratives
+          {{ 'PROPERTY.INFO.SECTIONS.ADMIN' | translate }}
         </h3>
 
         <div class="grid md:grid-cols-2 gap-4">
           <!-- Cadastral Reference -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Référence cadastrale
+              {{ 'PROPERTY.INFO.FIELDS.CADASTRAL_REFERENCE' | translate }}
             </label>
             @if (isEditing()) {
               <input 
@@ -1026,7 +1026,7 @@
                 @if (property().cadastralReference) {
                   {{ property().cadastralReference }}
                 } @else {
-                  <span class="text-slate-400">Non renseignée</span>
+                  <span class="text-slate-400">{{ 'COMMON.NOT_PROVIDED_FEM' | translate }}</span>
                 }
               </p>
             }
@@ -1035,7 +1035,7 @@
           <!-- Lot Number -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Numéro de lot
+              {{ 'PROPERTY.INFO.FIELDS.LOT_NUMBER' | translate }}
             </label>
             @if (isEditing()) {
               <input 
@@ -1047,7 +1047,7 @@
                 @if (property().lotNumber) {
                   {{ property().lotNumber }}
                 } @else {
-                  <span class="text-slate-400">Non renseigné</span>
+                  <span class="text-slate-400">{{ 'COMMON.NOT_PROVIDED' | translate }}</span>
                 }
               </p>
             }
@@ -1056,7 +1056,7 @@
           <!-- Acquisition Date -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Date d'acquisition
+              {{ 'PROPERTY.INFO.FIELDS.PURCHASE_DATE' | translate }}
             </label>
             @if (isEditing()) {
               <input 
@@ -1068,7 +1068,7 @@
                 @if (property().purchaseDate) {
                   {{ property().purchaseDate | date:'dd/MM/yyyy' }}
                 } @else {
-                  <span class="text-slate-400">Non renseignée</span>
+                  <span class="text-slate-400">{{ 'COMMON.NOT_PROVIDED_FEM' | translate }}</span>
                 }
               </p>
             }
@@ -1077,7 +1077,7 @@
           <!-- Total Works Amount -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Montant total travaux réalisés
+              {{ 'PROPERTY.INFO.FIELDS.TOTAL_WORKS_AMOUNT' | translate }}
             </label>
             @if (isEditing()) {
               <div class="relative">
@@ -1092,7 +1092,7 @@
                 @if (property().totalWorksAmount) {
                   {{ property().totalWorksAmount | number:'1.2-2' }} €
                 } @else {
-                  <span class="text-slate-400 font-normal">Non renseigné</span>
+                  <span class="text-slate-400 font-normal">{{ 'COMMON.NOT_PROVIDED' | translate }}</span>
                 }
               </p>
             }
@@ -1105,7 +1105,7 @@
         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
           <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
             <i class="ph ph-note text-amber-500"></i>
-            Notes
+            {{ 'PROPERTY.INFO.SECTIONS.NOTES' | translate }}
           </h3>
 
           @if (isEditing()) {
@@ -1113,7 +1113,7 @@
               [(ngModel)]="editForm()!.description"
               rows="4"
               class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-amber-500 outline-none resize-none"
-              placeholder="Ajouter des notes..."></textarea>
+              [placeholder]="'PROPERTY.INFO.FIELDS.NOTES' | translate"></textarea>
           } @else {
             <p class="text-slate-600 dark:text-slate-300 whitespace-pre-wrap">{{ property().description }}</p>
           }
@@ -1134,7 +1134,7 @@
           </h3>
           <button 
             (click)="cancelImageUpload()"
-            class="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition">
+            class="cursor-pointer w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition">
             <i class="ph ph-x text-white text-xl"></i>
           </button>
         </div>
@@ -1154,7 +1154,7 @@
                   <!-- Remove Button -->
                   <button 
                     (click)="removePendingImage(imgIndex)"
-                    class="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg transition">
+                    class="cursor-pointer absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg transition">
                     <i class="ph ph-trash text-lg"></i>
                   </button>
                 </div>
@@ -1174,9 +1174,9 @@
                         [class.dark:bg-slate-800]="img.category !== cat.value"
                         [class.text-slate-700]="img.category !== cat.value"
                         [class.dark:text-slate-300]="img.category !== cat.value"
-                        class="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-xs font-medium transition hover:scale-105 flex items-center justify-center gap-1">
+                        class="cursor-pointer px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-xs font-medium transition hover:scale-105 flex items-center justify-center gap-1">
                         <i [class]="cat.icon"></i>
-                        <span>{{ cat.label }}</span>
+                        <span>{{ cat.label | translate }}</span>
                       </button>
                     }
                   </div>
@@ -1197,13 +1197,13 @@
         <div class="border-t border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-end gap-3">
           <button 
             (click)="cancelImageUpload()"
-            class="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg font-medium transition">
+            class="cursor-pointer px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg font-medium transition">
             {{ 'COMMON.CANCEL' | translate }}
           </button>
           <button 
             (click)="confirmImageUpload()"
             [disabled]="pendingImages().length === 0 || isUploadingImages()"
-            class="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:shadow-lg text-white rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            class="cursor-pointer px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:shadow-lg text-white rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
             @if (isUploadingImages()) {
               <i class="ph ph-circle-notch animate-spin"></i>
               <span>{{ 'COMMON.UPLOADING' | translate }}</span>

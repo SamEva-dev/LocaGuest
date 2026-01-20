@@ -33,13 +33,22 @@
               <div class="p-5 border-b border-slate-200 dark:border-slate-700">
                 <div class="flex items-start gap-4">
                   <!-- Avatar cliquable -->
-                  <div 
-                    data-tour="property.tenants.open-tenant"
-                    (click)="openTenantDetail(item.tenant)"
-                    class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-xl cursor-pointer hover:shadow-xl hover:scale-105 transition-all flex-shrink-0"
-                  >
-                    {{ getInitials(item.tenant.fullName || 'T') }}
-                  </div>
+                  @if (getTenantAvatarDataUrl(item.tenant)) {
+                    <img
+                      data-tour="property.tenants.open-tenant"
+                      (click)="openTenantDetail(item.tenant)"
+                      class="w-16 h-16 rounded-full flex-shrink-0 object-cover border border-slate-200 dark:border-slate-700 cursor-pointer hover:shadow-xl hover:scale-105 transition-all"
+                      [src]="getTenantAvatarDataUrl(item.tenant)"
+                      [alt]="item.tenant.fullName" />
+                  } @else {
+                    <div 
+                      data-tour="property.tenants.open-tenant"
+                      (click)="openTenantDetail(item.tenant)"
+                      class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-xl cursor-pointer hover:shadow-xl hover:scale-105 transition-all flex-shrink-0"
+                    >
+                      {{ getInitials(item.tenant.fullName || 'T') }}
+                    </div>
+                  }
                   
                   <div class="flex-1 min-w-0">
                     <!-- Nom + Code + Badge Paiement -->
@@ -358,21 +367,29 @@
                 <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
               @for (item of currentTenants(); track item.tenant.id) {
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                   <td class="px-4 py-3">
                     <div class="flex items-center gap-3">
-                      <div 
-                        (click)="openTenantDetail(item.tenant)"
-                        class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:shadow-lg transition flex-shrink-0"
-                      >
-                        {{ getInitials(item.tenant.fullName || 'T') }}
-                      </div>
-                      <div class="min-w-0">
-                        <div 
+                      @if (getTenantAvatarDataUrl(item.tenant)) {
+                        <img
                           (click)="openTenantDetail(item.tenant)"
-                          class="font-semibold text-slate-900 dark:text-white cursor-pointer hover:text-emerald-600 transition truncate"
+                          class="w-10 h-10 rounded-full flex-shrink-0 object-cover border border-slate-200 dark:border-slate-700 cursor-pointer hover:shadow-lg transition"
+                          [src]="getTenantAvatarDataUrl(item.tenant)"
+                          [alt]="item.tenant.fullName" />
+                      } @else {
+                        <div
+                          (click)="openTenantDetail(item.tenant)"
+                          class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm cursor-pointer hover:shadow-lg transition flex-shrink-0"
+                        >
+                          {{ getInitials(item.tenant.fullName || 'T') }}
+                        </div>
+                      }
+                      <div class="min-w-0">
+                        <div
+                          (click)="openTenantDetail(item.tenant)"
+                          class="font-semibold text-slate-900 dark:text-white cursor-pointer hover:text-emerald-600 dark:hover:text-emerald-400 transition truncate"
                         >
                           {{ item.tenant.fullName }}
                         </div>

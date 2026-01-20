@@ -152,6 +152,7 @@ export class RentabilityPage {
 
   private applyPrefill(prefill: Partial<RentabilityInput>) {
     // Merge prefill into existing user data (do not wipe other steps)
+    const before = this.inputData();
     this.inputData.update(current => ({
       ...current,
       ...prefill,
@@ -184,8 +185,11 @@ export class RentabilityPage {
       return next;
     });
 
-    // Mark dirty so autosave can persist scenario after user tweaks
-    this.isDirty.set(true);
+    // Mark dirty only if prefill actually changed something
+    const after = this.inputData();
+    if (JSON.stringify(before) !== JSON.stringify(after)) {
+      this.isDirty.set(true);
+    }
   }
 
   private mapPropertyToRentabilityInput(property: PropertyDetail): Partial<RentabilityInput> {
@@ -346,6 +350,9 @@ export class RentabilityPage {
    * Mettre à jour les données d'une étape
    */
   updateStepData(step: number, data: Partial<RentabilityInput>, isValid: boolean) {
+    const beforeData = this.inputData();
+    const beforeStatus = this.stepsStatus();
+
     // Fusionner les données
     this.inputData.update(current => ({
       ...current,
@@ -360,7 +367,13 @@ export class RentabilityPage {
     }));
 
     // Marquer comme modifié
-    this.isDirty.set(true);
+    const afterData = this.inputData();
+    const afterStatus = this.stepsStatus();
+    const dataChanged = JSON.stringify(beforeData) !== JSON.stringify(afterData);
+    const statusChanged = JSON.stringify(beforeStatus) !== JSON.stringify(afterStatus);
+    if (dataChanged || statusChanged) {
+      this.isDirty.set(true);
+    }
   }
 
   /**

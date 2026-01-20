@@ -8,6 +8,7 @@ import { TenantsService } from '../../../../core/services/tenants.service';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { TranslateService } from '@ngx-translate/core';
+import { AvatarStorageService } from '../../../../core/services/avatar-storage.service';
 import { 
   InventoryEntryWizardSimpleComponent, 
   InventoryEntryWizardData 
@@ -74,6 +75,7 @@ export class PropertyTenantsTab {
   private toasts = inject(ToastService);
   private confirmService = inject(ConfirmService);
   private translate = inject(TranslateService);
+  private avatarStorage = inject(AvatarStorageService);
   
   isLoading = signal(false);
   showActions = signal(false);
@@ -430,6 +432,11 @@ export class PropertyTenantsTab {
       .join('')
       .toUpperCase()
       .substring(0, 2);
+  }
+
+  getTenantAvatarDataUrl(tenant: TenantListItem): string | null {
+    if (!tenant?.id) return null;
+    return this.avatarStorage.getTenantAvatarDataUrl(tenant.id);
   }
   
   formatDate(date: string | Date): string {
