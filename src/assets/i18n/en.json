@@ -1082,10 +1082,6 @@
     "TERMINATION_REASON_PLACEHOLDER": "E.g. early termination, unpaid rent, mutual agreement...",
     "TYPE": "Type de contrat"
   },
-  "PROFITABILITY": {
-    "TITLE": "Accounting & Projections",
-    "SUBTITLE": "Analyze your financial performance"
-  },
   "DOCUMENTS": {
     "TITLE": "Tenant documents",
     "UPLOAD": "Upload document",
@@ -1567,6 +1563,57 @@
       "PREV": "Previous",
       "DONE": "Finish"
     },
+    "MAIN_LAYOUT": {
+      "START": "Guided tour",
+      "STEP_1": {
+        "TITLE": "Navigation — Step 1/12: Header",
+        "DESC": "This header contains global actions: theme, notifications and user menu."
+      },
+      "STEP_2": {
+        "TITLE": "Navigation — Step 2/12: Main tabs",
+        "DESC": "Use this bar to navigate between the main sections of the application."
+      },
+      "STEP_3": {
+        "TITLE": "Navigation — Step 3/12: Dashboard",
+        "DESC": "Access your overview (KPIs, shortcuts, recent activity)."
+      },
+      "STEP_4": {
+        "TITLE": "Navigation — Step 4/12: Mon LocaGuest",
+        "DESC": "Manage your properties, tenants, relationships and related actions (detail pages)."
+      },
+      "STEP_5": {
+        "TITLE": "Navigation — Step 5/12: Contracts",
+        "DESC": "Centralize contract management (create, track, actions)."
+      },
+      "STEP_6": {
+        "TITLE": "Navigation — Step 6/12: Documents",
+        "DESC": "Browse and manage your documents (contracts, receipts, attachments, etc.)."
+      },
+      "STEP_7": {
+        "TITLE": "Navigation — Step 7/12: Accounting & Projections",
+        "DESC": "Analyze your performance (revenue, expenses, net profit, charts)."
+      },
+      "STEP_8": {
+        "TITLE": "Navigation — Step 8/12: Profitability calculator",
+        "DESC": "Simulate and compare profitability scenarios (financing, expenses, ROI)."
+      },
+      "STEP_9": {
+        "TITLE": "Navigation — Step 9/12: Settings",
+        "DESC": "Configure the application (preferences, organization, notifications, etc.)."
+      },
+      "STEP_10": {
+        "TITLE": "Header — Step 10/12: Theme",
+        "DESC": "Switch between light and dark theme."
+      },
+      "STEP_11": {
+        "TITLE": "Header — Step 11/12: Notifications",
+        "DESC": "View your notifications and quickly access pending actions."
+      },
+      "STEP_12": {
+        "TITLE": "Header — Step 12/12: User menu",
+        "DESC": "Access account-related actions (plan, logout, etc.)."
+      }
+    },
     "PROFITABILITY": {
       "START": "Guided tour",
       "ROOT": {
@@ -1855,6 +1902,8 @@
     "MENU": "USER.MENU"
   },
   "PROFITABILITY": {
+    "TITLE": "Accounting & Projections",
+    "SUBTITLE": "Analyze your financial performance",
     "HEADER": {
       "TITLE": "Accounting & Projections",
       "SUBTITLE": "Analyze your financial performance"

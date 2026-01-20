@@ -10,6 +10,7 @@ import { ConfirmService } from '../../core/ui/confirm.service';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 import { BrandingThemeService } from '../../core/services/branding-theme.service';
 import { SatisfactionSurveyModal } from '../../shared/components/satisfaction-survey-modal/satisfaction-survey-modal';
+import { MainLayoutTourService } from './main-layout-tour.service';
 
 @Component({
   selector: 'main-layout',
@@ -21,6 +22,7 @@ export class MainLayout {
   private auth = inject(AuthService);
   private router = inject(Router);
   private tabManager = inject(TabManagerService);
+  private tour = inject(MainLayoutTourService);
   theme = inject(ThemeService);
   branding = inject(BrandingThemeService);
   
@@ -116,6 +118,10 @@ export class MainLayout {
 
       this.tabManager.setActiveTab('dashboard');
     }
+  }
+
+  startTour() {
+    this.tour.start();
   }
 
   hasSubmittedSatisfactionSurvey(): boolean {

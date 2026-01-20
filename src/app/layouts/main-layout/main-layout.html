@@ -1,7 +1,7 @@
 <div class="h-screen flex flex-col bg-slate-50 dark:bg-slate-900">
   
   <!-- Header -->
-  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between shadow-sm">
+  <header data-tour="main.header" class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between shadow-sm">
     
     <!-- Logo -->
     <div class="flex items-center gap-3">
@@ -22,6 +22,7 @@
       
       <!-- Theme toggle -->
       <button
+        data-tour="main.theme-toggle"
         (click)="toggleTheme()"
         class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
         [title]="'THEME.TOGGLE' | translate"
@@ -36,6 +37,7 @@
       <!-- Notifications -->
       <div class="relative notifications-menu">
         <button
+          data-tour="main.notifications"
           (click)="toggleNotificationsMenu()"
           class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors relative"
           [title]="'NOTIFICATIONS.TITLE' | translate"
@@ -100,7 +102,7 @@
       }
 
       <!-- User menu -->
-      <div class="relative flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-slate-700">
+      <div data-tour="main.user-menu" class="relative flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-slate-700">
         <div class="text-right">
           <p class="text-sm font-medium text-slate-800 dark:text-white">{{ user()?.fullName }}</p>
           <p class="text-xs text-slate-500 dark:text-slate-400">{{ user()?.email }}</p>
@@ -147,7 +149,15 @@
   </header>
 
   <!-- Tab Bar -->
-  <div class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 flex items-center gap-1 overflow-x-auto scrollbar-thin">
+  <div data-tour="main.tabs" class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 flex items-center gap-1 overflow-x-auto scrollbar-thin">
+    <button
+      data-tour="main.tour-start"
+      (click)="startTour()"
+      class="ml-1 mr-2 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-sm font-medium text-slate-700 dark:text-slate-200 transition whitespace-nowrap"
+      type="button"
+    >
+      <i class="ph ph-question mr-1"></i>{{ 'TOUR.MAIN_LAYOUT.START' | translate }}
+    </button>
     @for (tab of tabs(); track tab.id) {
       <div
         (click)="selectTab(tab.id)"
@@ -168,6 +178,16 @@
               [class.dark:text-white]="activeTabId() === tab.id"
               [class.text-slate-600]="activeTabId() !== tab.id"
               [class.dark:text-slate-300]="activeTabId() !== tab.id"
+              [attr.data-tour]="
+                tab.id === 'dashboard' ? 'main.tab.dashboard' :
+                tab.id === 'mon-locaguest' ? 'main.tab.mon-locaguest' :
+                tab.id === 'contracts' ? 'main.tab.contracts' :
+                tab.id === 'documents' ? 'main.tab.documents' :
+                tab.id === 'profitability' ? 'main.tab.profitability' :
+                tab.id === 'rentability' ? 'main.tab.rentability' :
+                tab.id === 'settings' ? 'main.tab.settings' :
+                null
+              "
         >
           {{ tab.title | translate }}
         </span>

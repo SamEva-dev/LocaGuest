@@ -109,13 +109,12 @@ export class ThemeService {
     
     const shouldBeDark = theme === 'dark' || (theme === 'auto' && prefersDark);
     
-    if (shouldBeDark) {
-      document.documentElement.classList.add('dark');
-      this.isDark.set(true);
-    } else {
-      document.documentElement.classList.remove('dark');
-      this.isDark.set(false);
+    document.documentElement.classList.toggle('dark', shouldBeDark);
+    document.documentElement.style.colorScheme = shouldBeDark ? 'dark' : 'light';
+    if (document.body) {
+      document.body.classList.toggle('dark', shouldBeDark);
     }
+    this.isDark.set(shouldBeDark);
   }
 
   private applyCustomColors(colors: CustomColors): void {

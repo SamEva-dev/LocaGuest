@@ -6,6 +6,9 @@
   BRANDING THEME VARIABLES
   ======================================== */
 :root {
+  --app-bg: #f8fafc;
+  --app-fg: #0f172a;
+
   /* Primary Brand Color (set dynamically by BrandingThemeService) */
   --color-primary: #3B82F6;
   --color-primary-rgb: 59, 130, 246;
@@ -23,6 +26,56 @@
   --color-accent-rgb: 245, 158, 11;
   --color-accent-hover: color-mix(in srgb, var(--color-accent) 80%, black);
   --color-accent-light: color-mix(in srgb, var(--color-accent) 20%, white);
+}
+
+.dark {
+  --app-bg: #0f172a;
+  --app-fg: #f8fafc;
+}
+
+html,
+body {
+  background-color: var(--app-bg);
+  color: var(--app-fg);
+  min-height: 100%;
+}
+
+app-root {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--app-bg);
+}
+
+.dark .bg-white {
+  background-color: rgb(30 41 59) !important;
+}
+
+.dark .bg-slate-50 {
+  background-color: rgb(15 23 42) !important;
+}
+
+.dark .bg-slate-100 {
+  background-color: rgb(30 41 59) !important;
+}
+
+.dark .text-slate-900,
+.dark .text-slate-800 {
+  color: rgb(248 250 252) !important;
+}
+
+.dark .text-slate-700,
+.dark .text-slate-600 {
+  color: rgb(203 213 225) !important;
+}
+
+.dark .text-slate-500,
+.dark .text-slate-400 {
+  color: rgb(148 163 184) !important;
+}
+
+.dark .border-slate-200,
+.dark .border-slate-100 {
+  border-color: rgb(51 65 85) !important;
 }
 
 /* ========================================

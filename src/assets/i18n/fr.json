@@ -1112,10 +1112,6 @@
     "METHOD_CASH": "Espèces",
     "METHOD_CHECK": "Chèque"
   },
-  "PROFITABILITY": {
-    "TITLE": "Comptabilité & Projections",
-    "SUBTITLE": "Analysez vos performances financières"
-  },
   "DOCUMENTS": {
     "TITLE": "Documents du locataire",
     "UPLOAD": "Importer un document",
@@ -1694,6 +1690,57 @@
       "PREV": "Précédent",
       "DONE": "Terminer"
     },
+    "MAIN_LAYOUT": {
+      "START": "Visite guidée",
+      "STEP_1": {
+        "TITLE": "Navigation — Étape 1/12 : En-tête",
+        "DESC": "Cet en-tête regroupe les actions globales : thème, notifications et menu utilisateur."
+      },
+      "STEP_2": {
+        "TITLE": "Navigation — Étape 2/12 : Onglets principaux",
+        "DESC": "Cette barre vous permet de naviguer entre les grandes sections de l’application."
+      },
+      "STEP_3": {
+        "TITLE": "Navigation — Étape 3/12 : Dashboard",
+        "DESC": "Accédez à votre vue d’ensemble (indicateurs, raccourcis, activité récente)."
+      },
+      "STEP_4": {
+        "TITLE": "Navigation — Étape 4/12 : Mon LocaGuest",
+        "DESC": "Gérez vos biens, locataires, relations et les actions associées (fiches détaillées)."
+      },
+      "STEP_5": {
+        "TITLE": "Navigation — Étape 5/12 : Contrats",
+        "DESC": "Centralisez la gestion des contrats (création, suivi, actions)."
+      },
+      "STEP_6": {
+        "TITLE": "Navigation — Étape 6/12 : Documents",
+        "DESC": "Consultez et gérez vos documents (contrats, quittances, pièces jointes, etc.)."
+      },
+      "STEP_7": {
+        "TITLE": "Navigation — Étape 7/12 : Comptabilité & Projections",
+        "DESC": "Analysez vos performances (revenus, charges, bénéfice, graphiques)."
+      },
+      "STEP_8": {
+        "TITLE": "Navigation — Étape 8/12 : Calcul de rentabilité",
+        "DESC": "Simulez et comparez des scénarios de rentabilité (financement, charges, rendement)."
+      },
+      "STEP_9": {
+        "TITLE": "Navigation — Étape 9/12 : Paramètres",
+        "DESC": "Configurez votre application (préférences, organisation, notifications, etc.)."
+      },
+      "STEP_10": {
+        "TITLE": "En-tête — Étape 10/12 : Thème",
+        "DESC": "Basculez entre le thème clair et le thème sombre."
+      },
+      "STEP_11": {
+        "TITLE": "En-tête — Étape 11/12 : Notifications",
+        "DESC": "Consultez vos notifications et accédez rapidement aux actions à effectuer."
+      },
+      "STEP_12": {
+        "TITLE": "En-tête — Étape 12/12 : Menu utilisateur",
+        "DESC": "Retrouvez les actions liées à votre compte (plan, déconnexion, etc.)."
+      }
+    },
     "PROFITABILITY": {
       "START": "Visite guidée",
       "ROOT": {
@@ -1982,6 +2029,8 @@
     "MENU": "Menu utilisateur"
   },
   "PROFITABILITY": {
+    "TITLE": "Comptabilité & Projections",
+    "SUBTITLE": "Analysez vos performances financières",
     "HEADER": {
       "TITLE": "Comptabilité & Projections",
       "SUBTITLE": "Analysez vos performances financières"
