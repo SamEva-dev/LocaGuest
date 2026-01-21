@@ -1968,6 +1968,150 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/webhooks/brevo/transactional": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required for all write requests (POST/PUT/PATCH/DELETE). Used to safely retry without duplicating side effects. */
+                    "Idempotency-Key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/webhooks/brevo/transactional": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required for all write requests (POST/PUT/PATCH/DELETE). Used to safely retry without duplicating side effects. */
+                    "Idempotency-Key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/Checkout/create-session": {
         parameters: {
             query?: never;
@@ -2610,6 +2754,162 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/Contact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required for all write requests (POST/PUT/PATCH/DELETE). Used to safely retry without duplicating side effects. */
+                    "Idempotency-Key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["LocaGuest.Api.Controllers.SendContactMessageRequest"];
+                    "text/json": components["schemas"]["LocaGuest.Api.Controllers.SendContactMessageRequest"];
+                    "application/*+json": components["schemas"]["LocaGuest.Api.Controllers.SendContactMessageRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/Contact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required for all write requests (POST/PUT/PATCH/DELETE). Used to safely retry without duplicating side effects. */
+                    "Idempotency-Key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["LocaGuest.Api.Controllers.SendContactMessageRequest"];
+                    "text/json": components["schemas"]["LocaGuest.Api.Controllers.SendContactMessageRequest"];
+                    "application/*+json": components["schemas"]["LocaGuest.Api.Controllers.SendContactMessageRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/Contracts/stats": {
         parameters: {
             query?: never;
@@ -2655,6 +2955,80 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Contracts/{id}/effective-state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    dateUtc?: string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/Contracts/{id}/effective-state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    dateUtc?: string;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
                 cookie?: never;
             };
             requestBody?: never;
@@ -3262,7 +3636,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Contracts/tenant/{tenantId}": {
+    "/api/Contracts/tenant/{OccupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -3274,7 +3648,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    OccupantId: string;
                 };
                 cookie?: never;
             };
@@ -3312,7 +3686,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Contracts/tenant/{tenantId}": {
+    "/api/v1/Contracts/tenant/{OccupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -3324,7 +3698,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    OccupantId: string;
                 };
                 cookie?: never;
             };
@@ -5398,6 +5772,306 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/Deposits/contract/{contractId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    contractId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/Deposits/contract/{contractId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    contractId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Deposits/contract/{contractId}/receive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required for all write requests (POST/PUT/PATCH/DELETE). Used to safely retry without duplicating side effects. */
+                    "Idempotency-Key": string;
+                };
+                path: {
+                    contractId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["LocaGuest.Api.Controllers.DepositsController+ReceiveDepositRequest"];
+                    "text/json": components["schemas"]["LocaGuest.Api.Controllers.DepositsController+ReceiveDepositRequest"];
+                    "application/*+json": components["schemas"]["LocaGuest.Api.Controllers.DepositsController+ReceiveDepositRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/Deposits/contract/{contractId}/receive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required for all write requests (POST/PUT/PATCH/DELETE). Used to safely retry without duplicating side effects. */
+                    "Idempotency-Key": string;
+                };
+                path: {
+                    contractId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["LocaGuest.Api.Controllers.DepositsController+ReceiveDepositRequest"];
+                    "text/json": components["schemas"]["LocaGuest.Api.Controllers.DepositsController+ReceiveDepositRequest"];
+                    "application/*+json": components["schemas"]["LocaGuest.Api.Controllers.DepositsController+ReceiveDepositRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Deposits/contract/{contractId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    contractId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/Deposits/contract/{contractId}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    contractId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/Documents/property/{propertyId}/sheet": {
         parameters: {
             query?: never;
@@ -5520,7 +6194,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Documents/tenant/{tenantId}/sheet": {
+    "/api/Documents/occupant/{occupantId}/sheet": {
         parameters: {
             query?: never;
             header?: never;
@@ -5532,7 +6206,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    occupantId: string;
                 };
                 cookie?: never;
             };
@@ -5581,7 +6255,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Documents/tenant/{tenantId}/sheet": {
+    "/api/v1/Documents/occupant/{occupantId}/sheet": {
         parameters: {
             query?: never;
             header?: never;
@@ -5593,7 +6267,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    occupantId: string;
                 };
                 cookie?: never;
             };
@@ -6276,7 +6950,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Documents/tenant/{tenantId}": {
+    "/api/Documents/occupant/{occupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -6288,7 +6962,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    occupantId: string;
                 };
                 cookie?: never;
             };
@@ -6311,7 +6985,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Documents/tenant/{tenantId}": {
+    "/api/v1/Documents/occupant/{occupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -6323,7 +6997,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    occupantId: string;
                 };
                 cookie?: never;
             };
@@ -6442,7 +7116,7 @@ export interface paths {
                         file?: string;
                         type?: string;
                         category?: string;
-                        tenantId?: string;
+                        occupantId?: string;
                         propertyId?: string;
                         description?: string;
                     };
@@ -6526,7 +7200,7 @@ export interface paths {
                         file?: string;
                         type?: string;
                         category?: string;
-                        tenantId?: string;
+                        occupantId?: string;
                         propertyId?: string;
                         description?: string;
                     };
@@ -6872,7 +7546,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Documents/tenant/{tenantId}/export-zip": {
+    "/api/Documents/occupant/{occupantId}/export-zip": {
         parameters: {
             query?: never;
             header?: never;
@@ -6884,7 +7558,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    occupantId: string;
                 };
                 cookie?: never;
             };
@@ -6907,7 +7581,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Documents/tenant/{tenantId}/export-zip": {
+    "/api/v1/Documents/occupant/{occupantId}/export-zip": {
         parameters: {
             query?: never;
             header?: never;
@@ -6919,7 +7593,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    occupantId: string;
                 };
                 cookie?: never;
             };
@@ -9486,7 +10160,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Invoices/tenant/{tenantId}": {
+    "/api/Invoices/tenant/{OccupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -9498,7 +10172,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    OccupantId: string;
                 };
                 cookie?: never;
             };
@@ -9532,7 +10206,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Invoices/tenant/{tenantId}": {
+    "/api/v1/Invoices/tenant/{OccupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -9544,7 +10218,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    OccupantId: string;
                 };
                 cookie?: never;
             };
@@ -9728,7 +10402,7 @@ export interface paths {
                 query?: {
                     startDate?: string;
                     endDate?: string;
-                    tenantId?: string;
+                    OccupantId?: string;
                     propertyId?: string;
                     format?: string;
                 };
@@ -9767,7 +10441,7 @@ export interface paths {
                 query?: {
                     startDate?: string;
                     endDate?: string;
-                    tenantId?: string;
+                    OccupantId?: string;
                     propertyId?: string;
                     format?: string;
                 };
@@ -10393,9 +11067,9 @@ export interface paths {
             };
             requestBody?: {
                 content: {
-                    "application/json": components["schemas"]["LocaGuest.Application.Features.Tenants.Commands.CreateTenant.CreateTenantCommand"];
-                    "text/json": components["schemas"]["LocaGuest.Application.Features.Tenants.Commands.CreateTenant.CreateTenantCommand"];
-                    "application/*+json": components["schemas"]["LocaGuest.Application.Features.Tenants.Commands.CreateTenant.CreateTenantCommand"];
+                    "application/json": components["schemas"]["LocaGuest.Application.Features.Occupants.Commands.CreateOccupant.CreateOccupantCommand"];
+                    "text/json": components["schemas"]["LocaGuest.Application.Features.Occupants.Commands.CreateOccupant.CreateOccupantCommand"];
+                    "application/*+json": components["schemas"]["LocaGuest.Application.Features.Occupants.Commands.CreateOccupant.CreateOccupantCommand"];
                 };
             };
             responses: {
@@ -10493,9 +11167,9 @@ export interface paths {
             };
             requestBody?: {
                 content: {
-                    "application/json": components["schemas"]["LocaGuest.Application.Features.Tenants.Commands.CreateTenant.CreateTenantCommand"];
-                    "text/json": components["schemas"]["LocaGuest.Application.Features.Tenants.Commands.CreateTenant.CreateTenantCommand"];
-                    "application/*+json": components["schemas"]["LocaGuest.Application.Features.Tenants.Commands.CreateTenant.CreateTenantCommand"];
+                    "application/json": components["schemas"]["LocaGuest.Application.Features.Occupants.Commands.CreateOccupant.CreateOccupantCommand"];
+                    "text/json": components["schemas"]["LocaGuest.Application.Features.Occupants.Commands.CreateOccupant.CreateOccupantCommand"];
+                    "application/*+json": components["schemas"]["LocaGuest.Application.Features.Occupants.Commands.CreateOccupant.CreateOccupantCommand"];
                 };
             };
             responses: {
@@ -12742,7 +13416,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Payments/tenant/{tenantId}": {
+    "/api/Payments/tenant/{OccupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -12754,7 +13428,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    OccupantId: string;
                 };
                 cookie?: never;
             };
@@ -12792,7 +13466,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Payments/tenant/{tenantId}": {
+    "/api/v1/Payments/tenant/{OccupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -12804,7 +13478,7 @@ export interface paths {
                 query?: never;
                 header?: never;
                 path: {
-                    tenantId: string;
+                    OccupantId: string;
                 };
                 cookie?: never;
             };
@@ -12952,7 +13626,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    tenantId?: string;
+                    OccupantId?: string;
                     propertyId?: string;
                     month?: number;
                     year?: number;
@@ -13005,7 +13679,7 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    tenantId?: string;
+                    OccupantId?: string;
                     propertyId?: string;
                     month?: number;
                     year?: number;
@@ -13393,7 +14067,7 @@ export interface paths {
             parameters: {
                 query?: {
                     propertyId?: string;
-                    tenantId?: string;
+                    OccupantId?: string;
                     maxDaysLate?: number;
                 };
                 header?: never;
@@ -13445,7 +14119,7 @@ export interface paths {
             parameters: {
                 query?: {
                     propertyId?: string;
-                    tenantId?: string;
+                    OccupantId?: string;
                     maxDaysLate?: number;
                 };
                 header?: never;
@@ -14474,7 +15148,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Properties/{id}/associated-tenants": {
+    "/api/Properties/{id}/associated-occupants": {
         parameters: {
             query?: never;
             header?: never;
@@ -14509,7 +15183,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Properties/{id}/associated-tenants": {
+    "/api/v1/Properties/{id}/associated-occupants": {
         parameters: {
             query?: never;
             header?: never;
@@ -14614,7 +15288,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Properties/{id}/available-tenants": {
+    "/api/Properties/{id}/available-occupants": {
         parameters: {
             query?: never;
             header?: never;
@@ -14649,7 +15323,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Properties/{id}/available-tenants": {
+    "/api/v1/Properties/{id}/available-occupants": {
         parameters: {
             query?: never;
             header?: never;
@@ -14684,7 +15358,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Properties/{id}/assign-tenant": {
+    "/api/Properties/{id}/assign-occupant": {
         parameters: {
             query?: never;
             header?: never;
@@ -14764,7 +15438,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Properties/{id}/assign-tenant": {
+    "/api/v1/Properties/{id}/assign-occupant": {
         parameters: {
             query?: never;
             header?: never;
@@ -14844,7 +15518,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Properties/{propertyId}/dissociate-tenant/{tenantId}": {
+    "/api/Properties/{propertyId}/dissociate-tenant/{OccupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -14863,7 +15537,7 @@ export interface paths {
                 };
                 path: {
                     propertyId: string;
-                    tenantId: string;
+                    OccupantId: string;
                 };
                 cookie?: never;
             };
@@ -14919,7 +15593,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/Properties/{propertyId}/dissociate-tenant/{tenantId}": {
+    "/api/v1/Properties/{propertyId}/dissociate-tenant/{OccupantId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -14938,7 +15612,7 @@ export interface paths {
                 };
                 path: {
                     propertyId: string;
-                    tenantId: string;
+                    OccupantId: string;
                 };
                 cookie?: never;
             };
@@ -15837,6 +16511,72 @@ export interface paths {
                 };
             };
         };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/PublicStats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/PublicStats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -17629,6 +18369,162 @@ export interface paths {
                         "text/plain": components["schemas"]["Microsoft.AspNetCore.Mvc.ProblemDetails"];
                         "application/json": components["schemas"]["Microsoft.AspNetCore.Mvc.ProblemDetails"];
                         "text/json": components["schemas"]["Microsoft.AspNetCore.Mvc.ProblemDetails"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/SatisfactionSurvey": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required for all write requests (POST/PUT/PATCH/DELETE). Used to safely retry without duplicating side effects. */
+                    "Idempotency-Key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["LocaGuest.Api.Controllers.SubmitSatisfactionSurveyRequest"];
+                    "text/json": components["schemas"]["LocaGuest.Api.Controllers.SubmitSatisfactionSurveyRequest"];
+                    "application/*+json": components["schemas"]["LocaGuest.Api.Controllers.SubmitSatisfactionSurveyRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Too Many Requests */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/SatisfactionSurvey": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header: {
+                    /** @description Required for all write requests (POST/PUT/PATCH/DELETE). Used to safely retry without duplicating side effects. */
+                    "Idempotency-Key": string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["LocaGuest.Api.Controllers.SubmitSatisfactionSurveyRequest"];
+                    "text/json": components["schemas"]["LocaGuest.Api.Controllers.SubmitSatisfactionSurveyRequest"];
+                    "application/*+json": components["schemas"]["LocaGuest.Api.Controllers.SubmitSatisfactionSurveyRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/problem+json": unknown;
                     };
                 };
                 /** @description Conflict */
@@ -20764,7 +21660,7 @@ export interface components {
         };
         "LocaGuest.Api.Controllers.ContractsController+UpdateContractRequest": {
             /** Format: uuid */
-            tenantId?: string | null;
+            occupantId?: string | null;
             /** Format: uuid */
             propertyId?: string | null;
             /** Format: uuid */
@@ -20796,6 +21692,13 @@ export interface components {
             charges?: number;
             description?: string | null;
         };
+        "LocaGuest.Api.Controllers.DepositsController+ReceiveDepositRequest": {
+            /** Format: double */
+            amount?: number;
+            /** Format: date-time */
+            dateUtc?: string;
+            reference?: string | null;
+        };
         "LocaGuest.Api.Controllers.MarkDocumentAsSignedRequest": {
             /** Format: date-time */
             signedDate?: string | null;
@@ -20822,6 +21725,12 @@ export interface components {
             phone?: string | null;
             status?: string | null;
         };
+        "LocaGuest.Api.Controllers.SendContactMessageRequest": {
+            name?: string | null;
+            email?: string | null;
+            subject?: string | null;
+            message?: string | null;
+        };
         "LocaGuest.Api.Controllers.SendDocumentForSignatureRequest": {
             recipients?: components["schemas"]["LocaGuest.Api.Controllers.SignatureRecipient"][] | null;
             message?: string | null;
@@ -20833,6 +21742,11 @@ export interface components {
             name?: string | null;
             /** Format: int32 */
             signingOrder?: number;
+        };
+        "LocaGuest.Api.Controllers.SubmitSatisfactionSurveyRequest": {
+            /** Format: int32 */
+            rating?: number;
+            comment?: string | null;
         };
         "LocaGuest.Api.Controllers.TrackingEventDto": {
             eventType?: string | null;
@@ -20860,7 +21774,7 @@ export interface components {
             firstName?: string | null;
             lastName?: string | null;
             /** Format: uuid */
-            tenantId?: string | null;
+            occupantId?: string | null;
             tenantCode?: string | null;
             isActive?: boolean;
             mfaEnabled?: boolean;
@@ -20905,12 +21819,12 @@ export interface components {
             /** Format: uuid */
             propertyId?: string;
             /** Format: uuid */
-            tenantId?: string;
+            occupantId?: string;
             /** Format: uuid */
             roomId?: string | null;
             isConflict?: boolean;
             propertyName?: string | null;
-            tenantName?: string | null;
+            occupantName?: string | null;
             type?: string | null;
             /** Format: date-time */
             startDate?: string;
@@ -20941,7 +21855,7 @@ export interface components {
             /** Format: uuid */
             contractId?: string | null;
             /** Format: uuid */
-            tenantId?: string;
+            occupantId?: string;
             /** Format: uuid */
             propertyId?: string;
             contractType?: string | null;
@@ -20962,7 +21876,7 @@ export interface components {
             /** Format: uuid */
             propertyId?: string;
             /** Format: uuid */
-            tenantId?: string | null;
+            occupantId?: string | null;
             notes?: string | null;
         };
         "LocaGuest.Application.DTOs.Documents.LandlordInfoDto": {
@@ -21002,7 +21916,7 @@ export interface components {
             /** Format: uuid */
             contractId?: string;
             /** Format: uuid */
-            renterTenantId?: string;
+            renterOccupantId?: string;
             /** Format: date-time */
             inspectionDate?: string;
             agentName?: string | null;
@@ -21028,7 +21942,7 @@ export interface components {
             /** Format: uuid */
             contractId?: string;
             /** Format: uuid */
-            renterTenantId?: string;
+            renterOccupantId?: string;
             /** Format: uuid */
             inventoryEntryId?: string;
             /** Format: date-time */
@@ -21059,7 +21973,7 @@ export interface components {
         };
         "LocaGuest.Application.DTOs.Payments.CreatePaymentDto": {
             /** Format: uuid */
-            tenantId?: string;
+            occupantId?: string;
             /** Format: uuid */
             propertyId?: string;
             /** Format: uuid */
@@ -21080,7 +21994,7 @@ export interface components {
             /** Format: uuid */
             id?: string;
             /** Format: uuid */
-            tenantId?: string;
+            occupantId?: string;
             /** Format: uuid */
             propertyId?: string;
             /** Format: uuid */
@@ -21111,7 +22025,7 @@ export interface components {
             createdAt?: string;
             /** Format: date-time */
             updatedAt?: string | null;
-            tenantName?: string | null;
+            occupantName?: string | null;
             propertyName?: string | null;
             /** Format: int32 */
             paymentDueDay?: number;
@@ -21314,7 +22228,7 @@ export interface components {
             /** Format: uuid */
             propertyId?: string;
             /** Format: uuid */
-            tenantId?: string;
+            occupantId?: string;
             type?: string | null;
             /** Format: date-time */
             startDate?: string;
@@ -21326,6 +22240,11 @@ export interface components {
             charges?: number;
             /** Format: double */
             deposit?: number | null;
+            /** Format: double */
+            depositAmountExpected?: number | null;
+            /** Format: date-time */
+            depositDueDate?: string | null;
+            depositAllowInstallments?: boolean;
             /** Format: int32 */
             paymentDueDay?: number;
             /** Format: uuid */
@@ -21356,7 +22275,7 @@ export interface components {
             reason?: string | null;
         };
         "LocaGuest.Application.Features.Documents.Commands.GenerateQuittance.GenerateQuittanceCommand": {
-            tenantId: string | null;
+            occupantId: string | null;
             propertyId: string | null;
             /** Format: double */
             amount: number;
@@ -21430,6 +22349,26 @@ export interface components {
             /** Format: int32 */
             year?: number;
         };
+        "LocaGuest.Application.Features.Occupants.Commands.CreateOccupant.CreateOccupantCommand": {
+            firstName?: string | null;
+            lastName?: string | null;
+            email?: string | null;
+            phone?: string | null;
+            /** Format: date-time */
+            dateOfBirth?: string | null;
+            address?: string | null;
+            city?: string | null;
+            postalCode?: string | null;
+            country?: string | null;
+            nationality?: string | null;
+            idNumber?: string | null;
+            emergencyContact?: string | null;
+            emergencyPhone?: string | null;
+            occupation?: string | null;
+            /** Format: double */
+            monthlyIncome?: number | null;
+            notes?: string | null;
+        };
         "LocaGuest.Application.Features.Organizations.Commands.CreateOrganization.CreateOrganizationCommand": {
             name?: string | null;
             email?: string | null;
@@ -21493,8 +22432,8 @@ export interface components {
             /** Format: uuid */
             id?: string;
             /** Format: uuid */
-            tenantId?: string;
-            tenantName?: string | null;
+            occupantId?: string;
+            occupantName?: string | null;
             /** Format: uuid */
             propertyId?: string;
             propertyName?: string | null;
@@ -21533,8 +22472,8 @@ export interface components {
             /** Format: uuid */
             id?: string;
             /** Format: uuid */
-            tenantId?: string;
-            tenantName?: string | null;
+            occupantId?: string;
+            occupantName?: string | null;
             /** Format: uuid */
             propertyId?: string;
             propertyName?: string | null;
@@ -21775,26 +22714,6 @@ export interface components {
         "LocaGuest.Application.Features.Team.Commands.InviteTeamMember.InviteTeamMemberCommand": {
             email?: string | null;
             role?: string | null;
-        };
-        "LocaGuest.Application.Features.Tenants.Commands.CreateTenant.CreateTenantCommand": {
-            firstName?: string | null;
-            lastName?: string | null;
-            email?: string | null;
-            phone?: string | null;
-            /** Format: date-time */
-            dateOfBirth?: string | null;
-            address?: string | null;
-            city?: string | null;
-            postalCode?: string | null;
-            country?: string | null;
-            nationality?: string | null;
-            idNumber?: string | null;
-            emergencyContact?: string | null;
-            emergencyPhone?: string | null;
-            occupation?: string | null;
-            /** Format: double */
-            monthlyIncome?: number | null;
-            notes?: string | null;
         };
         "LocaGuest.Application.Features.Users.Commands.UpdateNotifications.UpdateNotificationsCommand": {
             paymentReceived?: boolean;

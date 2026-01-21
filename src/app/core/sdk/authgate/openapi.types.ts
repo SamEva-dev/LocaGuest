@@ -786,6 +786,344 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/Auth/change-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["ChangePasswordDto"];
+                    "text/json": components["schemas"]["ChangePasswordDto"];
+                    "application/*+json": components["schemas"]["ChangePasswordDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Auth/deactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/external-auth/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["OAuthProvidersResponseDto"];
+                        "application/json": components["schemas"]["OAuthProvidersResponseDto"];
+                        "text/json": components["schemas"]["OAuthProvidersResponseDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/external-auth/google/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/external-auth/facebook/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/external-auth/google": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["ExternalTokenLoginDto"];
+                    "text/json": components["schemas"]["ExternalTokenLoginDto"];
+                    "application/*+json": components["schemas"]["ExternalTokenLoginDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ExternalLoginResponseDto"];
+                        "application/json": components["schemas"]["ExternalLoginResponseDto"];
+                        "text/json": components["schemas"]["ExternalLoginResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/external-auth/facebook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["ExternalTokenLoginDto"];
+                    "text/json": components["schemas"]["ExternalTokenLoginDto"];
+                    "application/*+json": components["schemas"]["ExternalTokenLoginDto"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ExternalLoginResponseDto"];
+                        "application/json": components["schemas"]["ExternalLoginResponseDto"];
+                        "text/json": components["schemas"]["ExternalLoginResponseDto"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["ProblemDetails"];
+                        "application/json": components["schemas"]["ProblemDetails"];
+                        "text/json": components["schemas"]["ProblemDetails"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/Invitation/invite": {
         parameters: {
             query?: never;
@@ -1939,6 +2277,10 @@ export interface components {
          * @enum {integer}
          */
         AuditAction: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17;
+        ChangePasswordDto: {
+            currentPassword?: string | null;
+            newPassword?: string | null;
+        };
         CurrentUserDto: {
             /** Format: uuid */
             id?: string;
@@ -1964,6 +2306,35 @@ export interface components {
             qrCodeUri?: string | null;
             qrCodeImage?: string | null;
             recoveryCodes?: string[] | null;
+        };
+        ExternalLoginResponseDto: {
+            success?: boolean;
+            accessToken?: string | null;
+            refreshToken?: string | null;
+            /** Format: date-time */
+            expiresAt?: string | null;
+            user?: components["schemas"]["ExternalUserInfoDto"];
+            error?: string | null;
+            isNewUser?: boolean;
+            requiresRegistration?: boolean;
+        };
+        ExternalTokenLoginDto: {
+            provider?: string | null;
+            token?: string | null;
+            accessToken?: string | null;
+        };
+        ExternalUserInfoDto: {
+            /** Format: uuid */
+            id?: string;
+            email?: string | null;
+            firstName?: string | null;
+            lastName?: string | null;
+            pictureUrl?: string | null;
+            provider?: string | null;
+            providerId?: string | null;
+            /** Format: uuid */
+            organizationId?: string | null;
+            roles?: string[] | null;
         };
         InviteCollaboratorCommand: {
             email?: string | null;
@@ -2003,6 +2374,15 @@ export interface components {
             expiresIn?: number | null;
             requiresMfa?: boolean;
             mfaToken?: string | null;
+        };
+        OAuthProviderInfo: {
+            name?: string | null;
+            displayName?: string | null;
+            enabled?: boolean;
+            iconUrl?: string | null;
+        };
+        OAuthProvidersResponseDto: {
+            providers?: components["schemas"]["OAuthProviderInfo"][] | null;
         };
         PreLoginRequestDto: {
             email?: string | null;
@@ -2050,12 +2430,14 @@ export interface components {
             userId?: string;
             email?: string | null;
             /** Format: uuid */
-            organizationId?: string;
+            organizationId?: string | null;
             organizationCode?: string | null;
             organizationName?: string | null;
             accessToken?: string | null;
             refreshToken?: string | null;
             role?: string | null;
+            status?: string | null;
+            message?: string | null;
         };
         RequestPasswordResetCommand: {
             email: string | null;

@@ -16,10 +16,19 @@ export interface ChatbotSource {
   excerpt: string;
 }
 
+export interface ChatbotSuggestion {
+  id: string;
+  labelKey: string;
+  promptKey?: string;
+  assistantKey?: string;
+  followUps?: ChatbotSuggestion[];
+}
+
 export interface ChatbotConfig {
   appName: string;
   docs: { url: string; name: string }[];
   maxSources: number;
+  suggestions?: ChatbotSuggestion[];
   ai: {
     baseUrl: string;
     apiKey?: string;

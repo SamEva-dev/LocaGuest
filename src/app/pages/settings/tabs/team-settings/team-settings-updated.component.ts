@@ -207,11 +207,11 @@ import { Permissions } from '../../../../core/auth/permissions';
                 [(ngModel)]="inviteRole"
                 class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
                 @if (canAssignRoles()) {
-                  <option value="Admin">Administrateur</option>
+                  <option value="TenantAdmin">Administrateur</option>
                 }
-                <option value="Manager">Gestionnaire</option>
+                <option value="TenantManager">Gestionnaire</option>
                 <option value="Accountant">Comptable</option>
-                <option value="Viewer">Lecture seule</option>
+                <option value="ReadOnly">Lecture seule</option>
               </select>
             </div>
 

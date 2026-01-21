@@ -6,6 +6,47 @@
     "LOGIN": "Sign in",
     "START": "Get started"
   },
+  "CHATBOT": {
+    "TOOLTIP_OPEN": "Help",
+    "TOOLTIP_CLOSE": "Close help",
+    "HEADER": {
+      "TITLE": "Assistant",
+      "SUBTITLE": "Documentation + AI"
+    },
+    "GREETING": "Hi, I'm the {{appName}} assistant. Ask your question, I'll search the documentation and guide you.",
+    "STATUS": {
+      "THINKING": "Thinking..."
+    },
+    "INPUT": {
+      "PLACEHOLDER": "Ask your question..."
+    },
+    "SOURCES": {
+      "TITLE": "Sources"
+    },
+    "SUGGESTIONS": {
+      "TITLE": "Suggestions",
+      "DEFAULT_FOLLOWUP": "To answer accurately, I need one clarification:",
+      "CREATE_TENANT": {
+        "LABEL": "How do I create a tenant?",
+        "PROMPT": "How do I create a tenant?",
+        "ASSISTANT": "Where do you want to create the tenant from?",
+        "FROM_TENANT_LABEL": "From the tenants list",
+        "FROM_TENANT_PROMPT": "Explain how to create a tenant from My LocaGuest > Tenants.",
+        "FROM_PROPERTY_LABEL": "From a property",
+        "FROM_PROPERTY_PROMPT": "Explain how to create a tenant from a property page (tenant association)."
+      },
+      "CREATE_CONTRACT": {
+        "LABEL": "How do I create a contract?",
+        "PROMPT": "How do I create a rental contract in LocaGuest?"
+      }
+    },
+    "FOOTER": {
+      "HINT": "If the AI is not available, the assistant will show the closest documentation excerpts."
+    },
+    "ERROR": {
+      "GENERIC": "I couldn't generate an answer right now. Please check the AI configuration (endpoint) or try again."
+    }
+  },
   "IMAGES": {
     "HERO_ALT": "Modern building",
     "DASHBOARD_ALT": "LocaGuest dashboard preview"
@@ -871,6 +912,7 @@
     "PHONE_PLACEHOLDER": "+1 212 555 0123",
     "REMEMBER_ME": "Remember me",
     "FORGOT_PASSWORD": "Forgot password?",
+    "CHANGE_EMAIL": "Change email",
     "LOGGING": "Signing in...",
     "REGISTERING": "Creating account...",
     "LOGIN": "Sign in",

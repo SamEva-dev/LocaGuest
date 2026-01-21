@@ -964,32 +964,89 @@ export class ContractWizardModal {
   }
   
   // Helpers pour mise à jour form depuis template
-  updateFormField(field: keyof ContractForm, value: any) {
-    this.form.update(f => ({ ...f, [field]: value }));
+  private coerceString(value: unknown): string {
+    if (value === null || value === undefined) return '';
+    return String(value);
+  }
+
+  private coerceNumber(value: unknown): number {
+    if (value === null || value === undefined || value === '') return 0;
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  private coerceBoolean(value: unknown): boolean {
+    return Boolean(value);
+  }
+
+  updateFormField(field: keyof ContractForm, value: unknown) {
+    this.form.update((f) => {
+      switch (field) {
+        case 'rent':
+        case 'charges':
+        case 'deposit':
+        case 'depositAmountExpected':
+        case 'paymentDueDay':
+          return { ...f, [field]: this.coerceNumber(value) };
+
+        case 'depositAllowInstallments':
+        case 'autoRenewal':
+        case 'indexationIRL':
+        case 'isRenewable':
+        case 'isPaper':
+          return { ...f, [field]: this.coerceBoolean(value) };
+
+        case 'startDate':
+        case 'endDate':
+        case 'depositDueDate':
+        case 'tenantId':
+        case 'tenantName':
+        case 'propertyId':
+        case 'propertyName':
+        case 'room':
+        case 'roomId':
+        case 'templateId':
+        case 'inventoryDate':
+        case 'inventoryAgent':
+        case 'previousContractId':
+          return { ...f, [field]: this.coerceString(value) };
+
+        default:
+          return { ...f, [field]: value as any };
+      }
+    });
   }
   
-  updateStartDate(value: string) {
-    this.form.update(f => ({ ...f, startDate: value }));
+  setPropertySearchTerm(value: string | null | undefined) {
+    this.propertySearchTerm.set(value ?? '');
+  }
+
+  setNewTenantField(field: keyof NewTenantForm, value: string | null | undefined) {
+    this.newTenantForm.update((v) => ({ ...v, [field]: value ?? '' }));
+  }
+
+  updateStartDate(value: string | null | undefined) {
+    this.form.update(f => ({ ...f, startDate: value ?? '' }));
   }
   
-  updateEndDate(value: string) {
-    this.form.update(f => ({ ...f, endDate: value }));
+  updateEndDate(value: string | null | undefined) {
+    this.form.update(f => ({ ...f, endDate: value ?? '' }));
   }
   
-  updateType(value: string) {
-    this.form.update(f => ({ ...f, type: value as any }));
+  updateType(value: string | null | undefined) {
+    this.form.update(f => ({ ...f, type: (value ?? 'Non meublé') as any }));
   }
   
-  updateRent(value: any) {
-    this.form.update(f => ({ ...f, rent: +value }));
+  updateRent(value: unknown) {
+    this.form.update(f => ({ ...f, rent: this.coerceNumber(value) }));
   }
   
-  updateCharges(value: any) {
-    this.form.update(f => ({ ...f, charges: +value }));
+  updateCharges(value: unknown) {
+    this.form.update(f => ({ ...f, charges: this.coerceNumber(value) }));
   }
   
-  updateDeposit(value: any) {
-    this.form.update(f => ({ ...f, deposit: +value }));
+  updateDeposit(value: unknown) {
+    this.form.update(f => ({ ...f, deposit: this.coerceNumber(value) }));
   }
   
   hasActiveLease(tenantId: string): boolean {

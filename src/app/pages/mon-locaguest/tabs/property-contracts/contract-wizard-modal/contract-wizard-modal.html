@@ -122,7 +122,8 @@
               <div class="flex items-center gap-2">
                 <input
                   type="text"
-                  [(ngModel)]="propertySearchTerm"
+                  [ngModel]="propertySearchTerm()"
+                  (ngModelChange)="setPropertySearchTerm($event)"
                   placeholder="Rechercher un bien..."
                   class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm"
                 />
@@ -138,7 +139,8 @@
                   <label class="block text-sm font-medium mb-1">Prénom *</label>
                   <input
                     type="text"
-                    [(ngModel)]="newTenantForm().firstName"
+                    [ngModel]="newTenantForm().firstName"
+                    (ngModelChange)="setNewTenantField('firstName', $event)"
                     class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
                     placeholder="Jean"
                   />
@@ -147,7 +149,8 @@
                   <label class="block text-sm font-medium mb-1">Nom *</label>
                   <input
                     type="text"
-                    [(ngModel)]="newTenantForm().lastName"
+                    [ngModel]="newTenantForm().lastName"
+                    (ngModelChange)="setNewTenantField('lastName', $event)"
                     class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
                     placeholder="Dupont"
                   />
@@ -156,7 +159,8 @@
                   <label class="block text-sm font-medium mb-1">Email</label>
                   <input
                     type="email"
-                    [(ngModel)]="newTenantForm().email"
+                    [ngModel]="newTenantForm().email"
+                    (ngModelChange)="setNewTenantField('email', $event)"
                     class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
                     placeholder="jean.dupont@email.com"
                   />
@@ -165,7 +169,8 @@
                   <label class="block text-sm font-medium mb-1">Téléphone</label>
                   <input
                     type="tel"
-                    [(ngModel)]="newTenantForm().phone"
+                    [ngModel]="newTenantForm().phone"
+                    (ngModelChange)="setNewTenantField('phone', $event)"
                     class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
                     placeholder="06 12 34 56 78"
                   />
@@ -418,7 +423,8 @@
               <label class="block text-sm font-medium mb-1">Charges mensuelles (€)</label>
               <input
                 type="number"
-                [(ngModel)]="form().charges"
+                [ngModel]="form().charges"
+                (ngModelChange)="updateFormField('charges', $event)"
                 class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
                 placeholder="50"
                 min="0"
@@ -431,7 +437,8 @@
               <div class="flex gap-2">
                 <input
                   type="number"
-                  [(ngModel)]="form().deposit"
+                  [ngModel]="form().deposit"
+                  (ngModelChange)="updateFormField('deposit', $event)"
                   class="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
                   placeholder="850"
                   min="0"
@@ -451,7 +458,8 @@
               <div class="flex gap-2">
                 <input
                   type="number"
-                  [(ngModel)]="form().depositAmountExpected"
+                  [ngModel]="form().depositAmountExpected"
+                  (ngModelChange)="updateFormField('depositAmountExpected', $event)"
                   class="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
                   placeholder="1700"
                   min="0"
@@ -473,7 +481,8 @@
               <label class="block text-sm font-medium mb-1">Date limite paiement caution</label>
               <input
                 type="date"
-                [(ngModel)]="form().depositDueDate"
+                [ngModel]="form().depositDueDate"
+                (ngModelChange)="updateFormField('depositDueDate', $event)"
                 class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
               />
             </div>
@@ -481,7 +490,8 @@
             <div class="flex items-center gap-2">
               <input
                 type="checkbox"
-                [(ngModel)]="form().depositAllowInstallments"
+                [ngModel]="form().depositAllowInstallments"
+                (ngModelChange)="updateFormField('depositAllowInstallments', $event)"
                 class="rounded border-slate-300 dark:border-slate-600"
               />
               <span class="text-sm">Autoriser le paiement en plusieurs fois</span>
@@ -490,7 +500,8 @@
             <div>
               <label class="block text-sm font-medium mb-1">Date limite de paiement *</label>
               <select
-                [(ngModel)]="form().paymentDueDay"
+                [ngModel]="form().paymentDueDay"
+                (ngModelChange)="updateFormField('paymentDueDay', $event)"
                 class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
               >
                 <option [value]="1">1er du mois</option>

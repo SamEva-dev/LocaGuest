@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/services/auth.service';
 
@@ -11,19 +11,25 @@ import { AuthService } from '../../core/auth/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForgotPassword {
-constructor(private translate: TranslateService) {
-      translate.setDefaultLang('fr');
-      translate.use('fr'); // 
-  }
-   private auth = inject(AuthService);
+  private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
- isLoading = signal(false);
+  isLoading = signal(false);
+  prefilledEmail = signal('');
+
+  constructor(private translate: TranslateService) {
+    translate.setDefaultLang('fr');
+    translate.use('fr'); // 
+
+    const qEmail = (this.route.snapshot.queryParamMap.get('email') ?? '').trim();
+    if (qEmail) this.prefilledEmail.set(qEmail);
+  }
 
   async sendResetLink(email: string) {
     this.isLoading.set(true);
     try {
-      await this.auth.forgotPassword(email);
+      await this.auth.forgotPassword((email ?? '').trim());
       // Option: toast succès
     } finally {
       this.isLoading.set(false);

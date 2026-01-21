@@ -6,6 +6,47 @@
     "LOGIN": "Se connecter",
     "START": "Commencer"
   },
+  "CHATBOT": {
+    "TOOLTIP_OPEN": "Aide",
+    "TOOLTIP_CLOSE": "Fermer l'aide",
+    "HEADER": {
+      "TITLE": "Assistant",
+      "SUBTITLE": "Documentation + IA"
+    },
+    "GREETING": "Bonjour, je suis l'assistant {{appName}}. Pose-moi ta question, je chercherai dans la documentation et je te guiderai.",
+    "STATUS": {
+      "THINKING": "Réflexion en cours..."
+    },
+    "INPUT": {
+      "PLACEHOLDER": "Pose ta question..."
+    },
+    "SOURCES": {
+      "TITLE": "Sources"
+    },
+    "SUGGESTIONS": {
+      "TITLE": "Suggestions",
+      "DEFAULT_FOLLOWUP": "Pour répondre précisément, j'ai besoin d'une précision :",
+      "CREATE_TENANT": {
+        "LABEL": "Comment créer un locataire ?",
+        "PROMPT": "Comment créer un locataire ?",
+        "ASSISTANT": "Tu veux créer le locataire depuis quel endroit ?",
+        "FROM_TENANT_LABEL": "Depuis la liste des locataires",
+        "FROM_TENANT_PROMPT": "Explique-moi comment créer un locataire depuis Mon LocaGuest > Locataires.",
+        "FROM_PROPERTY_LABEL": "Depuis un bien",
+        "FROM_PROPERTY_PROMPT": "Explique-moi comment créer un locataire depuis la fiche d'un bien (association locataire)."
+      },
+      "CREATE_CONTRACT": {
+        "LABEL": "Comment créer un contrat ?",
+        "PROMPT": "Comment créer un contrat de location dans LocaGuest ?"
+      }
+    },
+    "FOOTER": {
+      "HINT": "Si l'IA n'est pas disponible, l'assistant propose les extraits de documentation les plus proches."
+    },
+    "ERROR": {
+      "GENERIC": "Je n'ai pas réussi à générer une réponse pour le moment. Vérifie la configuration de l'IA (endpoint) ou réessaye."
+    }
+  },
   "IMAGES": {
     "HERO_ALT": "Immeuble moderne",
     "DASHBOARD_ALT": "Aperçu du tableau de bord LocaGuest"
@@ -875,6 +916,7 @@
     "PHONE_PLACEHOLDER": "+33 6 12 34 56 78",
     "REMEMBER_ME": "Se souvenir de moi",
     "FORGOT_PASSWORD": "Mot de passe oublié ?",
+    "CHANGE_EMAIL": "Changer d'email",
     "LOGGING": "Connexion en cours...",
     "REGISTERING": "Création du compte...",
     "LOGIN": "Se connecter",

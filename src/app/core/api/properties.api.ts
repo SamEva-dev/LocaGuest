@@ -199,7 +199,7 @@ type UpdatePropertyStatusCommand =
   NonNullable<LocaGuestPaths['/api/Properties/{id}/status']['patch']['requestBody']>['content']['application/json'];
 
 type CreateContractCommand =
-  NonNullable<LocaGuestPaths['/api/Properties/{id}/assign-tenant']['post']['requestBody']>['content']['application/json'];
+  NonNullable<LocaGuestPaths['/api/Properties/{id}/assign-occupant']['post']['requestBody']>['content']['application/json'];
 
 export interface CreatePropertyDto {
   name: string;

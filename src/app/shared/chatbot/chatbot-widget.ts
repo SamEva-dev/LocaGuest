@@ -1,34 +1,41 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { CHATBOT_CONFIG } from './chatbot.tokens';
-import { ChatbotMessage } from './chatbot.types';
+import { ChatbotMessage, ChatbotSuggestion } from './chatbot.types';
 import { ChatbotService } from './chatbot.service';
 import { createId } from './chatbot.util';
 
 @Component({
   selector: 'chatbot-widget',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './chatbot-widget.html',
   styleUrl: './chatbot-widget.scss'
 })
 export class ChatbotWidget {
   private config = inject(CHATBOT_CONFIG);
   private chatbot = inject(ChatbotService);
+  private translate = inject(TranslateService);
 
   isOpen = signal(false);
   isWorking = signal(false);
   input = signal('');
 
   messages = signal<ChatbotMessage[]>([]);
+  suggestions = signal<ChatbotSuggestion[]>([]);
+  private rootSuggestions: ChatbotSuggestion[] = [];
 
   ngOnInit() {
+    this.rootSuggestions = this.config.suggestions ?? [];
+    this.suggestions.set(this.rootSuggestions);
+
     const greeting: ChatbotMessage = {
       id: createId('msg'),
       role: 'assistant',
-      content: `Bonjour, je suis l'assistant ${this.config.appName}. Pose-moi ta question, je chercherai dans la documentation et je te guiderai.`,
+      content: this.translate.instant('CHATBOT.GREETING', { appName: this.config.appName }),
       createdAt: Date.now()
     };
 
@@ -58,6 +65,7 @@ export class ChatbotWidget {
     };
 
     this.messages.update((m) => [...m, userMsg]);
+    this.suggestions.set([]);
 
     this.isWorking.set(true);
 
@@ -71,17 +79,53 @@ export class ChatbotWidget {
         createdAt: Date.now()
       };
       this.messages.update((m) => [...m, assistantMsg]);
+      this.suggestions.set(this.rootSuggestions);
     } catch {
       const assistantMsg: ChatbotMessage = {
         id: createId('msg'),
         role: 'assistant',
-        content: `Je n'ai pas réussi à générer une réponse pour le moment. Vérifie la configuration de l'IA (endpoint) ou réessaye.`,
+        content: this.translate.instant('CHATBOT.ERROR.GENERIC'),
         createdAt: Date.now()
       };
       this.messages.update((m) => [...m, assistantMsg]);
+      this.suggestions.set(this.rootSuggestions);
     } finally {
       this.isWorking.set(false);
     }
+  }
+
+  onSuggestionClick(s: ChatbotSuggestion) {
+    if (this.isWorking()) return;
+
+    const prompt = s.promptKey ? this.translate.instant(s.promptKey) : this.translate.instant(s.labelKey);
+    if (!prompt) return;
+
+    if (s.followUps?.length) {
+      const userMsg: ChatbotMessage = {
+        id: createId('msg'),
+        role: 'user',
+        content: prompt,
+        createdAt: Date.now()
+      };
+      this.messages.update((m) => [...m, userMsg]);
+
+      const assistantText = s.assistantKey
+        ? this.translate.instant(s.assistantKey)
+        : this.translate.instant('CHATBOT.SUGGESTIONS.DEFAULT_FOLLOWUP');
+
+      const assistantMsg: ChatbotMessage = {
+        id: createId('msg'),
+        role: 'assistant',
+        content: assistantText,
+        createdAt: Date.now()
+      };
+      this.messages.update((m) => [...m, assistantMsg]);
+      this.suggestions.set(s.followUps);
+      return;
+    }
+
+    this.input.set(prompt);
+    void this.send();
   }
 
   onKeyDown(event: KeyboardEvent) {
