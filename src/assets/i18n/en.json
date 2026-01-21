@@ -45,6 +45,15 @@
     },
     "ERROR": {
       "GENERIC": "I couldn't generate an answer right now. Please check the AI configuration (endpoint) or try again."
+    },
+    "DEBUG": {
+      "TITLE": "Chatbot - Diagnostics",
+      "LOADING": "Loading index...",
+      "READY": "Index ready. You can test a search.",
+      "SEARCH": "Search",
+      "SEARCH_PLACEHOLDER": "E.g. create a tenant",
+      "NO_RESULTS": "No results yet.",
+      "INDEX_LOAD_ERROR": "Unable to load chatbot index."
     }
   },
   "IMAGES": {
@@ -955,6 +964,10 @@
     "BACK_TO_LOGIN": "Back to sign in",
     "EMAIL_VALIDATED": "Your email has been verified.",
     "EMAIL_VALIDATION_FAILED": "Email verification failed.",
+    "EMAIL_VALIDATION_TITLE": "Verify your email",
+    "EMAIL_VALIDATION_INSTRUCTIONS": "We just sent you an email. Click the verification link to activate your account.",
+    "RESET_LINK_SENT_TITLE": "Check your email",
+    "RESET_LINK_SENT_INSTRUCTIONS": "If your email exists, you will receive a reset link. Also check your spam folder.",
     "INVALID_MFA_CODE": "Invalid MFA code.",
     "LOGOUT_SUCCESS": "Signed out successfully.",
     "MFA_DISABLED": "MFA disabled.",

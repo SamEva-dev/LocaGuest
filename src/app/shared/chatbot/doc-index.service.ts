@@ -18,6 +18,22 @@ interface IndexedChunk {
   tf: Map<string, number>;
 }
 
+interface PrebuiltIndexChunk {
+  docName: string;
+  chunkIndex: number;
+  text: string;
+  tokens: string[];
+  tf: Record<string, number>;
+}
+
+interface PrebuiltIndex {
+  version: number;
+  docs: { name: string; sourcePath?: string; chunkCount?: number }[];
+  stats?: { totalDocs?: number; totalChunks?: number };
+  df: Record<string, number>;
+  chunks: PrebuiltIndexChunk[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class DocIndexService {
   private http = inject(HttpClient);
@@ -27,8 +43,16 @@ export class DocIndexService {
   private df = new Map<string, number>();
   private chunkCount = 0;
 
-  async ensureIndexed(docs: DocDescriptor[]): Promise<void> {
+  async ensureIndexed(docs: DocDescriptor[], indexUrl?: string): Promise<void> {
     if (this.indexed) return;
+
+    if (indexUrl) {
+      const loaded = await this.tryLoadPrebuiltIndex(docs, indexUrl);
+      if (loaded) {
+        this.indexed = true;
+        return;
+      }
+    }
 
     const allChunks: IndexedChunk[] = [];
 
@@ -55,6 +79,35 @@ export class DocIndexService {
     this.chunkCount = allChunks.length;
     this.df = this.computeDf(allChunks);
     this.indexed = true;
+  }
+
+  private async tryLoadPrebuiltIndex(docs: DocDescriptor[], indexUrl: string): Promise<boolean> {
+    try {
+      const payload = await firstValueFrom(this.http.get<PrebuiltIndex>(indexUrl));
+      if (!payload || !Array.isArray(payload.chunks) || payload.chunks.length === 0) return false;
+
+      const docUrlByName = new Map<string, string>();
+      for (const d of docs) docUrlByName.set(d.name, d.url);
+
+      const allChunks: IndexedChunk[] = payload.chunks.map((c) => {
+        return {
+          docUrl: docUrlByName.get(c.docName) || '',
+          docName: c.docName,
+          chunkIndex: c.chunkIndex,
+          text: c.text,
+          tokens: Array.isArray(c.tokens) ? c.tokens : tokenize(c.text),
+          tf: new Map(Object.entries(c.tf || {}).map(([k, v]) => [k, Number(v) || 0]))
+        };
+      });
+
+      this.chunks = allChunks;
+      this.chunkCount = allChunks.length;
+      this.df = new Map(Object.entries(payload.df || {}).map(([k, v]) => [k, Number(v) || 0]));
+
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   search(query: string, maxSources: number): ChatbotSource[] {

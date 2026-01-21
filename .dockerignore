@@ -4,5 +4,6 @@ dist
 .vscode
 .git
 *.md
+!PRODUCT_DOC_LOCAGUEST-*.md
 *.log
 .env

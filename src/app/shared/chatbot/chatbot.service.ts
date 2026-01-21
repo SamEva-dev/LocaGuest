@@ -9,7 +9,7 @@ export class ChatbotService {
   private openai = inject(OpenAiClientService);
 
   async ask(config: ChatbotConfig, userQuestion: string): Promise<ChatbotAskResult> {
-    await this.docIndex.ensureIndexed(config.docs);
+    await this.docIndex.ensureIndexed(config.docs, config.indexUrl);
 
     const sources = this.docIndex.search(userQuestion, config.maxSources);
 

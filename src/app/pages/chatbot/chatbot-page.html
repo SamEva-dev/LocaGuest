@@ -1,0 +1,55 @@
+<div class="p-6 max-w-4xl mx-auto">
+  <h1 class="text-xl font-semibold mb-4">{{ 'CHATBOT.DEBUG.TITLE' | translate }}</h1>
+
+  @if (status() === 'loading') {
+    <div class="text-slate-600 dark:text-slate-300">
+      {{ 'CHATBOT.DEBUG.LOADING' | translate }}
+    </div>
+  }
+
+  @if (status() === 'error') {
+    <div class="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-200">
+      {{ error() }}
+    </div>
+  }
+
+  @if (status() === 'ready') {
+    <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+      <div class="text-sm text-slate-600 dark:text-slate-300 mb-3">
+        {{ 'CHATBOT.DEBUG.READY' | translate }}
+      </div>
+
+      <div class="flex gap-2">
+        <input
+          class="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+          [placeholder]="'CHATBOT.DEBUG.SEARCH_PLACEHOLDER' | translate"
+        />
+        <button
+          class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white"
+          type="button"
+          (click)="search()"
+        >
+          {{ 'CHATBOT.DEBUG.SEARCH' | translate }}
+        </button>
+      </div>
+
+      @if (results().length) {
+        <div class="mt-4 space-y-2">
+          @for (r of results(); track r.docName + ':' + r.chunkIndex) {
+            <div class="p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div class="text-sm font-medium">{{ r.docName }}#{{ r.chunkIndex }}</div>
+              <div class="text-xs text-slate-500">score: {{ r.score }}</div>
+              <div class="text-sm mt-2 whitespace-pre-wrap">{{ r.excerpt }}</div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="mt-4 text-sm text-slate-500 dark:text-slate-400">
+          {{ 'CHATBOT.DEBUG.NO_RESULTS' | translate }}
+        </div>
+      }
+    </div>
+  }
+</div>

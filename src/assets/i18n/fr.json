@@ -45,6 +45,15 @@
     },
     "ERROR": {
       "GENERIC": "Je n'ai pas réussi à générer une réponse pour le moment. Vérifie la configuration de l'IA (endpoint) ou réessaye."
+    },
+    "DEBUG": {
+      "TITLE": "Chatbot - Diagnostic",
+      "LOADING": "Chargement de l'index...",
+      "READY": "Index prêt. Tu peux tester une recherche.",
+      "SEARCH": "Rechercher",
+      "SEARCH_PLACEHOLDER": "Ex: créer un locataire",
+      "NO_RESULTS": "Aucun résultat pour le moment.",
+      "INDEX_LOAD_ERROR": "Impossible de charger l'index du chatbot."
     }
   },
   "IMAGES": {
@@ -959,6 +968,10 @@
     "BACK_TO_LOGIN": "Retour à la connexion",
     "EMAIL_VALIDATED": "Votre email a été validé.",
     "EMAIL_VALIDATION_FAILED": "Échec de la validation de l'email.",
+    "EMAIL_VALIDATION_TITLE": "Vérifiez votre email",
+    "EMAIL_VALIDATION_INSTRUCTIONS": "Nous venons de vous envoyer un email. Cliquez sur le lien de validation pour activer votre compte.",
+    "RESET_LINK_SENT_TITLE": "Consultez votre email",
+    "RESET_LINK_SENT_INSTRUCTIONS": "Si votre email existe, vous recevrez un lien de réinitialisation. Pensez aussi à vérifier vos spams.",
     "INVALID_MFA_CODE": "Code MFA invalide.",
     "LOGOUT_SUCCESS": "Déconnexion réussie.",
     "MFA_DISABLED": "MFA désactivé.",

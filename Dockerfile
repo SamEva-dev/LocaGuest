@@ -9,6 +9,10 @@ COPY . .
 
 # Build configuration: production | preprod | staging
 ARG BUILD_CONFIGURATION=production
+
+# Generate chatbot prebuilt index (from PRODUCT_DOC_LOCAGUEST-*.md)
+RUN npm run gen:chatbot:index
+
 RUN npm run build -- --configuration $BUILD_CONFIGURATION
 
 # Normalize output into /app/out (handles both dist/locaGuest/browser and dist/locaGuest)

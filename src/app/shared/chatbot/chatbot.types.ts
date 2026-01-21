@@ -29,6 +29,7 @@ export interface ChatbotConfig {
   docs: { url: string; name: string }[];
   maxSources: number;
   suggestions?: ChatbotSuggestion[];
+  indexUrl?: string;
   ai: {
     baseUrl: string;
     apiKey?: string;
