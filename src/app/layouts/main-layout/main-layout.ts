@@ -26,6 +26,7 @@ import { environment } from '../../../environnements/environment.dev';
         { url: '/docs/PRODUCT_DOC_LOCAGUEST-B.md', name: 'PRODUCT_DOC_LOCAGUEST-B' }
       ],
       maxSources: 5,
+      indexUrl: '/assets/chatbot/chatbot.index.json',
       suggestions: [
         {
           id: 'create-tenant',

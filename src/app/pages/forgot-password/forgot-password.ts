@@ -29,8 +29,9 @@ export class ForgotPassword {
   async sendResetLink(email: string) {
     this.isLoading.set(true);
     try {
-      await this.auth.forgotPassword((email ?? '').trim());
-      // Option: toast succès
+      const e = (email ?? '').trim();
+      await this.auth.forgotPassword(e);
+      this.router.navigate(['/check-email'], { queryParams: { type: 'reset', email: e } });
     } finally {
       this.isLoading.set(false);
     }

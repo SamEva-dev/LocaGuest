@@ -50,8 +50,8 @@ export class AuthApi {
     return this.http.post<void>(`${this.base}/PasswordReset/request`, { email });
   }
 
-  resetPassword(token: string, newPassword: string) {
-    return this.http.post<void>(`${this.base}/PasswordReset/reset`, { token, newPassword });
+  resetPassword(email: string, token: string, newPassword: string, confirmPassword: string) {
+    return this.http.post<void>(`${this.base}/PasswordReset/reset`, { email, token, newPassword, confirmPassword });
   }
 
   refresh(refreshToken: string) {
@@ -59,8 +59,8 @@ export class AuthApi {
   }
 
   // TODO: Verify if validateEmail exists in AuthGate
-  validateEmail(token: string) {
-    return this.http.post<void>(`${this.base}/Auth/validate-email`, { token });
+  validateEmail(email: string, token: string) {
+    return this.http.post<void>(`${this.base}/Auth/validate-email`, { email, token });
   }
   
   // TODO: Verify if devices endpoints exist in AuthGate

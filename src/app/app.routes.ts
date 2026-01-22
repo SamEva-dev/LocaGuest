@@ -15,6 +15,21 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/forgot-password/forgot-password').then(m => m.ForgotPassword)
   },
   {
+    path: 'check-email',
+    canActivate: [GuestGuard],
+    loadComponent: () => import('./pages/check-email/check-email').then(m => m.CheckEmail)
+  },
+  {
+    path: 'confirm-email',
+    canActivate: [GuestGuard],
+    loadComponent: () => import('./pages/confirm-email/confirm-email').then(m => m.ConfirmEmail)
+  },
+  {
+    path: 'reset-password',
+    canActivate: [GuestGuard],
+    loadComponent: () => import('./pages/reset-password/reset-password').then(m => m.ResetPassword)
+  },
+  {
     path: 'login',
     canActivate: [GuestGuard],
     loadComponent: () => import('./pages/login/login').then(m => m.Login)
@@ -102,6 +117,10 @@ export const routes: Routes = [
       {
         path: 'pricing',
         loadComponent: () => import('./pages/pricing/pricing-page.component').then(m => m.PricingPageComponent)
+      },
+      {
+        path: 'chatbot',
+        loadComponent: () => import('./pages/chatbot/chatbot-page').then(m => m.ChatbotPage)
       }
     ]
   },

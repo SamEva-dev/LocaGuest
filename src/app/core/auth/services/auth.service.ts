@@ -160,18 +160,18 @@ export class AuthService {
     }
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<void> {
+  async resetPassword(email: string, token: string, newPassword: string, confirmPassword: string): Promise<void> {
     try {
-      await this.api.resetPassword(token, newPassword).toPromise();
+      await this.api.resetPassword(email, token, newPassword, confirmPassword).toPromise();
       this.toast.success('AUTH.RESET_SUCCESS');
     } catch {
       this.toast.error('AUTH.RESET_FAILED');
     }
   }
 
-   async validateEmail(token: string): Promise<void> {
+   async validateEmail(email: string, token: string): Promise<void> {
     try {
-      await this.api.validateEmail(token).toPromise();
+      await this.api.validateEmail(email, token).toPromise();
       this.toast.success('AUTH.EMAIL_VALIDATED');
     } catch {
       this.toast.error('AUTH.EMAIL_VALIDATION_FAILED');

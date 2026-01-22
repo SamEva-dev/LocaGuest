@@ -101,11 +101,8 @@ export class Register implements OnDestroy {
           this.router.navigate(['/app']);
         }, 2000);
       } else {
-        this.toast.successDirect('Inscription réussie. Vous serez redirigé vers la page de login dans 5s.');
-        this.succesMessage = 'Inscription réussie. Vous serez redirigé vers la page de login dans 5s.';
-        this.redirectTimeoutId = window.setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 5000);
+        this.toast.success('AUTH.REGISTER_SUCCESS');
+        this.router.navigate(['/check-email'], { queryParams: { type: 'verify', email } });
       }
     
     } catch (error: any) {
