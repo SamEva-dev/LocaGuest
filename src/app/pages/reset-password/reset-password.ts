@@ -38,7 +38,9 @@ export class ResetPassword {
     return !!this.password() && !!this.confirmPassword() && this.password() !== this.confirmPassword();
   }
 
-  async submit() {
+  async submit(event?: Event) {
+    event?.preventDefault();
+
     const email = (this.email() ?? '').trim();
     const token = (this.token() ?? '').trim();
     const password = this.password();

@@ -516,11 +516,16 @@ export class Login implements OnInit, OnDestroy {
   // Navigation Angular
   this.router.navigate(['/register']);
 }
-goToForgotPassword() {
+async goToForgotPassword() {
   const email = (this.loginEmail?.() ?? this.userEmail?.() ?? '').trim();
-  this.router.navigate(['/forgot-password'], {
-    queryParams: email ? { email } : undefined
-  });
+
+  if (email) {
+    await this.auth.forgotPassword(email);
+    this.router.navigate(['/check-email'], { queryParams: { type: 'reset', email } });
+    return;
+  }
+
+  this.router.navigate(['/forgot-password']);
 }
 
 }
