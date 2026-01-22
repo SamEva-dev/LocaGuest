@@ -79,12 +79,35 @@ function computeTf(tokens) {
 }
 
 async function findDefaultDocs() {
-  const entries = await fs.readdir(process.cwd(), { withFileTypes: true });
-  return entries
-    .filter((e) => e.isFile())
-    .map((e) => e.name)
-    .filter((name) => /^PRODUCT_DOC_LOCAGUEST-.*\.md$/i.test(name))
-    .sort((a, b) => a.localeCompare(b));
+  const root = process.cwd();
+  const docPattern = /^PRODUCT_DOC_LOCAGUEST-.*\.md$/i;
+
+  const candidates = [];
+
+  try {
+    const entries = await fs.readdir(root, { withFileTypes: true });
+    for (const e of entries) {
+      if (!e.isFile()) continue;
+      if (!docPattern.test(e.name)) continue;
+      candidates.push(e.name);
+    }
+  } catch {
+    // ignore
+  }
+
+  try {
+    const docsDir = path.join(root, 'Docs', 'product');
+    const entries = await fs.readdir(docsDir, { withFileTypes: true });
+    for (const e of entries) {
+      if (!e.isFile()) continue;
+      if (!docPattern.test(e.name)) continue;
+      candidates.push(path.join('Docs', 'product', e.name));
+    }
+  } catch {
+    // ignore
+  }
+
+  return candidates.sort((a, b) => a.localeCompare(b));
 }
 
 async function main() {
