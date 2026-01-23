@@ -85,8 +85,14 @@ describe('PropertyDetailTab', () => {
 
   it('loads property data when input data contains propertyId', fakeAsync(() => {
     propertiesService.getProperty.calls.reset();
+    propertiesService.getPropertyPayments.calls.reset();
+    propertiesService.getPropertyContracts.calls.reset();
+    propertiesService.getAssociatedTenants.calls.reset();
+    propertiesService.getFinancialSummary.calls.reset();
+    documentsApi.getPropertyDocuments.calls.reset();
 
     fixture.componentRef.setInput('data', { propertyId: 'p1' });
+    fixture.detectChanges();
     tick();
 
     expect(propertiesService.getProperty).toHaveBeenCalledWith('p1');

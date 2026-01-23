@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RentabilityCalculatorService } from '../../core/services/rentability-calculator.service';
 import { RentabilityScenariosService } from '../../core/services/rentability-scenarios.service';
+import { ConnectivityService } from '../../core/services/connectivity.service';
+import { RentabilityHybridService } from '../../core/services/rentability-hybrid.service';
 import { ExportService } from '../../core/services/export.service';
 import { PropertiesService } from '../../core/services/properties.service';
 import { PropertyDetail } from '../../core/api/properties.api';
@@ -45,6 +47,8 @@ import { ScenariosManagerComponent } from './components/scenarios-manager.compon
 export class RentabilityPage {
   private calculator = inject(RentabilityCalculatorService);
   scenariosService = inject(RentabilityScenariosService); // Public for template
+  private hybridService = inject(RentabilityHybridService);
+  private connectivity = inject(ConnectivityService);
   private exportService = inject(ExportService);
   private propertiesService = inject(PropertiesService);
 
@@ -127,6 +131,13 @@ export class RentabilityPage {
 
     // Charger la liste des biens (pour pré-remplissage)
     this.propertiesService.getProperties({ page: 1, pageSize: 200 }).subscribe();
+
+    // Sync drafts when coming back online
+    this.connectivity.onlineChanges().subscribe((online) => {
+      if (online) {
+        this.hybridService.syncPending().catch((e) => console.error('Sync pending drafts failed', e));
+      }
+    });
   }
 
   onSelectProperty(propertyId: string) {
@@ -428,7 +439,9 @@ export class RentabilityPage {
   /**
    * Auto-save (debounced)
    */
+  // Auto-save timer
   private autoSaveTimeout?: number;
+
   private autoSave() {
     if (this.autoSaveTimeout) {
       clearTimeout(this.autoSaveTimeout);
@@ -477,20 +490,21 @@ export class RentabilityPage {
       const result = this.result();
       const scenarioId = this.currentScenarioId();
       const name = this.scenarioName();
-      
-      this.scenariosService.saveScenario(input, name, false, result || undefined, scenarioId || undefined)
-        .subscribe({
-          next: (scenario) => {
-            this.currentScenarioId.set(scenario.id);
-            this.lastSaved.set(new Date());
-            this.isDirty.set(false);
-            this.isSaving.set(false);
-          },
-          error: (error) => {
-            console.error('Save error:', error);
-            this.isSaving.set(false);
-          }
-        });
+
+      const out = await this.hybridService.saveHybrid({
+        input,
+        name,
+        scenarioId: scenarioId || undefined,
+        localResult: result,
+      });
+
+      if (out.scenarioId) {
+        this.currentScenarioId.set(out.scenarioId);
+      }
+
+      this.lastSaved.set(new Date());
+      this.isDirty.set(false);
+      this.isSaving.set(false);
     } catch (error) {
       console.error('Save error:', error);
       this.isSaving.set(false);

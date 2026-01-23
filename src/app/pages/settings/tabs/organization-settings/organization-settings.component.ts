@@ -184,7 +184,17 @@ export class OrganizationSettingsComponent implements OnInit {
   getLogoUrl(): string | null {
     const logoUrl = this.organization().logoUrl;
     if (!logoUrl) return null;
-    if (logoUrl.startsWith('http')) return logoUrl;
-    return `${environment.BASE_LOCAGUEST_API}${logoUrl}`;
+    const trimmed = logoUrl.trim();
+    if (trimmed.length === 0) return null;
+    if (
+      /^https?:\/\//i.test(trimmed) ||
+      /^blob:/i.test(trimmed) ||
+      /^data:/i.test(trimmed)
+    ) {
+      return trimmed;
+    }
+
+    const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+    return `${environment.BASE_LOCAGUEST_API}${normalized}`;
   }
 }

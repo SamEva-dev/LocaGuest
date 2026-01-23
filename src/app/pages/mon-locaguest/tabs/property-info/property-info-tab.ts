@@ -90,7 +90,7 @@ export class PropertyInfoTab implements OnDestroy {
   currentImage = computed(() => {
     const images = this.property()?.imageUrls || [];
     const imageId = images[this.currentImageIndex()];
-    if (!imageId) return '/placeholder-property.jpg';
+    if (!imageId) return '/assets/images/hero-building.jpg';
     
     // Vérifier si l'image est déjà en cache
     const cache = this.imageBlobCache();
@@ -100,13 +100,15 @@ export class PropertyInfoTab implements OnDestroy {
     
     // Charger l'image via HttpClient avec authentification
     this.loadImageBlob(imageId);
-    return '/placeholder-property.jpg'; // Placeholder temporaire pendant le chargement
+    return '/assets/images/hero-building.jpg'; // Placeholder temporaire pendant le chargement
   });
   
   private loadImageBlob(imageId: string): void {
     this.imagesService.getImageBlob(imageId).subscribe({
       next: (blob: Blob) => {
+        console.log(blob);
         const blobUrl = URL.createObjectURL(blob);
+        console.log(blobUrl);
         // Mettre à jour le signal avec une nouvelle Map
         this.imageBlobCache.update(cache => {
           const newCache = new Map(cache);
@@ -119,7 +121,7 @@ export class PropertyInfoTab implements OnDestroy {
         // Mettre à jour le signal avec une nouvelle Map
         this.imageBlobCache.update(cache => {
           const newCache = new Map(cache);
-          newCache.set(imageId, '/placeholder-property.jpg');
+          newCache.set(imageId, '/assets/images/hero-building.jpg');
           return newCache;
         });
       }

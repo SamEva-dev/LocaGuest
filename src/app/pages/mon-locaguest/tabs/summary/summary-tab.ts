@@ -56,6 +56,9 @@ export class SummaryTab {
   notifications = signal<any[]>([]);
   deadlines = signal<any[]>([]);
 
+  // Cache des URLs blob pour avatars (auth required)
+  private avatarBlobCache = signal<Map<string, string>>(new Map());
+
   openMenuId = signal<string | null>(null);
 
   stats = computed(() => {
@@ -437,7 +440,8 @@ export class SummaryTab {
       return trimmed;
     }
 
-    return this.imagesService.getImageUrl(trimmed);
+    // Protected resource: use blob loader
+    return this.getOrLoadAvatarBlobUrl(trimmed);
   }
 
   getEffectivePropertyAvatarUrl(property: PropertyListItem): string | null {
@@ -446,7 +450,40 @@ export class SummaryTab {
 
     const localId = this.avatarStorage.getPropertyAvatarImageId(property.id);
     if (!localId) return null;
-    return this.imagesService.getImageUrl(localId);
+
+    return this.getOrLoadAvatarBlobUrl(localId);
+  }
+
+  private getOrLoadAvatarBlobUrl(imageId: string): string {
+    const cache = this.avatarBlobCache();
+    if (cache.has(imageId)) {
+      return cache.get(imageId)!;
+    }
+
+    // Placeholder while loading
+    this.loadAvatarBlob(imageId);
+    return '/assets/images/hero-building.jpg';
+  }
+
+  private loadAvatarBlob(imageId: string): void {
+    this.imagesService.getImageBlob(imageId).subscribe({
+      next: (blob: Blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+        this.avatarBlobCache.update((current) => {
+          const next = new Map(current);
+          next.set(imageId, blobUrl);
+          return next;
+        });
+      },
+      error: (err: any) => {
+        console.error('Erreur chargement avatar:', err);
+        this.avatarBlobCache.update((current) => {
+          const next = new Map(current);
+          next.set(imageId, '/assets/images/hero-building.jpg');
+          return next;
+        });
+      }
+    });
   }
 
   getTenantAvatarDataUrl(tenant: TenantListItem): string | null {

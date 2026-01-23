@@ -8,6 +8,9 @@ import { DashboardApi } from '../../../../core/api/dashboard.api';
 import { InternalTabManagerService } from '../../../../core/services/internal-tab-manager.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { ToastService } from '../../../../core/ui/toast.service';
+import { TranslateService } from '@ngx-translate/core';
+import { ImagesService } from '../../../../core/services/images.service';
+import { AvatarStorageService } from '../../../../core/services/avatar-storage.service';
 
 describe('SummaryTab', () => {
   let component: SummaryTab;
@@ -51,6 +54,9 @@ describe('SummaryTab', () => {
         { provide: InternalTabManagerService, useValue: tabManager },
         { provide: ConfirmService, useValue: confirmService },
         { provide: ToastService, useValue: toasts },
+        { provide: TranslateService, useValue: { setDefaultLang: () => undefined, use: () => of('fr'), get: (k: any) => of(k), stream: (k: any) => of(k), instant: (k: any) => k } },
+        { provide: ImagesService, useValue: { getPropertyImageUrl: () => null, getTenantImageUrl: () => null } },
+        { provide: AvatarStorageService, useValue: { getTenantAvatarDataUrl: () => null, getPropertyAvatarDataUrl: () => null } },
       ],
     })
       .overrideTemplate(SummaryTab, '')

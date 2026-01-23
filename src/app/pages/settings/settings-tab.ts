@@ -160,6 +160,31 @@ export class SettingsTab implements OnInit {
     this.loadSettings();
   }
 
+  // Compatibility wrappers (older code paths / templates may call these)
+  loadUserData() {
+    this.usersApi.getUserProfile().subscribe({
+      next: (profile) => this.profileData.set(profile),
+      error: (err) => console.error('Error loading profile:', err)
+    });
+  }
+
+  loadPreferences() {
+    this.usersApi.getUserPreferences().subscribe({
+      next: (prefs) => {
+        this.preferences.set(prefs);
+        this.themeService.setDarkMode(prefs.darkMode);
+      },
+      error: (err) => console.error('Error loading preferences:', err)
+    });
+  }
+
+  loadNotifications() {
+    this.usersApi.getNotificationSettings().subscribe({
+      next: (notifs) => this.notifications.set(notifs),
+      error: (err) => console.error('Error loading notifications:', err)
+    });
+  }
+
   private canAccessSubTab(tabId: string): boolean {
     switch (tabId) {
       case 'organization':
@@ -175,26 +200,9 @@ export class SettingsTab implements OnInit {
   }
 
   loadSettings() {
-    // Load profile
-    this.usersApi.getUserProfile().subscribe({
-      next: (profile) => this.profileData.set(profile),
-      error: (err) => console.error('Error loading profile:', err)
-    });
-
-    // Load preferences
-    this.usersApi.getUserPreferences().subscribe({
-      next: (prefs) => {
-        this.preferences.set(prefs);
-        this.themeService.setDarkMode(prefs.darkMode);
-      },
-      error: (err) => console.error('Error loading preferences:', err)
-    });
-
-    // Load notifications
-    this.usersApi.getNotificationSettings().subscribe({
-      next: (notifs) => this.notifications.set(notifs),
-      error: (err) => console.error('Error loading notifications:', err)
-    });
+    this.loadUserData();
+    this.loadPreferences();
+    this.loadNotifications();
 
     // Load billing data
     this.loadBillingData();
@@ -233,6 +241,7 @@ export class SettingsTab implements OnInit {
   }
 
   uploadingPhoto = false;
+  private localProfilePhotoDataUrl = signal<string | null>(null);
 
   onPhotoChange(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -252,11 +261,21 @@ export class SettingsTab implements OnInit {
         return;
       }
 
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const dataUrl = e?.target?.result as string | undefined;
+        if (dataUrl) {
+          this.localProfilePhotoDataUrl.set(dataUrl);
+        }
+      };
+      reader.readAsDataURL(file);
+
       this.uploadingPhoto = true;
       this.usersApi.uploadProfilePhoto(file).subscribe({
         next: (profile) => {
           this.profileData.set(profile);
           this.uploadingPhoto = false;
+          this.localProfilePhotoDataUrl.set(null);
         },
         error: (err) => {
           console.error('Error uploading photo:', err);
@@ -460,11 +479,27 @@ export class SettingsTab implements OnInit {
     });
   }
   
-  getProfilePhotoUrl(): string | null {
+  private resolveProfilePhotoUrl(): string | null {
     const photoUrl = this.profileData().photoUrl;
     if (!photoUrl) return null;
-    if (photoUrl.startsWith('http')) return photoUrl;
-    return `${environment.BASE_LOCAGUEST_API}${photoUrl}`;
+    const trimmed = photoUrl.trim();
+    if (trimmed.length === 0) return null;
+    if (
+      /^https?:\/\//i.test(trimmed) ||
+      /^blob:/i.test(trimmed) ||
+      /^data:/i.test(trimmed)
+    ) {
+      return trimmed;
+    }
+    const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+    return `${environment.BASE_LOCAGUEST_API}${normalized}`;
+  }
+
+  getProfilePhotoUrl(): string | null {
+    const local = this.localProfilePhotoDataUrl();
+    if (local) return local;
+
+    return this.resolveProfilePhotoUrl();
   }
 
   toggleDarkMode() {

@@ -215,13 +215,25 @@ export class BrandingThemeService {
     if (!org || !org.logoUrl) {
       return null;
     }
-    
-    // If URL is relative, prepend API base URL
-    if (org.logoUrl.startsWith('/')) {
-      return `${environment.BASE_LOCAGUEST_API}${org.logoUrl}`;
+
+    return this.toAbsoluteUrl(org.logoUrl);
+  }
+
+  private toAbsoluteUrl(url?: string | null): string {
+    if (!url) return '';
+    const trimmed = url.trim();
+    if (trimmed.length === 0) return '';
+
+    if (
+      /^https?:\/\//i.test(trimmed) ||
+      /^blob:/i.test(trimmed) ||
+      /^data:/i.test(trimmed)
+    ) {
+      return trimmed;
     }
-    
-    return org.logoUrl;
+
+    const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+    return `${environment.BASE_LOCAGUEST_API}${normalized}`;
   }
 
   /**

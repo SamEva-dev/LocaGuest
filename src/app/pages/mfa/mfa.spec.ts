@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MfaComponent } from './mfa';
+import { AuthService } from '../../core/auth/services/auth.service';
 
 describe('Mfa', () => {
   let component: MfaComponent;
@@ -8,7 +9,17 @@ describe('Mfa', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MfaComponent]
+      imports: [MfaComponent],
+      providers: [
+        {
+          provide: AuthService,
+          useValue: {
+            mfaPendingUser: () => ({ id: 'u1' }),
+            verifyMfa: async () => undefined,
+            logout: () => undefined,
+          }
+        }
+      ]
     })
     .compileComponents();
 
