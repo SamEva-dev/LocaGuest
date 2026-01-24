@@ -13,7 +13,7 @@ import { SatisfactionSurveyModal } from '../../shared/components/satisfaction-su
 import { MainLayoutTourService } from './main-layout-tour.service';
 import { ChatbotWidget } from '../../shared/chatbot/chatbot-widget';
 import { provideChatbot } from '../../shared/chatbot/provide-chatbot';
-import { environment } from '../../../environnements/environment.dev';
+import { environment } from '../../../environnements/environment';
 
 @Component({
   selector: 'main-layout',

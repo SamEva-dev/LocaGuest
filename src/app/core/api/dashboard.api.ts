@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environnements/environment.dev';
+import { environment } from '../../../environnements/environment';
 
 export interface DashboardSummary {
   propertiesCount: number;

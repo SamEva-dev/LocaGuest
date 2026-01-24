@@ -556,9 +556,25 @@ export class TenantDetailTab {
     });
     
     if (activeContract) {
+      const fromProperty = this.fromProperty();
+      const propertyName =
+        (activeContract as any)?.propertyName ||
+        this.associatedProperty()?.name ||
+        fromProperty?.name ||
+        this.associatedProperty()?.code ||
+        fromProperty?.code ||
+        'Bien';
+
+      const propertyCode =
+        (activeContract as any)?.propertyCode ||
+        this.associatedProperty()?.code ||
+        fromProperty?.code ||
+        activeContract.code ||
+        '';
+
       this.currentOccupancy.set({
-        propertyName: activeContract.tenantName || 'Bien', // tenantName contient le nom du bien
-        propertyCode: activeContract.code || '',
+        propertyName,
+        propertyCode,
         roomName: activeContract.roomId ? `Chambre ${activeContract.roomId.substring(0, 8)}` : undefined,
         contractId: activeContract.id,
         moveInDate: new Date(activeContract.startDate),

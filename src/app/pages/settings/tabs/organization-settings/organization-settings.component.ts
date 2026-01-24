@@ -5,7 +5,7 @@ import { OrganizationsService, Organization } from '../../../../core/services/or
 import { BrandingThemeService } from '../../../../core/services/branding-theme.service';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { environment } from '../../../../../environnements/environment.dev';
+import { environment } from '../../../../../environnements/environment';
 
 interface OrganizationSettings {
   id: string;

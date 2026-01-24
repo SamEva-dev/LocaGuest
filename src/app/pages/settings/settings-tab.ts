@@ -14,7 +14,7 @@ import { TwoFactorSettingsComponent } from './tabs/two-factor-settings/two-facto
 import { OrganizationSettingsComponent } from './tabs/organization-settings/organization-settings.component';
 import { ToastService } from '../../core/ui/toast.service';
 import { AuthApi } from '../../core/api/auth.api';
-import { environment } from '../../../environnements/environment.dev';
+import { environment } from '../../../environnements/environment';
 
 @Component({
   selector: 'settings-tab',

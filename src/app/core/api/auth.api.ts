@@ -1,7 +1,7 @@
 // core/auth/auth.api.ts
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environnements/environment.dev';
+import { environment } from '../../../environnements/environment';
 import { AcceptLocaGuestInvitationRequest, AcceptLocaGuestInvitationResponse, LoginRequest, LoginResponse, PreLoginRequest, PreLoginResponse, RegisterRequest, RegisterResponse } from '../auth/auth.models';
 
 @Injectable({ providedIn: 'root' })

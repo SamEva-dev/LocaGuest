@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { environment } from '../../../environnements/environment.dev';
+import { environment } from '../../../environnements/environment';
 import { TenantListItem } from './tenants.api';
 import type { paths as LocaGuestPaths } from '../sdk/locaguest/openapi.types';
 

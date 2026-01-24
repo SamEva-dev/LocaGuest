@@ -5,7 +5,7 @@ import { TokenService } from '../services/token/token.service';
 import { from, throwError } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
-import { environment } from '../../../../environnements/environment.dev';
+import { environment } from '../../../../environnements/environment';
 
 export const ApiInterceptor: HttpInterceptorFn = (req, next) => {
   const tokens = inject(TokenService);

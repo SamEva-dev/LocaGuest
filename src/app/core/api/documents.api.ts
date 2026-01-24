@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environnements/environment.dev';
+import { environment } from '../../../environnements/environment';
 import { 
   DocumentDto, 
   MarkDocumentAsSignedRequest, 
@@ -28,7 +28,7 @@ export class DocumentsApi {
   }
 
   getTenantDocuments(tenantId: string): Observable<DocumentDto[]> {
-    return this.http.get<DocumentDto[]>(`${this.baseUrl}/tenant/${tenantId}`);
+    return this.http.get<DocumentDto[]>(`${this.baseUrl}/occupant/${tenantId}`);
   }
 
   getPropertyDocuments(propertyId: string): Observable<DocumentCategory[]> {
@@ -60,7 +60,7 @@ export class DocumentsApi {
   }
 
   exportDocumentsZip(tenantId: string): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/tenant/${tenantId}/export-zip`, {
+    return this.http.get(`${this.baseUrl}/occupant/${tenantId}/export-zip`, {
       responseType: 'blob'
     });
   }
@@ -107,7 +107,7 @@ export class DocumentsApi {
   }
 
   downloadTenantSheet(tenantId: string): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/tenant/${tenantId}/sheet`, {
+    return this.http.get(`${this.baseUrl}/occupant/${tenantId}/sheet`, {
       responseType: 'blob'
     });
   }

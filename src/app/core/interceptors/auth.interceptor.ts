@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { catchError, switchMap, throwError, from } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
-import { environment } from '../../../environnements/environment.dev';
+import { environment } from '../../../environnements/environment';
 
 /**
  * Intercepteur HTTP pour ajouter le token JWT aux requêtes
