@@ -46,6 +46,12 @@ export interface DocumentUploadResponse {
   fileSizeBytes: number;
 }
 
+export interface GeneratedDocumentResponse {
+  id: string;
+  code?: string;
+  fileName?: string;
+ }
+
 export interface SignatureResponse {
   message: string;
   documentId: string;
@@ -71,6 +77,12 @@ export class DocumentsService {
       headers: new HttpHeaders({
         'Accept': 'application/pdf'
       })
+    });
+  }
+
+  generateAddendumPdf(addendumId: string): Observable<GeneratedDocumentResponse> {
+    return this.http.post<GeneratedDocumentResponse>(`${this.baseUrl}/generate-addendum`, {
+      addendumId
     });
   }
 

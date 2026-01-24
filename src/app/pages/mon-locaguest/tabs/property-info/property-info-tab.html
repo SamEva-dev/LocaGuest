@@ -132,34 +132,18 @@
               {{ 'PROPERTY.INFO.FIELDS.STATUS' | translate }}
             </label>
             <button 
-              (click)="showStatusDropdown.set(!showStatusDropdown())"
-              [disabled]="isEditing()"
+              [disabled]="true"
               class="cursor-pointer w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-between transition"
-              [class.opacity-50]="isEditing()"
-              [class.cursor-not-allowed]="isEditing()">
+              [class.opacity-50]="true"
+              [class.cursor-not-allowed]="true">
               <span class="flex items-center gap-2">
-                <span 
-                  [class]="'w-2 h-2 rounded-full bg-' + currentStatus().color + '-500'"></span>
+                <span
+                  class="w-2 h-2 rounded-full"
+                  [ngClass]="statusDotClass[currentStatus().color] || statusDotClass['slate']"></span>
                 <span class="font-medium">{{ currentStatus().label | translate }}</span>
               </span>
-              <i class="ph ph-caret-down"></i>
+              <i class="ph ph-lock"></i>
             </button>
-
-            <!-- Status Dropdown -->
-            @if (showStatusDropdown() && !isEditing()) {
-              <div class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-10 overflow-hidden">
-                @for (status of availableStatuses; track status.value) {
-                  <button 
-                    (click)="changeStatus(status.value)"
-                    class="cursor-pointer w-full px-3 py-2 flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition text-left"
-                    [class.bg-slate-50]="status.value === property().status"
-                    [class.dark:bg-slate-700]="status.value === property().status">
-                    <span [class]="'w-2 h-2 rounded-full bg-' + status.color + '-500'"></span>
-                    <span>{{ status.label | translate }}</span>
-                  </button>
-                }
-              </div>
-            }
           </div>
 
           <!-- Occupation (for Colocation) -->
@@ -307,7 +291,8 @@
               {{ 'PROPERTY.INFO.FIELDS.USAGE_TYPE' | translate }}
             </label>
             <div 
-              [class]="'inline-flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium bg-' + getUsageTypeColor(property().propertyUsageType) + '-100 text-' + getUsageTypeColor(property().propertyUsageType) + '-700 dark:bg-' + getUsageTypeColor(property().propertyUsageType) + '-900/30 dark:text-' + getUsageTypeColor(property().propertyUsageType) + '-400'">
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-sm font-medium"
+              [ngClass]="usageTypeBadgeClass[getUsageTypeColor(property().propertyUsageType)] || usageTypeBadgeClass['slate']">
               <i [class]="getUsageTypeIcon(property().propertyUsageType)"></i>
               {{ getUsageTypeLabel(property().propertyUsageType) | translate }}
             </div>
@@ -409,7 +394,7 @@
             }
           </div>
 
-          @if (property().propertyUsageType.toLowerCase() === 'Airbnb') {
+          @if (isAirbnb()) {
             <!-- Airbnb Nights booked per month -->
             <div>
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">

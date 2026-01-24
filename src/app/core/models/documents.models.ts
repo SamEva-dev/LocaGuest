@@ -16,6 +16,7 @@ export interface TenantDocument {
 }
 
 export interface GenerateContractDto {
+  contractId?: string;
   tenantId: string;
   propertyId: string;
   contractType: DocumentType;

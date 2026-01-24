@@ -5,7 +5,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PropertyDetail, PropertyImage, PropertyImageCategory } from '../../../../core/api/properties.api';
 import { PropertiesService } from '../../../../core/services/properties.service';
 import { ImagesService } from '../../../../core/services/images.service';
-import { AvatarStorageService } from '../../../../core/services/avatar-storage.service';
 import { DocumentsApi } from '../../../../core/api/documents.api';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
@@ -22,7 +21,6 @@ export class PropertyInfoTab implements OnDestroy {
   propertyUpdated = output<void>();
   private propertiesService = inject(PropertiesService);
   private imagesService = inject(ImagesService);
-  private avatarStorage = inject(AvatarStorageService);
   private documentsApi = inject(DocumentsApi);
   
   // Services UI
@@ -54,6 +52,22 @@ export class PropertyInfoTab implements OnDestroy {
     { value: 'UnderMaintenance', label: 'PROPERTY.STATUS_UNDER_MAINTENANCE', color: 'orange', icon: 'ph-wrench' }
   ];
 
+  statusDotClass: Record<string, string> = {
+    slate: 'bg-slate-500',
+    emerald: 'bg-emerald-500',
+    blue: 'bg-blue-500',
+    amber: 'bg-amber-500',
+    orange: 'bg-orange-500',
+    purple: 'bg-purple-500'
+  };
+
+  usageTypeBadgeClass: Record<string, string> = {
+    emerald: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    blue: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    purple: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+    slate: 'bg-slate-100 text-slate-700 dark:bg-slate-900/30 dark:text-slate-300'
+  };
+
   // Property types
   propertyTypes = ['APARTMENT', 'HOUSE', 'STUDIO', 'VILLA', 'DUPLEX', 'LOFT'];
   
@@ -74,6 +88,10 @@ export class PropertyInfoTab implements OnDestroy {
   currentStatus = computed(() => {
     const status = this.property()?.status || 'Vacant';
     return this.availableStatuses.find(s => s.value === status) || this.availableStatuses[0];
+  });
+
+  isAirbnb = computed(() => {
+    return this.property()?.propertyUsageType?.toLowerCase() === 'airbnb';
   });
 
   hasImages = computed(() => {
@@ -333,6 +351,27 @@ export class PropertyInfoTab implements OnDestroy {
 
   uploadImages(files: FileList) {
     const fileArray = Array.from(files);
+
+    const maxFiles = 10;
+    const maxBytesPerFile = 5 * 1024 * 1024;
+    const allowedMimeTypes = new Set([
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/gif'
+    ]);
+
+    if (fileArray.length > maxFiles) {
+      this.toasts.errorDirect(this.translate.instant('PROPERTY.INFO.ERROR_MESSAGES.UPLOAD_IMAGES'));
+      return;
+    }
+
+    const invalidFiles = fileArray.filter(f => f.size > maxBytesPerFile || (f.type && !allowedMimeTypes.has(f.type)));
+    if (invalidFiles.length > 0) {
+      this.toasts.errorDirect(this.translate.instant('PROPERTY.INFO.ERROR_MESSAGES.UPLOAD_IMAGES'));
+      return;
+    }
+
     const pending: {file: File, preview: string, category: PropertyImageCategory}[] = [];
 
     let processed = 0;
@@ -403,7 +442,7 @@ export class PropertyInfoTab implements OnDestroy {
         .find(img => (img.category || '').toLowerCase() === 'living_room')
         ?.id;
       if (livingRoomImageId) {
-        this.avatarStorage.setPropertyAvatarImageId(prop.id, livingRoomImageId);
+        await firstValueFrom(this.propertiesService.setCoverImage(prop.id, livingRoomImageId));
       }
 
       const totalUploaded = results.reduce((sum, r) => sum + (r?.images?.length ?? 0), 0);
@@ -450,11 +489,6 @@ export class PropertyInfoTab implements OnDestroy {
     try {
       // 1. Supprimer le fichier via le service (met à jour la propriété automatiquement en backend)
       await firstValueFrom(this.imagesService.deleteImage(imageIdToDelete));
-
-      const currentAvatarId = this.avatarStorage.getPropertyAvatarImageId(prop.id);
-      if (currentAvatarId && currentAvatarId === imageIdToDelete) {
-        this.avatarStorage.setPropertyAvatarImageId(prop.id, null);
-      }
 
       // 2. Succès - le backend a déjà mis à jour property.imageUrls
       

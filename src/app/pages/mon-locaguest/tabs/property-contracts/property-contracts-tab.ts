@@ -122,7 +122,32 @@ export class PropertyContractsTab {
   });
 
   async generateAddendumPdf(addendum: AddendumDto) {
-    await this.downloadAddendumPdf(addendum);
+    try {
+      this.isGeneratingPdf.set(true);
+      const created = await firstValueFrom(this.documentsService.generateAddendumPdf(addendum.id));
+      const docId = created?.id;
+      if (!docId) {
+        this.toasts.errorDirect('Erreur génération PDF avenant');
+        return;
+      }
+
+      await this.loadAllAddendums();
+
+      const blob = await firstValueFrom(this.documentsService.downloadDocument(docId));
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Avenant_${addendum.id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      console.error('❌ Erreur génération PDF avenant:', error);
+      this.toasts.errorDirect(error?.error?.message || 'Erreur lors de la génération du PDF');
+    } finally {
+      this.isGeneratingPdf.set(false);
+    }
   }
 
   async sendAddendumForElectronicSignature(_: AddendumDto) {

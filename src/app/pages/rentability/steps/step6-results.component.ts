@@ -28,6 +28,38 @@ import { YearlyBreakdownComponent } from '../components/charts/yearly-breakdown.
       </p>
 
       @if (result) {
+        <div class="mb-6">
+          @if (isCertified) {
+            <div class="rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-900 px-4 py-3">
+              <div class="font-medium">Résultats certifiés serveur</div>
+              @if (calculationVersion) {
+                <div class="text-sm opacity-80">Version: {{ calculationVersion }}</div>
+              }
+              @if (inputsHash) {
+                <div class="text-xs opacity-80 break-all">Hash: {{ inputsHash }}</div>
+              }
+            </div>
+          } @else {
+            <div class="rounded-lg border border-amber-200 bg-amber-50 text-amber-900 px-4 py-3">
+              <div class="font-medium">Résultats non certifiés</div>
+              @if (calculationVersion) {
+                <div class="text-sm opacity-80">Version: {{ calculationVersion }}</div>
+              }
+            </div>
+          }
+
+          @if (warnings?.length) {
+            <div class="mt-3 rounded-lg border border-slate-200 bg-white px-4 py-3">
+              <div class="font-medium text-slate-900">Avertissements</div>
+              <ul class="mt-2 list-disc pl-5 text-sm text-slate-700">
+                @for (w of warnings; track w) {
+                  <li>{{ w }}</li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+
         <!-- KPIs Grid -->
         <div class="grid grid-cols-4 gap-4 mb-6">
           <!-- Cashflow mensuel -->
@@ -219,4 +251,8 @@ import { YearlyBreakdownComponent } from '../components/charts/yearly-breakdown.
 export class Step6ResultsComponent {
   @Input() result: RentabilityResult | null = null;
   @Input() input?: Partial<RentabilityInput>;
+  @Input() warnings: string[] = [];
+  @Input() isCertified: boolean = false;
+  @Input() inputsHash: string | null = null;
+  @Input() calculationVersion: string | null = null;
 }

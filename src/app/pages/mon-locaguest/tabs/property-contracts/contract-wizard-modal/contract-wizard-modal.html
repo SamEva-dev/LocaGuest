@@ -50,7 +50,7 @@
                 [class.bg-white]="currentStep() >= step"
                 [class.bg-white/30]="currentStep() < step"
                 [class.text-white]="currentStep() < step"
-                [ngClass]="currentStep() >= step ? 'text-' + themeColors().ring + '-600' : ''"
+                [ngClass]="currentStep() >= step ? stepActiveTextClass() : ''"
               >
                 @if (currentStep() > step) {
                   <i class="ph ph-check text-lg"></i>

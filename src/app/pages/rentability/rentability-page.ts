@@ -2,12 +2,14 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RentabilityCalculatorService } from '../../core/services/rentability-calculator.service';
+import { RentabilityApi } from '../../core/api/rentability.api';
 import { RentabilityScenariosService } from '../../core/services/rentability-scenarios.service';
 import { ConnectivityService } from '../../core/services/connectivity.service';
 import { RentabilityHybridService } from '../../core/services/rentability-hybrid.service';
 import { ExportService } from '../../core/services/export.service';
 import { PropertiesService } from '../../core/services/properties.service';
 import { PropertyDetail } from '../../core/api/properties.api';
+import { firstValueFrom } from 'rxjs';
 import { 
   RentabilityInput, 
   RentabilityResult, 
@@ -17,14 +19,14 @@ import {
 } from '../../core/models/rentability.models';
 
 // Import des composants enfants
-import { Step1ContextComponent } from './steps/step1-context.component.js';
-import { Step2RevenuesComponent } from './steps/step2-revenues.component.js';
-import { Step3ChargesComponent } from './steps/step3-charges.component.js';
-import { Step4FinancingComponent } from './steps/step4-financing.component.js';
-import { Step5TaxComponent } from './steps/step5-tax.component.js';
-import { Step6ResultsComponent } from './steps/step6-results.component.js';
-import { Step7AnalysisComponent } from './steps/step7-analysis.component.js';
-import { ScenariosManagerComponent } from './components/scenarios-manager.component.js';
+import { Step1ContextComponent } from './steps/step1-context.component';
+import { Step2RevenuesComponent } from './steps/step2-revenues.component';
+import { Step3ChargesComponent } from './steps/step3-charges.component';
+import { Step4FinancingComponent } from './steps/step4-financing.component';
+import { Step5TaxComponent } from './steps/step5-tax.component';
+import { Step6ResultsComponent } from './steps/step6-results.component';
+import { Step7AnalysisComponent } from './steps/step7-analysis.component';
+import { ScenariosManagerComponent } from './components/scenarios-manager.component';
 
 @Component({
   selector: 'app-rentability-page',
@@ -46,6 +48,7 @@ import { ScenariosManagerComponent } from './components/scenarios-manager.compon
 })
 export class RentabilityPage {
   private calculator = inject(RentabilityCalculatorService);
+  private rentabilityApi = inject(RentabilityApi);
   scenariosService = inject(RentabilityScenariosService); // Public for template
   private hybridService = inject(RentabilityHybridService);
   private connectivity = inject(ConnectivityService);
@@ -56,6 +59,10 @@ export class RentabilityPage {
   currentStep = signal<number>(1);
   inputData = signal<Partial<RentabilityInput>>({});
   result = signal<RentabilityResult | null>(null);
+  calcWarnings = signal<string[]>([]);
+  isCertified = signal<boolean>(false);
+  inputsHash = signal<string | null>(null);
+  calculationVersion = signal<string | null>(null);
   isDirty = signal<boolean>(false);
   lastSaved = signal<Date | null>(null);
   isSaving = signal<boolean>(false);
@@ -410,9 +417,17 @@ export class RentabilityPage {
       };
       
       const input = inputWithDefaults as RentabilityInput;
+      if (this.connectivity.isOnline()) {
+        void this.calculateServer(input);
+        return;
+      }
+
       const result = this.calculator.calculate(input);
-      
       this.result.set(result);
+      this.calcWarnings.set(['Mode hors-ligne : résultats non certifiés (calcul local).']);
+      this.isCertified.set(false);
+      this.inputsHash.set(null);
+      this.calculationVersion.set(this.calculator.calcVersion);
       
       // Déverrouiller les étapes résultats et analyse
       this.stepsStatus.update(status => ({
@@ -426,6 +441,54 @@ export class RentabilityPage {
       
     } catch (error) {
       console.error('Calculation error:', error);
+    }
+  }
+
+  private async calculateServer(input: RentabilityInput): Promise<void> {
+    try {
+      const computed = await firstValueFrom(this.rentabilityApi.compute({
+        inputs: input,
+        clientCalcVersion: this.calculator.calcVersion
+      }));
+
+      // Map server DTO to UI RentabilityResult shape
+      const mapped: RentabilityResult = {
+        input,
+        yearlyResults: (computed.results.yearlyResults as any) ?? [],
+        kpis: (computed.results.kpis as any) ?? ({} as any),
+        calculatedAt: new Date()
+      };
+
+      this.result.set(mapped);
+      this.calcWarnings.set(computed.warnings ?? []);
+      this.isCertified.set(!!computed.isCertified);
+      this.inputsHash.set(computed.inputsHash ?? null);
+      this.calculationVersion.set(computed.calculationVersion ?? null);
+
+      // Déverrouiller les étapes résultats et analyse
+      this.stepsStatus.update(status => ({
+        ...status,
+        6: 'idle',
+        7: 'idle'
+      }));
+
+      this.goToStep(6);
+    } catch (error) {
+      console.error('Server calculation error, falling back to local:', error);
+
+      const local = this.calculator.calculate(input);
+      this.result.set(local);
+      this.calcWarnings.set(['Erreur calcul serveur : fallback sur calcul local non certifié.']);
+      this.isCertified.set(false);
+      this.inputsHash.set(null);
+      this.calculationVersion.set(this.calculator.calcVersion);
+
+      this.stepsStatus.update(status => ({
+        ...status,
+        6: 'idle',
+        7: 'idle'
+      }));
+      this.goToStep(6);
     }
   }
 

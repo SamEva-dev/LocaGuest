@@ -531,6 +531,16 @@ export class ContractWizardModal {
       ? { gradient: 'from-emerald-500 to-teal-600', ring: 'emerald', bg: 'emerald' }
       : { gradient: 'from-orange-500 to-rose-500', ring: 'orange', bg: 'orange' };
   });
+
+  ringTextClass: Record<string, string> = {
+    emerald: 'text-emerald-600',
+    orange: 'text-orange-600'
+  };
+
+  stepActiveTextClass = computed(() => {
+    const ring = this.themeColors().ring;
+    return this.ringTextClass[ring] || 'text-emerald-600';
+  });
   
   // ✅ NOUVEAU: Computed pour le titre du header selon contexte
   headerTitle = computed(() => {

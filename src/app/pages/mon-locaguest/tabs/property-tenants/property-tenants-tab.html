@@ -65,7 +65,8 @@
                       
                       <!-- ✅ NOUVEAU - Badge Paiement -->
                       <span 
-                        [class]="'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-' + item.paymentStatus.color + '-50 dark:bg-' + item.paymentStatus.color + '-900/20 text-' + item.paymentStatus.color + '-700 dark:text-' + item.paymentStatus.color + '-300'"
+                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
+                        [ngClass]="paymentStatusBadgeClass[item.paymentStatus.color] || paymentStatusBadgeClass['slate']"
                       >
                         <i [class]="item.paymentStatus.icon + ' text-sm'"></i>
                         <span>{{ item.paymentStatus.label }}</span>
@@ -254,7 +255,7 @@
                   }
                   
                   <!-- Badge Colocation Solidaire -->
-                  @if (isColocation() && property().propertyUsageType.toLowerCase().includes('solidaire')) {
+                  @if (isColocation() && (property().propertyUsageType || '').toLowerCase().includes('solidaire')) {
                     <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 text-xs font-medium">
                       <i class="ph ph-users-three"></i>
                       <span>Bail solidaire</span>

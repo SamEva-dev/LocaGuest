@@ -327,12 +327,12 @@ export class PropertiesApi {
   }
 
   getAvailableTenants(propertyId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/${propertyId}/available-tenants`);
+    return this.http.get<any[]>(`${this.baseUrl}/${propertyId}/available-occupants`);
   }
 
   assignTenant(propertyId: string, contractDto: CreateContractDto): Observable<Contract> {
     return this.http.post<Contract>(
-      `${this.baseUrl}/${propertyId}/assign-tenant`,
+      `${this.baseUrl}/${propertyId}/assign-occupant`,
       contractDto as unknown as CreateContractCommand
     );
   }
@@ -343,5 +343,12 @@ export class PropertiesApi {
 
   getAssociatedTenants(propertyId: string): Observable<TenantListItem[]> {
     return this.http.get<TenantListItem[]>(`${this.baseUrl}/${propertyId}/associated-occupants`);
+  }
+
+  setCoverImage(propertyId: string, imageId: string): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(
+      `${this.baseUrl}/${propertyId}/images/${imageId}/set-cover`,
+      {}
+    );
   }
 }

@@ -90,7 +90,7 @@ export class MarkSignedModal {
             'Bail',
             'Contrats',
             this.contract().id,
-            this.contract().tenantId,
+            this.tenant().id,
             this.propertyId(),
             'Contrat signé'
           )

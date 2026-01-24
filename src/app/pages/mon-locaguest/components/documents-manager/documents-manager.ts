@@ -440,6 +440,7 @@ export class DocumentsManagerComponent {
     if (tenant.contracts && tenant.contracts.length > 0) {
       const contract = tenant.contracts[0];
       return {
+        id: contract.id,
         propertyId: tenant.propertyId,
         propertyCode: tenant.propertyCode,
         propertyName: contract.propertyName || tenant.propertyCode,
@@ -535,6 +536,7 @@ export class DocumentsManagerComponent {
     }
 
     const dto: GenerateContractDto = {
+      contractId: activeContract.id,
       tenantId: this.tenantId(),
       propertyId: activeContract.propertyId,
       contractType: this.contractFormType(),

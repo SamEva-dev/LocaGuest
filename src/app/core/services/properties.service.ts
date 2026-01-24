@@ -207,6 +207,10 @@ export class PropertiesService {
     return this.propertiesApi.getAssociatedTenants(propertyId);
   }
 
+  setCoverImage(propertyId: string, imageId: string): Observable<{ success: boolean }> {
+    return this.propertiesApi.setCoverImage(propertyId, imageId);
+  }
+
   // Clear cache
   refresh(): void {
     this.propertiesCache$ = undefined;

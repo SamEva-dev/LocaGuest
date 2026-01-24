@@ -12,7 +12,7 @@ import {
 export class RentabilityCalculatorService {
 
   private readonly DEFAULT_DISCOUNT_RATE = 6; // %
-  private readonly CALC_VERSION = 'front-1.1.0';
+  readonly calcVersion = 'front-1.1.0';
 
   /**
    * Calcul principal de la rentabilité
