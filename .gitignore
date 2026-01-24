@@ -27,7 +27,6 @@ lerna-debug.log*
 
 # Added by Geoffroy Sauvard
 .angular
-package-lock.json
 
 # compiled output
 /dist
