@@ -28,6 +28,9 @@ export const Permissions = {
   ContractsTerminate: 'contracts.terminate',
   ContractsDelete: 'contracts.delete',
 
+  PaymentsRead: 'payments.read',
+  PaymentsWrite: 'payments.write',
+
   DocumentsRead: 'documents.read',
   DocumentsUpload: 'documents.upload',
   DocumentsGenerate: 'documents.generate',

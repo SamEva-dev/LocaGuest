@@ -132,10 +132,13 @@ export class RentabilityPage {
         this.autoSave();
       }
     });
-    
-    // Charger les scénarios au démarrage
-    this.scenariosService.loadUserScenarios();
 
+    effect(() => {
+      if (this.showScenarios()) {
+        this.scenariosService.loadUserScenarios();
+      }
+    });
+    
     // Charger la liste des biens (pour pré-remplissage)
     this.propertiesService.getProperties({ page: 1, pageSize: 200 }).subscribe();
 

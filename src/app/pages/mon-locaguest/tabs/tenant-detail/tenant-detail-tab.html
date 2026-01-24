@@ -233,7 +233,7 @@
             <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
               <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
                 <i class="ph ph-folder-open text-blue-600"></i>
-                Dossier Administratif
+                {{ 'TENANT.UI.ADMIN_FILE' | translate }}
               </h4>
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
@@ -243,13 +243,13 @@
                   </span>
                   @if (tenant()!.documentsValidated !== undefined && tenant()!.totalDocumentsRequired) {
                     <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                      {{ tenant()!.documentsValidated }}/{{ tenant()!.totalDocumentsRequired }} documents
+                      {{ tenant()!.documentsValidated }}/{{ tenant()!.totalDocumentsRequired }} {{ 'TENANT.UI.DOCUMENTS' | translate }}
                     </span>
                   }
                 </div>
                 @if (tenant()!.missingDocumentTypes && tenant()!.missingDocumentTypes!.length > 0) {
                   <div class="p-2 bg-orange-50 dark:bg-orange-900/20 rounded text-xs text-orange-700 dark:text-orange-400">
-                    <i class="ph ph-warning"></i> Manquant: {{ tenant()!.missingDocumentTypes!.join(', ') }}
+                    <i class="ph ph-warning"></i> {{ 'TENANT.UI.MISSING' | translate }}: {{ tenant()!.missingDocumentTypes!.join(', ') }}
                   </div>
                 }
               </div>
@@ -261,7 +261,7 @@
             <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
               <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
                 <i class="ph ph-note text-blue-600"></i>
-                Notes
+                {{ 'TENANT.UI.NOTES' | translate }}
               </h4>
               <p class="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap">{{ tenant()!.notes }}</p>
             </div>
@@ -273,14 +273,14 @@
       <div data-tour="tenant.status" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6">
         <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
           <i class="ph ph-house-line text-blue-600"></i>
-          <span>Statut Locatif</span>
+          <span>{{ 'TENANT.UI.RENTAL_STATUS' | translate }}</span>
         </h3>
         
         @if (currentOccupancy()) {
           <div class="space-y-4">
             <!-- Occupation actuelle -->
             <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Occupation actuelle</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">{{ 'TENANT.UI.CURRENT_OCCUPANCY' | translate }}</p>
               <div class="flex items-center gap-3">
                 <i class="ph ph-buildings text-blue-600 text-2xl"></i>
                 <div class="flex-1">
@@ -299,19 +299,19 @@
             <!-- Dates du bail -->
             <div class="grid grid-cols-2 gap-3">
               <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Entrée</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">{{ 'TENANT.UI.MOVE_IN' | translate }}</p>
                 <p class="font-semibold text-slate-800 dark:text-white">
                   {{ currentOccupancy()!.moveInDate | date:'dd/MM/yyyy' }}
                 </p>
               </div>
               <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Fin du bail</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">{{ 'TENANT.UI.LEASE_END' | translate }}</p>
                 <p class="font-semibold text-slate-800 dark:text-white">
                   {{ currentOccupancy()!.leaseEndDate | date:'dd/MM/yyyy' }}
                 </p>
                 @if (getDaysUntilLeaseEnd(currentOccupancy()!.leaseEndDate) > 0) {
                   <p class="text-xs text-slate-500 mt-1">
-                    <i class="ph ph-clock"></i> {{ getDaysUntilLeaseEnd(currentOccupancy()!.leaseEndDate) }} jours restants
+                    <i class="ph ph-clock"></i> {{ 'TENANT.UI.DAYS_REMAINING' | translate:{ count: getDaysUntilLeaseEnd(currentOccupancy()!.leaseEndDate) } }}
                   </p>
                 }
               </div>
@@ -320,17 +320,17 @@
             <!-- Finances résumées -->
             @if (financialStatus()) {
               <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-3 font-medium">Situation financière</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-3 font-medium">{{ 'TENANT.UI.FINANCIAL_SUMMARY' | translate }}</p>
                 
                 <div class="grid grid-cols-2 gap-3">
                   <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Solde du mois</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">{{ 'TENANT.UI.MONTH_BALANCE' | translate }}</p>
                     <p [class]="getPaymentStatusColor(financialStatus()!.currentMonthBalance) + ' text-xl font-bold'">
                       {{ formatCurrency(financialStatus()!.currentMonthBalance) }}
                     </p>
                   </div>
                   <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Retard total</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">{{ 'TENANT.UI.TOTAL_ARREARS' | translate }}</p>
                     <p [class]="getPaymentStatusColor(financialStatus()!.totalArrears) + ' text-xl font-bold'">
                       {{ formatCurrency(financialStatus()!.totalArrears) }}
                     </p>
@@ -340,12 +340,12 @@
                 @if (financialStatus()!.lastPaymentDate) {
                   <div class="mt-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
                     <p class="text-xs text-emerald-700 dark:text-emerald-400 mb-1">
-                      <i class="ph ph-check-circle"></i> Dernier paiement
+                      <i class="ph ph-check-circle"></i> {{ 'TENANT.UI.LAST_PAYMENT' | translate }}
                     </p>
                     <p class="text-sm font-semibold text-emerald-900 dark:text-emerald-100">
                       {{ formatCurrency(financialStatus()!.lastPaymentAmount) }}
                       <span class="text-xs text-emerald-600 dark:text-emerald-400 font-normal">
-                        le {{ financialStatus()!.lastPaymentDate | date:'dd/MM/yyyy' }}
+                        {{ 'TENANT.UI.ON_DATE' | translate:{ date: (financialStatus()!.lastPaymentDate | date:'dd/MM/yyyy') } }}
                       </span>
                     </p>
                   </div>
@@ -365,15 +365,17 @@
             <!-- Badge statut -->
             <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
               <div class="flex items-center justify-between">
-                <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-medium">
-                  <i class="ph ph-check-circle"></i>
-                  <span>Locataire en règle</span>
-                </span>
+                @if (!financialStatus()) {
+                  <span class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium">
+                    <i class="ph ph-info"></i>
+                    <span>{{ 'TENANT.UI.FINANCIAL_STATUS_UNAVAILABLE' | translate }}</span>
+                  </span>
+                }
                 
                 @if (paymentStats()) {
                   <div class="text-right">
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Régularité</p>
-                    <p class="text-lg font-bold text-emerald-600">{{ paymentStats()!.onTimeRate }}%</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">{{ 'TENANT.UI.TOTAL_PAID' | translate }}</p>
+                    <p class="font-bold text-emerald-600">{{ formatCurrency(paymentStats()!.totalPaid) }}</p>
                   </div>
                 }
               </div>
@@ -383,10 +385,10 @@
           <!-- Pas d'occupation active -->
           <div class="text-center py-8">
             <i class="ph ph-house-line text-4xl text-slate-300 dark:text-slate-600 mb-2"></i>
-            <p class="text-slate-500 dark:text-slate-400">Aucune occupation active</p>
+            <p class="text-slate-500 dark:text-slate-400">{{ 'TENANT.UI.NO_ACTIVE_OCCUPANCY' | translate }}</p>
             @if (contracts().length > 0) {
               <p class="text-sm text-slate-400 dark:text-slate-500 mt-1">
-                {{ contracts().length }} contrat(s) historique(s)
+                {{ 'TENANT.UI.HISTORICAL_CONTRACTS_COUNT' | translate:{ count: contracts().length } }}
               </p>
             }
           </div>
@@ -403,10 +405,10 @@
           [class.opacity-50]="!canDissociateTenant()"
           [class.cursor-not-allowed]="!canDissociateTenant()"
           class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition flex items-center gap-2 disabled:hover:bg-red-600"
-          [title]="canDissociateTenant() ? 'Dissocier le locataire du bien' : 'Impossible: contrats actifs en cours'"
+          [title]="canDissociateTenant() ? ('TENANT.UI.DISSOCIATE_TENANT_TOOLTIP' | translate) : ('TENANT.UI.DISSOCIATE_TENANT_DISABLED_TOOLTIP' | translate)"
         >
           <i class="ph ph-link-break"></i>
-          <span>Dissocier du bien</span>
+          <span>{{ 'TENANT.UI.DISSOCIATE_TENANT' | translate }}</span>
         </button>
       </div>
     }
@@ -442,7 +444,7 @@
                     : 'px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center gap-2'"
                 >
                   <i class="ph ph-plus-circle"></i>
-                  <span>Nouveau Contrat</span>
+                  <span>{{ 'TENANT.UI.NEW_CONTRACT' | translate }}</span>
                 </button>
               </div>
               @if (contracts().length > 0) {
@@ -472,13 +474,13 @@
 
                               @if (getSignedAddendums(contract.id).length > 0) {
                                 <span class="text-xs px-2 py-1 rounded-full font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
-                                  Avenant signé
+                                  {{ 'TENANT.UI.ADDENDUM_SIGNED' | translate }}
                                 </span>
                               }
 
                               @if (contract.noticeEndDate) {
                                 <span class="text-xs px-2 py-1 rounded-full font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300">
-                                  En préavis · {{ contract.noticeEndDate | date:'dd/MM/yyyy' }}
+                                  {{ 'TENANT.UI.UNDER_NOTICE_UNTIL' | translate:{ date: (contract.noticeEndDate | date:'dd/MM/yyyy') } }}
                                 </span>
                               }
                             </div>
@@ -488,7 +490,7 @@
                             @if (getNextSignedFutureAddendum(contract.id); as nextAdd) {
                               <div class="mt-2 inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 text-xs text-indigo-800 dark:text-indigo-200">
                                 <i class="ph ph-clock-countdown"></i>
-                                <span class="font-semibold">À venir</span>
+                                <span class="font-semibold">{{ 'TENANT.UI.UPCOMING' | translate }}</span>
                                 <span>({{ nextAdd.effectiveDate | date:'dd/MM/yyyy' }})</span>
                                 @if (getAddendumFutureSummary(nextAdd)) {
                                   <span class="text-indigo-700/90 dark:text-indigo-200/90">· {{ getAddendumFutureSummary(nextAdd) }}</span>
@@ -508,7 +510,7 @@
                                 [class.dark:bg-blue-900/20]="isContractExpanded(contract.id)"
                               >
                                 <i class="ph" [class.ph-caret-down]="!isContractExpanded(contract.id)" [class.ph-caret-up]="isContractExpanded(contract.id)"></i>
-                                Documents
+                                {{ 'TENANT.UI.DOCUMENTS' | translate }}
                               </button>
                             }
                           </div>
@@ -524,10 +526,10 @@
                               data-tour="tenant.contracts.renew"
                               (click)="renewContract(contract)"
                               class="px-3 py-1.5 text-sm rounded-lg border border-blue-300 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition flex items-center gap-1.5"
-                              title="Renouveler le contrat (< 60 jours avant expiration)"
+                              [title]="'TENANT.UI.RENEW_CONTRACT_TOOLTIP' | translate"
                             >
                               <i class="ph ph-arrows-clockwise"></i>
-                              <span>Renouveler</span>
+                              <span>{{ 'TENANT.UI.RENEW' | translate }}</span>
                             </button>
                           }
                           
@@ -537,10 +539,10 @@
                               data-tour="tenant.contracts.addendum"
                               (click)="createAddendum(contract)"
                               class="px-3 py-1.5 text-sm rounded-lg border border-purple-300 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition flex items-center gap-1.5"
-                              title="Créer un avenant au contrat"
+                              [title]="'TENANT.UI.ADDENDUM_TOOLTIP' | translate"
                             >
                               <i class="ph ph-file-plus"></i>
-                              <span>Avenant</span>
+                              <span>{{ 'TENANT.UI.ADDENDUM' | translate }}</span>
                             </button>
                           }
                           
@@ -550,10 +552,10 @@
                               data-tour="tenant.contracts.notice"
                               (click)="giveNotice(contract)"
                               class="px-3 py-1.5 text-sm rounded-lg border border-orange-300 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition flex items-center gap-1.5"
-                              title="Donner préavis / Rompre le contrat"
+                              [title]="'TENANT.UI.NOTICE_TOOLTIP' | translate"
                             >
                               <i class="ph ph-warning-circle"></i>
-                              <span>Préavis</span>
+                              <span>{{ 'TENANT.UI.NOTICE' | translate }}</span>
                             </button>
                           }
                           
@@ -562,10 +564,10 @@
                             <button
                               (click)="createEntryInventory(contract)"
                               class="px-3 py-1.5 text-sm rounded-lg border border-emerald-300 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition flex items-center gap-1.5"
-                              title="Créer état des lieux d'entrée"
+                              [title]="'TENANT.UI.ENTRY_INVENTORY_TOOLTIP' | translate"
                             >
                               <i class="ph ph-clipboard-text"></i>
-                              <span>EDL Entrée</span>
+                              <span>{{ 'TENANT.UI.ENTRY_INVENTORY' | translate }}</span>
                             </button>
                           }
                           
@@ -574,10 +576,10 @@
                             data-tour="tenant.contracts.view"
                             (click)="viewContractDocument(contract, $event)"
                             class="px-3 py-1.5 text-sm rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1.5"
-                            title="Voir le contrat"
+                            [title]="'TENANT.UI.VIEW_CONTRACT_TOOLTIP' | translate"
                           >
                             <i class="ph ph-eye"></i>
-                            <span>Voir</span>
+                            <span>{{ 'TENANT.UI.VIEW' | translate }}</span>
                           </button>
 
                           <!-- EDL Sortie -->
@@ -586,10 +588,10 @@
                               data-tour="tenant.contracts.exit-inventory"
                               (click)="createExitInventory(contract)"
                               class="px-3 py-1.5 text-sm rounded-lg border border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition flex items-center gap-1.5"
-                              title="Créer état des lieux de sortie"
+                              [title]="'TENANT.UI.EXIT_INVENTORY_TOOLTIP' | translate"
                             >
                               <i class="ph ph-clipboard-text"></i>
-                              <span>EDL Sortie</span>
+                              <span>{{ 'TENANT.UI.EXIT_INVENTORY' | translate }}</span>
                             </button>
                           }
                           
@@ -598,20 +600,20 @@
                             data-tour="tenant.contracts.pdf"
                             (click)="downloadContractPDF(contract)"
                             class="px-3 py-1.5 text-sm rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1.5"
-                            title="Télécharger le PDF du contrat"
+                            [title]="'TENANT.UI.DOWNLOAD_CONTRACT_PDF_TOOLTIP' | translate"
                           >
                             <i class="ph ph-download"></i>
-                            <span>PDF</span>
+                            <span>{{ 'TENANT.UI.PDF' | translate }}</span>
                           </button>
 
                           @if (getSignedAddendums(contract.id).length > 0) {
                             <button
                               (click)="downloadAddendumPdf(getSignedAddendums(contract.id)[0], $event)"
                               class="px-3 py-1.5 text-sm rounded-lg border border-purple-300 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition flex items-center gap-1.5"
-                              title="Télécharger le PDF de l'avenant signé"
+                              [title]="'TENANT.UI.DOWNLOAD_ADDENDUM_PDF_TOOLTIP' | translate"
                             >
                               <i class="ph ph-file-pdf"></i>
-                              <span>PDF Avenant</span>
+                              <span>{{ 'TENANT.UI.ADDENDUM_PDF' | translate }}</span>
                             </button>
                           }
                           
@@ -620,10 +622,10 @@
                             data-tour="tenant.contracts.history"
                             (click)="showContractHistory(contract)"
                             class="px-3 py-1.5 text-sm rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1.5"
-                            title="Afficher l'historique du contrat"
+                            [title]="'TENANT.UI.CONTRACT_HISTORY_TOOLTIP' | translate"
                           >
                             <i class="ph ph-clock-clockwise"></i>
-                            <span>Historique</span>
+                            <span>{{ 'TENANT.UI.HISTORY' | translate }}</span>
                           </button>
                         </div>
                       </div>
@@ -656,52 +658,52 @@
               @if (paymentStats()) {
                 <div data-tour="tenant.paymentHistory.summary" class="grid grid-cols-4 gap-4 mb-6">
                   <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">Solde total</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">{{ 'TENANT.UI.TOTAL_BALANCE' | translate }}</p>
                     <p class="text-2xl font-bold text-blue-600">
                       {{ formatCurrency(paymentStats()!.totalPaid || 0) }}
                     </p>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                      {{ paymentStats()!.totalPayments }} paiement(s)
+                      {{ 'TENANT.UI.PAYMENTS_COUNT' | translate:{ count: paymentStats()!.totalPayments } }}
                     </p>
                   </div>
                   
                   @if (financialStatus()) {
                     <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
-                      <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">Montant dû ce mois</p>
+                      <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">{{ 'TENANT.UI.AMOUNT_DUE_THIS_MONTH' | translate }}</p>
                       <p class="text-2xl font-bold text-orange-600">
                         {{ formatCurrency(financialStatus()!.nextDueAmount || 0) }}
                       </p>
                       @if (financialStatus()!.nextDueDate) {
                         <p class="text-xs text-orange-600 dark:text-orange-400 mt-1">
-                          <i class="ph ph-calendar"></i> Échéance: {{ financialStatus()!.nextDueDate | date:'dd/MM' }}
+                          <i class="ph ph-calendar"></i> {{ 'TENANT.UI.DUE_DATE_SHORT' | translate:{ date: (financialStatus()!.nextDueDate | date:'dd/MM') } }}
                         </p>
                       }
                     </div>
                     
                     <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-                      <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">Retard total</p>
+                      <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">{{ 'TENANT.UI.TOTAL_ARREARS' | translate }}</p>
                       <p class="text-2xl font-bold text-red-600">
                         {{ formatCurrency(financialStatus()!.totalArrears || 0) }}
                       </p>
                       @if (financialStatus()!.totalArrears > 0) {
                         <p class="text-xs text-red-600 dark:text-red-400 mt-1">
-                          <i class="ph ph-warning"></i> Action requise
+                          <i class="ph ph-warning"></i> {{ 'TENANT.UI.ACTION_REQUIRED' | translate }}
                         </p>
                       } @else {
                         <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
-                          <i class="ph ph-check"></i> À jour
+                          <i class="ph ph-check"></i> {{ 'TENANT.UI.UP_TO_DATE' | translate }}
                         </p>
                       }
                     </div>
                   }
                   
                   <div class="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">Régularité</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">{{ 'TENANT.UI.REGULARITY' | translate }}</p>
                     <p class="text-2xl font-bold text-emerald-600">
                       {{ paymentStats()!.onTimeRate || 0 }}%
                     </p>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                      {{ paymentStats()!.latePayments || 0 }} retard(s)
+                      {{ 'TENANT.UI.LATE_PAYMENTS_COUNT' | translate:{ count: (paymentStats()!.latePayments || 0) } }}
                     </p>
                   </div>
                 </div>
@@ -712,7 +714,7 @@
                 <div class="mb-6 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800">
                   <h4 class="font-semibold mb-3 flex items-center gap-2">
                     <i class="ph ph-calendar-check text-blue-600"></i>
-                    <span>Prochaines échéances</span>
+                    <span>{{ 'TENANT.UI.UPCOMING_DUES' | translate }}</span>
                   </h4>
                   <div class="space-y-2">
                     @if (financialStatus()!.nextDueDate) {
@@ -726,7 +728,7 @@
                               {{ financialStatus()!.nextDueDate | date:'MMMM yyyy' }}
                             </p>
                             <p class="text-xs text-slate-500">
-                              Échéance: {{ financialStatus()!.nextDueDate | date:'dd/MM/yyyy' }}
+                              {{ 'TENANT.UI.DUE_DATE_LONG' | translate:{ date: (financialStatus()!.nextDueDate | date:'dd/MM/yyyy') } }}
                             </p>
                           </div>
                         </div>
@@ -735,13 +737,13 @@
                             {{ formatCurrency(financialStatus()!.nextDueAmount) }}
                           </p>
                           <span class="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/30">
-                            À venir
+                            {{ 'TENANT.UI.UPCOMING' | translate }}
                           </span>
                         </div>
                       </div>
                     } @else {
                       <p class="text-sm text-slate-500 text-center py-4">
-                        Aucune échéance programmée
+                        {{ 'TENANT.UI.NO_DUE_SCHEDULED' | translate }}
                       </p>
                     }
                   </div>
@@ -756,7 +758,7 @@
               <div class="mb-6">
                 <h4 class="font-semibold mb-3 flex items-center gap-2">
                   <i class="ph ph-receipt text-slate-600"></i>
-                  <span>Échéances</span>
+                  <span>{{ 'TENANT.UI.DUES' | translate }}</span>
                 </h4>
 
                 @if (depositInfo() && currentOccupancy() && (depositInfo()!.amountExpected ?? 0) > 0) {
@@ -806,7 +808,7 @@
                   </div>
                 } @else if (rentInvoices().length === 0) {
                   <div class="text-sm text-slate-500 text-center py-4">
-                    Aucune échéance trouvée
+                    {{ 'TENANT.UI.NO_DUES_FOUND' | translate }}
                   </div>
                 } @else {
                   <div class="space-y-2">
@@ -821,7 +823,7 @@
                               {{ invoice.month }}/{{ invoice.year }}
                             </p>
                             <p class="text-xs text-slate-500">
-                              Échéance: {{ invoice.dueDate | date:'dd/MM/yyyy' }}
+                              {{ 'TENANT.UI.DUE_DATE_LONG' | translate:{ date: (invoice.dueDate | date:'dd/MM/yyyy') } }}
                             </p>
                             @if (invoice.propertyName) {
                               <p class="text-xs text-slate-400">
@@ -839,10 +841,11 @@
                             </span>
                           </div>
                           <button
+                            data-tour="tenant.invoices.pdf"
                             (click)="downloadInvoicePdf(invoice)"
                             class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             [disabled]="downloadingInvoiceId() === invoice.id"
-                            title="Télécharger la facture PDF">
+                            [title]="'TENANT.UI.DOWNLOAD_INVOICE_PDF_TOOLTIP' | translate">
                             @if (downloadingInvoiceId() === invoice.id) {
                               <i class="ph ph-spinner-gap animate-spin"></i>
                             } @else {
@@ -924,7 +927,7 @@
         <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
           <h2 class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
             <i class="ph ph-clipboard-text text-orange-600"></i>
-            <span>État des lieux d'entrée</span>
+            <span>{{ 'TENANT.UI.ENTRY_INVENTORY_TITLE' | translate }}</span>
           </h2>
           <button
             (click)="closeInventoryEntryWizard()"

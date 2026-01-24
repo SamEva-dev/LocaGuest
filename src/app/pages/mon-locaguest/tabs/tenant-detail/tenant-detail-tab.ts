@@ -313,7 +313,7 @@ export class TenantDetailTab {
         return this.auth.hasPermission(Permissions.ContractsRead);
       case 'payments':
       case 'payment-history':
-        return this.auth.hasPermission(Permissions.AnalyticsRead);
+        return this.auth.hasPermission(Permissions.PaymentsRead);
       case 'documents':
         return this.auth.hasPermission(Permissions.DocumentsRead);
       default:
@@ -599,6 +599,14 @@ export class TenantDetailTab {
       this.financialStatus.set(null);
       return;
     }
+
+    // Tant que le backend ne renvoie pas un calcul fiable (montant dû / retard / solde),
+    // on ne doit pas afficher de valeurs "0" qui ressemblent à un statut validé.
+    // Heuristique minimale: si on n'a aucun paiement et aucune stat exploitable, on masque.
+    if (!payments.length && !(stats.totalPaid > 0) && !(stats.totalPayments > 0) && !(stats.latePayments > 0)) {
+      this.financialStatus.set(null);
+      return;
+    }
     
     // Trouver le dernier paiement
     const sortedPayments = [...payments].sort((a, b) => 
@@ -617,8 +625,8 @@ export class TenantDetailTab {
       : 0;
     
     this.financialStatus.set({
-      currentMonthBalance: 0, // TODO: Calculer depuis backend
-      totalArrears: 0, // TODO: Calculer depuis backend
+      currentMonthBalance: 0,
+      totalArrears: 0,
       lastPaymentDate: lastPayment ? new Date(lastPayment.paymentDate) : null,
       lastPaymentAmount: lastPayment?.amount || 0,
       nextDueDate: nextMonth,
@@ -681,9 +689,9 @@ export class TenantDetailTab {
     const contractInfos = this.contracts().map(c => ({
       id: c.id,
       tenantId: c.tenantId || t.id,
-      propertyId: t.propertyId || '', // propertyId vient du tenant, pas du contrat
-      propertyName: c.tenantName, // Utiliser tenantName comme fallback
-      propertyCode: c.code,
+      propertyId: (c as any)?.propertyId || t.propertyId || '',
+      propertyName: (c as any)?.propertyName || (c as any)?.propertyCode || t.propertyCode || 'Bien',
+      propertyCode: (c as any)?.propertyCode || t.propertyCode || '',
       type: c.type,
       startDate: c.startDate,
       endDate: c.endDate,
