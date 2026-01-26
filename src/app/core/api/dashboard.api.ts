@@ -5,6 +5,7 @@ import { environment } from '../../../environnements/environment';
 
 export interface DashboardSummary {
   propertiesCount: number;
+  occupiedPropertiesCount: number;
   activeTenants: number;
   occupancyRate: number;
   monthlyRevenue: number;
@@ -28,16 +29,16 @@ export interface Deadline {
 }
 
 export interface OccupancyChartData {
-  month: number;
-  monthName: string;
+  day: number;
+  label: string;
   occupiedUnits: number;
   totalUnits: number;
   occupancyRate: number;
 }
 
 export interface RevenueChartData {
-  month: number;
-  monthName: string;
+  day: number;
+  label: string;
   expectedRevenue: number;
   actualRevenue: number;
   collectionRate: number;
@@ -65,14 +66,18 @@ export class DashboardApi {
     return this.http.get<Deadline>(`${this.baseUrl}/deadlines`);
   }
 
-  getOccupancyChart(year: number = 2025): Observable<{ monthlyData: OccupancyChartData[] }> {
-    const params = new HttpParams().set('year', year.toString());
-    return this.http.get<{ monthlyData: OccupancyChartData[] }>(`${this.baseUrl}/charts/occupancy`, { params });
+  getOccupancyChart(month: number, year: number): Observable<{ dailyData: OccupancyChartData[] }> {
+    const params = new HttpParams()
+      .set('month', month.toString())
+      .set('year', year.toString());
+    return this.http.get<{ dailyData: OccupancyChartData[] }>(`${this.baseUrl}/charts/occupancy`, { params });
   }
 
-  getRevenueChart(year: number = 2025): Observable<{ monthlyData: RevenueChartData[] }> {
-    const params = new HttpParams().set('year', year.toString());
-    return this.http.get<{ monthlyData: RevenueChartData[] }>(`${this.baseUrl}/charts/revenue`, { params });
+  getRevenueChart(month: number, year: number): Observable<{ dailyData: RevenueChartData[] }> {
+    const params = new HttpParams()
+      .set('month', month.toString())
+      .set('year', year.toString());
+    return this.http.get<{ dailyData: RevenueChartData[] }>(`${this.baseUrl}/charts/revenue`, { params });
   }
 
   getAvailableYears(): Observable<{ years: number[] }> {

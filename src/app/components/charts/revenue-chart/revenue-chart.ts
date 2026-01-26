@@ -82,16 +82,16 @@ export class RevenueChart implements OnInit, OnChanges {
   }
 
   loadRevenueData() {
-    this.dashboardService.getRevenueChart(this.year).subscribe({
+    this.dashboardService.getRevenueChart(this.month, this.year).subscribe({
       next: (data) => {
         const revenues = data.map(d => d.actualRevenue);
-        const months = data.map(d => d.monthName);
+        const labels = data.map(d => d.label);
         
         this.chartOptions.series = [{
           name: 'Revenus',
           data: revenues
         }];
-        this.chartOptions.xaxis.categories = months;
+        this.chartOptions.xaxis.categories = labels;
         
         // Update chart if needed
         if (this.chart) {

@@ -10,20 +10,26 @@ export class DashboardService {
   summary = signal<DashboardSummary | null>(null);
   activities = signal<Activity[]>([]);
   deadlines = signal<Deadline | null>(null);
-  loading = signal(false);
+  loadingSummary = signal(false);
+  loadingActivities = signal(false);
+  summaryError = signal<string | null>(null);
+  activitiesError = signal<string | null>(null);
 
   getSummary(month?: number, year?: number): Observable<DashboardSummary> {
-    this.loading.set(true);
+    this.loadingSummary.set(true);
+    this.summaryError.set(null);
     return this.dashboardApi.getSummary(month, year).pipe(
       tap(data => {
         this.summary.set(data);
-        this.loading.set(false);
+        this.loadingSummary.set(false);
       }),
       catchError((err: unknown) => {
         console.error('Error loading dashboard summary:', err);
-        this.loading.set(false);
-        return of({
+        this.summaryError.set('Error loading dashboard summary');
+        this.loadingSummary.set(false);
+        return of<DashboardSummary>({
           propertiesCount: 0,
+          occupiedPropertiesCount: 0,
           activeTenants: 0,
           occupancyRate: 0,
           monthlyRevenue: 0
@@ -33,10 +39,17 @@ export class DashboardService {
   }
 
   getActivities(limit: number = 20): Observable<Activity[]> {
+    this.loadingActivities.set(true);
+    this.activitiesError.set(null);
     return this.dashboardApi.getActivities(limit).pipe(
-      tap(data => this.activities.set(data)),
+      tap(data => {
+        this.activities.set(data);
+        this.loadingActivities.set(false);
+      }),
       catchError((err: unknown) => {
         console.error('Error loading activities:', err);
+        this.activitiesError.set('Error loading activities');
+        this.loadingActivities.set(false);
         return of([]);
       })
     );
@@ -52,9 +65,9 @@ export class DashboardService {
     );
   }
 
-  getOccupancyChart(year: number = 2025): Observable<OccupancyChartData[]> {
-    return this.dashboardApi.getOccupancyChart(year).pipe(
-      map(response => response.monthlyData),
+  getOccupancyChart(month: number, year: number): Observable<OccupancyChartData[]> {
+    return this.dashboardApi.getOccupancyChart(month, year).pipe(
+      map(response => response.dailyData),
       catchError((err: unknown) => {
         console.error('Error loading occupancy chart:', err);
         return of([]);
@@ -62,9 +75,9 @@ export class DashboardService {
     );
   }
 
-  getRevenueChart(year: number = 2025): Observable<RevenueChartData[]> {
-    return this.dashboardApi.getRevenueChart(year).pipe(
-      map(response => response.monthlyData),
+  getRevenueChart(month: number, year: number): Observable<RevenueChartData[]> {
+    return this.dashboardApi.getRevenueChart(month, year).pipe(
+      map(response => response.dailyData),
       catchError((err: unknown) => {
         console.error('Error loading revenue chart:', err);
         return of([]);

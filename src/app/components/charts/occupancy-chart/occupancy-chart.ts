@@ -78,10 +78,10 @@ export class OccupancyChart implements OnInit, OnChanges {
   }
 
   loadOccupancyData() {
-    this.dashboardService.getOccupancyChart(this.year).subscribe({
+    this.dashboardService.getOccupancyChart(this.month, this.year).subscribe({
       next: (data) => {
         const occupancyRates = data.map(d => d.occupancyRate);
-        const labels = data.map(d => d.monthName);
+        const labels = data.map(d => d.label);
         
         this.chartOptions.series = [{
           name: 'Taux d\'occupation',

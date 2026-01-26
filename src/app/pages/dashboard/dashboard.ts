@@ -32,13 +32,14 @@ export class Dashboard {
   // Payments dashboard data
   paymentsDashboard = signal<PaymentsDashboard | null>(null);
   loadingPayments = signal(false);
+  paymentsError = signal<string | null>(null);
 
   // Mapper les stat cards à partir du summary + payments
   stats = computed(() => {
     const s = this.dashboard.summary();
     const p = this.paymentsDashboard();
     return [
-      { key: 'properties', label: 'DASHBOARD.STATS.PROPERTIES', value: s?.propertiesCount ?? 0, icon: 'ph-house', color: 'blue', delta: undefined, deltaPositive: true },
+      { key: 'properties', label: 'DASHBOARD.STATS.PROPERTIES', value: s?.propertiesCount ?? 0, icon: 'ph-house', color: 'blue', delta: s ? `${s.occupiedPropertiesCount ?? 0} occupés` : undefined, deltaPositive: true },
       { key: 'tenants', label: 'DASHBOARD.STATS.TENANTS', value: s?.activeTenants ?? 0, icon: 'ph-users-three', color: 'green', delta: undefined, deltaPositive: true },
       { key: 'occupancy', label: 'DASHBOARD.STATS.OCCUPANCY', value: `${Math.round((s?.occupancyRate ?? 0)*100)}%`, icon: 'ph-chart-line-up', color: 'purple', delta: undefined, deltaPositive: true },
       { key: 'revenue', label: 'DASHBOARD.STATS.REVENUE', value: `€ ${s?.monthlyRevenue?.toLocaleString?.() ?? 0}`, icon: 'ph-currency-eur', color: 'amber', delta: undefined, deltaPositive: true },
@@ -70,6 +71,7 @@ export class Dashboard {
 
   loadPaymentsDashboard() {
     this.loadingPayments.set(true);
+    this.paymentsError.set(null);
     this.paymentsService.getPaymentsDashboard({
       month: this.selectedMonth,
       year: this.selectedYear
@@ -80,6 +82,7 @@ export class Dashboard {
       },
       error: (err) => {
         console.error('Error loading payments dashboard:', err);
+        this.paymentsError.set('Error loading payments dashboard');
         this.loadingPayments.set(false);
       }
     });
@@ -108,13 +111,5 @@ export class Dashboard {
     this.loadAvailableYears();
     this.summary$.subscribe();
     this.activities$.subscribe();
-  }
-
-  openPropertyDemo() {
-    this.tabManager.openProperty('1', 'T3 - Centre Ville');
-  }
-
-  openTenantDemo() {
-    this.tabManager.openTenant('1', 'Marie Dupont');
   }
 }

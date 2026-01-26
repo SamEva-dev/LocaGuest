@@ -61,8 +61,8 @@ export interface PaymentsDashboard {
 
 export interface UpcomingPayment {
   id: string;
-  tenantId: string;
-  tenantName: string;
+  occupantId: string;
+  occupantName: string;
   propertyId: string;
   propertyName: string;
   amountDue: number;
@@ -72,8 +72,8 @@ export interface UpcomingPayment {
 
 export interface OverduePaymentSummary {
   id: string;
-  tenantId: string;
-  tenantName: string;
+  occupantId: string;
+  occupantName: string;
   propertyId: string;
   propertyName: string;
   amountDue: number;
