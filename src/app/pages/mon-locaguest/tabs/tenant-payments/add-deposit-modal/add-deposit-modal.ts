@@ -41,6 +41,8 @@ export class AddDepositModal implements OnInit {
 
   deposit = signal<DepositDto | null>(null);
 
+  allowInstallments = computed(() => this.deposit()?.allowInstallments ?? true);
+
   form = signal({
     contractId: '',
     amount: 0,
@@ -153,6 +155,14 @@ export class AddDepositModal implements OnInit {
 
     const max = this.maxPayableAmount();
     const amount = Math.max(0, Math.min(Number(f.amount) || 0, max > 0 ? max : Number(f.amount) || 0));
+
+    if (!this.allowInstallments() && max > 0 && amount !== max) {
+      this.toastService.errorDirect(
+        this.translate.instant('DEPOSITS.PAY.ERRORS.INSTALLMENTS_NOT_ALLOWED')
+      );
+      this.isSaving.set(false);
+      return;
+    }
 
     const dateUtcIso = new Date(f.dateUtc + 'T00:00:00Z').toISOString();
 

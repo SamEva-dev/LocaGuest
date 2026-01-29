@@ -62,6 +62,17 @@ export class AuthApi {
   validateEmail(email: string, token: string) {
     return this.http.post<void>(`${this.base}/Auth/validate-email`, { email, token });
   }
+
+  resendEmailConfirmation(email: string) {
+    return this.http.post<void>(`${this.base}/Auth/resend-confirm-email`, { email });
+  }
+
+  getProvisioningStatus(email: string) {
+    return this.http.get<{ status: string; organizationId?: string | null }>(
+      `${this.base}/Auth/provisioning-status`,
+      { params: { email } }
+    );
+  }
   
   // TODO: Verify if devices endpoints exist in AuthGate
   listDevices() {

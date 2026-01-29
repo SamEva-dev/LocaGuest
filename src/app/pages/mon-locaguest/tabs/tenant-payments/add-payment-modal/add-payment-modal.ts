@@ -42,6 +42,7 @@ export class AddPaymentModal implements OnInit {
   contracts = signal<ContractOption[]>([]);
   isLoadingContracts = signal(false);
   isSaving = signal(false);
+  submitAttempted = signal(false);
   
   // Form
   form = signal({
@@ -94,6 +95,11 @@ export class AddPaymentModal implements OnInit {
       f.expectedDate &&
       !this.isSaving()
     );
+  });
+
+  contractRequiredError = computed(() => {
+    if (!this.submitAttempted()) return false;
+    return !this.form().contractId;
   });
   
   ngOnInit() {
@@ -218,12 +224,13 @@ export class AddPaymentModal implements OnInit {
   }
   
   handleSubmit() {
+    this.submitAttempted.set(true);
     if (!this.canSubmit()) return;
     
     const f = this.form();
     
     const request: CreatePaymentRequest = {
-      tenantId: this.tenantId(),
+      occupantId: this.tenantId(),
       propertyId: f.propertyId,
       contractId: f.contractId,
       paymentType: f.paymentType,

@@ -22,6 +22,7 @@ import { AuthService } from '../../../../core/auth/services/auth.service';
 import { Permissions } from '../../../../core/auth/permissions';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { PaymentsRefreshService } from '../../../../core/services/payments-refresh.service';
 
 @Component({
   selector: 'property-detail-tab',
@@ -37,6 +38,7 @@ export class PropertyDetailTab {
   private documentsApi = inject(DocumentsApi);
   private auth = inject(AuthService);
   private imagesService = inject(ImagesService);
+  private paymentsRefresh = inject(PaymentsRefreshService);
   
   // ✅ Services UI
   private toasts = inject(ToastService);
@@ -440,6 +442,24 @@ export class PropertyDetailTab {
   });
 
   constructor() {
+    this.paymentsRefresh.refresh$.subscribe(() => {
+      const propertyId = this.data()?.propertyId;
+      if (!propertyId) return;
+
+      this.paymentsApi.getPaymentsByProperty(propertyId).subscribe({
+        next: (payments) => {
+          const sortedPayments = (payments || []).slice().sort((a, b) => {
+            const da = a.paymentDate ? new Date(a.paymentDate).getTime() : 0;
+            const db = b.paymentDate ? new Date(b.paymentDate).getTime() : 0;
+            return db - da;
+          });
+          this.payments.set(sortedPayments);
+          this.recentPayments.set(sortedPayments.slice(0, 3));
+        },
+        error: (err) => console.error('❌ Error loading payments:', err)
+      });
+    });
+
     effect(() => {
       if (!this.canAccessSubTab(this.activeSubTab())) {
         this.activeSubTab.set('informations');

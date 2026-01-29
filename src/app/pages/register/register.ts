@@ -102,7 +102,31 @@ export class Register implements OnDestroy {
         }, 2000);
       } else {
         this.toast.success('AUTH.REGISTER_SUCCESS');
-        this.router.navigate(['/check-email'], { queryParams: { type: 'verify', email } });
+
+        const normalized = (email ?? '').trim().toLowerCase();
+        const deadline = Date.now() + 30000;
+        let organizationReady = false;
+
+        while (Date.now() < deadline) {
+          try {
+            const status = await firstValueFrom(this.authApi.getProvisioningStatus(normalized));
+            if (status?.organizationId) {
+              organizationReady = true;
+              break;
+            }
+          } catch {
+            // ignore transient errors during provisioning
+          }
+
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+
+        if (!organizationReady) {
+          this.toast.errorDirect("Création de l'organisation en cours. Réessaie dans quelques secondes.");
+          return;
+        }
+
+        this.router.navigate(['/check-email'], { queryParams: { type: 'verify', email: normalized } });
       }
     
     } catch (error: any) {

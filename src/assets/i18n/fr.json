@@ -881,21 +881,22 @@
     "PAY": {
       "TITLE": "Payer la caution",
       "CONTRACT": "Contrat",
-      "LOADING_CONTRACTS": "Chargement des contrats...",
       "SELECT_CONTRACT": "Sélectionner un contrat",
-      "OUTSTANDING": "Reste à verser",
+      "LOADING_CONTRACTS": "Chargement des contrats...",
+      "OUTSTANDING": "Restant dû",
       "EXPECTED": "Attendu",
       "RECEIVED": "Reçu",
       "STATUS": "Statut",
       "AMOUNT": "Montant",
       "DATE": "Date",
-      "REFERENCE": "Référence (optionnel)",
-      "REFERENCE_PLACEHOLDER": "Ex: Virement 2026-01",
+      "REFERENCE": "Référence",
+      "REFERENCE_PLACEHOLDER": "Ex: Virement du 05/01",
       "SAVE": "Enregistrer",
       "ERRORS": {
         "LOAD_CONTRACTS": "Erreur lors du chargement des contrats",
         "LOAD_DEPOSIT": "Erreur lors du chargement de la caution",
-        "RECORD": "Erreur lors de l'enregistrement de la caution"
+        "RECORD": "Erreur lors de l'enregistrement de la caution",
+        "INSTALLMENTS_NOT_ALLOWED": "Le paiement en plusieurs fois n'est pas autorisé pour cette caution."
       }
     },
     "BADGE": {
@@ -1104,7 +1105,8 @@
       "GENERATING": "Génération…"
     },
     "BADGES": {
-      "ASSOCIATED_TO": "Associé à"
+      "ASSOCIATED_TO": "Associé à",
+      "ADDENDUM": "Avenant"
     },
     "UI": {
       "DOCUMENTS": "documents",

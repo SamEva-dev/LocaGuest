@@ -53,6 +53,10 @@
                 </option>
               }
             </select>
+
+            @if (contractRequiredError()) {
+              <p class="mt-1 text-xs text-red-600">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+            }
           }
         </div>
 

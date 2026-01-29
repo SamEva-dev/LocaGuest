@@ -123,7 +123,7 @@ export class ContractWizardModal {
     deposit: 0,
     depositAmountExpected: undefined,
     depositDueDate: '',
-    depositAllowInstallments: false,
+    depositAllowInstallments: true,
     paymentDueDay: 5, // Par défaut: 5 du mois
     duration: 12,
     autoRenewal: true,

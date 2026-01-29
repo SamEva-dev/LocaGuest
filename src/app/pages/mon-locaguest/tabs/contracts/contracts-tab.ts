@@ -457,7 +457,7 @@ export class ContractsTab implements OnInit {
       deposit: formValue.deposit || 0,
       depositAmountExpected: formValue.deposit || 0,
       depositDueDate: formValue.startDate!,
-      depositAllowInstallments: false
+      depositAllowInstallments: true
     };
 
     this.contractsApi.createContract(request).subscribe({

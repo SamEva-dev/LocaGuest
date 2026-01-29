@@ -46,7 +46,7 @@ export type PaymentMethod =
   | 'Other';
 
 export interface CreatePaymentRequest {
-  tenantId: string;
+  occupantId: string;
   propertyId: string;
   contractId: string;
   paymentType: 'Rent' | 'Deposit';
@@ -132,14 +132,14 @@ export class PaymentsApi {
    * Get payment statistics
    */
   getPaymentStats(params: {
-    tenantId?: string;
+    occupantId?: string;
     propertyId?: string;
     month?: number;
     year?: number;
   }): Observable<PaymentStats> {
     let httpParams = new HttpParams();
     
-    if (params.tenantId) httpParams = httpParams.set('tenantId', params.tenantId);
+    if (params.occupantId) httpParams = httpParams.set('occupantId', params.occupantId);
     if (params.propertyId) httpParams = httpParams.set('propertyId', params.propertyId);
     if (params.month) httpParams = httpParams.set('month', params.month.toString());
     if (params.year) httpParams = httpParams.set('year', params.year.toString());

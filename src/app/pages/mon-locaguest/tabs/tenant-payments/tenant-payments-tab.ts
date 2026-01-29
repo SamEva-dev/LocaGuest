@@ -5,6 +5,7 @@ import { PaymentsApi, Payment, PaymentStats } from '../../../../core/api/payment
 import { AddPaymentModal } from './add-payment-modal/add-payment-modal';
 import { AddDepositModal } from './add-deposit-modal/add-deposit-modal';
 import { firstValueFrom } from 'rxjs';
+import { PaymentsRefreshService } from '../../../../core/services/payments-refresh.service';
 
 @Component({
   selector: 'tenant-payments-tab',
@@ -19,6 +20,7 @@ export class TenantPaymentsTab implements OnInit {
   
   // Services
   private paymentsApi = inject(PaymentsApi);
+  private paymentsRefresh = inject(PaymentsRefreshService);
   
   // Expose Math for template
   Math = Math;
@@ -86,7 +88,7 @@ export class TenantPaymentsTab implements OnInit {
   loadStats() {
     const year = this.filterYear();
     this.paymentsApi.getPaymentStats({ 
-      tenantId: this.tenantId(),
+      occupantId: this.tenantId(),
       year: year || undefined
     }).subscribe({
       next: (stats) => {
@@ -110,12 +112,14 @@ export class TenantPaymentsTab implements OnInit {
     this.showAddModal.set(false);
     this.loadPayments();
     this.loadStats();
+    this.paymentsRefresh.trigger('payment_created');
   }
 
   handleDepositRecorded() {
     this.showDepositModal.set(false);
     this.loadPayments();
     this.loadStats();
+    this.paymentsRefresh.trigger('deposit_recorded');
   }
   
   handleModalClose() {

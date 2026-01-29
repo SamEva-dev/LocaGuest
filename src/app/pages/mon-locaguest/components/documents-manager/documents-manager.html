@@ -59,83 +59,78 @@
             (change)="onCategoryChange()"
             class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700"
           >
-            <option value="">Toutes les catégories</option>
-            @for (cat of documentCategories; track cat.label) {
-              <option [value]="cat.label">{{ cat.label }}</option>
+            <option value="">Tous les types</option>
+            @for (cat of documentCategories(); track cat.type) {
+              <option [value]="cat.type">{{ cat.label }}</option>
             }
           </select>
         </div>
       }
       
-      <!-- Documents Grid by Category -->
+      <!-- Documents Grid by Type -->
       @if (!isLoading()) {
         <div class="space-y-6">
-          @for (category of documentCategories; track category.label) {
-            @if (getFilteredDocumentsByType(category.type).length > 0 || category.showEmpty) {
+          @for (category of documentCategories(); track category.type) {
+            @if (getFilteredDocumentsByType([category.type]).length > 0) {
               <div>
                 <h4 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3 flex items-center gap-2">
                   <i [class]="'ph ' + category.icon"></i>
                   {{ category.label }}
                 </h4>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  @for (doc of getFilteredDocumentsByType(category.type); track doc.id || doc.fileName) {
-                  <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition group">
-                    <div class="flex items-start justify-between mb-2">
-                      <div class="flex items-center gap-3">
-                        <div [class]="'w-10 h-10 rounded-lg flex items-center justify-center ' + getDocumentColor(doc.type)">
-                          <i [class]="'ph ' + getDocumentIcon(doc.type) + ' text-xl'"></i>
+                  @for (doc of getFilteredDocumentsByType([category.type]); track doc.id || doc.fileName) {
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition group">
+                      <div class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-3">
+                          <div [class]="'w-10 h-10 rounded-lg flex items-center justify-center ' + getDocumentColor(doc.type)">
+                            <i [class]="'ph ' + getDocumentIcon(doc.type) + ' text-xl'"></i>
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium truncate">{{ doc.fileName }}</p>
+                            <p class="text-xs text-slate-500">{{ formatFileSize(doc.fileSize) }}</p>
+                          </div>
                         </div>
-                        <div class="flex-1 min-w-0">
-                          <p class="text-sm font-medium truncate">{{ doc.fileName }}</p>
-                          <p class="text-xs text-slate-500">{{ formatFileSize(doc.fileSize) }}</p>
+                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                          @if (doc.url) {
+                            <button
+                              (click)="viewDocument(doc)"
+                              class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                              title="Voir"
+                            >
+                              <i class="ph ph-eye text-slate-600 dark:text-slate-400"></i>
+                            </button>
+                            <button
+                              (click)="downloadDocument(doc)"
+                              class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                              title="Télécharger"
+                            >
+                              <i class="ph ph-download text-slate-600 dark:text-slate-400"></i>
+                            </button>
+                          }
+                          <button
+                            (click)="deleteDocument(doc)"
+                            class="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                            title="Supprimer"
+                          >
+                            <i class="ph ph-trash text-red-600"></i>
+                          </button>
                         </div>
                       </div>
-                      <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                        @if (doc.url) {
-                          <button
-                            (click)="viewDocument(doc)"
-                            class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
-                            title="Voir"
-                          >
-                            <i class="ph ph-eye text-slate-600 dark:text-slate-400"></i>
-                          </button>
-                          <button
-                            (click)="downloadDocument(doc)"
-                            class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
-                            title="Télécharger"
-                          >
-                            <i class="ph ph-download text-slate-600 dark:text-slate-400"></i>
-                          </button>
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-500">{{ doc.uploadDate | date:'dd/MM/yyyy' }}</span>
+                        @if (doc.expiryDate) {
+                          <span [class]="isExpiringSoon(doc.expiryDate) ? 'text-orange-600 font-medium' : 'text-slate-500'">
+                            <i class="ph ph-clock"></i> {{ doc.expiryDate | date:'dd/MM/yyyy' }}
+                          </span>
                         }
-                        <button
-                          (click)="deleteDocument(doc)"
-                          class="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
-                          title="Supprimer"
-                        >
-                          <i class="ph ph-trash text-red-600"></i>
-                        </button>
                       </div>
-                    </div>
-                    <div class="flex items-center justify-between text-xs">
-                      <span class="text-slate-500">{{ doc.uploadDate | date:'dd/MM/yyyy' }}</span>
-                      @if (doc.expiryDate) {
-                        <span [class]="isExpiringSoon(doc.expiryDate) ? 'text-orange-600 font-medium' : 'text-slate-500'">
-                          <i class="ph ph-clock"></i> {{ doc.expiryDate | date:'dd/MM/yyyy' }}
-                        </span>
+                      @if (doc.description) {
+                        <p class="text-xs text-slate-500 mt-2">{{ doc.description }}</p>
                       }
                     </div>
-                    @if (doc.description) {
-                      <p class="text-xs text-slate-500 mt-2">{{ doc.description }}</p>
-                    }
-                  </div>
-                } @empty {
-                  <div class="col-span-full text-center py-8 text-slate-400">
-                    <i [class]="'ph ' + category.icon + ' text-4xl mb-2'"></i>
-                    <p class="text-sm">Aucun document de type {{ category.label }}</p>
-                  </div>
-                }
+                  }
+                </div>
               </div>
-            </div>
             }
           }
         </div>

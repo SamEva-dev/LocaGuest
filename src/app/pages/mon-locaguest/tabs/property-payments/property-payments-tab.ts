@@ -2,6 +2,7 @@ import { Component, input, signal, inject, OnInit, computed } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaymentsApi, Payment, PaymentStats } from '../../../../core/api/payments.api';
+import { PaymentsRefreshService } from '../../../../core/services/payments-refresh.service';
 
 @Component({
   selector: 'property-payments-tab',
@@ -16,6 +17,7 @@ export class PropertyPaymentsTab implements OnInit {
   
   // Services
   private paymentsApi = inject(PaymentsApi);
+  private paymentsRefresh = inject(PaymentsRefreshService);
   
   // State
   payments = signal<Payment[]>([]);
@@ -54,6 +56,11 @@ export class PropertyPaymentsTab implements OnInit {
   ngOnInit() {
     this.loadPayments();
     this.loadStats();
+
+    this.paymentsRefresh.refresh$.subscribe(() => {
+      this.loadPayments();
+      this.loadStats();
+    });
   }
   
   loadPayments() {

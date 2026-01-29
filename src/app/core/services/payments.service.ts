@@ -27,7 +27,7 @@ export interface Payment {
 }
 
 export interface CreatePaymentDto {
-  tenantId: string;
+  occupantId: string;
   propertyId: string;
   contractId: string;
   amountDue: number;

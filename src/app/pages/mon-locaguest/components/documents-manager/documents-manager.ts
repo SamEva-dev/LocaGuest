@@ -47,11 +47,9 @@ export class DocumentsManagerComponent {
       );
     }
     
-    // Filter by category
+    // Filter by document type
     if (this.selectedCategory()) {
-      const categoryTypes = this.documentCategories
-        .find(c => c.label === this.selectedCategory())?.type || [];
-      docs = docs.filter(d => categoryTypes.includes(d.type));
+      docs = docs.filter(d => d.type === this.selectedCategory());
     }
     
     return docs;
@@ -134,14 +132,18 @@ export class DocumentsManagerComponent {
     { type: 'OTHER', label: 'Autre document', icon: 'ph-file', color: 'bg-slate-100 text-slate-600', requiresExpiry: false }
   ];
 
-  documentCategories = [
-    { type: ['CNI', 'PASSPORT'], label: 'Identité', icon: 'ph-identification-card', showEmpty: true },
-    { type: ['ASSURANCE'], label: 'Assurances', icon: 'ph-shield-check', showEmpty: true },
-    { type: ['BAIL', 'AVENANT'], label: 'Contrats', icon: 'ph-file-text', showEmpty: true },
-    { type: ['ETAT_LIEUX_ENTREE', 'ETAT_LIEUX_SORTIE'], label: 'États des lieux', icon: 'ph-clipboard-text', showEmpty: false },
-    { type: ['ATTESTATION_EMPLOI', 'BULLETIN_SALAIRE', 'AVIS_IMPOSITION'], label: 'Documents financiers', icon: 'ph-currency-eur', showEmpty: false },
-    { type: ['OTHER'], label: 'Autres', icon: 'ph-folder', showEmpty: false }
-  ];
+  documentCategories = computed(() => {
+    const docs = this.documents();
+    const types = new Set(docs.map(d => d.type));
+
+    return this.documentTemplates
+      .filter(t => types.has(t.type))
+      .map(t => ({
+        type: t.type,
+        label: t.label,
+        icon: t.icon
+      }));
+  });
 
   contractTypes: Array<{value: DocumentType, label: string, icon: string, description: string}> = [
     { value: 'BAIL' as DocumentType, label: 'Bail de location', icon: 'ph-house', description: 'Contrat de location principal' },

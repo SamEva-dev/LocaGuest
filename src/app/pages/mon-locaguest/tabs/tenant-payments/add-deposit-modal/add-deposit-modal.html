@@ -65,7 +65,11 @@
             step="0.01"
              required
             [max]="maxPayableAmount()"
+            [readonly]="!allowInstallments()"
+            [class.cursor-not-allowed]="!allowInstallments()"
+            [class.opacity-75]="!allowInstallments()"
           />
+
           @if (maxPayableAmount() > 0) {
             <div class="text-xs text-slate-500 mt-1">
               Max: {{ maxPayableAmount() | number:'1.2-2' }} €

@@ -40,6 +40,7 @@ export class Login implements OnInit, OnDestroy {
   rememberMe = signal(false);
   loginStep = signal<'email' | 'password'>('email');
   loginEmail = signal<string>('');
+  emailInput = signal<string>('');
   
   // 2FA state
   show2FAInput = signal(false);
@@ -64,6 +65,12 @@ export class Login implements OnInit, OnDestroy {
   ngOnInit() {
     const expired = this.route.snapshot.queryParamMap.get('expired');
     if (expired) this.toast.info('AUTH.SESSION_EXPIRED');
+
+    const prefill = (this.route.snapshot.queryParamMap.get('email') ?? '').trim().toLowerCase();
+    if (prefill) {
+      this.emailInput.set(prefill);
+      this.loginStep.set('email');
+    }
   }
 
   async continueWithEmail(email: string) {

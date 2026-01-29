@@ -28,6 +28,7 @@ import { Permissions } from '../../../../core/auth/permissions';
 import { DepositsApi, DepositDto } from '../../../../core/api/deposits.api';
 import { ContractRenewalData, ContractRenewalWizard } from '../property-contracts/contract-renewal-wizard/contract-renewal-wizard';
 import { AvatarStorageService } from '../../../../core/services/avatar-storage.service';
+import { PaymentsRefreshService } from '../../../../core/services/payments-refresh.service';
 
 @Component({
   selector: 'tenant-detail-tab',
@@ -64,6 +65,7 @@ export class TenantDetailTab {
   private depositsApi = inject(DepositsApi);
   private avatarStorage = inject(AvatarStorageService);
   private translate = inject(TranslateService);
+  private paymentsRefresh = inject(PaymentsRefreshService);
 
   activeSubTab = signal('contracts');
   isLoading = signal(false);
@@ -72,6 +74,7 @@ export class TenantDetailTab {
   tenantAvatarDataUrl = signal<string | null>(null);
   payments = signal<TenantPayment[]>([]);
   contracts = signal<Contract[]>([]);
+  contractInventories = signal<Map<string, { hasEntry: boolean; hasExit: boolean }>>(new Map());
   paymentStats = signal<TenantPaymentStats | null>(null);
 
   rentInvoices = signal<RentInvoiceDto[]>([]);
@@ -277,6 +280,27 @@ export class TenantDetailTab {
   }
 
   constructor() {
+    this.paymentsRefresh.refresh$.subscribe(() => {
+      const t = this.tenant();
+      if (!t?.id) return;
+
+      // ✅ Rafraîchir les données impactées par un paiement/caution
+      this.tenantsService.getTenantPayments(t.id).subscribe({
+        next: (payments) => this.payments.set(payments),
+        error: (err) => console.error('❌ Error loading tenant payments:', err)
+      });
+
+      this.tenantsService.getPaymentStats(t.id).subscribe({
+        next: (stats) => this.paymentStats.set(stats),
+        error: (err) => console.error('❌ Error loading payment stats:', err)
+      });
+
+      this.loadRentInvoices(t.id);
+
+      // Deposit badge/outstanding peut évoluer
+      this.loadDepositForActiveContract(this.contracts());
+    });
+
     effect(() => {
       const t = this.tenant();
       if (!t?.id) {
@@ -437,6 +461,9 @@ export class TenantDetailTab {
       next: (contracts) => {
         this.contracts.set(contracts);
 
+        // ✅ Charger les infos EDL (entrée/sortie) pour afficher les bons boutons
+        void this.loadContractInventories(contracts);
+
         // ✅ Load addendums for tenant contracts
         void this.loadAllAddendumsForContracts();
 
@@ -451,6 +478,29 @@ export class TenantDetailTab {
       },
       error: (err) => console.error('❌ Error loading tenant contracts:', err)
     });
+  }
+
+  private async loadContractInventories(contracts: Contract[]) {
+    const map = new Map<string, { hasEntry: boolean; hasExit: boolean }>();
+
+    for (const c of contracts) {
+      try {
+        const inv = await firstValueFrom(this.inventoriesApi.getByContract(c.id));
+        map.set(c.id, { hasEntry: !!inv?.hasEntry, hasExit: !!inv?.hasExit });
+      } catch {
+        map.set(c.id, { hasEntry: false, hasExit: false });
+      }
+    }
+
+    this.contractInventories.set(map);
+  }
+
+  private hasEntryInventory(contractId: string): boolean {
+    return this.contractInventories().get(contractId)?.hasEntry === true;
+  }
+
+  private hasExitInventory(contractId: string): boolean {
+    return this.contractInventories().get(contractId)?.hasExit === true;
   }
 
   private async loadDepositForActiveContract(contracts: Contract[]) {
@@ -817,8 +867,8 @@ export class TenantDetailTab {
   canCreateEntryInventory(contract: Contract): boolean {
     if (!contract.status) return false;
     const status = contract.status.toLowerCase();
-    // Si Signed et date début >= aujourd'hui
-    return status === 'signed' && new Date(contract.startDate) >= new Date();
+    // Si Signed et pas encore d'EDL entrée
+    return status === 'signed' && !this.hasEntryInventory(contract.id);
   }
   
   /**
@@ -827,8 +877,9 @@ export class TenantDetailTab {
   canCreateExitInventory(contract: Contract): boolean {
     if (!contract.status) return false;
     const status = contract.status.toLowerCase();
-    // Si Active ou Terminated et EDL entrée existe (à vérifier backend)
-    return status === 'active' || status === 'terminated';
+    // Si Active/Terminated et EDL entrée existe et pas encore d'EDL sortie
+    if (status !== 'active' && status !== 'terminated') return false;
+    return this.hasEntryInventory(contract.id) && !this.hasExitInventory(contract.id);
   }
   
   /**
@@ -1092,6 +1143,10 @@ export class TenantDetailTab {
   handleInventoryExitClose(_: any) {
     this.showInventoryExitWizard.set(false);
     this.inventoryExitData.set(null);
+
+    // Refresh contracts list (status/EDL flags may have changed)
+    const t = this.tenant();
+    if (t?.id) this.loadContracts(t.id);
   }
   
   /**
