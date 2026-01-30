@@ -10,15 +10,25 @@
     } @else {
       @if (isSuccess()) {
         <p class="text-sm text-gray-600 text-center">{{ 'AUTH.EMAIL_VALIDATED' | translate }}</p>
+        @if (errorMessage()) {
+          <p class="text-sm text-red-600 text-center mt-2">{{ errorMessage() }}</p>
+        }
       } @else {
         <p class="text-sm text-gray-600 text-center">{{ 'AUTH.EMAIL_VALIDATION_FAILED' | translate }}</p>
       }
 
       <div class="text-center mt-4">
-        <button (click)="goToLogin()"
-                class="w-full py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200">
-          {{ 'AUTH.LOGIN' | translate }}
-        </button>
+        @if (isSuccess() && errorMessage()) {
+          <button (click)="retry()"
+                  class="w-full py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200">
+            Réessayer
+          </button>
+        } @else {
+          <button (click)="goToLogin()"
+                  class="w-full py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-colors duration-200">
+            {{ 'AUTH.LOGIN' | translate }}
+          </button>
+        }
       </div>
     }
 

@@ -190,6 +190,7 @@ export class SummaryTab {
         this.properties.set(result.items);
         this.totalItems.set(result.totalCount);
         this.isLoading.set(false);
+        console.log(result);
       },
       error: (err) => {
         console.error('❌ Error loading properties:', err);
