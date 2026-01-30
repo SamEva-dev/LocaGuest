@@ -16,6 +16,7 @@ export interface PropertyContext {
   horizon: number; // années
   objective: InvestmentObjective;
   purchasePrice: number;
+  notaryFeesRate?: number;
   notaryFees: number;
   renovationCost: number;
   landValue?: number;

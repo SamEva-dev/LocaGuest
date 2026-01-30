@@ -71,6 +71,13 @@ export class SettingsTab implements OnInit {
     bio: ''
   });
 
+  patchProfileData(patch: Partial<UserProfile>) {
+    this.profileData.set({
+      ...this.profileData(),
+      ...patch
+    });
+  }
+
   // Notification settings
   notifications = signal<NotificationSettings>({
     paymentReceived: true,
@@ -97,6 +104,18 @@ export class SettingsTab implements OnInit {
     sidebarNavigation: true,
     headerNavigation: false
   });
+
+  patchPreferences(patch: Partial<UserPreferences>) {
+    this.preferences.set({
+      ...this.preferences(),
+      ...patch
+    });
+  }
+
+  setPreferenceLanguage(language: string) {
+    this.patchPreferences({ language });
+    this.onLanguageChange();
+  }
 
   // Billing
   currentSubscription = this.subscriptionService.subscription;

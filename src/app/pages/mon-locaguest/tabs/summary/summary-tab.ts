@@ -9,12 +9,14 @@ import { OccupancyChart } from '../../../../components/charts/occupancy-chart/oc
 import { PropertiesApi, PropertyListItem } from '../../../../core/api/properties.api';
 import { TenantsApi, TenantListItem } from '../../../../core/api/tenants.api';
 import { DashboardApi } from '../../../../core/api/dashboard.api';
+import { TenantOnboardingApi } from '../../../../core/api/tenant-onboarding.api';
 import { AddPropertyForm } from '../../forms/add-property/add-property-form';
 import { AddTenantForm } from '../../forms/add-tenant/add-tenant-form';
 import { ConfirmService } from '../../../../core/ui/confirm.service';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { ImagesService } from '../../../../core/services/images.service';
 import { AvatarStorageService } from '../../../../core/services/avatar-storage.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'summary-tab',
@@ -27,6 +29,7 @@ export class SummaryTab {
   private propertiesApi = inject(PropertiesApi);
   private tenantsApi = inject(TenantsApi);
   private dashboardApi = inject(DashboardApi);
+  private tenantOnboardingApi = inject(TenantOnboardingApi);
   private confirmService = inject(ConfirmService);
   private toasts = inject(ToastService);
   private translate = inject(TranslateService);
@@ -38,6 +41,9 @@ export class SummaryTab {
   isLoading = signal(false);
   showAddPropertyForm = signal(false);
   showAddTenantForm = signal(false);
+  showAddTenantChooser = signal(false);
+  inviteTenantEmail = signal('');
+  inviteTenantSending = signal(false);
   
   // Search & Filters
   searchQuery = signal('');
@@ -107,6 +113,46 @@ export class SummaryTab {
       //   this.loadTenants();
       // }
     });
+  }
+
+  openAddTenantForm() {
+    this.inviteTenantEmail.set('');
+    this.showAddTenantChooser.set(true);
+  }
+
+  closeAddTenantChooser() {
+    this.showAddTenantChooser.set(false);
+    this.inviteTenantSending.set(false);
+  }
+
+  openAddTenantFormDirect() {
+    this.showAddTenantChooser.set(false);
+    this.showAddTenantForm.set(true);
+  }
+
+  canSendTenantInvitation() {
+    const email = (this.inviteTenantEmail() || '').trim();
+    if (!email) return false;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  async sendTenantInvitation() {
+    if (!this.canSendTenantInvitation() || this.inviteTenantSending()) return;
+
+    this.inviteTenantSending.set(true);
+    try {
+      const email = (this.inviteTenantEmail() || '').trim();
+      await firstValueFrom(this.tenantOnboardingApi.createInvitation({
+        email,
+        propertyId: null
+      }));
+      this.toasts.successDirect('Invitation envoyée');
+      this.closeAddTenantChooser();
+    } catch (e) {
+      console.error('❌ Error sending tenant invitation:', e);
+      this.toasts.errorDirect('Erreur lors de l’envoi de l’invitation');
+      this.inviteTenantSending.set(false);
+    }
   }
 
   ngOnInit() {
@@ -341,10 +387,6 @@ export class SummaryTab {
 
   onPropertyCreated(property: any) {
     this.loadProperties();
-  }
-
-  openAddTenantForm() {
-    this.showAddTenantForm.set(true);
   }
 
   closeAddTenantForm() {

@@ -163,9 +163,24 @@ import { PropertyContext } from '../../../core/models/rentability.models';
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 {{ 'RENTABILITY.STEP1.NOTARY_FEES' | translate }} (€)
               </label>
-              <input type="number" formControlName="notaryFees" min="0" step="100"
+              <input type="number" formControlName="notaryFees" min="0" step="100" [readOnly]="form.get('autoNotaryFees')?.value"
                 class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
               <p class="text-xs text-slate-500 mt-1">{{ 'RENTABILITY.STEP1.NOTARY_FEES_HINT' | translate }}</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                Taux frais de notaire (%)
+              </label>
+              <input type="number" formControlName="notaryFeesRate" min="0" max="30" step="0.1"
+                class="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white">
+            </div>
+
+            <div class="flex items-end">
+              <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300 select-none">
+                <input type="checkbox" formControlName="autoNotaryFees" class="h-4 w-4 rounded border-slate-300 dark:border-slate-600">
+                Calcul automatique
+              </label>
             </div>
 
             <div>
@@ -228,6 +243,8 @@ export class Step1ContextComponent implements OnInit, OnChanges {
       horizon: [10, [Validators.required, Validators.min(1), Validators.max(30)]],
       objective: ['cashflow', Validators.required],
       purchasePrice: [200000, [Validators.required, Validators.min(0)]],
+      notaryFeesRate: [8, [Validators.required, Validators.min(0), Validators.max(30)]],
+      autoNotaryFees: [true],
       notaryFees: [16000, [Validators.required, Validators.min(0)]],
       renovationCost: [0, [Validators.required, Validators.min(0)]],
       landValue: [0, Validators.min(0)],
@@ -237,6 +254,7 @@ export class Step1ContextComponent implements OnInit, OnChanges {
     // Emit changes
     effect(() => {
       this.form.valueChanges.subscribe(() => {
+        this.syncNotaryFees();
         this.emitChanges();
       });
     });
@@ -246,6 +264,8 @@ export class Step1ContextComponent implements OnInit, OnChanges {
     if (this.data) {
       this.form.patchValue(this.data, { emitEvent: false });
     }
+
+    this.syncNotaryFees(false);
     
     // Initial emit
     setTimeout(() => this.emitChanges(), 0);
@@ -254,6 +274,7 @@ export class Step1ContextComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['data'] && this.data) {
       this.form.patchValue(this.data, { emitEvent: false });
+      this.syncNotaryFees(false);
       setTimeout(() => this.emitChanges(), 0);
     }
   }
@@ -267,9 +288,40 @@ export class Step1ContextComponent implements OnInit, OnChanges {
   }
 
   private emitChanges() {
+    const value = this.form.value as any;
+
     this.dataChange.emit({
-      data: this.form.value as PropertyContext,
+      data: {
+        type: value.type,
+        location: value.location,
+        surface: value.surface,
+        state: value.state,
+        strategy: value.strategy,
+        horizon: value.horizon,
+        objective: value.objective,
+        purchasePrice: value.purchasePrice,
+        notaryFeesRate: value.notaryFeesRate,
+        notaryFees: value.notaryFees,
+        renovationCost: value.renovationCost,
+        landValue: value.landValue,
+        furnitureCost: value.furnitureCost,
+      } as PropertyContext,
       isValid: this.form.valid
     });
+  }
+
+  private syncNotaryFees(emit = true) {
+    const auto = !!this.form.get('autoNotaryFees')?.value;
+    if (!auto) return;
+
+    const purchasePrice = Number(this.form.get('purchasePrice')?.value ?? 0);
+    const rate = Number(this.form.get('notaryFeesRate')?.value ?? 0);
+    const computed = Math.max(0, Math.round(purchasePrice * (rate / 100)));
+
+    const current = Number(this.form.get('notaryFees')?.value ?? 0);
+    if (Number.isFinite(current) && current === computed) return;
+
+    this.form.patchValue({ notaryFees: computed }, { emitEvent: false });
+    if (emit) this.emitChanges();
   }
 }

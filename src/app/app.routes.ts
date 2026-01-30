@@ -44,6 +44,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/accept-invitation/accept-invitation').then(m => m.AcceptInvitationComponent)
   },
   {
+    path: 'public/tenant-onboarding',
+    loadComponent: () => import('./pages/tenant-onboarding-public/tenant-onboarding-public').then(m => m.TenantOnboardingPublic)
+  },
+  {
     path: 'privacy',
     loadComponent: () => import('./pages/legal/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)
   },
