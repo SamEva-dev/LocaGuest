@@ -115,8 +115,8 @@ export class AuthService {
       const res = await this.api.register(request).toPromise();
       if (!res) throw new Error('No response from API');
       
-      // If account was reactivated, apply the login tokens
-      if (res.status === 'reactivated' && res.accessToken && res.refreshToken) {
+      // If registration returns tokens, apply the login tokens (reactivated or direct activation)
+      if (res.accessToken && res.refreshToken) {
         this.applyLogin({
           accessToken: res.accessToken,
           refreshToken: res.refreshToken,

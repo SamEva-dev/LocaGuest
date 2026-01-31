@@ -112,6 +112,12 @@ export class Register implements OnDestroy {
         this.redirectTimeoutId = window.setTimeout(() => {
           this.router.navigate(['/app']);
         }, 2000);
+      } else if (result?.accessToken && result?.refreshToken) {
+        this.toast.successDirect(result.message || 'Inscription réussie. Connexion en cours...');
+        this.succesMessage = result.message || 'Inscription réussie. Connexion en cours...';
+        this.redirectTimeoutId = window.setTimeout(() => {
+          this.router.navigate(['/app']);
+        }, 1200);
       } else {
         this.toast.success('AUTH.REGISTER_SUCCESS');
 
