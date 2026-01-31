@@ -63,6 +63,8 @@ export class Login implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.rememberMe.set(this.auth.getRememberMe());
+
     const expired = this.route.snapshot.queryParamMap.get('expired');
     if (expired) this.toast.info('AUTH.SESSION_EXPIRED');
 
@@ -93,7 +95,7 @@ export class Login implements OnInit, OnDestroy {
       }
 
       if (res.nextStep === 'Register') {
-        this.router.navigate(['/register']);
+        this.router.navigate(['/register'], { queryParams: { email: normalized } });
         return;
       }
 

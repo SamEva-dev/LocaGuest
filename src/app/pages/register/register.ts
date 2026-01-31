@@ -30,6 +30,7 @@ export class Register implements OnDestroy {
 
  showPassword = signal(false);
   isLoading = signal(false);
+  emailLocked = signal(false);
   errorMessage : string='';
   succesMessage : string='';
  joinMode = signal(false);
@@ -47,10 +48,21 @@ export class Register implements OnDestroy {
   ngOnInit() {
     const mode = this.route.snapshot.queryParamMap.get('mode');
     const token = this.route.snapshot.queryParamMap.get('token');
+
+    const prefillEmail = (this.route.snapshot.queryParamMap.get('email') ?? '').trim().toLowerCase();
+    if (prefillEmail) {
+      this.form.email = prefillEmail;
+      this.emailLocked.set(true);
+    }
+
     if (mode === 'join' && token) {
       this.joinMode.set(true);
       this.invitationToken.set(token);
     }
+  }
+
+  changeEmail() {
+    this.emailLocked.set(false);
   }
 
   get passwordsMismatch(): boolean {

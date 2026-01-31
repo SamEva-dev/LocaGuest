@@ -82,6 +82,8 @@ export class AuthService {
 
   setRememberMe(value: boolean) { this.tokens.setRememberMe(value); }
 
+  getRememberMe(): boolean { return this.tokens.getRememberMe(); }
+
    async login(email: string, password: string): Promise<void> {
     try {
       const res = await this.api.login({ email, password } as LoginRequest).toPromise();

@@ -5,12 +5,33 @@ import { AuthTokens } from '../../auth.models';
 const ACCESS = 'lg.access';
 const REFRESH = 'lg.refresh';
 const EXPIRES = 'lg.expires';
+const REMEMBER = 'lg.rememberMe';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
   private _persist = signal<boolean>(false); // rememberMe
 
-  setRememberMe(value: boolean) { this._persist.set(value); }
+  constructor() {
+    try {
+      this._persist.set(localStorage.getItem(REMEMBER) === '1');
+    } catch {
+      // ignore
+    }
+  }
+
+  setRememberMe(value: boolean) {
+    this._persist.set(value);
+    try {
+      if (value) localStorage.setItem(REMEMBER, '1');
+      else localStorage.removeItem(REMEMBER);
+    } catch {
+      // ignore
+    }
+  }
+
+  getRememberMe(): boolean {
+    return this._persist();
+  }
 
   save(tokens: AuthTokens) {
     if (this._persist()) {

@@ -73,9 +73,17 @@
           <div class="relative">
             <i class="ph ph-envelope-simple absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
             <input name="email" [(ngModel)]="form.email" #emailRegister="ngModel" type="email" required
+                   [readonly]="emailLocked()"
                    class="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                    [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate">
           </div>
+          @if (emailLocked()) {
+            <button type="button"
+                    (click)="changeEmail()"
+                    class="mt-2 text-sm text-blue-600 hover:underline">
+              Changer d'email
+            </button>
+          }
           @if ((f.submitted || emailRegister.touched) && emailRegister.invalid) {
             <p class="mt-1 text-xs text-red-600">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
           }
